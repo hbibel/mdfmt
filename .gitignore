@@ -1,0 +1,7 @@
+/target/
+/opencode.jsonc
+.env
+.env.*
+!.env.example
+.superpowers/
+.worktrees/
