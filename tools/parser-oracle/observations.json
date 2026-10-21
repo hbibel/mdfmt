@@ -1,0 +1,4459 @@
+[
+  {
+    "id": "containers",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "blockQuote",
+        "text": "> - Parent\n>   - nested prose\n>     continued",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          3,
+          16
+        ]
+      },
+      {
+        "type": "blockQuotePrefix",
+        "text": "> ",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          3
+        ]
+      },
+      {
+        "type": "blockQuoteMarker",
+        "text": ">",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          2
+        ]
+      },
+      {
+        "type": "blockQuotePrefixWhitespace",
+        "text": " ",
+        "start": [
+          1,
+          2
+        ],
+        "end": [
+          1,
+          3
+        ]
+      },
+      {
+        "type": "listUnordered",
+        "text": "- Parent\n>   - nested prose\n>     continued",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          3,
+          16
+        ]
+      },
+      {
+        "type": "listItemPrefix",
+        "text": "- ",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          5
+        ]
+      },
+      {
+        "type": "listItemMarker",
+        "text": "-",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          4
+        ]
+      },
+      {
+        "type": "listItemPrefixWhitespace",
+        "text": " ",
+        "start": [
+          1,
+          4
+        ],
+        "end": [
+          1,
+          5
+        ]
+      },
+      {
+        "type": "content",
+        "text": "Parent",
+        "start": [
+          1,
+          5
+        ],
+        "end": [
+          1,
+          11
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Parent",
+        "start": [
+          1,
+          5
+        ],
+        "end": [
+          1,
+          11
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Parent",
+        "start": [
+          1,
+          5
+        ],
+        "end": [
+          1,
+          11
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          11
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "blockQuotePrefix",
+        "text": "> ",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          3
+        ]
+      },
+      {
+        "type": "blockQuoteMarker",
+        "text": ">",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          2
+        ]
+      },
+      {
+        "type": "blockQuotePrefixWhitespace",
+        "text": " ",
+        "start": [
+          2,
+          2
+        ],
+        "end": [
+          2,
+          3
+        ]
+      },
+      {
+        "type": "listItemIndent",
+        "text": "  ",
+        "start": [
+          2,
+          3
+        ],
+        "end": [
+          2,
+          5
+        ]
+      },
+      {
+        "type": "listUnordered",
+        "text": "- nested prose\n>     continued",
+        "start": [
+          2,
+          5
+        ],
+        "end": [
+          3,
+          16
+        ]
+      },
+      {
+        "type": "listItemPrefix",
+        "text": "- ",
+        "start": [
+          2,
+          5
+        ],
+        "end": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": "listItemMarker",
+        "text": "-",
+        "start": [
+          2,
+          5
+        ],
+        "end": [
+          2,
+          6
+        ]
+      },
+      {
+        "type": "listItemPrefixWhitespace",
+        "text": " ",
+        "start": [
+          2,
+          6
+        ],
+        "end": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": "content",
+        "text": "nested prose\n>     continued",
+        "start": [
+          2,
+          7
+        ],
+        "end": [
+          3,
+          16
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "nested prose\n>     continued",
+        "start": [
+          2,
+          7
+        ],
+        "end": [
+          3,
+          16
+        ]
+      },
+      {
+        "type": "data",
+        "text": "nested prose",
+        "start": [
+          2,
+          7
+        ],
+        "end": [
+          2,
+          19
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          2,
+          19
+        ],
+        "end": [
+          3,
+          1
+        ]
+      },
+      {
+        "type": "blockQuotePrefix",
+        "text": "> ",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          3
+        ]
+      },
+      {
+        "type": "blockQuoteMarker",
+        "text": ">",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          2
+        ]
+      },
+      {
+        "type": "blockQuotePrefixWhitespace",
+        "text": " ",
+        "start": [
+          3,
+          2
+        ],
+        "end": [
+          3,
+          3
+        ]
+      },
+      {
+        "type": "listItemIndent",
+        "text": "  ",
+        "start": [
+          3,
+          3
+        ],
+        "end": [
+          3,
+          5
+        ]
+      },
+      {
+        "type": "listItemIndent",
+        "text": "  ",
+        "start": [
+          3,
+          5
+        ],
+        "end": [
+          3,
+          7
+        ]
+      },
+      {
+        "type": "data",
+        "text": "continued",
+        "start": [
+          3,
+          7
+        ],
+        "end": [
+          3,
+          16
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          3,
+          16
+        ],
+        "end": [
+          4,
+          1
+        ]
+      },
+      {
+        "type": "lineEndingBlank",
+        "text": "\n",
+        "start": [
+          4,
+          1
+        ],
+        "end": [
+          5,
+          1
+        ]
+      },
+      {
+        "type": "listUnordered",
+        "text": "- lazy\ncontinuation",
+        "start": [
+          5,
+          1
+        ],
+        "end": [
+          6,
+          13
+        ]
+      },
+      {
+        "type": "listItemPrefix",
+        "text": "- ",
+        "start": [
+          5,
+          1
+        ],
+        "end": [
+          5,
+          3
+        ]
+      },
+      {
+        "type": "listItemMarker",
+        "text": "-",
+        "start": [
+          5,
+          1
+        ],
+        "end": [
+          5,
+          2
+        ]
+      },
+      {
+        "type": "listItemPrefixWhitespace",
+        "text": " ",
+        "start": [
+          5,
+          2
+        ],
+        "end": [
+          5,
+          3
+        ]
+      },
+      {
+        "type": "content",
+        "text": "lazy\ncontinuation",
+        "start": [
+          5,
+          3
+        ],
+        "end": [
+          6,
+          13
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "lazy\ncontinuation",
+        "start": [
+          5,
+          3
+        ],
+        "end": [
+          6,
+          13
+        ]
+      },
+      {
+        "type": "data",
+        "text": "lazy",
+        "start": [
+          5,
+          3
+        ],
+        "end": [
+          5,
+          7
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          5,
+          7
+        ],
+        "end": [
+          6,
+          1
+        ]
+      },
+      {
+        "type": "data",
+        "text": "continuation",
+        "start": [
+          6,
+          1
+        ],
+        "end": [
+          6,
+          13
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          6,
+          13
+        ],
+        "end": [
+          7,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "links",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "Read [the *docs*](https://example.com \"title\") and ![image](img.png), `code here`.",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          83
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Read [the *docs*](https://example.com \"title\") and ![image](img.png), `code here`.",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          83
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Read ",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "link",
+        "text": "[the *docs*](https://example.com \"title\")",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          1,
+          47
+        ]
+      },
+      {
+        "type": "label",
+        "text": "[the *docs*]",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          1,
+          18
+        ]
+      },
+      {
+        "type": "labelMarker",
+        "text": "[",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          1,
+          7
+        ]
+      },
+      {
+        "type": "labelText",
+        "text": "the *docs*",
+        "start": [
+          1,
+          7
+        ],
+        "end": [
+          1,
+          17
+        ]
+      },
+      {
+        "type": "data",
+        "text": "the ",
+        "start": [
+          1,
+          7
+        ],
+        "end": [
+          1,
+          11
+        ]
+      },
+      {
+        "type": "emphasis",
+        "text": "*docs*",
+        "start": [
+          1,
+          11
+        ],
+        "end": [
+          1,
+          17
+        ]
+      },
+      {
+        "type": "emphasisSequence",
+        "text": "*",
+        "start": [
+          1,
+          11
+        ],
+        "end": [
+          1,
+          12
+        ]
+      },
+      {
+        "type": "emphasisText",
+        "text": "docs",
+        "start": [
+          1,
+          12
+        ],
+        "end": [
+          1,
+          16
+        ]
+      },
+      {
+        "type": "data",
+        "text": "docs",
+        "start": [
+          1,
+          12
+        ],
+        "end": [
+          1,
+          16
+        ]
+      },
+      {
+        "type": "emphasisSequence",
+        "text": "*",
+        "start": [
+          1,
+          16
+        ],
+        "end": [
+          1,
+          17
+        ]
+      },
+      {
+        "type": "labelMarker",
+        "text": "]",
+        "start": [
+          1,
+          17
+        ],
+        "end": [
+          1,
+          18
+        ]
+      },
+      {
+        "type": "resource",
+        "text": "(https://example.com \"title\")",
+        "start": [
+          1,
+          18
+        ],
+        "end": [
+          1,
+          47
+        ]
+      },
+      {
+        "type": "resourceMarker",
+        "text": "(",
+        "start": [
+          1,
+          18
+        ],
+        "end": [
+          1,
+          19
+        ]
+      },
+      {
+        "type": "resourceDestination",
+        "text": "https://example.com",
+        "start": [
+          1,
+          19
+        ],
+        "end": [
+          1,
+          38
+        ]
+      },
+      {
+        "type": "resourceDestinationRaw",
+        "text": "https://example.com",
+        "start": [
+          1,
+          19
+        ],
+        "end": [
+          1,
+          38
+        ]
+      },
+      {
+        "type": "resourceDestinationString",
+        "text": "https://example.com",
+        "start": [
+          1,
+          19
+        ],
+        "end": [
+          1,
+          38
+        ]
+      },
+      {
+        "type": "data",
+        "text": "https://example.com",
+        "start": [
+          1,
+          19
+        ],
+        "end": [
+          1,
+          38
+        ]
+      },
+      {
+        "type": "lineSuffix",
+        "text": " ",
+        "start": [
+          1,
+          38
+        ],
+        "end": [
+          1,
+          39
+        ]
+      },
+      {
+        "type": "resourceTitle",
+        "text": "\"title\"",
+        "start": [
+          1,
+          39
+        ],
+        "end": [
+          1,
+          46
+        ]
+      },
+      {
+        "type": "resourceTitleMarker",
+        "text": "\"",
+        "start": [
+          1,
+          39
+        ],
+        "end": [
+          1,
+          40
+        ]
+      },
+      {
+        "type": "resourceTitleString",
+        "text": "title",
+        "start": [
+          1,
+          40
+        ],
+        "end": [
+          1,
+          45
+        ]
+      },
+      {
+        "type": "data",
+        "text": "title",
+        "start": [
+          1,
+          40
+        ],
+        "end": [
+          1,
+          45
+        ]
+      },
+      {
+        "type": "resourceTitleMarker",
+        "text": "\"",
+        "start": [
+          1,
+          45
+        ],
+        "end": [
+          1,
+          46
+        ]
+      },
+      {
+        "type": "resourceMarker",
+        "text": ")",
+        "start": [
+          1,
+          46
+        ],
+        "end": [
+          1,
+          47
+        ]
+      },
+      {
+        "type": "data",
+        "text": " and ",
+        "start": [
+          1,
+          47
+        ],
+        "end": [
+          1,
+          52
+        ]
+      },
+      {
+        "type": "image",
+        "text": "![image](img.png)",
+        "start": [
+          1,
+          52
+        ],
+        "end": [
+          1,
+          69
+        ]
+      },
+      {
+        "type": "label",
+        "text": "![image]",
+        "start": [
+          1,
+          52
+        ],
+        "end": [
+          1,
+          60
+        ]
+      },
+      {
+        "type": "labelImageMarker",
+        "text": "!",
+        "start": [
+          1,
+          52
+        ],
+        "end": [
+          1,
+          53
+        ]
+      },
+      {
+        "type": "labelMarker",
+        "text": "[",
+        "start": [
+          1,
+          53
+        ],
+        "end": [
+          1,
+          54
+        ]
+      },
+      {
+        "type": "labelText",
+        "text": "image",
+        "start": [
+          1,
+          54
+        ],
+        "end": [
+          1,
+          59
+        ]
+      },
+      {
+        "type": "data",
+        "text": "image",
+        "start": [
+          1,
+          54
+        ],
+        "end": [
+          1,
+          59
+        ]
+      },
+      {
+        "type": "labelMarker",
+        "text": "]",
+        "start": [
+          1,
+          59
+        ],
+        "end": [
+          1,
+          60
+        ]
+      },
+      {
+        "type": "resource",
+        "text": "(img.png)",
+        "start": [
+          1,
+          60
+        ],
+        "end": [
+          1,
+          69
+        ]
+      },
+      {
+        "type": "resourceMarker",
+        "text": "(",
+        "start": [
+          1,
+          60
+        ],
+        "end": [
+          1,
+          61
+        ]
+      },
+      {
+        "type": "resourceDestination",
+        "text": "img.png",
+        "start": [
+          1,
+          61
+        ],
+        "end": [
+          1,
+          68
+        ]
+      },
+      {
+        "type": "resourceDestinationRaw",
+        "text": "img.png",
+        "start": [
+          1,
+          61
+        ],
+        "end": [
+          1,
+          68
+        ]
+      },
+      {
+        "type": "resourceDestinationString",
+        "text": "img.png",
+        "start": [
+          1,
+          61
+        ],
+        "end": [
+          1,
+          68
+        ]
+      },
+      {
+        "type": "data",
+        "text": "img.png",
+        "start": [
+          1,
+          61
+        ],
+        "end": [
+          1,
+          68
+        ]
+      },
+      {
+        "type": "resourceMarker",
+        "text": ")",
+        "start": [
+          1,
+          68
+        ],
+        "end": [
+          1,
+          69
+        ]
+      },
+      {
+        "type": "data",
+        "text": ", ",
+        "start": [
+          1,
+          69
+        ],
+        "end": [
+          1,
+          71
+        ]
+      },
+      {
+        "type": "codeText",
+        "text": "`code here`",
+        "start": [
+          1,
+          71
+        ],
+        "end": [
+          1,
+          82
+        ]
+      },
+      {
+        "type": "codeTextSequence",
+        "text": "`",
+        "start": [
+          1,
+          71
+        ],
+        "end": [
+          1,
+          72
+        ]
+      },
+      {
+        "type": "codeTextData",
+        "text": "code here",
+        "start": [
+          1,
+          72
+        ],
+        "end": [
+          1,
+          81
+        ]
+      },
+      {
+        "type": "codeTextSequence",
+        "text": "`",
+        "start": [
+          1,
+          81
+        ],
+        "end": [
+          1,
+          82
+        ]
+      },
+      {
+        "type": "data",
+        "text": ".",
+        "start": [
+          1,
+          82
+        ],
+        "end": [
+          1,
+          83
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          83
+        ],
+        "end": [
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "multiline-link",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "A [two\nlines](url) link.",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          2,
+          18
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "A [two\nlines](url) link.",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          2,
+          18
+        ]
+      },
+      {
+        "type": "data",
+        "text": "A ",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          3
+        ]
+      },
+      {
+        "type": "link",
+        "text": "[two\nlines](url)",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          2,
+          12
+        ]
+      },
+      {
+        "type": "label",
+        "text": "[two\nlines]",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": "labelMarker",
+        "text": "[",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          4
+        ]
+      },
+      {
+        "type": "labelText",
+        "text": "two\nlines",
+        "start": [
+          1,
+          4
+        ],
+        "end": [
+          2,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "two",
+        "start": [
+          1,
+          4
+        ],
+        "end": [
+          1,
+          7
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          7
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "data",
+        "text": "lines",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          6
+        ]
+      },
+      {
+        "type": "labelMarker",
+        "text": "]",
+        "start": [
+          2,
+          6
+        ],
+        "end": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": "resource",
+        "text": "(url)",
+        "start": [
+          2,
+          7
+        ],
+        "end": [
+          2,
+          12
+        ]
+      },
+      {
+        "type": "resourceMarker",
+        "text": "(",
+        "start": [
+          2,
+          7
+        ],
+        "end": [
+          2,
+          8
+        ]
+      },
+      {
+        "type": "resourceDestination",
+        "text": "url",
+        "start": [
+          2,
+          8
+        ],
+        "end": [
+          2,
+          11
+        ]
+      },
+      {
+        "type": "resourceDestinationRaw",
+        "text": "url",
+        "start": [
+          2,
+          8
+        ],
+        "end": [
+          2,
+          11
+        ]
+      },
+      {
+        "type": "resourceDestinationString",
+        "text": "url",
+        "start": [
+          2,
+          8
+        ],
+        "end": [
+          2,
+          11
+        ]
+      },
+      {
+        "type": "data",
+        "text": "url",
+        "start": [
+          2,
+          8
+        ],
+        "end": [
+          2,
+          11
+        ]
+      },
+      {
+        "type": "resourceMarker",
+        "text": ")",
+        "start": [
+          2,
+          11
+        ],
+        "end": [
+          2,
+          12
+        ]
+      },
+      {
+        "type": "data",
+        "text": " link.",
+        "start": [
+          2,
+          12
+        ],
+        "end": [
+          2,
+          18
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          2,
+          18
+        ],
+        "end": [
+          3,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "reference",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "[hello][id]",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          12
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "[hello][id]",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          12
+        ]
+      },
+      {
+        "type": "link",
+        "text": "[hello][id]",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          12
+        ]
+      },
+      {
+        "type": "label",
+        "text": "[hello]",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          8
+        ]
+      },
+      {
+        "type": "labelMarker",
+        "text": "[",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          2
+        ]
+      },
+      {
+        "type": "labelText",
+        "text": "hello",
+        "start": [
+          1,
+          2
+        ],
+        "end": [
+          1,
+          7
+        ]
+      },
+      {
+        "type": "data",
+        "text": "hello",
+        "start": [
+          1,
+          2
+        ],
+        "end": [
+          1,
+          7
+        ]
+      },
+      {
+        "type": "labelMarker",
+        "text": "]",
+        "start": [
+          1,
+          7
+        ],
+        "end": [
+          1,
+          8
+        ]
+      },
+      {
+        "type": "reference",
+        "text": "[id]",
+        "start": [
+          1,
+          8
+        ],
+        "end": [
+          1,
+          12
+        ]
+      },
+      {
+        "type": "referenceMarker",
+        "text": "[",
+        "start": [
+          1,
+          8
+        ],
+        "end": [
+          1,
+          9
+        ]
+      },
+      {
+        "type": "referenceString",
+        "text": "id",
+        "start": [
+          1,
+          9
+        ],
+        "end": [
+          1,
+          11
+        ]
+      },
+      {
+        "type": "data",
+        "text": "id",
+        "start": [
+          1,
+          9
+        ],
+        "end": [
+          1,
+          11
+        ]
+      },
+      {
+        "type": "referenceMarker",
+        "text": "]",
+        "start": [
+          1,
+          11
+        ],
+        "end": [
+          1,
+          12
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          12
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "lineEndingBlank",
+        "text": "\n",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          3,
+          1
+        ]
+      },
+      {
+        "type": "content",
+        "text": "[id]: https://example.com \"Title\"",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          34
+        ]
+      },
+      {
+        "type": "definition",
+        "text": "[id]: https://example.com \"Title\"",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          34
+        ]
+      },
+      {
+        "type": "definitionLabel",
+        "text": "[id]",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          5
+        ]
+      },
+      {
+        "type": "definitionLabelMarker",
+        "text": "[",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          2
+        ]
+      },
+      {
+        "type": "definitionLabelString",
+        "text": "id",
+        "start": [
+          3,
+          2
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "data",
+        "text": "id",
+        "start": [
+          3,
+          2
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "definitionLabelMarker",
+        "text": "]",
+        "start": [
+          3,
+          4
+        ],
+        "end": [
+          3,
+          5
+        ]
+      },
+      {
+        "type": "definitionMarker",
+        "text": ":",
+        "start": [
+          3,
+          5
+        ],
+        "end": [
+          3,
+          6
+        ]
+      },
+      {
+        "type": "lineSuffix",
+        "text": " ",
+        "start": [
+          3,
+          6
+        ],
+        "end": [
+          3,
+          7
+        ]
+      },
+      {
+        "type": "definitionDestination",
+        "text": "https://example.com",
+        "start": [
+          3,
+          7
+        ],
+        "end": [
+          3,
+          26
+        ]
+      },
+      {
+        "type": "definitionDestinationRaw",
+        "text": "https://example.com",
+        "start": [
+          3,
+          7
+        ],
+        "end": [
+          3,
+          26
+        ]
+      },
+      {
+        "type": "definitionDestinationString",
+        "text": "https://example.com",
+        "start": [
+          3,
+          7
+        ],
+        "end": [
+          3,
+          26
+        ]
+      },
+      {
+        "type": "data",
+        "text": "https://example.com",
+        "start": [
+          3,
+          7
+        ],
+        "end": [
+          3,
+          26
+        ]
+      },
+      {
+        "type": "lineSuffix",
+        "text": " ",
+        "start": [
+          3,
+          26
+        ],
+        "end": [
+          3,
+          27
+        ]
+      },
+      {
+        "type": "definitionTitle",
+        "text": "\"Title\"",
+        "start": [
+          3,
+          27
+        ],
+        "end": [
+          3,
+          34
+        ]
+      },
+      {
+        "type": "definitionTitleMarker",
+        "text": "\"",
+        "start": [
+          3,
+          27
+        ],
+        "end": [
+          3,
+          28
+        ]
+      },
+      {
+        "type": "definitionTitleString",
+        "text": "Title",
+        "start": [
+          3,
+          28
+        ],
+        "end": [
+          3,
+          33
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Title",
+        "start": [
+          3,
+          28
+        ],
+        "end": [
+          3,
+          33
+        ]
+      },
+      {
+        "type": "definitionTitleMarker",
+        "text": "\"",
+        "start": [
+          3,
+          33
+        ],
+        "end": [
+          3,
+          34
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          3,
+          34
+        ],
+        "end": [
+          4,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "table",
+        "text": "| a | b |\n| - | - |\n| x | y |",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          3,
+          10
+        ]
+      },
+      {
+        "type": "tableHead",
+        "text": "| a | b |\n| - | - |",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          2,
+          10
+        ]
+      },
+      {
+        "type": "tableRow",
+        "text": "| a | b |",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          10
+        ]
+      },
+      {
+        "type": "tableHeader",
+        "text": "| a ",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          5
+        ]
+      },
+      {
+        "type": "tableCellDivider",
+        "text": "|",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          2
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          1,
+          2
+        ],
+        "end": [
+          1,
+          3
+        ]
+      },
+      {
+        "type": "tableContent",
+        "text": "a",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          4
+        ]
+      },
+      {
+        "type": "data",
+        "text": "a",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          4
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          1,
+          4
+        ],
+        "end": [
+          1,
+          5
+        ]
+      },
+      {
+        "type": "tableHeader",
+        "text": "| b |",
+        "start": [
+          1,
+          5
+        ],
+        "end": [
+          1,
+          10
+        ]
+      },
+      {
+        "type": "tableCellDivider",
+        "text": "|",
+        "start": [
+          1,
+          5
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          1,
+          7
+        ]
+      },
+      {
+        "type": "tableContent",
+        "text": "b",
+        "start": [
+          1,
+          7
+        ],
+        "end": [
+          1,
+          8
+        ]
+      },
+      {
+        "type": "data",
+        "text": "b",
+        "start": [
+          1,
+          7
+        ],
+        "end": [
+          1,
+          8
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          1,
+          8
+        ],
+        "end": [
+          1,
+          9
+        ]
+      },
+      {
+        "type": "tableCellDivider",
+        "text": "|",
+        "start": [
+          1,
+          9
+        ],
+        "end": [
+          1,
+          10
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          10
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "tableDelimiterRow",
+        "text": "| - | - |",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          10
+        ]
+      },
+      {
+        "type": "tableDelimiter",
+        "text": "| - ",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          5
+        ]
+      },
+      {
+        "type": "tableCellDivider",
+        "text": "|",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          2
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          2,
+          2
+        ],
+        "end": [
+          2,
+          3
+        ]
+      },
+      {
+        "type": "tableContent",
+        "text": "-",
+        "start": [
+          2,
+          3
+        ],
+        "end": [
+          2,
+          4
+        ]
+      },
+      {
+        "type": "tableDelimiterFiller",
+        "text": "-",
+        "start": [
+          2,
+          3
+        ],
+        "end": [
+          2,
+          4
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          2,
+          4
+        ],
+        "end": [
+          2,
+          5
+        ]
+      },
+      {
+        "type": "tableDelimiter",
+        "text": "| - |",
+        "start": [
+          2,
+          5
+        ],
+        "end": [
+          2,
+          10
+        ]
+      },
+      {
+        "type": "tableCellDivider",
+        "text": "|",
+        "start": [
+          2,
+          5
+        ],
+        "end": [
+          2,
+          6
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          2,
+          6
+        ],
+        "end": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": "tableContent",
+        "text": "-",
+        "start": [
+          2,
+          7
+        ],
+        "end": [
+          2,
+          8
+        ]
+      },
+      {
+        "type": "tableDelimiterFiller",
+        "text": "-",
+        "start": [
+          2,
+          7
+        ],
+        "end": [
+          2,
+          8
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          2,
+          8
+        ],
+        "end": [
+          2,
+          9
+        ]
+      },
+      {
+        "type": "tableCellDivider",
+        "text": "|",
+        "start": [
+          2,
+          9
+        ],
+        "end": [
+          2,
+          10
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          2,
+          10
+        ],
+        "end": [
+          3,
+          1
+        ]
+      },
+      {
+        "type": "tableBody",
+        "text": "| x | y |",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          10
+        ]
+      },
+      {
+        "type": "tableRow",
+        "text": "| x | y |",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          10
+        ]
+      },
+      {
+        "type": "tableData",
+        "text": "| x ",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          5
+        ]
+      },
+      {
+        "type": "tableCellDivider",
+        "text": "|",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          2
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          3,
+          2
+        ],
+        "end": [
+          3,
+          3
+        ]
+      },
+      {
+        "type": "tableContent",
+        "text": "x",
+        "start": [
+          3,
+          3
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "data",
+        "text": "x",
+        "start": [
+          3,
+          3
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          3,
+          4
+        ],
+        "end": [
+          3,
+          5
+        ]
+      },
+      {
+        "type": "tableData",
+        "text": "| y |",
+        "start": [
+          3,
+          5
+        ],
+        "end": [
+          3,
+          10
+        ]
+      },
+      {
+        "type": "tableCellDivider",
+        "text": "|",
+        "start": [
+          3,
+          5
+        ],
+        "end": [
+          3,
+          6
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          3,
+          6
+        ],
+        "end": [
+          3,
+          7
+        ]
+      },
+      {
+        "type": "tableContent",
+        "text": "y",
+        "start": [
+          3,
+          7
+        ],
+        "end": [
+          3,
+          8
+        ]
+      },
+      {
+        "type": "data",
+        "text": "y",
+        "start": [
+          3,
+          7
+        ],
+        "end": [
+          3,
+          8
+        ]
+      },
+      {
+        "type": "whitespace",
+        "text": " ",
+        "start": [
+          3,
+          8
+        ],
+        "end": [
+          3,
+          9
+        ]
+      },
+      {
+        "type": "tableCellDivider",
+        "text": "|",
+        "start": [
+          3,
+          9
+        ],
+        "end": [
+          3,
+          10
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          3,
+          10
+        ],
+        "end": [
+          4,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "html",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "htmlFlow",
+        "text": "<!-- markdownlint-disable -->",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          30
+        ]
+      },
+      {
+        "type": "htmlFlowData",
+        "text": "<!-- markdownlint-disable -->",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          30
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          30
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "lineEndingBlank",
+        "text": "\n",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          3,
+          1
+        ]
+      },
+      {
+        "type": "htmlFlow",
+        "text": "<div>\nraw\n</div>",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          5,
+          7
+        ]
+      },
+      {
+        "type": "content",
+        "text": "<div>\nraw\n</div>",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          5,
+          7
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "<div>\nraw\n</div>",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          5,
+          7
+        ]
+      },
+      {
+        "type": "htmlText",
+        "text": "<div>",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          6
+        ]
+      },
+      {
+        "type": "htmlTextData",
+        "text": "<div>",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          3,
+          6
+        ],
+        "end": [
+          4,
+          1
+        ]
+      },
+      {
+        "type": "data",
+        "text": "raw",
+        "start": [
+          4,
+          1
+        ],
+        "end": [
+          4,
+          4
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          4,
+          4
+        ],
+        "end": [
+          5,
+          1
+        ]
+      },
+      {
+        "type": "htmlText",
+        "text": "</div>",
+        "start": [
+          5,
+          1
+        ],
+        "end": [
+          5,
+          7
+        ]
+      },
+      {
+        "type": "htmlTextData",
+        "text": "</div>",
+        "start": [
+          5,
+          1
+        ],
+        "end": [
+          5,
+          7
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          5,
+          7
+        ],
+        "end": [
+          6,
+          1
+        ]
+      },
+      {
+        "type": "lineEndingBlank",
+        "text": "\n",
+        "start": [
+          6,
+          1
+        ],
+        "end": [
+          7,
+          1
+        ]
+      },
+      {
+        "type": "content",
+        "text": "Prose <b>bold</b>.",
+        "start": [
+          7,
+          1
+        ],
+        "end": [
+          7,
+          19
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Prose <b>bold</b>.",
+        "start": [
+          7,
+          1
+        ],
+        "end": [
+          7,
+          19
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose ",
+        "start": [
+          7,
+          1
+        ],
+        "end": [
+          7,
+          7
+        ]
+      },
+      {
+        "type": "htmlText",
+        "text": "<b>",
+        "start": [
+          7,
+          7
+        ],
+        "end": [
+          7,
+          10
+        ]
+      },
+      {
+        "type": "htmlTextData",
+        "text": "<b>",
+        "start": [
+          7,
+          7
+        ],
+        "end": [
+          7,
+          10
+        ]
+      },
+      {
+        "type": "data",
+        "text": "bold",
+        "start": [
+          7,
+          10
+        ],
+        "end": [
+          7,
+          14
+        ]
+      },
+      {
+        "type": "htmlText",
+        "text": "</b>",
+        "start": [
+          7,
+          14
+        ],
+        "end": [
+          7,
+          18
+        ]
+      },
+      {
+        "type": "htmlTextData",
+        "text": "</b>",
+        "start": [
+          7,
+          14
+        ],
+        "end": [
+          7,
+          18
+        ]
+      },
+      {
+        "type": "data",
+        "text": ".",
+        "start": [
+          7,
+          18
+        ],
+        "end": [
+          7,
+          19
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          7,
+          19
+        ],
+        "end": [
+          8,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "code",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "codeFenced",
+        "text": "```rs\nlet x = 1;\n```",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "codeFencedFence",
+        "text": "```rs",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "codeFencedFenceSequence",
+        "text": "```",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          4
+        ]
+      },
+      {
+        "type": "codeFencedFenceInfo",
+        "text": "rs",
+        "start": [
+          1,
+          4
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "rs",
+        "start": [
+          1,
+          4
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "codeFlowValue",
+        "text": "let x = 1;",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          11
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          2,
+          11
+        ],
+        "end": [
+          3,
+          1
+        ]
+      },
+      {
+        "type": "codeFencedFence",
+        "text": "```",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "codeFencedFenceSequence",
+        "text": "```",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          3,
+          4
+        ],
+        "end": [
+          4,
+          1
+        ]
+      },
+      {
+        "type": "lineEndingBlank",
+        "text": "\n",
+        "start": [
+          4,
+          1
+        ],
+        "end": [
+          5,
+          1
+        ]
+      },
+      {
+        "type": "codeIndented",
+        "text": "    indented code",
+        "start": [
+          5,
+          1
+        ],
+        "end": [
+          5,
+          18
+        ]
+      },
+      {
+        "type": "linePrefix",
+        "text": "    ",
+        "start": [
+          5,
+          1
+        ],
+        "end": [
+          5,
+          5
+        ]
+      },
+      {
+        "type": "codeFlowValue",
+        "text": "indented code",
+        "start": [
+          5,
+          5
+        ],
+        "end": [
+          5,
+          18
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          5,
+          18
+        ],
+        "end": [
+          6,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "breaks",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "escaped \\* &amp; 😀\nsoft  \nhard\\\nlast",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          4,
+          5
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "escaped \\* &amp; 😀\nsoft  \nhard\\\nlast",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          4,
+          5
+        ]
+      },
+      {
+        "type": "data",
+        "text": "escaped ",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          9
+        ]
+      },
+      {
+        "type": "characterEscape",
+        "text": "\\*",
+        "start": [
+          1,
+          9
+        ],
+        "end": [
+          1,
+          11
+        ]
+      },
+      {
+        "type": "escapeMarker",
+        "text": "\\",
+        "start": [
+          1,
+          9
+        ],
+        "end": [
+          1,
+          10
+        ]
+      },
+      {
+        "type": "characterEscapeValue",
+        "text": "*",
+        "start": [
+          1,
+          10
+        ],
+        "end": [
+          1,
+          11
+        ]
+      },
+      {
+        "type": "data",
+        "text": " ",
+        "start": [
+          1,
+          11
+        ],
+        "end": [
+          1,
+          12
+        ]
+      },
+      {
+        "type": "characterReference",
+        "text": "&amp;",
+        "start": [
+          1,
+          12
+        ],
+        "end": [
+          1,
+          17
+        ]
+      },
+      {
+        "type": "characterReferenceMarker",
+        "text": "&",
+        "start": [
+          1,
+          12
+        ],
+        "end": [
+          1,
+          13
+        ]
+      },
+      {
+        "type": "characterReferenceValue",
+        "text": "amp",
+        "start": [
+          1,
+          13
+        ],
+        "end": [
+          1,
+          16
+        ]
+      },
+      {
+        "type": "characterReferenceMarker",
+        "text": ";",
+        "start": [
+          1,
+          16
+        ],
+        "end": [
+          1,
+          17
+        ]
+      },
+      {
+        "type": "data",
+        "text": " 😀",
+        "start": [
+          1,
+          17
+        ],
+        "end": [
+          1,
+          20
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          20
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "data",
+        "text": "soft",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          5
+        ]
+      },
+      {
+        "type": "hardBreakTrailing",
+        "text": "  ",
+        "start": [
+          2,
+          5
+        ],
+        "end": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          2,
+          7
+        ],
+        "end": [
+          3,
+          1
+        ]
+      },
+      {
+        "type": "data",
+        "text": "hard",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          5
+        ]
+      },
+      {
+        "type": "hardBreakEscape",
+        "text": "\\",
+        "start": [
+          3,
+          5
+        ],
+        "end": [
+          3,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          3,
+          6
+        ],
+        "end": [
+          4,
+          1
+        ]
+      },
+      {
+        "type": "data",
+        "text": "last",
+        "start": [
+          4,
+          1
+        ],
+        "end": [
+          4,
+          5
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          4,
+          5
+        ],
+        "end": [
+          5,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unicode-crlf",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "blockQuote",
+        "text": ">\t😀 café\n> next",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": "blockQuotePrefix",
+        "text": ">\t",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          3
+        ]
+      },
+      {
+        "type": "blockQuoteMarker",
+        "text": ">",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          2
+        ]
+      },
+      {
+        "type": "blockQuotePrefixWhitespace",
+        "text": "\t",
+        "start": [
+          1,
+          2
+        ],
+        "end": [
+          1,
+          3
+        ]
+      },
+      {
+        "type": "linePrefix",
+        "text": "",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          3
+        ]
+      },
+      {
+        "type": "content",
+        "text": "😀 café\n> next",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "😀 café\n> next",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": "data",
+        "text": "😀 café",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          10
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          10
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "blockQuotePrefix",
+        "text": "> ",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          3
+        ]
+      },
+      {
+        "type": "blockQuoteMarker",
+        "text": ">",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          2
+        ]
+      },
+      {
+        "type": "blockQuotePrefixWhitespace",
+        "text": " ",
+        "start": [
+          2,
+          2
+        ],
+        "end": [
+          2,
+          3
+        ]
+      },
+      {
+        "type": "data",
+        "text": "next",
+        "start": [
+          2,
+          3
+        ],
+        "end": [
+          2,
+          7
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          2,
+          7
+        ],
+        "end": [
+          3,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "yaml",
+    "frontMatterLines": [
+      "---",
+      "title: Hello",
+      "---",
+      ""
+    ],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "toml",
+    "frontMatterLines": [
+      "+++",
+      "title = 'Hello'",
+      "+++"
+    ],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "yaml-dots",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "thematicBreak",
+        "text": "---",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          4
+        ]
+      },
+      {
+        "type": "thematicBreakSequence",
+        "text": "---",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          4
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          4
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "content",
+        "text": "title: Hello\n...\nProse",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          4,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "title: Hello\n...\nProse",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          4,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "title: Hello",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          13
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          2,
+          13
+        ],
+        "end": [
+          3,
+          1
+        ]
+      },
+      {
+        "type": "data",
+        "text": "...",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          3,
+          4
+        ],
+        "end": [
+          4,
+          1
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose",
+        "start": [
+          4,
+          1
+        ],
+        "end": [
+          4,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          4,
+          6
+        ],
+        "end": [
+          5,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unclosed-frontmatter",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "thematicBreak",
+        "text": "---",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          4
+        ]
+      },
+      {
+        "type": "thematicBreakSequence",
+        "text": "---",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          4
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          4
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "content",
+        "text": "title: Hello",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          13
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "title: Hello",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          13
+        ]
+      },
+      {
+        "type": "data",
+        "text": "title: Hello",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          13
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          2,
+          13
+        ],
+        "end": [
+          3,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "strikethrough-task-autolink",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "listUnordered",
+        "text": "- [x] ~~done~~ https://example.com",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          35
+        ]
+      },
+      {
+        "type": "listItemPrefix",
+        "text": "- ",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          3
+        ]
+      },
+      {
+        "type": "listItemMarker",
+        "text": "-",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          2
+        ]
+      },
+      {
+        "type": "listItemPrefixWhitespace",
+        "text": " ",
+        "start": [
+          1,
+          2
+        ],
+        "end": [
+          1,
+          3
+        ]
+      },
+      {
+        "type": "content",
+        "text": "[x] ~~done~~ https://example.com",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          35
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "[x] ~~done~~ https://example.com",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          35
+        ]
+      },
+      {
+        "type": "data",
+        "text": "[",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          4
+        ]
+      },
+      {
+        "type": "data",
+        "text": "x] ~~done~~ ",
+        "start": [
+          1,
+          4
+        ],
+        "end": [
+          1,
+          16
+        ]
+      },
+      {
+        "type": "literalAutolink",
+        "text": "https://example.com",
+        "start": [
+          1,
+          16
+        ],
+        "end": [
+          1,
+          35
+        ]
+      },
+      {
+        "type": "literalAutolinkHttp",
+        "text": "https://example.com",
+        "start": [
+          1,
+          16
+        ],
+        "end": [
+          1,
+          35
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          35
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "undefinedReferenceShortcut",
+        "text": "[x]",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "undefinedReference",
+        "text": "[x]",
+        "start": [
+          1,
+          3
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "x",
+        "start": [
+          1,
+          4
+        ],
+        "end": [
+          1,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lone-cr",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "hello",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "hello",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "hello",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "lineEndingBlank",
+        "text": "\n",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          3,
+          1
+        ]
+      },
+      {
+        "type": "content",
+        "text": "world",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "world",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "world",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          3,
+          6
+        ],
+        "end": [
+          4,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "json-frontmatter",
+    "frontMatterLines": [
+      "{",
+      "\"title\": \"Hello\"",
+      "}"
+    ],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "bom-frontmatter-crlf",
+    "frontMatterLines": [
+      "---",
+      "title: 😀",
+      "---"
+    ],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "toml-dots",
+    "frontMatterLines": [
+      "+++",
+      "title = 'Hello'",
+      "..."
+    ],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "frontmatter-nbsp-close",
+    "frontMatterLines": [
+      "---",
+      "title: Hello",
+      "--- ",
+      "",
+      "world",
+      "",
+      "---"
+    ],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "frontmatter-vtab-close",
+    "frontMatterLines": [
+      "---",
+      "title: Hello",
+      "---\u000b",
+      "",
+      "world",
+      "",
+      "---"
+    ],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "frontmatter-nbsp-open",
+    "frontMatterLines": [],
+    "tokens": [
+      {
+        "type": "setextHeading",
+        "text": "--- \ntitle: Hello\n---",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "setextHeadingText",
+        "text": "--- \ntitle: Hello",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          2,
+          13
+        ]
+      },
+      {
+        "type": "data",
+        "text": "--- ",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          5
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          5
+        ],
+        "end": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": "data",
+        "text": "title: Hello",
+        "start": [
+          2,
+          1
+        ],
+        "end": [
+          2,
+          13
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          2,
+          13
+        ],
+        "end": [
+          3,
+          1
+        ]
+      },
+      {
+        "type": "setextHeadingLine",
+        "text": "---",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "setextHeadingLineSequence",
+        "text": "---",
+        "start": [
+          3,
+          1
+        ],
+        "end": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          3,
+          4
+        ],
+        "end": [
+          4,
+          1
+        ]
+      },
+      {
+        "type": "content",
+        "text": "Prose",
+        "start": [
+          4,
+          1
+        ],
+        "end": [
+          4,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Prose",
+        "start": [
+          4,
+          1
+        ],
+        "end": [
+          4,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose",
+        "start": [
+          4,
+          1
+        ],
+        "end": [
+          4,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          4,
+          6
+        ],
+        "end": [
+          5,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "frontmatter-formfeed-open",
+    "frontMatterLines": [
+      "---\f",
+      "title: Hello",
+      "---"
+    ],
+    "tokens": [
+      {
+        "type": "content",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "paragraph",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "data",
+        "text": "Prose",
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          1,
+          6
+        ]
+      },
+      {
+        "type": "lineEnding",
+        "text": "\n",
+        "start": [
+          1,
+          6
+        ],
+        "end": [
+          2,
+          1
+        ]
+      }
+    ]
+  }
+]

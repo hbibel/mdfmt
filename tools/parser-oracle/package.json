@@ -1,0 +1,10 @@
+{
+  "name": "mdfmt-parser-oracle",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node oracle.mjs" },
+  "devDependencies": {
+    "markdownlint": "0.42.0",
+    "markdownlint-cli2": "0.24.0"
+  }
+}

@@ -1,0 +1,767 @@
+[
+  {
+    "fixture": "containers",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..67 Some(\"> - Parent\\n>   - nested prose\\n>     continued\\n\\n- lazy\\ncontinuation\\n\")",
+      "Blockquote 0..45 Some(\"> - Parent\\n>   - nested prose\\n>     continued\")",
+      "List 2..45 Some(\"- Parent\\n>   - nested prose\\n>     continued\")",
+      "ListItem 2..45 Some(\"- Parent\\n>   - nested prose\\n>     continued\")",
+      "Paragraph 4..10 Some(\"Parent\")",
+      "Text 4..10 Some(\"Parent\")",
+      "List 15..45 Some(\"- nested prose\\n>     continued\")",
+      "ListItem 15..45 Some(\"- nested prose\\n>     continued\")",
+      "Paragraph 17..45 Some(\"nested prose\\n>     continued\")",
+      "Text 17..45 Some(\"nested prose\\n>     continued\")",
+      "List 47..66 Some(\"- lazy\\ncontinuation\")",
+      "ListItem 47..66 Some(\"- lazy\\ncontinuation\")",
+      "Paragraph 49..66 Some(\"lazy\\ncontinuation\")",
+      "Text 49..66 Some(\"lazy\\ncontinuation\")"
+    ]
+  },
+  {
+    "fixture": "containers",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(BlockQuote(None)) 0..46 \"> - Parent\\n>   - nested prose\\n>     continued\\n\"",
+      "Start(List(None)) 2..46 \"- Parent\\n>   - nested prose\\n>     continued\\n\"",
+      "Start(Item) 2..46 \"- Parent\\n>   - nested prose\\n>     continued\\n\"",
+      "Text(Borrowed(\"Parent\")) 4..10 \"Parent\"",
+      "Start(List(None)) 15..46 \"- nested prose\\n>     continued\\n\"",
+      "Start(Item) 15..46 \"- nested prose\\n>     continued\\n\"",
+      "Text(Borrowed(\"nested prose\")) 17..29 \"nested prose\"",
+      "SoftBreak 29..30 \"\\n\"",
+      "Text(Borrowed(\"continued\")) 36..45 \"continued\"",
+      "End(Item) 15..46 \"- nested prose\\n>     continued\\n\"",
+      "End(List(false)) 15..46 \"- nested prose\\n>     continued\\n\"",
+      "End(Item) 2..46 \"- Parent\\n>   - nested prose\\n>     continued\\n\"",
+      "End(List(false)) 2..46 \"- Parent\\n>   - nested prose\\n>     continued\\n\"",
+      "End(BlockQuote(None)) 0..46 \"> - Parent\\n>   - nested prose\\n>     continued\\n\"",
+      "Start(List(None)) 47..67 \"- lazy\\ncontinuation\\n\"",
+      "Start(Item) 47..67 \"- lazy\\ncontinuation\\n\"",
+      "Text(Borrowed(\"lazy\")) 49..53 \"lazy\"",
+      "SoftBreak 53..54 \"\\n\"",
+      "Text(Borrowed(\"continuation\")) 54..66 \"continuation\"",
+      "End(Item) 47..67 \"- lazy\\ncontinuation\\n\"",
+      "End(List(false)) 47..67 \"- lazy\\ncontinuation\\n\""
+    ]
+  },
+  {
+    "fixture": "containers",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-6:12",
+      "BlockQuote 1:1-3:15",
+      "List(NodeList { list_type: Bullet, marker_offset: 0, padding: 2, start: 1, delimiter: Period, bullet_char: 45, tight: true, is_task_list: false }) 1:3-3:15",
+      "Item(NodeList { list_type: Bullet, marker_offset: 0, padding: 2, start: 1, delimiter: Period, bullet_char: 45, tight: false, is_task_list: false }) 1:3-3:15",
+      "Paragraph 1:5-1:10",
+      "Text(\"Parent\") 1:5-1:10",
+      "List(NodeList { list_type: Bullet, marker_offset: 0, padding: 2, start: 1, delimiter: Period, bullet_char: 45, tight: true, is_task_list: false }) 2:5-3:15",
+      "Item(NodeList { list_type: Bullet, marker_offset: 0, padding: 2, start: 1, delimiter: Period, bullet_char: 45, tight: false, is_task_list: false }) 2:5-3:15",
+      "Paragraph 2:7-3:15",
+      "Text(\"nested prose\") 2:7-2:18",
+      "SoftBreak 2:19-2:19",
+      "Text(\"continued\") 3:7-3:15",
+      "List(NodeList { list_type: Bullet, marker_offset: 0, padding: 2, start: 1, delimiter: Period, bullet_char: 45, tight: true, is_task_list: false }) 5:1-6:12",
+      "Item(NodeList { list_type: Bullet, marker_offset: 0, padding: 2, start: 1, delimiter: Period, bullet_char: 45, tight: false, is_task_list: false }) 5:1-6:12",
+      "Paragraph 5:3-6:12",
+      "Text(\"lazy\") 5:3-5:6",
+      "SoftBreak 5:7-5:7",
+      "Text(\"continuation\") 6:1-6:12"
+    ]
+  },
+  {
+    "fixture": "links",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..83 Some(\"Read [the *docs*](https://example.com \\\"title\\\") and ![image](img.png), `code here`.\\n\")",
+      "Paragraph 0..82 Some(\"Read [the *docs*](https://example.com \\\"title\\\") and ![image](img.png), `code here`.\")",
+      "Text 0..5 Some(\"Read \")",
+      "Link 5..46 Some(\"[the *docs*](https://example.com \\\"title\\\")\")",
+      "Text 6..10 Some(\"the \")",
+      "Emphasis 10..16 Some(\"*docs*\")",
+      "Text 11..15 Some(\"docs\")",
+      "Text 46..51 Some(\" and \")",
+      "Image 51..68 Some(\"![image](img.png)\")",
+      "Text 68..70 Some(\", \")",
+      "InlineCode 70..81 Some(\"`code here`\")",
+      "Text 81..82 Some(\".\")"
+    ]
+  },
+  {
+    "fixture": "links",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Paragraph) 0..83 \"Read [the *docs*](https://example.com \\\"title\\\") and ![image](img.png), `code here`.\\n\"",
+      "Text(Borrowed(\"Read \")) 0..5 \"Read \"",
+      "Start(Link { link_type: Inline, dest_url: Borrowed(\"https://example.com\"), title: Boxed(\"title\"), id: Borrowed(\"\") }) 5..46 \"[the *docs*](https://example.com \\\"title\\\")\"",
+      "Text(Borrowed(\"the \")) 6..10 \"the \"",
+      "Start(Emphasis) 10..16 \"*docs*\"",
+      "Text(Borrowed(\"docs\")) 11..15 \"docs\"",
+      "End(Emphasis) 10..16 \"*docs*\"",
+      "End(Link) 5..46 \"[the *docs*](https://example.com \\\"title\\\")\"",
+      "Text(Borrowed(\" and \")) 46..51 \" and \"",
+      "Start(Image { link_type: Inline, dest_url: Borrowed(\"img.png\"), title: Borrowed(\"\"), id: Borrowed(\"\") }) 51..68 \"![image](img.png)\"",
+      "Text(Borrowed(\"image\")) 53..58 \"image\"",
+      "End(Image) 51..68 \"![image](img.png)\"",
+      "Text(Borrowed(\", \")) 68..70 \", \"",
+      "Code(Borrowed(\"code here\")) 70..81 \"`code here`\"",
+      "Text(Borrowed(\".\")) 81..82 \".\"",
+      "End(Paragraph) 0..83 \"Read [the *docs*](https://example.com \\\"title\\\") and ![image](img.png), `code here`.\\n\""
+    ]
+  },
+  {
+    "fixture": "links",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-1:82",
+      "Paragraph 1:1-1:82",
+      "Text(\"Read \") 1:1-1:5",
+      "Link(NodeLink { url: \"https://example.com\", title: \"title\" }) 1:6-1:46",
+      "Text(\"the \") 1:7-1:10",
+      "Emph 1:11-1:16",
+      "Text(\"docs\") 1:12-1:15",
+      "Text(\" and \") 1:47-1:51",
+      "Image(NodeLink { url: \"img.png\", title: \"\" }) 1:52-1:68",
+      "Text(\"image\") 1:54-1:58",
+      "Text(\", \") 1:69-1:70",
+      "Code(NodeCode { num_backticks: 1, literal: \"code here\" }) 1:71-1:81",
+      "Text(\".\") 1:82-1:82"
+    ]
+  },
+  {
+    "fixture": "multiline-link",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..25 Some(\"A [two\\nlines](url) link.\\n\")",
+      "Paragraph 0..24 Some(\"A [two\\nlines](url) link.\")",
+      "Text 0..2 Some(\"A \")",
+      "Link 2..18 Some(\"[two\\nlines](url)\")",
+      "Text 3..12 Some(\"two\\nlines\")",
+      "Text 18..24 Some(\" link.\")"
+    ]
+  },
+  {
+    "fixture": "multiline-link",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Paragraph) 0..25 \"A [two\\nlines](url) link.\\n\"",
+      "Text(Borrowed(\"A \")) 0..2 \"A \"",
+      "Start(Link { link_type: Inline, dest_url: Borrowed(\"url\"), title: Borrowed(\"\"), id: Borrowed(\"\") }) 2..18 \"[two\\nlines](url)\"",
+      "Text(Borrowed(\"two\")) 3..6 \"two\"",
+      "SoftBreak 6..7 \"\\n\"",
+      "Text(Borrowed(\"lines\")) 7..12 \"lines\"",
+      "End(Link) 2..18 \"[two\\nlines](url)\"",
+      "Text(Borrowed(\" link.\")) 18..24 \" link.\"",
+      "End(Paragraph) 0..25 \"A [two\\nlines](url) link.\\n\""
+    ]
+  },
+  {
+    "fixture": "multiline-link",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-2:17",
+      "Paragraph 1:1-2:17",
+      "Text(\"A \") 1:1-1:2",
+      "Link(NodeLink { url: \"url\", title: \"\" }) 1:3-2:11",
+      "Text(\"two\") 1:4-1:6",
+      "SoftBreak 1:7-1:7",
+      "Text(\"lines\") 2:1-2:5",
+      "Text(\" link.\") 2:12-2:17"
+    ]
+  },
+  {
+    "fixture": "reference",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..47 Some(\"[hello][id]\\n\\n[id]: https://example.com \\\"Title\\\"\\n\")",
+      "Paragraph 0..11 Some(\"[hello][id]\")",
+      "LinkReference 0..11 Some(\"[hello][id]\")",
+      "Text 1..6 Some(\"hello\")",
+      "Definition 13..46 Some(\"[id]: https://example.com \\\"Title\\\"\")"
+    ]
+  },
+  {
+    "fixture": "reference",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Paragraph) 0..12 \"[hello][id]\\n\"",
+      "Start(Link { link_type: Reference, dest_url: Borrowed(\"https://example.com\"), title: Borrowed(\"Title\"), id: Borrowed(\"id\") }) 0..11 \"[hello][id]\"",
+      "Text(Borrowed(\"hello\")) 1..6 \"hello\"",
+      "End(Link) 0..11 \"[hello][id]\"",
+      "End(Paragraph) 0..12 \"[hello][id]\\n\""
+    ]
+  },
+  {
+    "fixture": "reference",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-3:33",
+      "Paragraph 1:1-1:11",
+      "Link(NodeLink { url: \"https://example.com\", title: \"Title\" }) 1:1-1:11",
+      "Text(\"hello\") 1:2-1:6"
+    ]
+  },
+  {
+    "fixture": "table",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..30 Some(\"| a | b |\\n| - | - |\\n| x | y |\\n\")",
+      "Table 0..29 Some(\"| a | b |\\n| - | - |\\n| x | y |\")",
+      "TableRow 0..9 Some(\"| a | b |\")",
+      "TableCell 0..4 Some(\"| a \")",
+      "Text 2..3 Some(\"a\")",
+      "TableCell 4..9 Some(\"| b |\")",
+      "Text 6..7 Some(\"b\")",
+      "TableRow 20..29 Some(\"| x | y |\")",
+      "TableCell 20..24 Some(\"| x \")",
+      "Text 22..23 Some(\"x\")",
+      "TableCell 24..29 Some(\"| y |\")",
+      "Text 26..27 Some(\"y\")"
+    ]
+  },
+  {
+    "fixture": "table",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Table([None, None])) 0..30 \"| a | b |\\n| - | - |\\n| x | y |\\n\"",
+      "Start(TableHead) 0..10 \"| a | b |\\n\"",
+      "Start(TableCell) 1..4 \" a \"",
+      "Text(Borrowed(\"a\")) 2..3 \"a\"",
+      "End(TableCell) 1..4 \" a \"",
+      "Start(TableCell) 5..8 \" b \"",
+      "Text(Borrowed(\"b\")) 6..7 \"b\"",
+      "End(TableCell) 5..8 \" b \"",
+      "End(TableHead) 0..10 \"| a | b |\\n\"",
+      "Start(TableRow) 20..30 \"| x | y |\\n\"",
+      "Start(TableCell) 21..24 \" x \"",
+      "Text(Borrowed(\"x\")) 22..23 \"x\"",
+      "End(TableCell) 21..24 \" x \"",
+      "Start(TableCell) 25..28 \" y \"",
+      "Text(Borrowed(\"y\")) 26..27 \"y\"",
+      "End(TableCell) 25..28 \" y \"",
+      "End(TableRow) 20..30 \"| x | y |\\n\"",
+      "End(Table) 0..30 \"| a | b |\\n| - | - |\\n| x | y |\\n\""
+    ]
+  },
+  {
+    "fixture": "table",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-3:9",
+      "Table(NodeTable { alignments: [None, None], num_columns: 2, num_rows: 2, num_nonempty_cells: 4 }) 1:1-3:9",
+      "TableRow(true) 1:1-1:9",
+      "TableCell 1:2-1:4",
+      "Text(\"a\") 1:3-1:3",
+      "TableCell 1:6-1:8",
+      "Text(\"b\") 1:7-1:7",
+      "TableRow(false) 3:1-3:9",
+      "TableCell 3:2-3:4",
+      "Text(\"x\") 3:3-3:3",
+      "TableCell 3:6-3:8",
+      "Text(\"y\") 3:7-3:7"
+    ]
+  },
+  {
+    "fixture": "html",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..68 Some(\"<!-- markdownlint-disable -->\\n\\n<div>\\nraw\\n</div>\\n\\nProse <b>bold</b>.\\n\")",
+      "Html 0..29 Some(\"<!-- markdownlint-disable -->\")",
+      "Html 31..47 Some(\"<div>\\nraw\\n</div>\")",
+      "Paragraph 49..67 Some(\"Prose <b>bold</b>.\")",
+      "Text 49..55 Some(\"Prose \")",
+      "Html 55..58 Some(\"<b>\")",
+      "Text 58..62 Some(\"bold\")",
+      "Html 62..66 Some(\"</b>\")",
+      "Text 66..67 Some(\".\")"
+    ]
+  },
+  {
+    "fixture": "html",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(HtmlBlock) 0..30 \"<!-- markdownlint-disable -->\\n\"",
+      "Html(Borrowed(\"<!-- markdownlint-disable -->\\n\")) 0..30 \"<!-- markdownlint-disable -->\\n\"",
+      "End(HtmlBlock) 0..30 \"<!-- markdownlint-disable -->\\n\"",
+      "Start(HtmlBlock) 31..48 \"<div>\\nraw\\n</div>\\n\"",
+      "Html(Borrowed(\"<div>\\n\")) 31..37 \"<div>\\n\"",
+      "Html(Borrowed(\"raw\\n\")) 37..41 \"raw\\n\"",
+      "Html(Borrowed(\"</div>\\n\")) 41..48 \"</div>\\n\"",
+      "End(HtmlBlock) 31..48 \"<div>\\nraw\\n</div>\\n\"",
+      "Start(Paragraph) 49..68 \"Prose <b>bold</b>.\\n\"",
+      "Text(Borrowed(\"Prose \")) 49..55 \"Prose \"",
+      "InlineHtml(Borrowed(\"<b>\")) 55..58 \"<b>\"",
+      "Text(Borrowed(\"bold\")) 58..62 \"bold\"",
+      "InlineHtml(Borrowed(\"</b>\")) 62..66 \"</b>\"",
+      "Text(Borrowed(\".\")) 66..67 \".\"",
+      "End(Paragraph) 49..68 \"Prose <b>bold</b>.\\n\""
+    ]
+  },
+  {
+    "fixture": "html",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-7:18",
+      "HtmlBlock(NodeHtmlBlock { block_type: 2, literal: \"<!-- markdownlint-disable -->\\n\" }) 1:1-1:29",
+      "HtmlBlock(NodeHtmlBlock { block_type: 6, literal: \"<div>\\nraw\\n</div>\\n\" }) 3:1-5:6",
+      "Paragraph 7:1-7:18",
+      "Text(\"Prose \") 7:1-7:6",
+      "HtmlInline(\"<b>\") 7:7-7:9",
+      "Text(\"bold\") 7:10-7:13",
+      "HtmlInline(\"</b>\") 7:14-7:17",
+      "Text(\".\") 7:18-7:18"
+    ]
+  },
+  {
+    "fixture": "code",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..40 Some(\"```rs\\nlet x = 1;\\n```\\n\\n    indented code\\n\")",
+      "Code 0..20 Some(\"```rs\\nlet x = 1;\\n```\")",
+      "Code 22..39 Some(\"    indented code\")"
+    ]
+  },
+  {
+    "fixture": "code",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(CodeBlock(Fenced(Borrowed(\"rs\")))) 0..20 \"```rs\\nlet x = 1;\\n```\"",
+      "Text(Borrowed(\"let x = 1;\\n\")) 6..17 \"let x = 1;\\n\"",
+      "End(CodeBlock) 0..20 \"```rs\\nlet x = 1;\\n```\"",
+      "Start(CodeBlock(Indented)) 26..40 \"indented code\\n\"",
+      "Text(Borrowed(\"indented code\\n\")) 26..40 \"indented code\\n\"",
+      "End(CodeBlock) 26..40 \"indented code\\n\""
+    ]
+  },
+  {
+    "fixture": "code",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-5:17",
+      "CodeBlock(NodeCodeBlock { fenced: true, fence_char: 96, fence_length: 3, fence_offset: 0, info: \"rs\", literal: \"let x = 1;\\n\", closed: true }) 1:1-3:3",
+      "CodeBlock(NodeCodeBlock { fenced: false, fence_char: 0, fence_length: 0, fence_offset: 0, info: \"\", literal: \"indented code\\n\", closed: true }) 5:5-5:17"
+    ]
+  },
+  {
+    "fixture": "breaks",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..40 Some(\"escaped \\\\* &amp; \ud83d\ude00\\nsoft  \\nhard\\\\\\nlast\\n\")",
+      "Paragraph 0..39 Some(\"escaped \\\\* &amp; \ud83d\ude00\\nsoft  \\nhard\\\\\\nlast\")",
+      "Text 0..26 Some(\"escaped \\\\* &amp; \ud83d\ude00\\nsoft\")",
+      "Break 26..29 Some(\"  \\n\")",
+      "Text 29..33 Some(\"hard\")",
+      "Break 33..35 Some(\"\\\\\\n\")",
+      "Text 35..39 Some(\"last\")"
+    ]
+  },
+  {
+    "fixture": "breaks",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Paragraph) 0..40 \"escaped \\\\* &amp; \ud83d\ude00\\nsoft  \\nhard\\\\\\nlast\\n\"",
+      "Text(Borrowed(\"escaped \")) 0..8 \"escaped \"",
+      "Text(Borrowed(\"* \")) 9..11 \"* \"",
+      "Text(Borrowed(\"&\")) 11..16 \"&amp;\"",
+      "Text(Borrowed(\" \ud83d\ude00\")) 16..21 \" \ud83d\ude00\"",
+      "SoftBreak 21..22 \"\\n\"",
+      "Text(Borrowed(\"soft\")) 22..26 \"soft\"",
+      "HardBreak 26..29 \"  \\n\"",
+      "Text(Borrowed(\"hard\")) 29..33 \"hard\"",
+      "HardBreak 33..35 \"\\\\\\n\"",
+      "Text(Borrowed(\"last\")) 35..39 \"last\"",
+      "End(Paragraph) 0..40 \"escaped \\\\* &amp; \ud83d\ude00\\nsoft  \\nhard\\\\\\nlast\\n\""
+    ]
+  },
+  {
+    "fixture": "breaks",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-4:4",
+      "Paragraph 1:1-4:4",
+      "Text(\"escaped * & \ud83d\ude00\") 1:1-1:21",
+      "SoftBreak 1:22-1:22",
+      "Text(\"soft\") 2:1-2:4",
+      "LineBreak 2:5-2:7",
+      "Text(\"hard\") 3:1-3:4",
+      "LineBreak 3:5-3:6",
+      "Text(\"last\") 4:1-4:4"
+    ]
+  },
+  {
+    "fixture": "unicode-crlf",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..25 Some(\"\\u{feff}>\\t\ud83d\ude00 caf\u00e9\\r\\n> next\\r\\n\")",
+      "Blockquote 3..23 Some(\">\\t\ud83d\ude00 caf\u00e9\\r\\n> next\")",
+      "Paragraph 4..23 Some(\"\\t\ud83d\ude00 caf\u00e9\\r\\n> next\")",
+      "Text 4..23 Some(\"\\t\ud83d\ude00 caf\u00e9\\r\\n> next\")"
+    ]
+  },
+  {
+    "fixture": "unicode-crlf",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Paragraph) 0..17 \"\\u{feff}>\\t\ud83d\ude00 caf\u00e9\\r\\n\"",
+      "Text(Borrowed(\"\\u{feff}>\\t\ud83d\ude00 caf\u00e9\")) 0..15 \"\\u{feff}>\\t\ud83d\ude00 caf\u00e9\"",
+      "End(Paragraph) 0..17 \"\\u{feff}>\\t\ud83d\ude00 caf\u00e9\\r\\n\"",
+      "Start(BlockQuote(None)) 17..25 \"> next\\r\\n\"",
+      "Start(Paragraph) 19..25 \"next\\r\\n\"",
+      "Text(Borrowed(\"next\")) 19..23 \"next\"",
+      "End(Paragraph) 19..25 \"next\\r\\n\"",
+      "End(BlockQuote(None)) 17..25 \"> next\\r\\n\""
+    ]
+  },
+  {
+    "fixture": "unicode-crlf",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-2:6",
+      "BlockQuote 1:4-2:6",
+      "Paragraph 1:6-2:6",
+      "Text(\"\ud83d\ude00 caf\u00e9\") 1:6-1:15",
+      "SoftBreak 1:16-1:17",
+      "Text(\"next\") 2:3-2:6"
+    ]
+  },
+  {
+    "fixture": "yaml",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..28 Some(\"---\\ntitle: Hello\\n---\\n\\nProse\\n\")",
+      "ThematicBreak 0..3 Some(\"---\")",
+      "Heading 4..20 Some(\"title: Hello\\n---\")",
+      "Text 4..16 Some(\"title: Hello\")",
+      "Paragraph 22..27 Some(\"Prose\")",
+      "Text 22..27 Some(\"Prose\")"
+    ]
+  },
+  {
+    "fixture": "yaml",
+    "candidate": "pulldown",
+    "regions": [
+      "Rule 0..4 \"---\\n\"",
+      "Start(Heading { level: H2, id: None, classes: [], attrs: [] }) 4..21 \"title: Hello\\n---\\n\"",
+      "Text(Borrowed(\"title: Hello\")) 4..16 \"title: Hello\"",
+      "End(Heading(H2)) 4..21 \"title: Hello\\n---\\n\"",
+      "Start(Paragraph) 22..28 \"Prose\\n\"",
+      "Text(Borrowed(\"Prose\")) 22..27 \"Prose\"",
+      "End(Paragraph) 22..28 \"Prose\\n\""
+    ]
+  },
+  {
+    "fixture": "yaml",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-5:5",
+      "ThematicBreak 1:1-1:3",
+      "Heading(NodeHeading { level: 2, setext: true, closed: false }) 2:1-3:3",
+      "Text(\"title: Hello\") 2:1-2:12",
+      "Paragraph 5:1-5:5",
+      "Text(\"Prose\") 5:1-5:5"
+    ]
+  },
+  {
+    "fixture": "toml",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..30 Some(\"+++\\ntitle = 'Hello'\\n+++\\nProse\\n\")",
+      "Paragraph 0..29 Some(\"+++\\ntitle = 'Hello'\\n+++\\nProse\")",
+      "Text 0..29 Some(\"+++\\ntitle = 'Hello'\\n+++\\nProse\")"
+    ]
+  },
+  {
+    "fixture": "toml",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Paragraph) 0..30 \"+++\\ntitle = 'Hello'\\n+++\\nProse\\n\"",
+      "Text(Borrowed(\"+++\")) 0..3 \"+++\"",
+      "SoftBreak 3..4 \"\\n\"",
+      "Text(Borrowed(\"title = 'Hello'\")) 4..19 \"title = 'Hello'\"",
+      "SoftBreak 19..20 \"\\n\"",
+      "Text(Borrowed(\"+++\")) 20..23 \"+++\"",
+      "SoftBreak 23..24 \"\\n\"",
+      "Text(Borrowed(\"Prose\")) 24..29 \"Prose\"",
+      "End(Paragraph) 0..30 \"+++\\ntitle = 'Hello'\\n+++\\nProse\\n\""
+    ]
+  },
+  {
+    "fixture": "toml",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-4:5",
+      "Paragraph 1:1-4:5",
+      "Text(\"+++\") 1:1-1:3",
+      "SoftBreak 1:4-1:4",
+      "Text(\"title = 'Hello'\") 2:1-2:15",
+      "SoftBreak 2:16-2:16",
+      "Text(\"+++\") 3:1-3:3",
+      "SoftBreak 3:4-3:4",
+      "Text(\"Prose\") 4:1-4:5"
+    ]
+  },
+  {
+    "fixture": "yaml-dots",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..27 Some(\"---\\ntitle: Hello\\n...\\nProse\\n\")",
+      "ThematicBreak 0..3 Some(\"---\")",
+      "Paragraph 4..26 Some(\"title: Hello\\n...\\nProse\")",
+      "Text 4..26 Some(\"title: Hello\\n...\\nProse\")"
+    ]
+  },
+  {
+    "fixture": "yaml-dots",
+    "candidate": "pulldown",
+    "regions": [
+      "Rule 0..4 \"---\\n\"",
+      "Start(Paragraph) 4..27 \"title: Hello\\n...\\nProse\\n\"",
+      "Text(Borrowed(\"title: Hello\")) 4..16 \"title: Hello\"",
+      "SoftBreak 16..17 \"\\n\"",
+      "Text(Borrowed(\"...\")) 17..20 \"...\"",
+      "SoftBreak 20..21 \"\\n\"",
+      "Text(Borrowed(\"Prose\")) 21..26 \"Prose\"",
+      "End(Paragraph) 4..27 \"title: Hello\\n...\\nProse\\n\""
+    ]
+  },
+  {
+    "fixture": "yaml-dots",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-4:5",
+      "ThematicBreak 1:1-1:3",
+      "Paragraph 2:1-4:5",
+      "Text(\"title: Hello\") 2:1-2:12",
+      "SoftBreak 2:13-2:13",
+      "Text(\"...\") 3:1-3:3",
+      "SoftBreak 3:4-3:4",
+      "Text(\"Prose\") 4:1-4:5"
+    ]
+  },
+  {
+    "fixture": "unclosed-frontmatter",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..17 Some(\"---\\ntitle: Hello\\n\")",
+      "ThematicBreak 0..3 Some(\"---\")",
+      "Paragraph 4..16 Some(\"title: Hello\")",
+      "Text 4..16 Some(\"title: Hello\")"
+    ]
+  },
+  {
+    "fixture": "unclosed-frontmatter",
+    "candidate": "pulldown",
+    "regions": [
+      "Rule 0..4 \"---\\n\"",
+      "Start(Paragraph) 4..17 \"title: Hello\\n\"",
+      "Text(Borrowed(\"title: Hello\")) 4..16 \"title: Hello\"",
+      "End(Paragraph) 4..17 \"title: Hello\\n\""
+    ]
+  },
+  {
+    "fixture": "unclosed-frontmatter",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-2:12",
+      "ThematicBreak 1:1-1:3",
+      "Paragraph 2:1-2:12",
+      "Text(\"title: Hello\") 2:1-2:12"
+    ]
+  },
+  {
+    "fixture": "strikethrough-task-autolink",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..35 Some(\"- [x] ~~done~~ https://example.com\\n\")",
+      "List 0..34 Some(\"- [x] ~~done~~ https://example.com\")",
+      "ListItem 0..34 Some(\"- [x] ~~done~~ https://example.com\")",
+      "Paragraph 6..34 Some(\"~~done~~ https://example.com\")",
+      "Delete 6..14 Some(\"~~done~~\")",
+      "Text 8..12 Some(\"done\")",
+      "Text 14..15 Some(\" \")",
+      "Link 15..34 Some(\"https://example.com\")",
+      "Text 15..34 Some(\"https://example.com\")"
+    ]
+  },
+  {
+    "fixture": "strikethrough-task-autolink",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(List(None)) 0..35 \"- [x] ~~done~~ https://example.com\\n\"",
+      "Start(Item) 0..35 \"- [x] ~~done~~ https://example.com\\n\"",
+      "TaskListMarker(true) 2..5 \"[x]\"",
+      "Start(Strikethrough) 6..14 \"~~done~~\"",
+      "Text(Borrowed(\"done\")) 8..12 \"done\"",
+      "End(Strikethrough) 6..14 \"~~done~~\"",
+      "Text(Borrowed(\" https://example.com\")) 14..34 \" https://example.com\"",
+      "End(Item) 0..35 \"- [x] ~~done~~ https://example.com\\n\"",
+      "End(List(false)) 0..35 \"- [x] ~~done~~ https://example.com\\n\""
+    ]
+  },
+  {
+    "fixture": "strikethrough-task-autolink",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-1:34",
+      "List(NodeList { list_type: Bullet, marker_offset: 0, padding: 2, start: 1, delimiter: Period, bullet_char: 45, tight: true, is_task_list: true }) 1:1-1:34",
+      "TaskItem(NodeTaskItem { symbol: Some('x'), symbol_sourcepos: 1:4-1:4 }) 1:1-1:34",
+      "Paragraph 1:7-1:34",
+      "Strikethrough 1:7-1:14",
+      "Text(\"done\") 1:9-1:12",
+      "Text(\" \") 1:15-1:15",
+      "Link(NodeLink { url: \"https://example.com\", title: \"\" }) 1:16-1:34",
+      "Text(\"https://example.com\") 1:16-1:34"
+    ]
+  },
+  {
+    "fixture": "lone-cr",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..13 Some(\"hello\\r\\rworld\\r\")",
+      "Paragraph 0..5 Some(\"hello\")",
+      "Text 0..5 Some(\"hello\")",
+      "Paragraph 7..12 Some(\"world\")",
+      "Text 7..12 Some(\"world\")"
+    ]
+  },
+  {
+    "fixture": "lone-cr",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Paragraph) 0..6 \"hello\\r\"",
+      "Text(Borrowed(\"hello\")) 0..5 \"hello\"",
+      "End(Paragraph) 0..6 \"hello\\r\"",
+      "Start(Paragraph) 7..13 \"world\\r\"",
+      "Text(Borrowed(\"world\")) 7..12 \"world\"",
+      "End(Paragraph) 7..13 \"world\\r\""
+    ]
+  },
+  {
+    "fixture": "lone-cr",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-3:5",
+      "Paragraph 1:1-1:5",
+      "Text(\"hello\") 1:1-1:5",
+      "Paragraph 3:1-3:5",
+      "Text(\"world\") 3:1-3:5"
+    ]
+  },
+  {
+    "fixture": "json-frontmatter",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..27 Some(\"{\\n\\\"title\\\": \\\"Hello\\\"\\n}\\nProse\\n\")",
+      "Paragraph 0..26 Some(\"{\\n\\\"title\\\": \\\"Hello\\\"\\n}\\nProse\")",
+      "Text 0..26 Some(\"{\\n\\\"title\\\": \\\"Hello\\\"\\n}\\nProse\")"
+    ]
+  },
+  {
+    "fixture": "json-frontmatter",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Paragraph) 0..27 \"{\\n\\\"title\\\": \\\"Hello\\\"\\n}\\nProse\\n\"",
+      "Text(Borrowed(\"{\")) 0..1 \"{\"",
+      "SoftBreak 1..2 \"\\n\"",
+      "Text(Borrowed(\"\\\"title\\\": \\\"Hello\\\"\")) 2..18 \"\\\"title\\\": \\\"Hello\\\"\"",
+      "SoftBreak 18..19 \"\\n\"",
+      "Text(Borrowed(\"}\")) 19..20 \"}\"",
+      "SoftBreak 20..21 \"\\n\"",
+      "Text(Borrowed(\"Prose\")) 21..26 \"Prose\"",
+      "End(Paragraph) 0..27 \"{\\n\\\"title\\\": \\\"Hello\\\"\\n}\\nProse\\n\""
+    ]
+  },
+  {
+    "fixture": "json-frontmatter",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-4:5",
+      "Paragraph 1:1-4:5",
+      "Text(\"{\") 1:1-1:1",
+      "SoftBreak 1:2-1:2",
+      "Text(\"\\\"title\\\": \\\"Hello\\\"\") 2:1-2:16",
+      "SoftBreak 2:17-2:17",
+      "Text(\"}\") 3:1-3:1",
+      "SoftBreak 3:2-3:2",
+      "Text(\"Prose\") 4:1-4:5"
+    ]
+  },
+  {
+    "fixture": "bom-frontmatter-crlf",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..33 Some(\"\\u{feff}---\\r\\ntitle: \ud83d\ude00\\r\\n---\\r\\nProse\\r\\n\")",
+      "ThematicBreak 3..6 Some(\"---\")",
+      "Heading 8..24 Some(\"title: \ud83d\ude00\\r\\n---\")",
+      "Text 8..19 Some(\"title: \ud83d\ude00\")",
+      "Paragraph 26..31 Some(\"Prose\")",
+      "Text 26..31 Some(\"Prose\")"
+    ]
+  },
+  {
+    "fixture": "bom-frontmatter-crlf",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Heading { level: H2, id: None, classes: [], attrs: [] }) 0..26 \"\\u{feff}---\\r\\ntitle: \ud83d\ude00\\r\\n---\\r\\n\"",
+      "Text(Borrowed(\"\\u{feff}---\")) 0..6 \"\\u{feff}---\"",
+      "SoftBreak 6..8 \"\\r\\n\"",
+      "Text(Borrowed(\"title: \ud83d\ude00\")) 8..19 \"title: \ud83d\ude00\"",
+      "End(Heading(H2)) 0..26 \"\\u{feff}---\\r\\ntitle: \ud83d\ude00\\r\\n---\\r\\n\"",
+      "Start(Paragraph) 26..33 \"Prose\\r\\n\"",
+      "Text(Borrowed(\"Prose\")) 26..31 \"Prose\"",
+      "End(Paragraph) 26..33 \"Prose\\r\\n\""
+    ]
+  },
+  {
+    "fixture": "bom-frontmatter-crlf",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-4:5",
+      "ThematicBreak 1:4-1:3",
+      "Heading(NodeHeading { level: 2, setext: true, closed: false }) 2:1-3:3",
+      "Text(\"title: \ud83d\ude00\") 2:1-2:11",
+      "Paragraph 4:1-4:5",
+      "Text(\"Prose\") 4:1-4:5"
+    ]
+  },
+  {
+    "fixture": "toml-dots",
+    "candidate": "markdown",
+    "regions": [
+      "Root 0..30 Some(\"+++\\ntitle = 'Hello'\\n...\\nProse\\n\")",
+      "Paragraph 0..29 Some(\"+++\\ntitle = 'Hello'\\n...\\nProse\")",
+      "Text 0..29 Some(\"+++\\ntitle = 'Hello'\\n...\\nProse\")"
+    ]
+  },
+  {
+    "fixture": "toml-dots",
+    "candidate": "pulldown",
+    "regions": [
+      "Start(Paragraph) 0..30 \"+++\\ntitle = 'Hello'\\n...\\nProse\\n\"",
+      "Text(Borrowed(\"+++\")) 0..3 \"+++\"",
+      "SoftBreak 3..4 \"\\n\"",
+      "Text(Borrowed(\"title = 'Hello'\")) 4..19 \"title = 'Hello'\"",
+      "SoftBreak 19..20 \"\\n\"",
+      "Text(Borrowed(\"...\")) 20..23 \"...\"",
+      "SoftBreak 23..24 \"\\n\"",
+      "Text(Borrowed(\"Prose\")) 24..29 \"Prose\"",
+      "End(Paragraph) 0..30 \"+++\\ntitle = 'Hello'\\n...\\nProse\\n\""
+    ]
+  },
+  {
+    "fixture": "toml-dots",
+    "candidate": "comrak",
+    "regions": [
+      "Document 1:1-4:5",
+      "Paragraph 1:1-4:5",
+      "Text(\"+++\") 1:1-1:3",
+      "SoftBreak 1:4-1:4",
+      "Text(\"title = 'Hello'\") 2:1-2:15",
+      "SoftBreak 2:16-2:16",
+      "Text(\"...\") 3:1-3:3",
+      "SoftBreak 3:4-3:4",
+      "Text(\"Prose\") 4:1-4:5"
+    ]
+  }
+]

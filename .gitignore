@@ -5,3 +5,4 @@
 !.env.example
 .superpowers/
 .worktrees/
+node_modules/
