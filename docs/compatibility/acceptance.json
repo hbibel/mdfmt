@@ -1,0 +1,407 @@
+{
+  "reference": "markdownlint-cli2 0.24.0 / markdownlint 0.42.0",
+  "status": "Source-reviewed target examples; no mdfmt implementation or full upstream oracle execution yet.",
+  "errorCaseScope": "Deferred regex and installed-package extends errors specify first-release behavior only. Later releases must support these roadmap items; package resolution uses installed files, not npm fetching.",
+  "policy": "Expected output specifies mdfmt behavior, not markdownlint-cli2 --fix output. All cases must be idempotent and preserve meaning except for explicitly authorized rule-prescribed edits such as MD026. Enabled MD013 supplies a prose wrapping target even when lint exceptions exempt the original line. expectedEffectiveConfig is the resolved rule object before rule defaults and per-line directives; cliOptions contains cli2 options separately. remainingRuleIds is a unique set after formatting, including warnings.",
+  "cases": [
+    {
+      "id": "md026-default-fixes-heading",
+      "input": "# Hello!\n",
+      "config": {},
+      "expectedOutput": "# Hello\n",
+      "remainingRuleIds": [],
+      "rationale": "MD026 is enabled by default; perform its prescribed fix despite the heading-text change."
+    },
+    {
+      "id": "md026-disabled-preserves-heading",
+      "input": "# Hello!\n",
+      "config": {"default": false, "MD026": false},
+      "expectedOutput": "# Hello!\n",
+      "remainingRuleIds": [],
+      "rationale": "A disabled rule must not cause punctuation removal."
+    },
+    {
+      "id": "md026-custom-allows-exclamation",
+      "input": "# Hello!\n",
+      "config": {"default": false, "MD026": {"punctuation": ".,;:"}},
+      "expectedOutput": "# Hello!\n",
+      "remainingRuleIds": [],
+      "rationale": "The configured prohibited set excludes exclamation marks."
+    },
+    {
+      "id": "md026-custom-removes-question",
+      "input": "# Why?\n",
+      "config": {"default": false, "MD026": {"punctuation": "?"}},
+      "expectedOutput": "# Why\n",
+      "remainingRuleIds": [],
+      "rationale": "Custom punctuation can prohibit a character allowed by default."
+    },
+    {
+      "id": "md026-default-allows-question",
+      "input": "# Why?\n",
+      "config": {"default": false, "MD026": true},
+      "expectedOutput": "# Why?\n",
+      "remainingRuleIds": [],
+      "rationale": "Question marks are not in the default prohibited set."
+    },
+    {
+      "id": "md026-preserves-entity-semicolon",
+      "input": "# Copyright &copy;\n",
+      "config": {"default": false, "MD026": true},
+      "expectedOutput": "# Copyright &copy;\n",
+      "remainingRuleIds": [],
+      "rationale": "The trailing semicolon belongs to an HTML entity and is exempt."
+    },
+    {
+      "id": "md026-empty-punctuation-preserves-heading",
+      "input": "# Hello!\n",
+      "config": {"default": false, "MD026": {"punctuation": ""}},
+      "expectedOutput": "# Hello!\n",
+      "remainingRuleIds": [],
+      "rationale": "An empty prohibited set permits all trailing characters."
+    },
+    {
+      "id": "lint-exempt-prose-still-wraps",
+      "input": "See the documentation for installation-instructions.\n",
+      "config": {"default": false, "MD013": {"line_length": 40}},
+      "expectedOutput": "See the documentation for\ninstallation-instructions.\n",
+      "remainingRuleIds": [],
+      "rationale": "Default MD013 exempts the original final-token overrun, but the user requires safe prose reflow to the configured width anyway."
+    },
+    {
+      "id": "prose-width-60",
+      "input": "This is a long paragraph that can safely be split across several lines without changing how it renders.\n",
+      "config": {"default": false, "MD013": {"line_length": 60}},
+      "expectedOutput": "This is a long paragraph that can safely be split across\nseveral lines without changing how it renders.\n",
+      "remainingRuleIds": [],
+      "rationale": "Wrap at word boundaries without exceeding 60 source columns."
+    },
+    {
+      "id": "inline-link-moves-intact",
+      "input": "Read more about this topic in [the documentation](https://example.com/docs).\n",
+      "config": {"default": false, "MD013": {"line_length": 60}},
+      "expectedOutput": "Read more about this topic in\n[the documentation](https://example.com/docs).\n",
+      "remainingRuleIds": [],
+      "rationale": "The link fits alone, not after the prose. Preserve its syntax and trailing punctuation."
+    },
+    {
+      "id": "inline-link-exact-width",
+      "input": "See [docs](https://example.com/abcdefghijklmnopqrstuvwxyzabcdef) now.\n",
+      "config": {"default": false, "MD013": {"line_length": 60, "strict": true}},
+      "expectedOutput": "See\n[docs](https://example.com/abcdefghijklmnopqrstuvwxyzabcdef)\nnow.\n",
+      "remainingRuleIds": [],
+      "rationale": "An indivisible link of exactly 60 characters fits; adjacent prose does not."
+    },
+    {
+      "id": "overlong-link-strict",
+      "input": "See [docs](https://example.com/abcdefghijklmnopqrstuvwxyzabcdefg) now.\n",
+      "config": {"default": false, "MD013": {"line_length": 60, "strict": true}},
+      "expectedOutput": "See\n[docs](https://example.com/abcdefghijklmnopqrstuvwxyzabcdefg)\nnow.\n",
+      "remainingRuleIds": ["MD013"],
+      "rationale": "Preserve the 61-character link; strict source behavior reports it even on its own line."
+    },
+    {
+      "id": "standalone-link-default-exempt",
+      "input": "[docs](https://example.com/abcdefghijklmnopqrstuvwxyzabcdefg)\n",
+      "config": {"default": false, "MD013": {"line_length": 60}},
+      "expectedOutput": "[docs](https://example.com/abcdefghijklmnopqrstuvwxyzabcdefg)\n",
+      "remainingRuleIds": [],
+      "rationale": "Standalone links are exempt in non-strict source behavior."
+    },
+    {
+      "id": "standalone-link-strict-not-exempt",
+      "input": "[docs](https://example.com/abcdefghijklmnopqrstuvwxyzabcdefg)\n",
+      "config": {"default": false, "MD013": {"line_length": 60, "strict": true}},
+      "expectedOutput": "[docs](https://example.com/abcdefghijklmnopqrstuvwxyzabcdefg)\n",
+      "remainingRuleIds": ["MD013"],
+      "rationale": "The pinned source contradicts its docs: strict bypasses the standalone-link exemption."
+    },
+    {
+      "id": "reference-definition-strict-exempt",
+      "input": "[docs]: https://example.com/abcdefghijklmnopqrstuvwxyzabcdefg\n",
+      "config": {"default": false, "MD013": {"line_length": 20, "strict": true}},
+      "expectedOutput": "[docs]: https://example.com/abcdefghijklmnopqrstuvwxyzabcdefg\n",
+      "remainingRuleIds": [],
+      "rationale": "Existing reference definitions are exempt even in strict mode; this does not authorize creating them."
+    },
+    {
+      "id": "default-last-token-overrun",
+      "input": "prefix abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm\n",
+      "config": {"default": false, "MD013": {"line_length": 60}},
+      "expectedOutput": "prefix\nabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm\n",
+      "remainingRuleIds": [],
+      "rationale": "Default mode exempts the source's final-token overrun from linting, but eligible prose still reflows to the configured target width; the indivisible token remains exempt."
+    },
+    {
+      "id": "stern-wraps-before-long-token",
+      "input": "prefix abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm\n",
+      "config": {"default": false, "MD013": {"line_length": 60, "stern": true}},
+      "expectedOutput": "prefix\nabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm\n",
+      "remainingRuleIds": [],
+      "rationale": "Stern flags the wrappable source line, but exempts the resulting indivisible token line."
+    },
+    {
+      "id": "strict-reports-long-token",
+      "input": "prefix abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm\n",
+      "config": {"default": false, "MD013": {"line_length": 60, "strict": true}},
+      "expectedOutput": "prefix\nabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklm\n",
+      "remainingRuleIds": ["MD013"],
+      "rationale": "Strict mode reports the overlong indivisible token after safe wrapping."
+    },
+    {
+      "id": "nested-list-prefix-budget",
+      "input": "- Parent\n  - This nested item has enough words to need wrapping.\n",
+      "config": {"default": false, "MD013": {"line_length": 30, "strict": true}},
+      "expectedOutput": "- Parent\n  - This nested item has\n    enough words to need\n    wrapping.\n",
+      "remainingRuleIds": [],
+      "rationale": "Count the four-column prefix and align continuations with the nested item body."
+    },
+    {
+      "id": "blockquote-prefix-budget",
+      "input": "> This quotation has enough words to need wrapping.\n",
+      "config": {"default": false, "MD013": {"line_length": 30, "strict": true}},
+      "expectedOutput": "> This quotation has enough\n> words to need wrapping.\n",
+      "remainingRuleIds": [],
+      "rationale": "Repeat the quote prefix while counting it within the width."
+    },
+    {
+      "id": "hard-break-preserved",
+      "input": "First line with a break.  \nThis is a long paragraph that can safely be split across several lines without changing how it renders.\n",
+      "config": {"default": false, "MD013": {"line_length": 60}},
+      "expectedOutput": "First line with a break.  \nThis is a long paragraph that can safely be split across\nseveral lines without changing how it renders.\n",
+      "remainingRuleIds": [],
+      "rationale": "Do not join through or strip the explicit two-space hard break."
+    },
+    {
+      "id": "inline-code-indivisible",
+      "input": "Use `some function call with spaces` now.\n",
+      "config": {"default": false, "MD013": {"line_length": 30, "strict": true}},
+      "expectedOutput": "Use\n`some function call with spaces`\nnow.\n",
+      "remainingRuleIds": ["MD013"],
+      "rationale": "The 32-character code span stays intact; never wrap its internal spaces."
+    },
+    {
+      "id": "table-preserved-checked",
+      "input": "| A | B |\n| --- | --- |\n| A | A description that is longer than twenty characters |\n",
+      "config": {"default": false, "MD013": {"line_length": 20, "strict": true, "tables": true}},
+      "expectedOutput": "| A | B |\n| --- | --- |\n| A | A description that is longer than twenty characters |\n",
+      "remainingRuleIds": ["MD013"],
+      "rationale": "Preserve all table bytes and report the configured violation."
+    },
+    {
+      "id": "table-preserved-excluded",
+      "input": "| A | B |\n| --- | --- |\n| A | A description that is longer than twenty characters |\n",
+      "config": {"default": false, "MD013": {"line_length": 20, "strict": true, "tables": false}},
+      "expectedOutput": "| A | B |\n| --- | --- |\n| A | A description that is longer than twenty characters |\n",
+      "remainingRuleIds": [],
+      "rationale": "The same overlong row is not a violation when tables are excluded."
+    },
+    {
+      "id": "heading-independent-limit",
+      "input": "# A heading that cannot be wrapped safely\n",
+      "config": {"default": false, "MD013": {"line_length": 60, "heading_line_length": 20, "strict": true}},
+      "expectedOutput": "# A heading that cannot be wrapped safely\n",
+      "remainingRuleIds": ["MD013"],
+      "rationale": "Do not split an ATX heading into paragraph lines to meet its independent limit."
+    },
+    {
+      "id": "heading-limit-inherits-line-length",
+      "input": "# A heading that cannot be wrapped safely\n",
+      "config": {"default": false, "MD013": {"line_length": 20, "strict": true}},
+      "expectedOutput": "# A heading that cannot be wrapped safely\n",
+      "remainingRuleIds": ["MD013"],
+      "rationale": "Omitted heading limit inherits 20 in source, not the schema's standalone 80."
+    },
+    {
+      "id": "code-independent-limit",
+      "input": "```text\nThis code line is too long.\n```\n",
+      "config": {"default": false, "MD013": {"line_length": 60, "code_block_line_length": 20, "strict": true}},
+      "formatterScenario": "unavailable",
+      "expectedOutput": "```text\nThis code line is too long.\n```\n",
+      "remainingRuleIds": ["MD013"],
+      "rationale": "Unavailable formatter leaves code intact while the separate code limit still applies."
+    },
+    {
+      "id": "code-excluded-from-length-check",
+      "input": "```text\nThis code line is too long.\n```\n",
+      "config": {"default": false, "MD013": {"line_length": 20, "strict": true, "code_blocks": false}},
+      "formatterScenario": "unavailable",
+      "expectedOutput": "```text\nThis code line is too long.\n```\n",
+      "remainingRuleIds": [],
+      "rationale": "Preserve code and respect the configured code-block exclusion."
+    },
+    {
+      "id": "formatter-success-in-quote",
+      "input": "> ```json\n> {\"one\": 1, \"two\": 2, \"three\": 3}\n> ```\n",
+      "config": {"default": false, "MD013": {"line_length": 60, "code_block_line_length": 20, "strict": true}},
+      "formatterScenario": "success",
+      "formatterOutput": "{\n  \"one\": 1,\n  \"two\": 2,\n  \"three\": 3\n}\n",
+      "expectedOutput": "> ```json\n> {\n>   \"one\": 1,\n>   \"two\": 2,\n>   \"three\": 3\n> }\n> ```\n",
+      "remainingRuleIds": [],
+      "rationale": "Proposed adapter contract: given successful complete output, restore the quote container; no specific real formatter chosen."
+    },
+    {
+      "id": "formatter-failure-preserves-code",
+      "input": "```json\n{\"one\": 1, \"two\": 2, \"three\": 3}\n```\n",
+      "config": {"default": false, "MD013": {"line_length": 20, "strict": true}},
+      "formatterScenario": "failure",
+      "formatterOutput": "partial invalid output",
+      "expectedOutput": "```json\n{\"one\": 1, \"two\": 2, \"three\": 3}\n```\n",
+      "remainingRuleIds": ["MD013"],
+      "expectedFormatterDiagnostic": "formatter-failed",
+      "rationale": "Discard partial output; omitted code limit inherits 20. Diagnostic naming is proposed."
+    },
+    {
+      "id": "formatter-timeout-preserves-code",
+      "input": "```json\n{\"one\": 1, \"two\": 2, \"three\": 3}\n```\n",
+      "config": {"default": false, "MD013": {"line_length": 20, "strict": true}},
+      "formatterScenario": "timeout",
+      "expectedOutput": "```json\n{\"one\": 1, \"two\": 2, \"three\": 3}\n```\n",
+      "remainingRuleIds": ["MD013"],
+      "expectedFormatterDiagnostic": "formatter-timeout",
+      "rationale": "Timeout policy must preserve code; exact timeout duration is a later adapter decision."
+    },
+    {
+      "id": "inline-disable-file",
+      "input": "<!-- markdownlint-disable-file MD013 -->\nThis is a long paragraph that can safely be split across several lines without changing how it renders.\n",
+      "config": {"default": false, "MD013": {"line_length": 60}},
+      "expectedOutput": "<!-- markdownlint-disable-file MD013 -->\nThis is a long paragraph that can safely be split across several lines without changing how it renders.\n",
+      "remainingRuleIds": [],
+      "rationale": "File-wide disabling prevents reflow for the disabled rule."
+    },
+    {
+      "id": "no-inline-config-bypasses-disable",
+      "input": "<!-- markdownlint-disable-file MD013 -->\nThis is a long paragraph that can safely be split across several lines without changing how it renders.\n",
+      "config": {"default": false, "MD013": {"line_length": 60}},
+      "cliOptions": {"noInlineConfig": true},
+      "expectedOutput": "<!-- markdownlint-disable-file MD013 -->\nThis is a long paragraph that can safely be split across\nseveral lines without changing how it renders.\n",
+      "remainingRuleIds": [],
+      "rationale": "Preserve the comment, but ignore its disabling instruction."
+    },
+    {
+      "id": "same-directory-jsonc-precedence",
+      "input": "# Title\n\nShort text.\n",
+      "config": {},
+      "files": {"/project/.markdownlint.jsonc": "{\"default\":false,\"MD013\":false}", "/project/.markdownlint.json": "{\"MD013\":true}"},
+      "cwd": "/project",
+      "target": "/project/file.md",
+      "expectedEffectiveConfig": {"default": false, "MD013": false},
+      "expectedOutput": "# Title\n\nShort text.\n",
+      "remainingRuleIds": [],
+      "rationale": "Only the first standalone config file by precedence is used."
+    },
+    {
+      "id": "standalone-overrides-cli2-config",
+      "input": "# Title\n\nShort text.\n",
+      "config": {},
+      "files": {"/project/.markdownlint-cli2.jsonc": "{\"config\":{\"default\":false,\"MD013\":{\"line_length\":60}}}", "/project/.markdownlint.json": "{\"default\":false,\"MD013\":false}"},
+      "cwd": "/project",
+      "target": "/project/file.md",
+      "expectedEffectiveConfig": {"default": false, "MD013": false},
+      "expectedOutput": "# Title\n\nShort text.\n",
+      "remainingRuleIds": [],
+      "rationale": "Standalone config wins over the same directory's cli2 rule config."
+    },
+    {
+      "id": "nested-standalone-replaces-parent",
+      "input": "# Title\n\nShort text.\n",
+      "config": {},
+      "files": {"/project/.markdownlint.json": "{\"default\":false,\"MD013\":{\"line_length\":60}}", "/project/docs/.markdownlint.json": "{\"MD013\":{\"line_length\":40}}"},
+      "cwd": "/project",
+      "target": "/project/docs/file.md",
+      "expectedEffectiveConfig": {"MD013": {"line_length": 40}},
+      "expectedOutput": "# Title\n\nShort text.\n",
+      "remainingRuleIds": [],
+      "rationale": "Child standalone config replaces parent config; default:false does not survive."
+    },
+    {
+      "id": "nested-cli2-shallow-rule-merge",
+      "input": "# Title\n\nShort text.\n",
+      "config": {},
+      "files": {"/project/.markdownlint-cli2.jsonc": "{\"config\":{\"default\":false,\"MD013\":{\"line_length\":60,\"strict\":true}}}", "/project/docs/.markdownlint-cli2.jsonc": "{\"config\":{\"MD013\":{\"line_length\":40}}}"},
+      "cwd": "/project",
+      "target": "/project/docs/file.md",
+      "expectedEffectiveConfig": {"default": false, "MD013": {"line_length": 40}},
+      "expectedOutput": "# Title\n\nShort text.\n",
+      "remainingRuleIds": [],
+      "rationale": "default:false survives, but the MD013 object is replaced and strict reverts to its default."
+    },
+    {
+      "id": "extends-relative-to-referring-file",
+      "input": "# Title\n\nShort text.\n",
+      "config": {},
+      "files": {"/project/docs/.markdownlint.json": "{\"extends\":\"../base.json\",\"MD013\":{\"line_length\":40}}", "/project/base.json": "{\"default\":false,\"MD013\":{\"line_length\":60,\"strict\":true}}"},
+      "cwd": "/project",
+      "target": "/project/docs/file.md",
+      "expectedEffectiveConfig": {"default": false, "MD013": {"line_length": 40}},
+      "expectedOutput": "# Title\n\nShort text.\n",
+      "remainingRuleIds": [],
+      "rationale": "Resolve extends from docs, then replace the whole inherited MD013 option object."
+    },
+    {
+      "id": "first-matching-override-only",
+      "input": "# Title\n\nShort text.\n",
+      "config": {},
+      "files": {"/project/.markdownlint-cli2.jsonc": "{\"config\":{\"default\":false,\"MD013\":{\"line_length\":60,\"strict\":true}},\"overrides\":[{\"filter\":[\"docs/**\"],\"config\":{\"MD013\":{\"line_length\":40}},\"combine\":\"merge\"},{\"filter\":[\"**/*.md\"],\"config\":{\"MD013\":{\"line_length\":20}},\"combine\":\"merge\"}]}"},
+      "cwd": "/project",
+      "target": "/project/docs/file.md",
+      "expectedEffectiveConfig": {"default": false, "MD013": {"line_length": 40}},
+      "expectedOutput": "# Title\n\nShort text.\n",
+      "remainingRuleIds": [],
+      "rationale": "Remove files from later override consideration; merge is by rule key."
+    },
+    {
+      "id": "discovered-cli2-overrides-explicit-base",
+      "input": "# Title\n\nShort text.\n",
+      "config": {},
+      "files": {"/project/base.markdownlint-cli2.jsonc": "{\"config\":{\"default\":false,\"MD013\":{\"line_length\":20,\"strict\":true}}}", "/project/.markdownlint-cli2.jsonc": "{\"config\":{\"MD013\":{\"line_length\":40}}}"},
+      "cwd": "/project",
+      "target": "/project/file.md",
+      "explicitConfigPath": "/project/base.markdownlint-cli2.jsonc",
+      "expectedEffectiveConfig": {"default": false, "MD013": {"line_length": 40}},
+      "expectedOutput": "# Title\n\nShort text.\n",
+      "remainingRuleIds": [],
+      "rationale": "Explicit --config provides base options; discovered cli2 config replaces its MD013 object, not its default:false key."
+    },
+    {
+      "id": "standalone-config-overrides-explicit-base",
+      "input": "# Title\n\nShort text.\n",
+      "config": {},
+      "files": {"/project/base.markdownlint-cli2.jsonc": "{\"config\":{\"default\":false,\"MD013\":{\"line_length\":20}}}", "/project/.markdownlint.json": "{\"default\":false,\"MD013\":false}"},
+      "cwd": "/project",
+      "target": "/project/file.md",
+      "explicitConfigPath": "/project/base.markdownlint-cli2.jsonc",
+      "expectedEffectiveConfig": {"default": false, "MD013": false},
+      "expectedOutput": "# Title\n\nShort text.\n",
+      "remainingRuleIds": [],
+      "rationale": "A discovered standalone config wins at linting even when explicit cli2 base config was supplied."
+    },
+    {
+      "id": "quoted-front-matter-title-default",
+      "input": "---\n\"TITLE\": A document title\n---\n\nShort text.\n",
+      "config": {"default": false, "MD041": true},
+      "expectedOutput": "---\n\"TITLE\": A document title\n---\n\nShort text.\n",
+      "remainingRuleIds": [],
+      "rationale": "Omitted source default accepts quoted title keys case-insensitively; do not materialize the narrower schema default."
+    },
+    {
+      "id": "warning-severity-preserved",
+      "input": "# A heading that cannot be wrapped safely\n",
+      "config": {"default": false, "MD013": {"severity": "warning", "line_length": 20, "strict": true}},
+      "expectedOutput": "# A heading that cannot be wrapped safely\n",
+      "remainingRuleIds": ["MD013"],
+      "expectedSeverity": "warning",
+      "rationale": "A remaining warning must not silently become an error."
+    }
+  ],
+  "errorCases": [
+    {"id":"javascript-config-rejected","path":"/project/.markdownlint.cjs","content":"module.exports = {};","expectedError":"unsupported-config-format","rationale":"Never execute JS config."},
+    {"id":"custom-rule-in-json-rejected","path":"/project/.markdownlint-cli2.jsonc","content":"{\"customRules\":[\"example-rule\"]}","expectedError":"unsupported-executable-feature","rationale":"A declarative file can still request executable modules."},
+    {"id":"parser-plugin-in-yaml-rejected","path":"/project/.markdownlint-cli2.yaml","content":"markdownItPlugins:\n  - [example-plugin]\n","expectedError":"unsupported-executable-feature","rationale":"Do not assume unknown syntax is compatible."},
+    {"id":"output-formatter-rejected","path":"/project/.markdownlint-cli2.jsonc","content":"{\"outputFormatters\":[[\"example-formatter\"]]}","expectedError":"unsupported-executable-feature","rationale":"Native diagnostic output does not execute Node modules."},
+    {"id":"module-paths-rejected","path":"/project/.markdownlint-cli2.jsonc","content":"{\"modulePaths\":[\"node_modules\"]}","expectedError":"unsupported-executable-feature","rationale":"No hidden Node module resolution."},
+    {"id":"custom-front-matter-regex-deferred","path":"/project/.markdownlint-cli2.jsonc","content":"{\"frontMatter\":\"(?<=start)body\"}","expectedError":"unsupported-front-matter-pattern","rationale":"Do not reinterpret JavaScript regex with a different engine."},
+    {"id":"custom-rule-regex-deferred","path":"/project/.markdownlint.json","content":"{\"MD051\":{\"ignored_pattern\":\"custom.*\"}}","expectedError":"unsupported-rule-pattern","rationale":"Custom JavaScript pattern compatibility remains deferred."},
+    {"id":"package-extends-deferred","path":"/project/.markdownlint.json","content":"{\"extends\":\"example-config\"}","expectedError":"unsupported-config-resolution","rationale":"Package/module lookup is outside the initial filesystem-only extends target."}
+  ]
+}
