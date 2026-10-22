@@ -35,3 +35,14 @@
 - The repository excludes the `git-commit` skill. Do not add a separate commit
   approval ceremony when the user has already requested a commit.
 - Broad tool permissions are intentional, not permission to expand task scope.
+
+## Worktrees and OpenCode configuration
+
+- The main checkout is `/home/hannes/projects/mdfmt/main`. Feature worktrees must
+  be siblings under `/home/hannes/projects/mdfmt/`; do not use OpenCode's default
+  data-directory location. Reuse an existing suitable worktree when possible.
+- Shared configuration lives at `/home/hannes/projects/mdfmt/opencode.jsonc`, above
+  all worktrees. Do not move it into a checkout or add shadowing local copies.
+- Before and after a session move, verify the effective model, permissions,
+  policies, and plugins. Stop and restore configuration if settings or skills
+  change unexpectedly; do not continue under fallback defaults.
