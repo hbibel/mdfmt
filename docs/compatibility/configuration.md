@@ -1,7 +1,9 @@
 # Declarative configuration contract
 
-This is a target contract for markdownlint-cli2 0.24.0 / markdownlint 0.42.0,
-not a claim that mdfmt implements it yet. No configuration loader exists.
+This is the target contract for markdownlint-cli2 0.24.0 / markdownlint 0.42.0,
+not a claim of complete compatibility. A native loader and directive/selection
+support now exist; [implementation evidence and remaining limits](configuration-evidence.md)
+distinguish tested behavior from targets below.
 
 Sources are the pinned [cli2 implementation][cli], [schema][schema],
 [option merge function][merge], and [library implementation][library].
@@ -21,6 +23,11 @@ See `rules.json` for all 53 built-in rules and their options.
 - Supported target: declarative rule-config `extends`, including inside cli2
   `config` and override `config`, shallow merging with local entries winning.
   Relative paths resolve from the referring file; support home-relative paths.
+  Standalone `extends` returns inherited keys followed by local keys. Cli2 instead
+  copies resolved keys into the existing `config`/override object: local key
+  positions stay first and previously absent inherited keys append. This
+  distinction can change tag/alias application order; both forms have runtime
+  regression coverage in the configuration evidence.
   Bare module/package resolution is deferred: emit
   `unsupported-config-resolution` in the first release. A later release must
   resolve already-installed declarative packages using compatible local lookup

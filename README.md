@@ -10,10 +10,11 @@ configuration, including prose reflow that goes beyond `markdownlint-cli2 --fix`
 The Rust library and CLI foundation exist: source-aware parsing, validated
 localized edits, UTF-16 coordinate accounting, and safe file replacement.
 
-No production rule fixes, rule diagnostics, or configuration loading are
-implemented yet. The CLI currently preserves input unchanged; a successful check
-does not mean the document is markdownlint-clean. Configuration compatibility and
-prose reflow are the next milestones.
+Declarative configuration loading, discovery/inheritance, inline rule permissions,
+and a tested subset of native file selection are implemented. Configuration
+compatibility is still incomplete; see the [coverage and limits](docs/compatibility/configuration-evidence.md).
+No production rule fixes or rule diagnostics exist yet. The CLI preserves input
+unchanged; a successful check does not mean the document is markdownlint-clean.
 
 ## Try the foundation
 
@@ -23,13 +24,23 @@ With the toolchain from `mise.toml`:
 mise exec -- cargo run -- document.md
 mise exec -- cargo run -- --check document.md
 mise exec -- cargo run -- --write document.md other.md
+mise exec -- cargo run -- --check "**/*.md" "#vendor/**"
+mise exec -- cargo run -- --check --config rules.toml --config-pointer /markdown document.md
 cat document.md | mise exec -- cargo run -- -
 ```
 
 The default prints one document without changing its file. `--check` writes
 nothing; `--write` accepts multiple literal files and updates changed files only.
-Use `--` before filenames starting with a dash. Directories, glob matching,
-configuration options, and mixed stdin/file input are not supported yet.
+Use `:` or `--` for literal filenames, including names containing glob characters.
+Directories expand recursively; `.` alone selects Markdown files in the current
+directory. Configuration globs append unless `--no-globs` is set. Mixed stdin/file
+input is not supported. Stdout mode requires exactly one selected input.
+
+Automatic discovery supports the declarative `.markdownlint-cli2.*` and
+`.markdownlint.*` names in the configuration contract. TOML requires `--config`.
+An explicit config supplies a base and does not disable discovery. JavaScript
+configuration, custom regexes, and package-based `extends` are rejected explicitly;
+filesystem-based `extends` is supported. `fix: false` prevents edits in every mode.
 
 Diagnostics go to stderr. Exit codes are 0 for successful processing, 1 for
 needed changes in check mode or remaining error findings, and 2 for usage or
@@ -79,9 +90,9 @@ mise exec -- cargo fmt --check
 mise exec -- cargo clippy --all-targets -- -D warnings
 ```
 
-Foundation tests cover preservation, source positions, protected regions,
-localized edits, idempotence, CLI streams, and safe replacement. Existing
-formatting acceptance examples remain future contracts, not passing rule tests.
+Tests cover preservation, source positions, protected regions, localized edits,
+idempotence, CLI streams, safe replacement, configuration and file selection.
+Existing formatting acceptance examples remain future contracts, not passing rule tests.
 The parser evaluation documents a separate pinned Node development oracle; Node
 is not needed to build or run mdfmt.
 

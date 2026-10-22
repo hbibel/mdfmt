@@ -1,3 +1,4 @@
+pub mod config;
 mod diagnostic;
 mod edit;
 mod parse;
@@ -41,19 +42,37 @@ impl FormatResult {
 /// Process Markdown without filesystem I/O. The foundation currently implements
 /// no rule fixes or findings; empty diagnostics do not establish lint compliance.
 pub fn format(source: &str, options: &FormatOptions) -> Result<FormatResult, ProcessingError> {
-    process(source, options, |_| vec![], |_| vec![])
+    format_with_config(source, options, &config::ResolvedConfig::default())
+}
+
+/// Process using resolved configuration; this function performs no filesystem I/O.
+pub fn format_with_config(
+    source: &str,
+    options: &FormatOptions,
+    config: &config::ResolvedConfig,
+) -> Result<FormatResult, ProcessingError> {
+    process(source, options, config, |_| vec![], |_| vec![])
 }
 
 fn process(
     text: &str,
     options: &FormatOptions,
+    config: &config::ResolvedConfig,
     produce: impl FnOnce(&Source) -> Vec<edit::Edit>,
     diagnose: impl FnOnce(&str) -> Vec<Diagnostic>,
 ) -> Result<FormatResult, ProcessingError> {
     let source = Source::new(text.into());
+    let document = config
+        .document(text)
+        .map_err(ProcessingError::Configuration)?;
     let parsed = parse::parse(&source).map_err(ProcessingError::Parse)?;
-    let mut edits = if options.fix {
-        produce(&source)
+    let mut edits = if options.fix && config.fix {
+        let proposed = produce(&source);
+        edit::validate_ranges(&source, &proposed)?;
+        proposed
+            .into_iter()
+            .filter(|edit| document.allows(&edit.origin, edit.span.clone(), text))
+            .collect()
     } else {
         vec![]
     };
@@ -82,7 +101,7 @@ mod tests {
             .map(|start| edit::Edit {
                 span: start..start + 5,
                 replacement: "Rust".into(),
-                origin: "test".into(),
+                origin: "MD013".into(),
             })
             .into_iter()
             .collect()
@@ -93,6 +112,7 @@ mod tests {
         let first = process(
             "Hello world!\r\n",
             &FormatOptions::default(),
+            &config::ResolvedConfig::default(),
             replace_world,
             |_| vec![],
         )
@@ -103,6 +123,7 @@ mod tests {
         let second = process(
             &first.output,
             &FormatOptions::default(),
+            &config::ResolvedConfig::default(),
             replace_world,
             |_| vec![],
         )
@@ -112,6 +133,7 @@ mod tests {
         let disabled = process(
             "Hello world!",
             &FormatOptions { fix: false },
+            &config::ResolvedConfig::default(),
             replace_world,
             |output| {
                 vec![Diagnostic {
@@ -128,5 +150,64 @@ mod tests {
         assert!(disabled.edits.is_empty());
         assert_eq!(disabled.diagnostics[0].message, "Hello world!");
         assert_eq!(disabled.diagnostics[0].severity, Severity::Warning);
+    }
+
+    #[test]
+    fn resolved_fix_and_inline_permissions_gate_real_edits() {
+        for (text, config) in [
+            (
+                "Hello world!",
+                config::ResolvedConfig {
+                    fix: false,
+                    ..Default::default()
+                },
+            ),
+            (
+                "Hello world!",
+                config::ResolvedConfig {
+                    rules: config::RuleConfig::from_value(serde_json::json!({"MD013":false}))
+                        .unwrap(),
+                    ..Default::default()
+                },
+            ),
+            (
+                "<!-- markdownlint-disable-file MD013 -->\nHello world!",
+                config::ResolvedConfig::default(),
+            ),
+            (
+                "Hello world! <!-- markdownlint-disable-line MD013 -->",
+                config::ResolvedConfig::default(),
+            ),
+        ] {
+            let result = process(
+                text,
+                &FormatOptions::default(),
+                &config,
+                replace_world,
+                |_| vec![],
+            )
+            .unwrap();
+            assert_eq!(result.output, text);
+            assert!(result.edits.is_empty());
+        }
+    }
+
+    #[test]
+    fn invalid_ranges_are_errors_not_silently_filtered_permissions() {
+        let error = process(
+            "Hello world",
+            &FormatOptions::default(),
+            &config::ResolvedConfig::default(),
+            |_| {
+                vec![edit::Edit {
+                    span: 0..99,
+                    replacement: String::new(),
+                    origin: "MD013".into(),
+                }]
+            },
+            |_| vec![],
+        )
+        .unwrap_err();
+        assert!(matches!(error, ProcessingError::InvalidRange(_)));
     }
 }

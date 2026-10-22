@@ -1,0 +1,550 @@
+[
+  {
+    "id": "discovery-priority",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "cli2-shallow-inheritance",
+    "files": [
+      "work/child/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/child/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {
+          "line_length": 40
+        }
+      },
+      {
+        "file": "work/child/a.md",
+        "rule": "MD026",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "standalone-replacement",
+    "files": [
+      "work/child/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/child/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {
+          "line_length": 35
+        }
+      },
+      {
+        "file": "work/child/a.md",
+        "rule": "MD026",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "cli2-blocks-parent-standalone",
+    "files": [
+      "work/child/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/child/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {
+          "line_length": 33
+        }
+      }
+    ]
+  },
+  {
+    "id": "explicit-toml-pointer",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {
+          "line_length": 42
+        }
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD026",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "extends-first-override",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {
+          "line_length": 40
+        }
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD026",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "outside-tree-base",
+    "files": [
+      "other/a.md"
+    ],
+    "probes": [
+      {
+        "file": "other/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "braces-and-negation",
+    "files": [
+      "work/.hidden.md",
+      "work/a.md",
+      "work/b.markdown"
+    ],
+    "probes": []
+  },
+  {
+    "id": "nested-ignores",
+    "files": [
+      "work/a.md",
+      "work/child/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "ancestor-gitignore",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "raw-inline-directives",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {
+          "line_length": 42
+        }
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 5,
+        "enabled": true,
+        "severity": "error",
+        "options": {
+          "line_length": 42
+        }
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 9,
+        "enabled": false,
+        "severity": "error",
+        "options": {
+          "line_length": 42
+        }
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 10,
+        "enabled": true,
+        "severity": "error",
+        "options": {
+          "line_length": 42
+        }
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 11,
+        "enabled": false,
+        "severity": "error",
+        "options": {
+          "line_length": 42
+        }
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 13,
+        "enabled": false,
+        "severity": "error",
+        "options": {
+          "line_length": 42
+        }
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 14,
+        "enabled": true,
+        "severity": "error",
+        "options": {
+          "line_length": 42
+        }
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD026",
+        "line": 1,
+        "enabled": true,
+        "severity": "warning",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "configure-file-multiline",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "warning",
+        "options": {
+          "line_length": 32
+        }
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 5,
+        "enabled": true,
+        "severity": "warning",
+        "options": {
+          "line_length": 32
+        }
+      }
+    ]
+  },
+  {
+    "id": "no-inline-config",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/a.md",
+        "rule": "MD026",
+        "line": 2,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "dot-slash-globs",
+    "files": [
+      "work/a.md",
+      "work/child/b.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/child/b.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "trailing-directory-exclusion",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "wildcard-directory-expansion",
+    "files": [
+      "work/docs/a.md",
+      "work/nested/docs/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "ordered-reinclusion",
+    "files": [
+      "work/a.md",
+      "work/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "filter-character-class",
+    "files": [
+      "work/!.md",
+      "work/b.md"
+    ],
+    "probes": [
+      {
+        "file": "work/b.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/!.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "cli2-inplace-extends-order",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "outside-gitignore-scope",
+    "files": [
+      "outside/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "javascript-directive-whitespace",
+    "files": [
+      "work/a.md",
+      "work/b.md",
+      "work/c.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 2,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/b.md",
+        "rule": "MD013",
+        "line": 2,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/c.md",
+        "rule": "MD013",
+        "line": 2,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "nonrecursive-star",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "extension-wildcard-directory",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "deduplicated-config-globs",
+    "files": [
+      "work/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "ignored-parent-whitelist",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "toml-configure-file",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 2,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "parent-relative-comma-braces",
+    "files": [
+      "docs/a.md",
+      "docs/b.markdown"
+    ],
+    "probes": []
+  },
+  {
+    "id": "literal-bracket-alternatives",
+    "files": [
+      "work/[ab].md",
+      "work/a.md",
+      "work/b.md"
+    ],
+    "probes": [
+      {
+        "file": "work/[ab].md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "generic-name-classification",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "generic-rule-schema-metadata",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  }
+]

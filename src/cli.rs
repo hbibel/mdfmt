@@ -1,5 +1,6 @@
 use crate::file_io::{FileIdentity, FileSnapshot, read_input, write_if_changed};
 use clap::Parser;
+use mdfmt::config::{ConfigResolver, ResolvedConfig, select_inputs};
 use mdfmt::{FormatOptions, FormatResult, Severity, Source};
 use std::{
     collections::HashSet,
@@ -11,7 +12,7 @@ use std::{
 #[command(
     version,
     about = "Source-preserving Markdown foundation (no rule fixes yet)",
-    after_help = "Only literal files are supported. Configuration loading and rule fixes are not implemented. Successful processing does not imply markdownlint compliance."
+    after_help = "Declarative configuration and native file selection are supported. Rule fixes and lint findings are not implemented. Successful processing does not imply markdownlint compliance."
 )]
 struct Args {
     #[arg(long, conflicts_with = "check", help = "Update files in place")]
@@ -19,11 +20,16 @@ struct Args {
     #[arg(long, help = "Check without writing or printing document content")]
     check: bool,
     #[arg(
-        required = true,
-        value_name = "FILE",
-        help = "Literal file path, or - for stdin"
+        value_name = "PATTERN",
+        help = "File/glob, :literal path, or - for stdin"
     )]
-    files: Vec<PathBuf>,
+    files: Vec<String>,
+    #[arg(long, help = "Declarative base configuration; discovery still applies")]
+    config: Option<PathBuf>,
+    #[arg(long, alias = "configPointer", requires = "config")]
+    config_pointer: Option<String>,
+    #[arg(long, help = "Do not append configuration globs")]
+    no_globs: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -62,10 +68,12 @@ fn process_document(
     label: &Path,
     original: &str,
     mode: Mode,
+    config: &ResolvedConfig,
     stdout: &mut impl Write,
     stderr: &mut impl Write,
 ) -> io::Result<(String, u8)> {
-    let result = mdfmt::format(original, &FormatOptions::default()).map_err(io::Error::other)?;
+    let result = mdfmt::format_with_config(original, &FormatOptions::default(), config)
+        .map_err(io::Error::other)?;
     let source = Source::new(result.output.clone());
     for diagnostic in &result.diagnostics {
         let position = diagnostic
@@ -95,7 +103,7 @@ fn process_document(
 }
 
 pub(crate) fn run() -> u8 {
-    let args = match Args::try_parse() {
+    let mut args = match Args::try_parse() {
         Ok(args) => args,
         Err(error) => {
             let status = if error.use_stderr() { 2 } else { 0 };
@@ -109,9 +117,50 @@ pub(crate) fn run() -> u8 {
     } else {
         Mode::Stdout
     };
-    let stdin_count = args.files.iter().filter(|p| p.as_os_str() == "-").count();
-    if (stdin_count > 0 && (args.files.len() != 1 || mode == Mode::Write))
-        || (mode == Mode::Stdout && args.files.len() != 1)
+    let raw: Vec<_> = std::env::args_os().collect();
+    if let Some(index) = raw.iter().position(|a| a == "--") {
+        let count = raw.len() - index - 1;
+        let start = args.files.len().saturating_sub(count);
+        for path in &mut args.files[start..] {
+            *path = format!(":{path}");
+        }
+    }
+    let resolver = match std::env::current_dir()
+        .map_err(io::Error::other)
+        .and_then(|directory| {
+            ConfigResolver::new(
+                &directory,
+                args.config.as_deref(),
+                args.config_pointer.as_deref(),
+            )
+            .map_err(io::Error::other)
+        }) {
+        Ok(resolver) => resolver,
+        Err(error) => {
+            let _ = writeln!(io::stderr().lock(), "mdfmt: {error}");
+            return 2;
+        }
+    };
+    if args.files.is_empty()
+        && (args.no_globs || resolver.base_options().strings("globs").is_empty())
+    {
+        let _ = writeln!(
+            io::stderr().lock(),
+            "mdfmt: provide input patterns, stdin -, or configuration globs"
+        );
+        return 2;
+    }
+    let stdin_count = args.files.iter().filter(|p| p.as_str() == "-").count();
+    let selection = match select_inputs(&resolver, &args.files, args.no_globs) {
+        Ok(selection) => selection,
+        Err(error) => {
+            let _ = writeln!(io::stderr().lock(), "mdfmt: {error}");
+            return 2;
+        }
+    };
+    if stdin_count > 1
+        || (selection.stdin && (!selection.files.is_empty() || mode == Mode::Write))
+        || (mode == Mode::Stdout && selection.files.len() + usize::from(selection.stdin) != 1)
     {
         let _ = writeln!(
             io::stderr().lock(),
@@ -121,14 +170,42 @@ pub(crate) fn run() -> u8 {
     }
     let mut stdout = io::stdout().lock();
     let mut stderr = io::stderr().lock();
+    if resolver.base_options().boolean("showFound")
+        && !resolver.base_options().boolean("noProgress")
+    {
+        let mut names: Vec<_> = selection
+            .files
+            .iter()
+            .map(|p| {
+                p.strip_prefix(resolver.invocation())
+                    .unwrap_or(p)
+                    .display()
+                    .to_string()
+            })
+            .collect();
+        if selection.stdin {
+            names.push("stdin".into());
+        }
+        names.sort();
+        if writeln!(stderr, "Found:\n {}", names.join("\n ")).is_err() {
+            return 2;
+        }
+    }
     let mut seen = SeenInputs::default();
     let mut status = 0;
-    for path in args.files {
+    let mut paths = selection.files;
+    if selection.stdin {
+        paths.push("-".into());
+    }
+    for path in paths {
         let outcome = (|| -> io::Result<u8> {
             if path.as_os_str() == "-" {
                 let mut text = String::new();
                 io::stdin().lock().read_to_string(&mut text)?;
-                return process_document(&path, &text, mode, &mut stdout, &mut stderr)
+                let config = resolver
+                    .resolve(&resolver.invocation().join("stdin"))
+                    .map_err(io::Error::other)?;
+                return process_document(&path, &text, mode, &config, &mut stdout, &mut stderr)
                     .map(|(_, code)| code);
             }
             let snapshot = read_input(&path)?;
@@ -139,8 +216,14 @@ pub(crate) fn run() -> u8 {
             if !seen.first_visit(&snapshot)? {
                 return Ok(0);
             }
-            let (output, code) =
-                process_document(&path, &snapshot.text, mode, &mut stdout, &mut stderr)?;
+            let (output, code) = process_document(
+                &path,
+                &snapshot.text,
+                mode,
+                &resolver.resolve(&path).map_err(io::Error::other)?,
+                &mut stdout,
+                &mut stderr,
+            )?;
             if mode == Mode::Write {
                 write_if_changed(&snapshot, &output)?;
             }

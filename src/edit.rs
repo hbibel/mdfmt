@@ -120,13 +120,8 @@ pub struct AppliedEdit {
 
 pub(crate) type Edit = AppliedEdit;
 
-pub(crate) fn apply_edits(
-    source: &Source,
-    parsed: &ParsedDocument,
-    mut edits: Vec<Edit>,
-) -> Result<String, ProcessingError> {
-    edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
-    for edit in &edits {
+pub(crate) fn validate_ranges(source: &Source, edits: &[Edit]) -> Result<(), ProcessingError> {
+    for edit in edits {
         let span = &edit.span;
         if span.start > span.end
             || source.position(span.start).is_err()
@@ -134,6 +129,19 @@ pub(crate) fn apply_edits(
         {
             return Err(ProcessingError::InvalidRange(span.clone()));
         }
+    }
+    Ok(())
+}
+
+pub(crate) fn apply_edits(
+    source: &Source,
+    parsed: &ParsedDocument,
+    mut edits: Vec<Edit>,
+) -> Result<String, ProcessingError> {
+    edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
+    validate_ranges(source, &edits)?;
+    for edit in &edits {
+        let span = &edit.span;
         let protected = parsed.regions.iter().any(|region| {
             region.kind.is_protected()
                 && if span.is_empty() {
