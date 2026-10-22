@@ -69,7 +69,7 @@
 - [x] Add failing tests for dot-only patterns, dotfiles, brace/extglob patterns, negative-only input, `!`/`#` exclusions, `:`/`--` literals, config globs/no-globs, nested ignores, gitignore ancestors, escaping, symlinks and outside-tree targets.
 - [x] Implement deterministic native enumeration, directory expansion, literal-path handling, ordered filters and gitignore application. Never read document contents during enumeration. Diagnose unsupported pattern semantics rather than silently approximating them.
 - [x] Run `mise exec -- cargo test --test config_selection`; require all passing.
-- [ ] Complete advanced glob support and broader escaping/Unicode/case/platform parity before declaring milestone 3 complete.
+- [x] Complete the native advanced-glob compiler, directed/generated escaping/Unicode/case comparisons and platform CI definition. Exhaustive platform/corpus hardening remains milestone 7; remote CI is not claimed executed locally.
 
 ## Task 5: Library/CLI integration and upstream evidence
 
@@ -147,3 +147,71 @@ The user delegated all decisions and waived questions/checkpoints. Use native ex
   before preserving grouped negation and wildcard boundaries and diagnosing
   post-group quantifiers and leading question marks. All 65 Rust tests and the
   expanded pinned suite pass after the fix pass. Milestone 3 remains incomplete.
+
+### Task 4 optional and repeated literal alternatives
+
+The user requested committing the current state, then continuing. Commit
+`48e2925` records the verified brace/class/exact-one batches. Continue natively
+in the same worktree; do not merge, push, or automatically commit later changes.
+
+Goal: support `?(a|b)`, `+(a|b)` and `*(a|b)` with literal alternatives, without
+claiming complete positive/negative extglob compatibility. Reuse the existing
+regex fragment mechanism; no runtime Node dependency or new Rust crate.
+
+Files and interfaces:
+
+- `src/config/extglob.rs`: change `translate`'s fragment callback to
+  `FnMut(String) -> String`; exact-one boundaries insert an empty regex string,
+  while optional/repeated literal branches insert an escaped grouped regex.
+  `src/config/repeat.rs` parses literal alternatives and diagnoses upstream safety
+  rewrites, unsupported syntax and excessive alternative counts.
+- `src/config/glob.rs`: retain that assertion as a matcher predicate evaluated
+  inside outer negation using `needs_initial_character(pattern: &str) -> bool`.
+  Continue UTF-16 conversion exactly once per fragment. Expanded fixtures also
+  require that guard for leading POSIX classes.
+- `tests/fixtures/configuration/{glob-cases,cases}.json` and observations: append
+  pinned runtime evidence, including unsupported nested/magic repeated bodies.
+- `tests/config_selection.rs`: keep negative and unimplemented forms diagnosed.
+- `README.md`, configuration evidence: document supported literal bodies and limits.
+
+Review focus:
+
+- Empty and repeated-character prefix-overlap alternatives: upstream may replace
+  repetition with a literal pattern for safety; diagnose instead of approximating.
+- Leading empty/newline inputs: upstream's initial assertion is not a dotall regex.
+- Unicode repetition and escaped glob characters: preserve UTF-16 units and literals.
+- Adjacent groups/wildcards and grouped bangs: do not regress exact-one boundaries.
+- Nested/magic bodies and resource growth: explicit errors, not partial selection.
+
+Checklist:
+
+- [x] Append runtime fixtures for literal optional/repeated alternatives, Unicode,
+  escaped punctuation, empty groups, ordered exclusions, overrides and ignores.
+  Run `node tools/parser-oracle/globs.mjs --record` and the configuration oracle;
+  watch native tests fail with `unsupported-glob` before writing implementation.
+- [x] Implement literal-body parsing and regex fragments. Reject nested groups,
+  unescaped wildcards/classes/braces/quotes, path separators, unsafe escapes and
+  upstream-literalized repeated alternatives. Preserve prior unsupported boundaries.
+- [x] Pin and implement the initial-character assertion, outer negation behavior,
+  malformed bodies and bounded total extglob groups, with RED→GREEN tests.
+- [x] Run all Rust tests, the complete pinned oracle, rustfmt, Clippy and diff
+  checks. Obtain one independent final review; fix Important findings test-first.
+- [x] Update evidence and ledger; leave the next batch uncommitted and milestone
+  3 open while negative extglobs and remaining parity work are outstanding.
+
+Execution outcome: 69 Rust tests pass, along with 84 pinned configuration scenarios,
+126 direct pattern observations, rustfmt, Clippy and whitespace checks. Independent
+review found six Important context interactions. Each gained a failing regression
+before explicit diagnostics for unsupported surrounding star/brace/regex syntax.
+All 67 configuration observations committed at `48e2925` remain unchanged.
+
+### Milestone 3 completion
+
+The replacement compiler supersedes the incremental unsupported-syntax batches.
+All former native-error scenarios now match actual upstream behavior. Final
+evidence includes 110 configuration scenarios, 126 directed glob cases, 755
+generated patterns and 755 actual cli2 filesystem selections. Independent review's
+four Important findings gained failing regressions and fixes, including a local
+regex-engine state-restoration correction. The 69 Rust tests and 537 vendored
+engine tests pass. See `docs/compatibility/configuration-completion.md` for the
+current contract, deliberate policies and unexecuted remote-platform boundaries.

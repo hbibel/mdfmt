@@ -16,7 +16,12 @@ fn selected(root: &Path, patterns: &[&str], no_globs: bool) -> Vec<String> {
     .unwrap()
     .files
     .iter()
-    .map(|p| p.strip_prefix(root).unwrap().to_string_lossy().into_owned())
+    .map(|p| {
+        p.strip_prefix(root)
+            .unwrap()
+            .to_string_lossy()
+            .replace(std::path::MAIN_SEPARATOR, "/")
+    })
     .collect()
 }
 
@@ -98,17 +103,106 @@ fn gitignore_true_includes_ancestors_but_glob_string_does_not() {
 }
 
 #[test]
-fn unsupported_globs_are_diagnosed_not_silently_approximated() {
+fn nested_gitignore_anchors_rules_to_its_own_directory() {
     let dir = tempfile::tempdir().unwrap();
-    let resolver = ConfigResolver::new(dir.path(), None, None).unwrap();
-    for pattern in ["+(a|b).md", "?(a|b).md", "*(a|b).md", "!(a).md"] {
+    let root = dir.path();
+    put(root, ".markdownlint-cli2.jsonc", r#"{"gitignore":true}"#);
+    put(root, "child/.gitignore", "/ignored.md\n");
+    put(root, "child/ignored.md", "text\n");
+    put(root, "child/deep/ignored.md", "text\n");
+    put(root, "kept.md", "text\n");
+    assert_eq!(
+        selected(root, &["**/*.md"], false),
+        ["child/deep/ignored.md", "kept.md"]
+    );
+}
+
+#[test]
+fn custom_gitignore_discovers_files_without_directory_expansion() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    put(
+        root,
+        ".markdownlint-cli2.jsonc",
+        r#"{"gitignore":"**/.gitignore"}"#,
+    );
+    put(root, "child/.gitignore", "*.md\n");
+    put(root, "child/ignored.md", "text\n");
+    put(root, "kept.md", "text\n");
+    assert_eq!(selected(root, &["**/*.md"], false), ["kept.md"]);
+    put(root, ".markdownlint-cli2.jsonc", r#"{"gitignore":"child"}"#);
+    assert_eq!(
+        selected(root, &["**/*.md"], false),
+        ["child/ignored.md", "kept.md"]
+    );
+}
+
+#[test]
+fn custom_gitignore_applies_partial_traversal_before_reading_rules() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    put(root, "a/b/.gitignore", "*.md\n");
+    for file in ["a/b/x.md", "b/x.md", "x.md"] {
+        put(root, file, "text\n");
+    }
+    for pattern in [
+        "@(a/b|b)/.gitignore",
+        "+(a/b)/.gitignore",
+        "?(a/b)/.gitignore",
+    ] {
+        put(
+            root,
+            ".markdownlint-cli2.jsonc",
+            &serde_json::json!({"gitignore":pattern}).to_string(),
+        );
         assert_eq!(
-            select_inputs(&resolver, &[pattern.into()], false)
-                .unwrap_err()
-                .code,
-            "unsupported-glob"
+            selected(root, &["**/*.md"], false),
+            ["a/b/x.md", "b/x.md", "x.md"],
+            "{pattern}"
         );
     }
+    put(
+        root,
+        ".markdownlint-cli2.jsonc",
+        r#"{"gitignore":"a/b/.gitignore"}"#,
+    );
+    assert_eq!(selected(root, &["**/*.md"], false), ["b/x.md", "x.md"]);
+}
+
+#[test]
+fn gitignore_discovery_skips_dependency_and_output_directories() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    put(root, ".markdownlint-cli2.jsonc", r#"{"gitignore":true}"#);
+    put(root, "node_modules/.gitignore", "*.md\n");
+    put(root, "node_modules/a.md", "text\n");
+    assert_eq!(selected(root, &["**/*.md"], false), ["node_modules/a.md"]);
+}
+
+#[test]
+fn gitignore_negation_is_case_insensitive_and_child_rules_win() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    put(root, ".markdownlint-cli2.jsonc", r#"{"gitignore":true}"#);
+    put(root, ".gitignore", "*.md\n");
+    put(root, "child/.gitignore", "!Kept.md\n");
+    put(root, "child/kept.md", "text\n");
+    put(root, "child/ignored.md", "text\n");
+    assert_eq!(selected(root, &["**/*.md"], false), ["child/kept.md"]);
+}
+
+#[test]
+fn extglobs_are_native_patterns_not_ordinary_exclusions() {
+    let dir = tempfile::tempdir().unwrap();
+    for name in ["a.md", "ab.md", "b.md"] {
+        put(dir.path(), name, "text");
+    }
+    assert!(selected(dir.path(), &["!(a).md"], false).is_empty());
+    assert_eq!(selected(dir.path(), &["./!(a).md"], false), ["b.md"]);
+    assert_eq!(
+        selected(dir.path(), &["+(a*).md"], false),
+        ["a.md", "ab.md"]
+    );
 }
 
 #[test]

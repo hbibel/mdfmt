@@ -15,6 +15,7 @@ const observations = fixtures.patterns.map(pattern => {
   const regexes = expanded.map(p => micromatch.makeRe(p, { dot: true, posix: true }));
   return {
     pattern,
+    expanded,
     enumeration: fixtures.paths.filter(p => regexes.some(regex => regex.test(p))),
     filtering: micromatch(fixtures.paths, [pattern], { dot: true })
   };

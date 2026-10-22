@@ -2,7 +2,7 @@
 
 This is the target contract for markdownlint-cli2 0.24.0 / markdownlint 0.42.0,
 not a claim of complete compatibility. A native loader and directive/selection
-support now exist; [implementation evidence and remaining limits](configuration-evidence.md)
+support now exist; [implementation evidence and remaining limits](configuration-completion.md)
 distinguish tested behavior from targets below.
 
 Sources are the pinned [cli2 implementation][cli], [schema][schema],

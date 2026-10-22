@@ -2,7 +2,7 @@
   "name": "mdfmt-parser-oracle",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node oracle.mjs && node configuration.mjs && node rule-options.mjs && node globs.mjs" },
+  "scripts": { "test": "node oracle.mjs && node configuration.mjs && node rule-options.mjs && node globs.mjs && node generated-globs.mjs && node selection-globs.mjs" },
   "devDependencies": {
     "markdownlint": "0.42.0",
     "markdownlint-cli2": "0.24.0"

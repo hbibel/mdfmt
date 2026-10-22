@@ -7,11 +7,10 @@
     "!.md", "-.md", ".md", "&.md", "~.md", "{.md", "}.md", "mdfmtGlobFragment0End1.md", "\\xc3.md",
     "c.md", "aa.md", "a,b.md", "a|b.md", "@(a|b).md", "@a.md", "@b.md",
     "(a|b).md", "a/x.md", "b/x.md", "c/x.md", "a/b/x.md", "x.md", "filea.md",
-    "!a.md", "a+.md"
+    "!a.md", "a+.md", "aaa.md", "abab.md", "abc.md", "cc.md", "abcc.md",
+    "éé.md", "🦀🦀.md", "a*.md", "+(a|aa).md", "\n.md", "\ra.md",
+    "\u2028a.md", "\u2029a.md", "x\n.md"
   ],
-  "unsupportedFiltering": ["@({1..3}|a).md", "@(a|b){1..3}.md"],
-  "unsupported": ["@(**|a).md", "@(**)/x.md", "@(**/*.md|a.md)", "@([ab]|[[:digit:]]).md", "@(a|[[:digit:]]).md", "@(a|b)?.md", "@(a|b)+.md", "@(?|a).md"],
-  "unsupportedEnumeration": ["@(a/b|c).md"],
   "patterns": [
     "[[:alnum:]].md", "[[:alpha:]].md", "[[:ascii:]].md", "[[:blank:]].md",
     "[[:cntrl:]].md", "[[:digit:]].md", "[[:graph:]].md", "[[:lower:]].md",
@@ -33,6 +32,15 @@
     "@(a|[[:digit:]]).md", "@({a,b}|[0-9]).md", "@(a|[ab]).md",
     "@(a|*).md", "@(a|?).md", "{a,@(b|)}.md", "{@(a|b)}.md",
     "@(!a).md", "@()!.md", "@(*)*/x.md", "*@(*)/x.md", "@(*)@(*)/x.md",
-    "@(a|b)?.md", "@(a|b)+.md", "@(?|a).md"
+    "@(a|b)?.md", "@(a|b)+.md", "@(?|a).md",
+    "?(a|b).md", "+(a|b).md", "*(a|b).md", "+(ab|c).md", "*(ab|c).md",
+    "?(|a).md", "+().md", "?().md", "*().md", "+(é|🦀).md", "*(🦀).md",
+    "+(a\\*|b).md", "+(a,b|c).md", "@(a|+(b|c)).md", "{a,+(b|c)}.md",
+    "?(a)@(b|c).md", "**/+(a|b).md", "!+(a|b).md", "!!+(a|b).md",
+    "./*(a|b).md", "+(a)*/x.md", "*+(a)/x.md", "*(a)+(b).md",
+    "?(\n).md", "x+(\n).md", "+(a|aa).md", "*(a|).md", "+(a|a).md",
+    "+(*(a)).md", "+(a*).md", "?(a*).md", "+(a/b).md", "+([ab]).md", "+(\"a\"|b).md",
+    "***(a).md", "+(a)**", "*?(a).md", "{x,+(\n)}.md", "{x,+(a..)}.md",
+    "{x,+(a)}?.md", "{x,+(a)}+.md", "+(a)(b).md", "+(a)|b.md"
   ]
 }

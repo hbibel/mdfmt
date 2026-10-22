@@ -1,0 +1,38 @@
+name: Native compatibility
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - if: runner.os != 'Windows'
+        run: cargo test --all-targets
+      - if: runner.os == 'Windows'
+        run: cargo test --lib --bins --test source --test preservation --test config_rules --test config_directives --test config_resolution
+      - if: runner.os == 'Linux'
+        run: cargo test --manifest-path vendor/regress/Cargo.toml --features prohibit-unsafe,utf16 --lib --test tests
+
+  upstream-oracle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: mkdir -p /tmp/opencode
+      - run: npm ci --ignore-scripts --prefix tools/parser-oracle
+      - run: npm test --prefix tools/parser-oracle

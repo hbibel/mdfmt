@@ -1,0 +1,6049 @@
+{
+  "files": [
+    "a.md",
+    "aa.md",
+    "ab.md",
+    "b.md",
+    ".hidden.md",
+    "1.md",
+    "2.md",
+    "é.md",
+    "🦀.md",
+    "*.md",
+    "[a].md",
+    "a/b.md",
+    "a/x.md",
+    "a/b/x.md",
+    "b/a.md",
+    "x/a.md",
+    "foo.test.md",
+    "foo.md",
+    "a..md",
+    "a+b.md",
+    "aaaa.md",
+    "a\"b\".md"
+  ],
+  "cases": [
+    {
+      "pattern": "*.*",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*.*",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\\@(a|b).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!!(a).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(a|!(b)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(*.test).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{é..ê}.md",
+      "files": [
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[🦀-🦞].md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "a.md\\",
+      "files": [
+        "a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "a|b",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "a{,b}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{x,@(a,b)}.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[]a].md",
+      "files": [
+        "a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[[:bad:]].md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[[:alpha:]--a].md",
+      "files": [
+        "1.md",
+        "2.md",
+        "a.md",
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(+(a(a)+)a)a.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "((aa+)+a)+a.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\\uD83E\\uDD80.md",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "[\\uD83E\\uDD80][\\uD83E\\uDD80].md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(a\"b\").md",
+      "files": [
+        "a\"b\".md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(+({a,b}|[!a])|*(\"a*\"|a..)).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(!([!a]|a..)|\\*)*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(*([^a]|a*)|*([[:digit:]]|{a,b})).{md,txt}",
+      "files": [
+        "[a].md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(a..|@([^a]|b)).md",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/a\\b.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(\\?|!(a|🦀))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\\?.{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(a|@(ab|[ab]))**",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(!(ab|ab)|\\?)/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(\"a*\"|@(a|a*))**",
+      "files": [
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(+(b|b)|+(é|{1..3})).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(*(é|\\?)|?(?|[^a])).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(a..|+({1..3}|{a,b}))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/a.md",
+      "files": [
+        "a.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@({a,b}|a\\b)*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(@(é|[!a])|🦀)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/{1..3}?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "a..",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "*/+(+([ab]|[!a])|[ab])/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(!({a,b}|b)|+(\"a*\"|a)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(🦀|+([[:digit:]]|é))*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(\\[a\\]|@(\\*|\\?))",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(@([!a]|a)|+(?|[[:digit:]]))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(+(\\?|{a,b})|[!a]).md",
+      "files": [
+        "*.md",
+        "1.md",
+        "2.md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "b.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[^a]/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/a\\b?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(?({1..3}|[[:digit:]])|+(a\\b|é))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "é/x.md",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "@(\\?|@(\"a*\"|[ab]))*.md",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(+(\\[a\\]|{1..3})|a)**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(a|\"a*\")",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/\\*",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[[:digit:]].{md,txt}",
+      "files": [
+        "1.md",
+        "2.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(+(a..|?)|b).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(@(\\[a\\]|a*)|+(\\*|ab))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(*(ab|?)|+(\\?|a..)).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@([ab]|?([[:digit:]]|?))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(\\?|*([!a]|\\*)).md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@([ab]|+(a\\b|ab))*.md",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(*(\"a*\"|a)|*(a\\b|ab))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[[:digit:]]/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(!(a*|\"a*\")|@([[:digit:]]|\\[a\\]))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(!(a|[ab])|a*)/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(@(b|\"a*\")|\"a*\")**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\\**.md",
+      "files": [
+        "*.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/ab*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@([[:digit:]]|[!a])*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{1..3}.{md,txt}",
+      "files": [
+        "1.md",
+        "2.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(+(a\\b|a*)|@([ab]|?))",
+      "files": [
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "b.{md,txt}",
+      "files": [
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!([ab]|?(b|{1..3})).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "xé?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!({1..3}|+(a\\b|\"a*\"))**",
+      "files": [
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(+(é|ab)|*({1..3}|[!a]))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(*(a*|ab)|a*)**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(?(\"a*\"|[^a])|[ab])?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@([[:digit:]]|[!a])**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(+(\\*|[ab])|[!a]).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(a\\b|🦀)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?([ab]|@(b|\\*))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/[!a]",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[^a]?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(*(\\[a\\]|[!a])|!([ab]|a))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/é",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(?([ab]|🦀)|@(a|[^a])).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(b|@([[:digit:]]|[^a])).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(!(a..|ab)|+([ab]|a))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[^a]/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(\\[a\\]|!(\\*|{a,b}))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(!(a\\b|\\?)|[[:digit:]])",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(?(é|[!a])|a)*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\"a*\"?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!([^a]|*(\\[a\\]|?)).{md,txt}",
+      "files": [
+        ".hidden.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(@(é|\\?)|!(a*|[[:digit:]]))?.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "[a].md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(!(é|[ab])|a).md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(é|{1..3})?.md",
+      "files": [
+        "1.md",
+        "2.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/{a,b}?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(*({a,b}|\\[a\\])|@({a,b}|a*))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\"a*\"/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(\\[a\\]|?(ab|é))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(\\[a\\]|@({a,b}|[^a]))",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(@(🦀|a\\b)|*(a*|ab))/x.md",
+      "files": [
+        "a/b/x.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "a*?.md",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\"a*\"*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/ab/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(?({a,b}|a*)|*(🦀|{a,b}))",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(?([[:digit:]]|a)|a..).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "ab?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(+(\\?|a\\b)|[[:digit:]])",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "xé*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/a...{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(+([ab]|\\?)|?(ab|a)).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(!([ab]|[!a])|\\*)?.md",
+      "files": [
+        "*.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(?(a\\b|[[:digit:]])|a\\b).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(!([^a]|a..)|?)/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!([^a]|?)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(a*|?([[:digit:]]|🦀)).{md,txt}",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(a..|{1..3})*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(@(\\[a\\]|a)|+({1..3}|🦀))*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x{a,b}.{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*({1..3}|a\\b)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[[:digit:]]**",
+      "files": [
+        "1.md",
+        "2.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/b*.md",
+      "files": [
+        "a/b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "a*.{md,txt}",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?.{md,txt}",
+      "files": [
+        "*.md",
+        "1.md",
+        "2.md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b.md",
+        "b/a.md",
+        "x/a.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/é/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/🦀**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(+([[:digit:]]|?)|?)**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(!([ab]|?)|@(\\*|a..))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "??.md",
+      "files": [
+        "a..md",
+        "aa.md",
+        "ab.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(?(b|a)|+(a..|\\*))*.md",
+      "files": [
+        "*.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(*([^a]|a*)|+({a,b}|é))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\\[a\\]",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x[!a]**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(*(a*|?)|a).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(@(a..|{a,b})|\\?).{md,txt}",
+      "files": [
+        "a.md",
+        "a/b.md",
+        "aa.md",
+        "aaaa.md",
+        "b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(+(\"a*\"|[ab])|?(\\?|[^a]))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\\??.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[[:digit:]]*.md",
+      "files": [
+        "1.md",
+        "2.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?([^a]|ab)**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(@([^a]|{1..3})|*(a\\b|[^a])).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(\"a*\"|a\\b).md",
+      "files": [
+        "a/b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(*(?|\\?)|@(ab|\\?)).{md,txt}",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(*(\"a*\"|é)|\\?)*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(+(b|{1..3})|*(🦀|{1..3}))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/a..*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(?(a*|{a,b})|!({a,b}|🦀))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(*({1..3}|{1..3})|?(\\*|a))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(@(\\[a\\]|{a,b})|?(a\\b|a*)).{md,txt}",
+      "files": [
+        "a/b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(!(a..|\\?)|*([[:digit:]]|{1..3})).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(?(🦀|ab)|*(ab|a..)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@([!a]|\\*)?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?([^a]|\\*).md",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(\\*|é)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/b.{md,txt}",
+      "files": [
+        "a/b.md",
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@([[:digit:]]|ab).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(ab|!(a\\b|\\?)).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(\\[a\\]|+(\\?|?))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(*([^a]|a..)|[[:digit:]])/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(*(é|[ab])|*([ab]|[!a])).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@([[:digit:]]|@(\\?|{a,b})).md",
+      "files": [
+        "a/b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\\*/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/{a,b}.{md,txt}",
+      "files": [
+        "a.md",
+        "a/b.md",
+        "b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(?(ab|[[:digit:]])|?(\\*|[ab]))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(!([!a]|[ab])|@(b|?))",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(\\[a\\]|+(\\?|[!a])).md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(b|\"a*\")*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(*(ab|🦀)|!({a,b}|[ab]))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(*(🦀|{1..3})|a)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(+({1..3}|[[:digit:]])|é)*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(a\\b|?([ab]|b)).md",
+      "files": [
+        "a/b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(@([^a]|\\?)|!(\\?|{a,b})).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "xa.{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(*({1..3}|\"a*\")|@([[:digit:]]|[!a]))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(b|\\[a\\])*.md",
+      "files": [
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(?(\"a*\"|{1..3})|!(\"a*\"|b))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/[^a]?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(🦀|@(\\*|a*))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(+([ab]|b)|[[:digit:]])**",
+      "files": [
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/[[:digit:]]/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(\"a*\"|?(?|[ab]))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@([ab]|*(b|{a,b}))*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(a*|*(b|🦀))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(!(\\?|[[:digit:]])|{1..3})*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!([!a]|+({1..3}|a..)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!([!a]|[!a])**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(ab|{a,b}).md",
+      "files": [
+        "a/b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\\[a\\]*.md",
+      "files": [
+        "[a].md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(\\[a\\]|@([[:digit:]]|{1..3}))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(a\\b|!(\"a*\"|ab))/x.md",
+      "files": [
+        "a/b/x.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(+(\\?|é)|!([^a]|[[:digit:]])).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(*(\"a*\"|\\[a\\])|+(ab|\"a*\"))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(@(é|[[:digit:]])|é).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(a\\b|?(a*|\"a*\")).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(\\*|@({1..3}|\\[a\\]))?.md",
+      "files": [
+        "*.md",
+        "1.md",
+        "2.md",
+        "[a].md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\\[a\\]?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(+(\"a*\"|🦀)|?([ab]|?))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(ab|!(a..|\"a*\"))",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/{1..3}.{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(!(a..|{a,b})|@([!a]|\\*))?.md",
+      "files": [
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(@([^a]|é)|?(\\*|\\?))?.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(*({a,b}|{1..3})|[[:digit:]])",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(+(a*|[!a])|!(a\\b|{1..3}))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(\"a*\"|!([!a]|[!a]))?.md",
+      "files": [
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(@(a*|[[:digit:]])|+(b|🦀))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(!([^a]|[ab])|+(\\[a\\]|[ab])).{md,txt}",
+      "files": [
+        "[a].md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(+(\"a*\"|é)|a*).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(+(\\[a\\]|[^a])|[^a]).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/{a,b}.{md,txt}",
+      "files": [
+        "a/b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x[ab].md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x\\*.{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(🦀|[[:digit:]]).md",
+      "files": [
+        "1.md",
+        "2.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/🦀**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/[[:digit:]].{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(\\*|@([[:digit:]]|a..))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(🦀|*([ab]|a..))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "ab",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "x+(!(é|a)|*([^a]|{a,b})).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(é|?(\\*|{a,b}))/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+([^a]|?(b|ab))*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\\[a\\].md",
+      "files": [
+        "[a].md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(!(ab|ab)|@(a|a)).{md,txt}",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/{1..3}/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(+(b|{a,b})|\\?).{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(+({1..3}|🦀)|!(\"a*\"|b))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(b|*(a|[^a]))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/a*?.md",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(@(a|?)|*([!a]|?))*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@([ab]|@(a|?)).{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(!(a\\b|\\*)|@(a*|\\?))/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/a..**",
+      "files": [
+        "a..md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(?({a,b}|é)|{1..3})**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "é",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "{a,b}/a\\b/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\"a*\"?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(a..|?).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(a*|+(🦀|[!a]))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(+([!a]|[ab])|+(b|\\[a\\])).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(!(\\?|🦀)|+(a|[!a])).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(b|\\[a\\])*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(!([[:digit:]]|[!a])|!([[:digit:]]|🦀))?.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/{1..3}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?({a,b}|*(é|\"a*\"))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/a../x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(*(é|\\[a\\])|*(é|\"a*\")).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(+([!a]|\"a*\")|*(é|\\*))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(*(b|{a,b})|+(\\*|a*))?.md",
+      "files": [
+        "*.md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(🦀|\\[a\\])*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(+({1..3}|a*)|[[:digit:]])*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(ab|@([ab]|ab))/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/a",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x\\[a\\]/x.md",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "**/\"a*\"/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x\\***",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(!(a..|a\\b)|+({1..3}|\"a*\"))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(@(é|🦀)|@([[:digit:]]|[^a]))**",
+      "files": [
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?({a,b}|@(é|ab))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(@(a..|a..)|+(a\\b|a\\b))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(?(🦀|{a,b})|@(\"a*\"|{a,b}))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/a*/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(?(\\?|?)|*(?|\\?))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*([^a]|\\[a\\])",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(!([!a]|?)|?(\\[a\\]|\\?))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(?(\\[a\\]|[ab])|*(a*|{1..3}))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\\*.{md,txt}",
+      "files": [
+        "*.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\"a*\"?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(!(a|a*)|+(ab|\"a*\"))**",
+      "files": [
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(+(🦀|a)|!(a|a))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(+(\\[a\\]|[!a])|!(b|{a,b}))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(!([^a]|?)|!(é|{a,b})).md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(?([ab]|a*)|@(a|b))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(+(\\[a\\]|[!a])|ab)",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(!(ab|{1..3})|@({1..3}|[[:digit:]]))**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(?(b|a)|🦀)?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(+({1..3}|\\?)|@(a\\b|🦀)).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(@(a*|é)|@(\\*|🦀))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x[^a]*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\\[a\\]/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(?([^a]|\"a*\")|+({1..3}|a\\b)).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x\\*.md",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "*/+(*([^a]|a\\b)|@({a,b}|\\?))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+({a,b}|*(a|{a,b}))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(@([ab]|[!a])|\\*)*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(*({a,b}|\\*)|@([!a]|\\[a\\])).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(+({1..3}|\\?)|?([^a]|é))",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(?(a\\b|\"a*\")|+([!a]|a*))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(@([^a]|b)|a..)*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(a*|*(\\*|\\?))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(@(\"a*\"|[^a])|[^a])",
+      "files": [
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*({1..3}|?(b|{a,b}))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/ab",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/é?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/[ab]?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/[[:digit:]]*.md",
+      "files": [
+        "1.md",
+        "2.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(+(b|\"a*\")|*(a..|é))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[ab].{md,txt}",
+      "files": [
+        "a.md",
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(!(🦀|🦀)|{1..3})?.md",
+      "files": [
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/\\??.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/{1..3}.{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(!({a,b}|\"a*\")|+(\"a*\"|[!a]))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(!({a,b}|é)|+(ab|\\?))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\\[a\\].{md,txt}",
+      "files": [
+        "[a].md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "a*",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(\\*|@(a|[!a]))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(!([ab]|\\*)|b).{md,txt}",
+      "files": [
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(*(\"a*\"|🦀)|@({a,b}|a..)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(!(\"a*\"|b)|?([[:digit:]]|ab))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(+({1..3}|[^a])|@(a..|\\*))**",
+      "files": [
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "xb/x.md",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "**/[[:digit:]].md",
+      "files": [
+        "1.md",
+        "2.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(@(a|b)|*([^a]|[ab]))/x.md",
+      "files": [
+        "a/b/x.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(é|a)*.md",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b/a.md",
+        "x/a.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(*(\\[a\\]|\"a*\")|@(a\\b|{a,b}))",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(*([ab]|\\*)|!([[:digit:]]|🦀))",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(?([[:digit:]]|{a,b})|[[:digit:]])/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\\*",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "**/*(?|!(é|a))**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/a.{md,txt}",
+      "files": [
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?({1..3}|*(a|\\?))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+({a,b}|!(\\?|{1..3})).md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[!a]**",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[^a].md",
+      "files": [
+        "*.md",
+        "1.md",
+        "2.md",
+        "b.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/🦀*.md",
+      "files": [
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/a\\b",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/a..*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(!([ab]|é)|@([!a]|🦀))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(?|a)/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(*({a,b}|[^a])|!(\\[a\\]|[ab]))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(+(b|{a,b})|*(\"a*\"|{a,b}))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "xa\\b.md",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "*(a\\b|?)*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/{a,b}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(?(a|a*)|[[:digit:]]).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\\**.md",
+      "files": [
+        "*.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(+(ab|é)|\\[a\\])**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(?|@([ab]|a..))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(?(a..|[!a])|*(\\[a\\]|[!a])).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(\\?|?(a*|[[:digit:]]))?.md",
+      "files": [
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/ab?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(?([[:digit:]]|a*)|!([!a]|[!a]))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(\\[a\\]|*([ab]|[!a]))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(+(ab|\\[a\\])|?)/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?([!a]|[^a])**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(*(\\[a\\]|b)|+(\\[a\\]|[[:digit:]]))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@([^a]|a\\b).md",
+      "files": [
+        "*.md",
+        "1.md",
+        "2.md",
+        "b.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\\***",
+      "files": [
+        "*.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+([[:digit:]]|+(a..|[[:digit:]]))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?.{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+({a,b}|?({1..3}|a..))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(?({a,b}|\\*)|+(\"a*\"|[!a])).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(b|+([[:digit:]]|{a,b}))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(\"a*\"|*(é|[[:digit:]]))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[ab]*.md",
+      "files": [
+        "a/b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(?(é|[!a])|*([!a]|{a,b}))*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(*(a|\\*)|?([ab]|\"a*\"))/x.md",
+      "files": [
+        "a/b/x.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(+({1..3}|a\\b)|[^a])**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(@([ab]|[ab])|@([^a]|a*))?.md",
+      "files": [
+        "*.md",
+        "1.md",
+        "2.md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(?|{a,b})?.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(?(a\\b|🦀)|a).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(*(ab|b)|\\[a\\]).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/\\*.{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(!({1..3}|a..)|a*).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(!(ab|[^a])|?([!a]|🦀))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(a..|[[:digit:]]).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(a|?({a,b}|{a,b}))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/\\?*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(!(é|[!a])|*(a\\b|a..)).md",
+      "files": [
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(!(a|a..)|a)",
+      "files": [
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "a*/x.md",
+      "files": [
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(?({a,b}|ab)|*(ab|{a,b})).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(+([^a]|{a,b})|!([^a]|🦀)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(+(\\[a\\]|b)|a)*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(🦀|*(🦀|[!a])).{md,txt}",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(+(ab|b)|+(a*|a..)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@([^a]|@(ab|\\?)).{md,txt}",
+      "files": [
+        "*.md",
+        "1.md",
+        "2.md",
+        "ab.md",
+        "b.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(*(a..|b)|*(🦀|{1..3}))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(*([ab]|🦀)|a).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\\?**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(!(a..|a..)|?(🦀|[^a]))",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(!(ab|é)|*(\"a*\"|b))",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/{1..3}.{md,txt}",
+      "files": [
+        "1.md",
+        "2.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/{1..3}.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/{1..3}**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(+(\\*|[!a])|?(\\?|[ab]))?.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(*(a\\b|\\[a\\])|+(\\*|{a,b}))?.md",
+      "files": [
+        "a/b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(!(\"a*\"|a\\b)|?)?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(!([!a]|b)|+([ab]|{a,b}))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(a..|@(a\\b|b))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(!(\\[a\\]|\\?)|!([!a]|[!a])).{md,txt}",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*([^a]|@(a|é))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(ab|[!a]).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\"a*\"**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/{1..3}*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "🦀/x.md",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "{a,b}/\\?",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[[:digit:]].md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(+([ab]|[ab])|ab)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(?(é|\\?)|{1..3})",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(!(\\*|\\*)|@(é|{1..3}))**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(+(\\*|\\[a\\])|!([^a]|[ab])).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(*({a,b}|\\?)|!({a,b}|b))",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(!(🦀|\\*)|+(\\*|\\*)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@({a,b}|?([[:digit:]]|[[:digit:]]))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "xab/x.md",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "*/!(+([ab]|?)|*(a..|ab))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*([[:digit:]]|+([!a]|a..))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(\\[a\\]|[[:digit:]])/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(?(a\\b|🦀)|🦀).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "xab.{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/ab.{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/é",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!([[:digit:]]|?(🦀|\\*))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(+(a\\b|a\\b)|\\*).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(@([!a]|[!a])|*({1..3}|[ab]))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(+(a..|{a,b})|!(a*|a*))?.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(+(ab|\\*)|*({1..3}|{a,b}))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\\?**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(?(🦀|{1..3})|*([^a]|\\*))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(@(\"a*\"|?)|@(?|b))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*([ab]|?([[:digit:]]|[^a]))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(b|é)*.md",
+      "files": [
+        "b.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/{a,b}.md",
+      "files": [
+        "a/b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/[[:digit:]]/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(*(\\?|\\?)|*([!a]|{1..3}))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?({1..3}|[^a])",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!({1..3}|+(b|?))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(?(a\\b|\\*)|{a,b})*.md",
+      "files": [
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(🦀|!(\\*|[[:digit:]]))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(+([ab]|a\\b)|?([ab]|[ab]))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(!([!a]|?)|{1..3})",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(+(🦀|[!a])|!(?|é))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/a\\b/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/[ab]**",
+      "files": [
+        "a/b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(?({a,b}|[!a])|*(a\\b|🦀))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "a?.md",
+      "files": [
+        "a..md",
+        "aa.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x\"a*\"*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(*(ab|{1..3})|?(a*|é))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(+(a\\b|ab)|@([^a]|[^a]))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(?([ab]|\\*)|@(\"a*\"|{1..3}))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/é/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(*({1..3}|\\?)|@(b|ab))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x[ab]*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(@(b|\\*)|*(a*|é)).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(!(\"a*\"|é)|!(\\[a\\]|{a,b})).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "b?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?.md",
+      "files": [
+        "*.md",
+        "1.md",
+        "2.md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b.md",
+        "b/a.md",
+        "x/a.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/a../x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[ab].{md,txt}",
+      "files": [
+        "a/b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(?(?|🦀)|*([^a]|a..))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/é.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "xa\\b*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(+(🦀|{1..3})|{1..3})/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+({1..3}|\\*).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/a***",
+      "files": [
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(!(a..|{1..3})|*(a*|?))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(*(a*|?)|*(b|[[:digit:]])).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(!(a|[!a])|+([!a]|\\[a\\])).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(?(🦀|\\*)|🦀)*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\"a*\".md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(*({a,b}|[ab])|*(a\\b|\\?))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(🦀|[^a])*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(*([!a]|\\[a\\])|b)?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(!([ab]|[!a])|\\?)",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(*(a..|a*)|{a,b})**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x[ab]**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(\\?|!(?|a)).{md,txt}",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(?(\"a*\"|a\\b)|[[:digit:]]).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!({1..3}|*([[:digit:]]|?))",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(+(\\[a\\]|\\?)|@(🦀|\\*))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(a*|*(a*|[!a]))/x.md",
+      "files": [
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(?([[:digit:]]|[[:digit:]])|*(\"a*\"|a))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(!(a|{a,b})|!(b|🦀)).{md,txt}",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(*(\\[a\\]|\\?)|@([!a]|a..))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(*(a*|é)|!({a,b}|\\?))",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\"a*\".md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(?([^a]|[!a])|?(a\\b|?)).{md,txt}",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(a|?(\\*|[^a]))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(@(\\[a\\]|[[:digit:]])|{1..3})*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(a\\b|?(a*|\\*)).md",
+      "files": [
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(a..|+(a*|ab))?.md",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(+(é|\"a*\")|*(\\*|🦀)).{md,txt}",
+      "files": [
+        "*.md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(b|*(\\?|a))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/a**.md",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(\\[a\\]|@(a\\b|é)).md",
+      "files": [
+        "[a].md",
+        "a/b.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\\[a\\]?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[[:digit:]]**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(?(b|a..)|?([ab]|\\[a\\]))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(!(🦀|a)|!(🦀|[[:digit:]]))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(@(\\*|\\?)|a..).md",
+      "files": [
+        "*.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(!(ab|?)|\\[a\\])**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x{1..3}.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(@(a..|a*)|!(\\[a\\]|\"a*\"))*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(!(a..|[!a])|!(\"a*\"|\"a*\")).{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(+(a..|b)|[[:digit:]])**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(!([^a]|?)|@({1..3}|a..))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(!(b|\\?)|a*)/x.md",
+      "files": [
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/{a,b}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@([ab]|!(\\?|[^a]))*.md",
+      "files": [
+        "a/b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(+([^a]|a)|@([^a]|🦀))?.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(?(é|a)|?({a,b}|ab)).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/b",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(?(a\\b|[!a])|!(a|\"a*\"))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(@({1..3}|a..)|🦀)?.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(+(a|{1..3})|!(a..|\"a*\"))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(?(🦀|é)|*(\\?|{a,b}))",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(!(ab|a\\b)|+([!a]|a..))",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(*([ab]|é)|+(a*|ab))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?({1..3}|?(?|\"a*\"))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(+(é|\"a*\")|+(ab|ab)).md",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(!(🦀|a\\b)|+([ab]|\\*))",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(é|!(a*|a\\b))?.md",
+      "files": [
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(+(a..|\\*)|!(a*|[!a]))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\"a*\"",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(?([!a]|b)|ab).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(!([ab]|[ab])|*({1..3}|é))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(!(a*|[!a])|{1..3}).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(!({1..3}|a)|+(a\\b|{1..3}))*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(!(\"a*\"|{1..3})|!(é|a*)).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/{1..3}/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(+(a*|\\?)|*(a..|a))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(?([ab]|[^a])|?(a..|\"a*\")).{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/\\?**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[!a]/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(a..|é)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(?(\"a*\"|\\*)|+(é|a\\b)).md",
+      "files": [
+        "a/b.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(@(\\?|{1..3})|@(\\[a\\]|\\[a\\]))?.md",
+      "files": [
+        "1.md",
+        "2.md",
+        "[a].md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "xb*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(@({1..3}|\\[a\\])|\\?)/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?([ab]|b).{md,txt}",
+      "files": [
+        "a/b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(\\?|!([ab]|[[:digit:]]))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(?([^a]|[[:digit:]])|!({1..3}|\"a*\"))?.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(*(é|a\\b)|{a,b})**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(é|+(\"a*\"|a*))",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(@(a..|a..)|+({1..3}|[ab])).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(*(ab|ab)|\"a*\")?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(*(b|\\[a\\])|{1..3})/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!([ab]|!(?|{1..3})).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(@([!a]|a..)|a*)",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(*(\\[a\\]|é)|[!a])?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(\"a*\"|+([[:digit:]]|[!a]))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/[ab]/x.md",
+      "files": [
+        "a/b/x.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(a..|+([^a]|\"a*\")).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/b.md",
+      "files": [
+        "a/b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/a*?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(!(🦀|a\\b)|!(é|?)).{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(*([[:digit:]]|\\?)|b)*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(+(?|\\[a\\])|@(\"a*\"|[!a])).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+({a,b}|@([ab]|ab)).{md,txt}",
+      "files": [
+        "a.md",
+        "a/b.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\"a*\"",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}**",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "a..*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/{a,b}**",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[ab]",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(\\*|@(\\?|{a,b}))?.md",
+      "files": [
+        "a/b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(@({a,b}|🦀)|[ab])/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*([[:digit:]]|+(ab|\"a*\"))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\"a*\".{md,txt}",
+      "files": [
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(*(\"a*\"|[ab])|!(\\?|[[:digit:]]))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/{1..3}**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(@(a*|ab)|!(?|b)).md",
+      "files": [
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(*(\\*|[!a])|[ab]).{md,txt}",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "a.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(é|a).md",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(a*|*(\\?|\"a*\")).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(+([ab]|\\?)|\\[a\\])*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(a|?(b|a))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(@(a..|b)|b)**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(\\*|[^a]).md",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[^a]*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(+(\"a*\"|\\*)|@(?|[!a]))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(*(a|[!a])|!(🦀|b))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!([!a]|?(🦀|{a,b}))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(?(a\\b|é)|!(ab|\"a*\"))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(+(\"a*\"|[ab])|?)*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(\\*|*(a*|é))",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(!([!a]|[ab])|!({1..3}|é)).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?([[:digit:]]|*(\\[a\\]|é)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(*(b|?)|b).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(!(ab|[!a])|!(b|\\*))?.md",
+      "files": [
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(?(a*|\\[a\\])|!({1..3}|\"a*\")).{md,txt}",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(!(\\?|b)|ab)/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/[ab]/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(@([^a]|é)|?(\"a*\"|\\[a\\]))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(@(\\*|\\?)|@(\\[a\\]|{a,b})).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(*(🦀|a)|*(\\[a\\]|\\?))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(+([[:digit:]]|é)|!(\"a*\"|?))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(!({1..3}|🦀)|{1..3})/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(a..|@(\"a*\"|?)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(!(?|\\[a\\])|[^a])?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(*([^a]|\"a*\")|?(ab|\\?))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@([ab]|@([[:digit:]]|🦀))?.md",
+      "files": [
+        "a.md",
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[[:digit:]]",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(@({1..3}|\\?)|?(ab|b))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(ab|\\?)/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/b.md",
+      "files": [
+        "a/b.md",
+        "b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(*([[:digit:]]|é)|\\?)?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(+(b|ab)|\\?)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(+(?|a)|🦀).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@({1..3}|{a,b})",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\\*.{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\\[a\\].md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x🦀.md",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "*/*(+([ab]|\\[a\\])|!(\"a*\"|\"a*\"))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(+([ab]|[^a])|?(a*|[[:digit:]]))*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[^a]",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(!(é|[[:digit:]])|+(\\[a\\]|ab))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/\\?/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(*(ab|é)|*([ab]|\\?))**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@({a,b}|[!a])",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(\\?|[^a])**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(?(?|b)|{a,b}).{md,txt}",
+      "files": [
+        "aa.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/🦀",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[ab].md",
+      "files": [
+        "a/b.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "🦀.md",
+      "files": [
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(\"a*\"|a*)**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(a|@([!a]|{1..3}))?.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "xé",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "[!a]**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\\[a\\]?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(@([ab]|b)|?).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(*(\\?|\\?)|*([ab]|[^a]))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(@(a\\b|{1..3})|+(a\\b|{1..3}))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(+(\\?|a)|@([ab]|b)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(a*|é).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(*(ab|ab)|@([[:digit:]]|?)).{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "\\?",
+      "files": [],
+      "missingNamedInput": true
+    },
+    {
+      "pattern": "*/{a,b}*.md",
+      "files": [
+        "a/b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(@(ab|a)|?(\"a*\"|ab))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/\"a*\"**",
+      "files": [
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(\"a*\"|@([[:digit:]]|\\*)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(🦀|[[:digit:]]).{md,txt}",
+      "files": [
+        "1.md",
+        "2.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(!(\\?|?)|*(a..|b))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(!(a*|a\\b)|*(é|?))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(+({a,b}|a\\b)|!({1..3}|[[:digit:]]))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(é|?).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "ab*.md",
+      "files": [
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(+(🦀|\\[a\\])|é)?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[^a]**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(b|?(é|\"a*\"))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(\\*|{a,b})**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[[:digit:]]",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(?(é|[[:digit:]])|a*).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(?([[:digit:]]|?)|+(\\[a\\]|{1..3}))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(?(🦀|{a,b})|+(\"a*\"|é))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(@(\"a*\"|ab)|!({a,b}|{1..3}))",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(?([[:digit:]]|a\\b)|+([[:digit:]]|é))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(+({a,b}|🦀)|*(\\?|a))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(!([ab]|[!a])|*(ab|a\\b))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(@({a,b}|é)|\"a*\")",
+      "files": [
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(a..|a\\b)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(?(é|[!a])|\\[a\\]).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!({a,b}|!(ab|a*))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(a*|*(a*|[^a]))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(*({a,b}|[^a])|+(a|a)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(a..|?(ab|🦀)).md",
+      "files": [
+        "ab.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/ab?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(*([!a]|[!a])|*(\"a*\"|\\*)).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(!(\\*|ab)|@([ab]|[^a])).{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/a***",
+      "files": [
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(*([[:digit:]]|a\\b)|🦀).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(*({a,b}|a\\b)|\\*)?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[!a]",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(!([[:digit:]]|\\*)|?([^a]|[!a]))",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/\\*?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(ab|*(\"a*\"|a)).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(*(a\\b|a\\b)|*(b|\\?)).{md,txt}",
+      "files": [
+        "a/b.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/\\[a\\]?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(?|!(\\*|🦀))/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(\\*|?(a..|a\\b))?.md",
+      "files": [
+        "*.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(!(a*|a\\b)|+(b|\\*)).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(?(🦀|b)|+([^a]|é))",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(\\[a\\]|\\[a\\]).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(+(b|\"a*\")|*([^a]|\\*))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+([[:digit:]]|a..)/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "🦀*.md",
+      "files": [
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(ab|🦀)?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/[!a].{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/*(*({1..3}|[!a])|*({1..3}|[!a]))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(\\*|*([ab]|a)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(*(?|\\[a\\])|ab)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/{a,b}.md",
+      "files": [
+        "a.md",
+        "a/b.md",
+        "b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(?(b|\"a*\")|!(a..|[^a]))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(*(\\*|\"a*\")|*(🦀|\"a*\")).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x[[:digit:]].{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*([^a]|?(a*|a))**",
+      "files": [
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!([ab]|*({1..3}|\"a*\"))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(a*|a).{md,txt}",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(@(a*|?)|!([^a]|{a,b}))/x.md",
+      "files": [
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(*(ab|[!a])|?)?.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/a**.md",
+      "files": [
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x[[:digit:]]",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(*(a|🦀)|[[:digit:]]).md",
+      "files": [
+        "1.md",
+        "2.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(+([!a]|🦀)|+(a*|[!a]))/x.md",
+      "files": [
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*({1..3}|ab).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+([^a]|[[:digit:]])",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(a*|+(a\\b|[^a]))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x*(?(\\*|b)|*(ab|b))**",
+      "files": [
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(!(\\?|ab)|\\*)**",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "a/b.md",
+        "a/b/x.md",
+        "a/x.md",
+        "aa.md",
+        "aaaa.md",
+        "b.md",
+        "b/a.md",
+        "foo.md",
+        "foo.test.md",
+        "x/a.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(+([^a]|{a,b})|?).{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/[[:digit:]]",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(a\\b|*(🦀|\\?))**",
+      "files": [
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "?(@([!a]|é)|?(\\*|{1..3}))*.md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(@(\"a*\"|?)|*(é|[!a])).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(+(\\?|?)|@({1..3}|ab))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(+(\"a*\"|\\*)|@(\"a*\"|a))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(*(\"a*\"|b)|+(\"a*\"|a*)).md",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a/b/x.md",
+        "a/x.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/\"a*\".md",
+      "files": [
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(a|!(\\*|a..))/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(*(ab|{1..3})|@(\\?|ab))?.md",
+      "files": [
+        "1.md",
+        "2.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/@(@(é|[ab])|@(ab|\\*)).md",
+      "files": [
+        "*.md",
+        "a.md",
+        "a/b.md",
+        "ab.md",
+        "b.md",
+        "b/a.md",
+        "x/a.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(?(\\[a\\]|\\*)|[[:digit:]]).{md,txt}",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/b?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/?(?([ab]|é)|!(\\?|[ab]))/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(+([^a]|a*)|*(\\*|a\\b))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "[!a].md",
+      "files": [
+        "*.md",
+        "1.md",
+        "2.md",
+        "b.md",
+        "é.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x@(@(🦀|?)|\\?).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/@(@([ab]|[ab])|@(a\\b|ab)).md",
+      "files": [
+        "a/b.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/{1..3}/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*(*(?|[!a])|b).{md,txt}",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/?(@(b|\\?)|@([[:digit:]]|\\*)).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "ab.md",
+      "files": [
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+({1..3}|*(\\?|[[:digit:]])).md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/[!a].md",
+      "files": [
+        "a/b.md",
+        "a/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/!(!(a*|[^a])|[^a]).md",
+      "files": [
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/a\\b/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/?(\\[a\\]|?(\\*|[^a]))/x.md",
+      "files": [
+        "a/b/x.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(ab|+(\\?|a\\b))/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(@(a|[^a])|*([[:digit:]]|[!a]))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(?(\\?|\"a*\")|é)",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/!(+({1..3}|{a,b})|\\*).md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "@(*(a*|\"a*\")|*({1..3}|\\[a\\])).{md,txt}",
+      "files": [
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/+(\\*|é)*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/+(@(a|a..)|+([^a]|\\*))*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "!(*(é|a..)|a..)**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "+(!(a\\b|a\\b)|?(ab|[[:digit:]])).{md,txt}",
+      "files": [
+        "*.md",
+        ".hidden.md",
+        "1.md",
+        "2.md",
+        "[a].md",
+        "a\"b\".md",
+        "a+b.md",
+        "a..md",
+        "a.md",
+        "aa.md",
+        "aaaa.md",
+        "ab.md",
+        "b.md",
+        "foo.md",
+        "foo.test.md",
+        "é.md",
+        "🦀.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x\"a*\"/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/*(!(\\?|?)|a).md",
+      "files": [
+        "b/a.md",
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/@(+(?|\\?)|*(b|\"a*\"))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x!(\\*|!(?|é))**",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x+(!(a..|{1..3})|[^a])*.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "x?(*(?|a..)|!(\"a*\"|b))**",
+      "files": [
+        "x/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/!(ab|{1..3})",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "**/+(!(é|a)|*(\\?|\"a*\"))?.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "*/🦀/x.md",
+      "files": [],
+      "missingNamedInput": false
+    },
+    {
+      "pattern": "{a,b}/*(?([^a]|{1..3})|!(ab|a))*.md",
+      "files": [
+        "a/b.md",
+        "a/x.md",
+        "b/a.md"
+      ],
+      "missingNamedInput": false
+    }
+  ]
+}

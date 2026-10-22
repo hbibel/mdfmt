@@ -1,9 +1,9 @@
 use super::{
     ConfigError, ConfigResolver,
-    glob::{filter_matches, matcher},
+    glob::{Traversal, filter_matches, matcher},
     resolve::{absolute, relative_path, slash},
 };
-use ignore::gitignore::GitignoreBuilder;
+use ignore::gitignore::{Gitignore, GitignoreBuilder};
 use std::{
     collections::HashSet,
     fs,
@@ -18,10 +18,12 @@ pub struct InputSelection {
 }
 
 fn normalize(pattern: &str) -> String {
-    let mut result = String::new();
+    let (pattern, mut result) = pattern
+        .strip_prefix(r"\:")
+        .map_or((pattern, String::new()), |rest| (rest, r"\:".into()));
     let mut chars = pattern.chars().peekable();
     while let Some(ch) = chars.next() {
-        if ch == '\\' && chars.peek().is_some_and(|c| !"$()*+?[\\]^:".contains(*c)) {
+        if ch == '\\' && chars.peek().is_none_or(|c| !"$()*+?[]^".contains(*c)) {
             result.push('/');
         } else {
             result.push(ch);
@@ -94,38 +96,98 @@ fn expanded_directory_pattern(base: &Path, pattern: &str) -> String {
 
 fn enumerate(base: &Path, pattern: &str) -> Result<Vec<PathBuf>, ConfigError> {
     let expanded = expanded_directory_pattern(base, pattern);
-    let pattern = expanded.as_str();
+    let dynamic = magic_index(&expanded).is_some();
+    let mut files = Vec::new();
+    let mut patterns = super::brace::enumerate(&expanded)?;
+    patterns.sort_by_key(|pattern| pattern.encode_utf16().count());
+    for pattern in patterns {
+        if !pattern.is_empty() {
+            files.extend(enumerate_expanded(base, &pattern, dynamic)?);
+        }
+    }
+    files.sort();
+    Ok(files)
+}
+
+fn enumerate_expanded(
+    base: &Path,
+    pattern: &str,
+    dynamic: bool,
+) -> Result<Vec<PathBuf>, ConfigError> {
     let directory_only = pattern.ends_with('/');
     let compiled = matcher(pattern.trim_end_matches('/'))?;
-    if magic_index(pattern).is_none() {
+    if magic_index(pattern).is_none() || !super::glob::dynamic(pattern) {
         let path = absolute(base, Path::new(&unescape(pattern)));
-        return Ok(if path.is_dir() {
+        let target = if Path::new(pattern).is_absolute() {
+            slash(&path)
+        } else {
+            relative_path(base, &path)
+        };
+        if path.is_file() && !compiled.is_match(target)? {
+            return Ok(vec![]);
+        }
+        return Ok(if dynamic {
+            if !directory_only && path.is_file() {
+                vec![path]
+            } else {
+                vec![]
+            }
+        } else if path.is_dir() {
             walk(&path)
-        } else if directory_only {
-            vec![]
         } else {
             vec![path]
         });
     }
-    let magic = magic_index(pattern).unwrap();
-    let prefix = pattern[..magic]
-        .rfind('/')
-        .map_or("", |slash| &pattern[..=slash]);
-    let root = absolute(base, Path::new(&unescape(prefix)));
-    Ok(walk(&root)
+    let root = absolute(base, Path::new(&super::glob::parent(pattern)));
+    let traversal = Traversal::new(pattern)?;
+    let mut files = Vec::new();
+    let mut traversal_error = None;
+    let entries = WalkDir::new(&root)
+        .follow_links(true)
+        .sort_by_file_name()
         .into_iter()
-        .filter(|path| {
-            if directory_only {
+        .filter_entry(|entry| {
+            if traversal_error.is_some() {
                 return false;
             }
+            if entry.depth() == 0 || !entry.file_type().is_dir() {
+                return true;
+            }
             let target = if Path::new(pattern).is_absolute() {
-                slash(path)
+                slash(entry.path())
             } else {
-                relative_path(base, path)
+                relative_path(base, entry.path())
             };
-            compiled.is_match(target)
-        })
-        .collect())
+            match traversal.permits(&target) {
+                Ok(permitted) => permitted,
+                Err(error) => {
+                    traversal_error = Some(error);
+                    false
+                }
+            }
+        });
+    for entry in entries
+        .filter_map(Result::ok)
+        .filter(|entry| entry.file_type().is_file())
+    {
+        let path = entry.into_path();
+        if directory_only {
+            continue;
+        }
+        let target = if Path::new(pattern).is_absolute() {
+            slash(&path)
+        } else {
+            relative_path(base, &path)
+        };
+        if !compiled.is_match(target)? {
+            continue;
+        }
+        files.push(path);
+    }
+    if let Some(error) = traversal_error {
+        return Err(error);
+    }
+    Ok(files)
 }
 
 fn excluded(base: &Path, path: &Path, patterns: &[String]) -> Result<bool, ConfigError> {
@@ -153,12 +215,152 @@ fn excluded(base: &Path, path: &Path, patterns: &[String]) -> Result<bool, Confi
             } else {
                 relative_path(base, target)
             };
-            if compiled.is_match(candidate) {
+            if compiled.is_match(candidate)? {
                 return Ok(true);
             }
         }
     }
     Ok(false)
+}
+
+fn ignore_search_excluded(base: &Path, path: &Path) -> bool {
+    path.strip_prefix(base).is_ok_and(|relative| {
+        relative.components().any(|part| {
+            matches!(
+                part.as_os_str().to_str(),
+                Some("node_modules" | "flow-typed" | "coverage" | ".git")
+            )
+        })
+    })
+}
+
+fn discover_ignore_files(base: &Path, pattern: &str) -> Result<Vec<PathBuf>, ConfigError> {
+    let mut files = Vec::new();
+    let mut seen = HashSet::new();
+    for pattern in super::brace::enumerate(pattern)? {
+        for file in discover_ignore_expanded(base, &pattern)? {
+            if seen.insert(file.clone()) {
+                files.push(file);
+            }
+        }
+    }
+    files.sort_by(|a, b| {
+        a.components()
+            .count()
+            .cmp(&b.components().count())
+            .then(a.cmp(b))
+    });
+    Ok(files)
+}
+
+fn discover_ignore_expanded(base: &Path, pattern: &str) -> Result<Vec<PathBuf>, ConfigError> {
+    let compiled = matcher(pattern)?;
+    if compiled.negated || pattern.ends_with('/') {
+        return Ok(vec![]);
+    }
+    if magic_index(pattern).is_none() || !super::glob::dynamic(pattern) {
+        let path = absolute(base, Path::new(&unescape(pattern)));
+        let target = if Path::new(pattern).is_absolute() {
+            slash(&path)
+        } else {
+            relative_path(base, &path)
+        };
+        return Ok(
+            if path.is_file()
+                && !ignore_search_excluded(base, &path)
+                && compiled.is_match(target)?
+            {
+                vec![path]
+            } else {
+                vec![]
+            },
+        );
+    }
+    let root = absolute(base, Path::new(&super::glob::parent(pattern)));
+    let traversal = Traversal::new(pattern)?;
+    let mut traversal_error = None;
+    let mut files: Vec<_> = WalkDir::new(root)
+        .follow_links(true)
+        .sort_by_file_name()
+        .into_iter()
+        .filter_entry(|entry| {
+            if traversal_error.is_some() || ignore_search_excluded(base, entry.path()) {
+                return false;
+            }
+            if entry.depth() == 0 || !entry.file_type().is_dir() {
+                return true;
+            }
+            let target = if Path::new(pattern).is_absolute() {
+                slash(entry.path())
+            } else {
+                relative_path(base, entry.path())
+            };
+            match traversal.permits(&target) {
+                Ok(permitted) => permitted,
+                Err(error) => {
+                    traversal_error = Some(error);
+                    false
+                }
+            }
+        })
+        .filter_map(Result::ok)
+        .filter(|entry| entry.file_type().is_file())
+        .map(|entry| entry.into_path())
+        .map(|path| {
+            let target = if Path::new(pattern).is_absolute() {
+                slash(&path)
+            } else {
+                relative_path(base, &path)
+            };
+            Ok(compiled.is_match(target)?.then_some(path))
+        })
+        .collect::<Result<Vec<_>, ConfigError>>()?
+        .into_iter()
+        .flatten()
+        .collect();
+    if let Some(error) = traversal_error {
+        return Err(error);
+    }
+    files.sort_by(|a, b| {
+        a.components()
+            .count()
+            .cmp(&b.components().count())
+            .then(a.cmp(b))
+    });
+    Ok(files)
+}
+
+fn ignore_file(file: &Path) -> Result<Gitignore, ConfigError> {
+    if file.file_name().is_some_and(|name| name == ".env") {
+        return Err(
+            ConfigError::invalid("gitignore", "refusing to read .env as an ignore file").at(file),
+        );
+    }
+    let text = fs::read_to_string(file)
+        .map_err(|e| ConfigError::invalid("gitignore", e.to_string()).at(file))?;
+    let mut builder = GitignoreBuilder::new(file.parent().unwrap());
+    builder
+        .case_insensitive(true)
+        .map_err(|e| ConfigError::invalid("gitignore", e.to_string()).at(file))?;
+    for line in text.lines() {
+        let line = line.strip_prefix('\u{feff}').unwrap_or(line);
+        // globset treats braces as alternatives, but gitignore treats them literally.
+        let mut pattern = String::new();
+        let mut escaped = false;
+        for ch in line.chars() {
+            if !escaped && matches!(ch, '{' | '}') {
+                pattern.push('\\');
+            }
+            pattern.push(ch);
+            escaped = ch == '\\' && !escaped;
+        }
+        builder
+            .add_line(Some(file.into()), &pattern)
+            .map_err(|e| ConfigError::invalid("gitignore", e.to_string()).at(file))?;
+    }
+    builder
+        .build()
+        .map_err(|e| ConfigError::invalid("gitignore", e.to_string()).at(file))
 }
 
 fn gitignored(resolver: &ConfigResolver, path: &Path) -> Result<bool, ConfigError> {
@@ -189,41 +391,40 @@ fn gitignored(resolver: &ConfigResolver, path: &Path) -> Result<bool, ConfigErro
         directories
             .into_iter()
             .map(|dir| dir.join(".gitignore"))
-            .filter(|p| p.is_file())
+            .filter(|p| p.is_file() && !ignore_search_excluded(base, p))
             .collect()
     } else if let Some(pattern) = options.string("gitignore") {
-        enumerate(base, pattern)?
+        discover_ignore_files(base, pattern)?
     } else {
         return Ok(false);
     };
-    let mut builder = GitignoreBuilder::new(root);
+    let mut ignores = vec![];
     for file in files {
-        if file.file_name().is_some_and(|name| name == ".env") {
-            return Err(ConfigError::invalid(
-                "gitignore",
-                "refusing to read .env as an ignore file",
-            )
-            .at(&file));
-        }
-        if fs::metadata(&file).is_ok_and(|m| m.is_file())
-            && let Some(error) = builder.add(&file)
-        {
-            return Err(ConfigError::invalid("gitignore", error.to_string()).at(&file));
-        }
+        ignores.push((file.parent().unwrap().to_path_buf(), ignore_file(&file)?));
     }
-    let ignores = builder
-        .build()
-        .map_err(|e| ConfigError::invalid("gitignore", e.to_string()))?;
     if !path.starts_with(root) {
         return Ok(false);
     }
-    Ok(ignores.matched(path, false).is_ignore()
+    let matched = |candidate: &Path, directory| {
+        ignores
+            .iter()
+            .rev()
+            .find_map(|(scope, matcher)| {
+                if !candidate.starts_with(scope) {
+                    return None;
+                }
+                let result = matcher.matched(candidate, directory);
+                (!result.is_none()).then(|| result.is_ignore())
+            })
+            .unwrap_or(false)
+    };
+    Ok(matched(path, false)
         || path
             .parent()
             .unwrap()
             .ancestors()
             .take_while(|dir| *dir != root)
-            .any(|directory| ignores.matched(directory, true).is_ignore()))
+            .any(|directory| matched(directory, true)))
 }
 
 pub fn select_inputs(
@@ -268,7 +469,6 @@ pub fn select_inputs(
             if !seen_patterns.insert(pattern.clone()) {
                 continue;
             }
-            // Validate before interpreting a leading ! so unsupported negative extglobs cannot become ordinary exclusions.
             matcher(&pattern)?;
             if let Some(pattern) = pattern.strip_prefix('!') {
                 for (_, exclusions) in &mut positive {

@@ -1,4 +1,5 @@
 /target/
+/vendor/regress/target/
 /opencode.jsonc
 .env
 .env.*

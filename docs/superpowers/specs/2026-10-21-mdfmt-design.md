@@ -84,6 +84,12 @@ reflow. Code and table handling must not silently disable configured checking.
 
 ## Release scope
 
+Implementation status (2026-10-22): milestones 1–3 are implemented for the
+first-release contract. [Configuration completion evidence](../../compatibility/configuration-completion.md)
+records native/upstream comparisons, intentional policy differences and remote
+platform validation not executed locally. Milestone 4's MD013 prose reflow is next;
+no production rule fixes or diagnostics are implemented yet.
+
 The first useful release includes local declarative configuration,
 filesystem-based `extends`, and configuration-aware prose reflow. It is not the
 end of the roadmap; built-in rule coverage, code formatter integration, and

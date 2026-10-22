@@ -11,8 +11,8 @@ The Rust library and CLI foundation exist: source-aware parsing, validated
 localized edits, UTF-16 coordinate accounting, and safe file replacement.
 
 Declarative configuration loading, discovery/inheritance, inline rule permissions,
-and a tested subset of native file selection are implemented. Configuration
-compatibility is still incomplete; see the [coverage and limits](docs/compatibility/configuration-evidence.md).
+and native file selection are implemented; see the
+[compatibility evidence and limits](docs/compatibility/configuration-completion.md).
 No production rule fixes or rule diagnostics exist yet. The CLI preserves input
 unchanged; a successful check does not mean the document is markdownlint-clean.
 
@@ -36,9 +36,10 @@ Directories expand recursively; `.` alone selects Markdown files in the current
 directory. Configuration globs append unless `--no-globs` is set. Mixed stdin/file
 input is not supported. Stdout mode requires exactly one selected input.
 Tested glob support includes numeric/alphabetic brace ranges, POSIX character
-classes, UTF-16 wildcard matching, and exact-one `@(a|b)` extglobs, including
-nested alternatives. Repetition and negative extglobs remain unsupported; see
-the configuration coverage document for interaction limits.
+classes, UTF-16 matching and all five extglob operators with nesting. Enumeration
+and configuration filters preserve their distinct upstream semantics, including
+brace expansion, negation and directory pruning. See the compatibility evidence
+for safety limits and intentional policy differences.
 
 Automatic discovery supports the declarative `.markdownlint-cli2.*` and
 `.markdownlint.*` names in the configuration contract. TOML requires `--config`.

@@ -1063,5 +1063,451 @@
       "work/@a.md"
     ],
     "probes": []
+  },
+  {
+    "id": "positive-extglob-optional",
+    "files": [
+      "work/.md",
+      "work/a.md",
+      "work/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-repeat-exclusion",
+    "files": [
+      "work/a.md",
+      "work/ab.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-override",
+    "files": [
+      "work/a.md",
+      "work/ab.md",
+      "work/c.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/ab.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/c.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "positive-extglob-nested-ignore",
+    "files": [
+      "work/a.md",
+      "work/child/c.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-unicode",
+    "files": [
+      "work/é.md",
+      "work/é🦀.md",
+      "work/🦀.md",
+      "work/🦀🦀.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-config-globs",
+    "files": [
+      "work/.md",
+      "work/a.md",
+      "work/ab.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-prefix-overlap",
+    "files": [
+      "work/+(a|aa).md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-nested-repeat",
+    "files": [
+      "work/a.md",
+      "work/aa.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-leading-star-context",
+    "files": [
+      "work/a.md",
+      "work/aa.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-trailing-globstar",
+    "files": [
+      "work/a.md",
+      "work/a/x.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-star-initial-assertion",
+    "files": [
+      "work/a.md",
+      "work/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-brace-initial-assertion",
+    "files": [
+      "work/x.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-hidden-range-override",
+    "files": [
+      "work/a...md",
+      "work/a.md",
+      "work/b.md",
+      "work/c.md",
+      "work/x.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/a...md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "positive-extglob-brace-question-suffix",
+    "files": [
+      "work/a.md",
+      "work/aa.md",
+      "work/xb.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-brace-plus-suffix",
+    "files": [],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-surrounding-parentheses",
+    "files": [
+      "work/aab.md",
+      "work/ab.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "positive-extglob-surrounding-pipe",
+    "files": [
+      "work/a",
+      "work/aa",
+      "work/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-nested-anchored-scope",
+    "files": [
+      "work/child/deep/ignored.md",
+      "work/kept.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-custom-static-scope",
+    "files": [
+      "work/kept.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-custom-globstar-discovery",
+    "files": [
+      "work/kept.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-custom-directory-is-not-file",
+    "files": [
+      "work/kept.md",
+      "work/rules/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-true-excluded-discovery-directories",
+    "files": [
+      "work/.git/a.md",
+      "work/coverage/a.md",
+      "work/flow-typed/a.md",
+      "work/kept.md",
+      "work/node_modules/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-custom-excluded-discovery-directories",
+    "files": [
+      "work/.git/a.md",
+      "work/coverage/a.md",
+      "work/flow-typed/a.md",
+      "work/kept.md",
+      "work/node_modules/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-case-insensitive-negation",
+    "files": [
+      "work/kept.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-custom-case-insensitive-negation",
+    "files": [
+      "work/kept.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-parent-child-negation-order",
+    "files": [
+      "work/child/kept.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-custom-parent-child-negation-order",
+    "files": [
+      "work/child/kept.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-child-cannot-rescue-ignored-parent",
+    "files": [
+      "work/kept.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "gitignore-literal-braces",
+    "files": [
+      "work/a.md",
+      "work/b.md",
+      "work/c.md",
+      "work/d.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "negative-extglob-leading-cli-exclusion",
+    "files": [],
+    "probes": []
+  },
+  {
+    "id": "negative-extglob-dot-prefix",
+    "files": [
+      "work/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "negative-extglob-override-reinclusion",
+    "files": [
+      "work/a.md",
+      "work/b.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/b.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "negative-extglob-suffix-path",
+    "files": [
+      "work/a.md",
+      "work/child/foo.md",
+      "work/foo.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "ordinary-parentheses-static-input",
+    "files": [],
+    "probes": []
+  },
+  {
+    "id": "nested-repetition-backtracking-override",
+    "files": [
+      "work/aaaa.md"
+    ],
+    "probes": [
+      {
+        "file": "work/aaaa.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "ordinary-repetition-backtracking-override",
+    "files": [
+      "work/aaaa.md"
+    ],
+    "probes": [
+      {
+        "file": "work/aaaa.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "escaped-surrogate-override",
+    "files": [
+      "work/🦀.md"
+    ],
+    "probes": [
+      {
+        "file": "work/🦀.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "embedded-quote-selection",
+    "files": [
+      "work/a\"b\".md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "embedded-quote-override",
+    "files": [
+      "work/a\"b\".md",
+      "work/ab.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a\"b\".md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/ab.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "custom-ignore-group-traversal",
+    "files": [
+      "work/a/b/x.md",
+      "work/b/x.md",
+      "work/x.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "custom-ignore-repeat-traversal",
+    "files": [
+      "work/a/b/x.md",
+      "work/b/x.md",
+      "work/x.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "custom-ignore-optional-traversal",
+    "files": [
+      "work/a/b/x.md",
+      "work/b/x.md",
+      "work/x.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "custom-ignore-static-path-control",
+    "files": [
+      "work/b/x.md",
+      "work/x.md"
+    ],
+    "probes": []
   }
 ]

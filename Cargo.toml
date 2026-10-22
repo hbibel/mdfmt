@@ -18,6 +18,6 @@ serde_json = { version = "1", features = ["preserve_order"] }
 serde_yaml = "0.9"
 toml = { version = "0.9", features = ["preserve_order"] }
 jsonc-parser = { version = "0.26", features = ["serde"] }
-globset = "0.4"
 walkdir = "2"
 ignore = "0.4"
+regress = { path = "vendor/regress", default-features = false, features = ["std", "prohibit-unsafe", "utf16"] }
