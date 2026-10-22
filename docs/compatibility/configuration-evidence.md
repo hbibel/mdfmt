@@ -22,6 +22,14 @@ findings, MD013 reflow, or MD026 edits ship with it. The broader
 - File/directory inputs, `*`, `**`, `?`, character classes, comma braces, dotfiles,
   `!`/`#` exclusions, `:` and `--` literal paths, dot-only selection, configuration
   globs, `--no-globs`, nested ignores, and gitignore files.
+- Numeric/alphabetic brace ranges, including descending, padded and stepped
+  enumeration; all fourteen upstream ASCII POSIX classes; repeated negation;
+  and UTF-16 wildcard accounting for BMP and non-BMP names. Enumeration and
+  override filters retain their distinct pinned range/class/negation semantics.
+- Exact-one `@(a|b)` extglobs, including nested/empty alternatives, comma braces,
+  ordinary character classes, Unicode and escaped literals. These work in file
+  globs, exclusions, configuration globs, nested ignores and override filters,
+  subject to the interaction limits below.
 - Explicit errors for selected JavaScript configs, non-empty executable module
   settings, deferred custom regexes and installed-package resolution. Empty module
   arrays are inert. Errors name the configuration path and property.
@@ -44,9 +52,10 @@ functions extracted from the pinned library source, with the library's real
 registry, helpers and configuration parsers. This is narrower than comparing all
 built-in rule diagnostics.
 
-Thirty shared scenarios in `tests/fixtures/configuration/cases.json` produce
-recorded `observations.json`. Rust tests reconstruct the same trees and compare
-selected paths and probed rule enablement, severity and parameters. Coverage
+Sixty-seven shared scenarios in `tests/fixtures/configuration/cases.json` produce
+recorded `observations.json`. Rust tests reconstruct the same trees: 62 compare
+selected paths and probed rule enablement, severity and parameters, while five
+require explicit native errors for observed unsupported interactions. Coverage
 includes discovery precedence, shallow cli2 inheritance, standalone replacement,
 suppressed parent standalone config, explicit TOML/Pointer precedence, extends/
 first override, outside-tree input, braces/negation/dotfiles, nested ignores,
@@ -59,6 +68,14 @@ Further regressions pin nonrecursive `*`, extension-matching directories,
 deduplicated configuration globs, ignored-parent whitelist rules, TOML inline
 configuration, parent-relative comma braces, literal bracket alternatives, generic
 filename classification and rule-schema metadata.
+An additional 83 pattern cases in `glob-cases.json` record enumeration matching
+and micromatch filtering over a shared set of paths, including all POSIX classes,
+range-filter quirks, Unicode classes, and literal-marker collision regressions.
+Supported contexts are compared natively; named unsupported contexts must return
+`unsupported-glob` instead of approximating their recorded upstream results.
+The first 30 configuration observations remain unchanged.
+Review regressions also pin literal class operators, enclosing braces around
+nested ranges, and complemented exclusions below the invocation directory.
 
 From the repository root, install only the development oracle dependencies:
 
@@ -66,6 +83,7 @@ From the repository root, install only the development oracle dependencies:
 npm ci --ignore-scripts --prefix tools/parser-oracle
 node tools/parser-oracle/configuration.mjs
 node tools/parser-oracle/rule-options.mjs
+node tools/parser-oracle/globs.mjs
 mise exec -- cargo test --test config_oracle
 ```
 
@@ -86,10 +104,25 @@ or applying `npm audit fix --force` would invalidate the compatibility baseline.
 
 Milestone 3 is not complete. In particular:
 
-- Extglobs, numeric brace ranges, repeated leading negation and POSIX character
-  classes return `unsupported-glob`. Other exotic escaping, Unicode wildcard
-  behavior and case-insensitive filesystems need broader
-  differential coverage before claiming globby/micromatch parity.
+- Repetition/optional `+(...)`, `*(...)`, `?(...)` and negative `!(...)` extglobs
+  return `unsupported-glob`. Exact-one extglobs reject globstars inside the group,
+  combined POSIX classes, plain parentheses inside groups, overlapping braces,
+  alternatives inside braces, leading unescaped question marks, and post-group
+  `?`/`+` quantifiers. Enumeration also rejects path separators inside
+  groups: upstream's directory pruning differs from whole-path regex matching.
+  Filters reject brace ranges combined with extglobs because upstream backtracking
+  can rewrite other alternatives. Extglob nesting is limited to 64 groups.
+  Literal text suffixes immediately after filter ranges also return
+  `unsupported-glob`. Unknown POSIX classes and ambiguous double-hyphen POSIX
+  classes are rejected explicitly. More complex
+  escaping, nested range/filter interactions, JavaScript regex backtracking quirks,
+  and case-insensitive filesystems need broader differential coverage before
+  claiming globby/micromatch parity. Current runtime evidence is Linux-only.
+- Patterns exceeding the upstream 65,536 UTF-16-unit limit are rejected. Numeric
+  endpoints must fit JavaScript's safe-integer range, individual expanded ranges
+  are limited to 1,000 values, and aggregate native range expansion has an
+  additional conservative allocation budget. Exceeding a limit is an error, not
+  an empty or partial selection.
 - Native enumeration is deterministic and terminates symlink cycles. It is not
   the upstream parallel enumeration algorithm. Missing named file inputs retain
   the foundation's operational-error behavior instead of silently selecting no file.
@@ -119,3 +152,19 @@ passed. The locked development suite verified 22 parser observations, 30
 configuration/selection scenarios and 53 rule option schemas. Independent review
 findings gained regressions and fixes; its final targeted follow-up reported no
 remaining blockers in those fixes, without claiming exhaustive compatibility.
+
+The Task 4 continuation passes 60 Rust tests, rustfmt, Clippy with warnings denied,
+and `git diff --check`. The pinned development suite reproduces 22 parser
+observations, 50 configuration/selection scenarios, 53 option schemas, and 41
+enumeration/filter pattern comparisons. Independent review found three selection
+differences; each gained a failing upstream-backed regression before its fix.
+This is a verified partial milestone, not complete glob or formatter coverage.
+
+The exact-one extglob continuation passes 65 Rust tests, rustfmt, Clippy with
+warnings denied, and the pinned development suite (22 parser observations, 67
+configuration scenarios, 53 schemas, 83 direct pattern observations). Runtime
+comparisons exposed POSIX backtracking, globstar and cross-segment traversal
+differences; these interactions are explicitly rejected, not claimed compatible.
+Independent review found four additional selection differences. Regressions failed
+before fixing grouped bangs and manufactured globstars, and before diagnosing
+post-group quantifiers and leading question marks. All four regressions now pass.

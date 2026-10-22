@@ -111,3 +111,39 @@ The user delegated all decisions and waived questions/checkpoints. Use native ex
 - Final verification: 54 Rust tests, rustfmt, Clippy with warnings denied, 22
   parser observations, 30 configuration observations, 53 pinned option schemas,
   and diff whitespace checks pass. Npm audit advisories remain as documented.
+
+### Task 4 continuation
+
+- Removed the clean, already-integrated `configuration-compatibility` worktree
+  and branch after user authorization. Continued in the sibling worktree
+  `/home/hannes/projects/mdfmt/configuration-globs`, on `feat/configuration-globs`.
+- Added bounded native brace-range expansion, ASCII POSIX classes, repeated
+  negation, and UTF-16 wildcard matching, preserving enumeration/filter differences.
+- Expanded runtime evidence to 50 configuration scenarios and 41 direct pattern
+  comparisons without changing the original 30 observations.
+- Extglobs, some range-filter/backtracking forms, and broader platform parity
+  remain unresolved. Task 4's final checkbox and milestone 3 remain open.
+- The continuation is left uncommitted pending user direction.
+- Independent review found three silent selection differences. Pinned upstream
+  regressions reproduced each before fixing literal class operators, enclosing
+  nested braces, and ancestor pruning for complemented exclusions.
+
+### Task 4 exact-one extglob continuation
+
+- Continued in the existing dirty `configuration-globs` worktree, preserving the
+  earlier continuation. Baseline: 60 passing Rust tests.
+- Implemented exact-one `@(...)` alternatives, including nesting, empty branches,
+  ordinary classes, comma braces, Unicode and escaped literals. Repetition and
+  negative extglobs remain for subsequent batches; milestone 3 stays open.
+- Extended the pinned oracle to 67 filesystem scenarios and 83 direct patterns.
+  Five filesystem scenarios and named direct contexts record upstream behavior
+  while requiring a native unsupported diagnostic instead of silent divergence.
+- Upstream comparisons exposed incompatible POSIX backtracking, globstars inside
+  groups, cross-segment enumeration and range/filter interactions. Diagnose those
+  combinations explicitly; do not claim full extglob parity.
+- Verification before review: 61 Rust tests, rustfmt, Clippy with warnings denied,
+  and the complete pinned Node suite pass. Leave changes uncommitted.
+- Independent review found four Important selection issues. Regressions failed
+  before preserving grouped negation and wildcard boundaries and diagnosing
+  post-group quantifiers and leading question marks. All 65 Rust tests and the
+  expanded pinned suite pass after the fix pass. Milestone 3 remains incomplete.

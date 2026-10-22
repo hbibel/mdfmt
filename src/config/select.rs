@@ -130,14 +130,16 @@ fn enumerate(base: &Path, pattern: &str) -> Result<Vec<PathBuf>, ConfigError> {
 
 fn excluded(base: &Path, path: &Path, patterns: &[String]) -> Result<bool, ConfigError> {
     for pattern in patterns {
+        let pattern = pattern.strip_prefix('!').unwrap_or(pattern);
         let expanded = expanded_directory_pattern(base, pattern);
         let pattern = expanded.as_str();
         let compiled = matcher(pattern.trim_end_matches('/'))?;
-        let prunes_directory = pattern.ends_with("/**")
-            || Path::new(pattern)
-                .file_name()
-                .and_then(|s| s.to_str())
-                .is_some_and(|s| magic_index(s).is_none());
+        let prunes_directory = !compiled.negated
+            && (pattern.ends_with("/**")
+                || Path::new(pattern)
+                    .file_name()
+                    .and_then(|s| s.to_str())
+                    .is_some_and(|s| magic_index(s).is_none()));
         for target in path
             .ancestors()
             .skip(usize::from(pattern.ends_with('/')))

@@ -546,5 +546,522 @@
         "options": {}
       }
     ]
+  },
+  {
+    "id": "numeric-brace-range",
+    "files": [
+      "work/file10.md",
+      "work/file11.md",
+      "work/file12.md",
+      "work/file8.md",
+      "work/file9.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "padded-brace-range-exclusion",
+    "files": [
+      "work/file01.md",
+      "work/file04.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "descending-stepped-brace-range",
+    "files": [
+      "work/file1.md",
+      "work/file3.md",
+      "work/file5.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "alphabetic-nested-brace-range",
+    "files": [
+      "work/a.md",
+      "work/b.md",
+      "work/c.md",
+      "work/note.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "brace-range-directory-expansion",
+    "files": [],
+    "probes": []
+  },
+  {
+    "id": "numeric-range-filter",
+    "files": [
+      "work/file1.md",
+      "work/file2.md",
+      "work/file4.md",
+      "work/file{1..3}.md"
+    ],
+    "probes": [
+      {
+        "file": "work/file1.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/file2.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/file4.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/file{1..3}.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "stepped-range-filter",
+    "files": [
+      "work/file1.md",
+      "work/file2.md",
+      "work/file3.md",
+      "work/file4.md"
+    ],
+    "probes": [
+      {
+        "file": "work/file1.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/file2.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/file3.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/file4.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "padded-range-filter",
+    "files": [
+      "work/file01.md",
+      "work/file01xx03.md",
+      "work/file02.md",
+      "work/file{01..03}.md"
+    ],
+    "probes": [
+      {
+        "file": "work/file01.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/file02.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/file01xx03.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/file{01..03}.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "posix-class-selection-filter",
+    "files": [
+      "work/1.md",
+      "work/9.md"
+    ],
+    "probes": [
+      {
+        "file": "work/1.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "posix-negated-class-filter",
+    "files": [
+      "work/!.md",
+      "work/a.md",
+      "work/é.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/!.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/é.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "repeated-negation-selection",
+    "files": [
+      "work/!a.md",
+      "work/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "repeated-negation-only",
+    "files": [],
+    "probes": []
+  },
+  {
+    "id": "repeated-negation-filter",
+    "files": [
+      "work/!a.md",
+      "work/a.md",
+      "work/b.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/b.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/!a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "unicode-single-wildcard",
+    "files": [
+      "work/a.md",
+      "work/é.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "unicode-double-wildcard",
+    "files": [
+      "work/ab.md",
+      "work/🦀.md"
+    ],
+    "probes": [
+      {
+        "file": "work/🦀.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/ab.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "case-sensitive-patterns",
+    "files": [
+      "work/UPPER.md",
+      "work/a.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "posix-literal-set-operators",
+    "files": [
+      "work/glo&.md",
+      "work/gloa.md",
+      "work/glob.md"
+    ],
+    "probes": [
+      {
+        "file": "work/glob.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/glo&.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "nested-range-literal-enclosure",
+    "files": [],
+    "probes": []
+  },
+  {
+    "id": "nested-range-literal-filenames",
+    "files": [
+      "work/glo{a}.md",
+      "work/glo{b}.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "complemented-exclusion-does-not-prune-parents",
+    "files": [
+      "work/src/config/glob.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "exact-one-extglob-selection",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "exact-one-extglob-override",
+    "files": [
+      "work/@(a|b).md",
+      "work/a.md",
+      "work/b.md",
+      "work/c.md"
+    ],
+    "probes": [
+      {
+        "file": "work/a.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/c.md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": true,
+        "severity": "error",
+        "options": {}
+      },
+      {
+        "file": "work/@(a|b).md",
+        "rule": "MD013",
+        "line": 1,
+        "enabled": false,
+        "severity": "error",
+        "options": {}
+      }
+    ]
+  },
+  {
+    "id": "exact-one-extglob-nested-ignore",
+    "files": [
+      "work/a.md",
+      "work/child/c.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "exact-one-extglob-path-alternatives",
+    "files": [],
+    "probes": []
+  },
+  {
+    "id": "exact-one-extglob-config-globs",
+    "files": [
+      "work/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "exact-one-extglob-empty-alternative",
+    "files": [
+      "work/.md",
+      "work/a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "exact-one-extglob-brace-classes",
+    "files": [
+      "work/1.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "exact-one-extglob-brace-ordinary-classes",
+    "files": [
+      "work/1.md",
+      "work/a.md",
+      "work/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "exact-one-extglob-directory-names",
+    "files": [],
+    "probes": []
+  },
+  {
+    "id": "extglob-grouped-bang-not-negation",
+    "files": [
+      "work/!a.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "extglob-empty-group-before-bang",
+    "files": [
+      "work/!.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "extglob-star-after-group",
+    "files": [
+      "work/a/x.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "extglob-star-before-group",
+    "files": [
+      "work/a/x.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "extglob-adjacent-star-groups",
+    "files": [
+      "work/a/x.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "extglob-post-group-question-mark",
+    "files": [
+      "work/a.md",
+      "work/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "extglob-post-group-plus",
+    "files": [
+      "work/a.md",
+      "work/aa.md",
+      "work/ab.md",
+      "work/b.md"
+    ],
+    "probes": []
+  },
+  {
+    "id": "extglob-leading-question-mark",
+    "files": [
+      "work/@a.md"
+    ],
+    "probes": []
   }
 ]

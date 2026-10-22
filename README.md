@@ -35,6 +35,10 @@ Use `:` or `--` for literal filenames, including names containing glob character
 Directories expand recursively; `.` alone selects Markdown files in the current
 directory. Configuration globs append unless `--no-globs` is set. Mixed stdin/file
 input is not supported. Stdout mode requires exactly one selected input.
+Tested glob support includes numeric/alphabetic brace ranges, POSIX character
+classes, UTF-16 wildcard matching, and exact-one `@(a|b)` extglobs, including
+nested alternatives. Repetition and negative extglobs remain unsupported; see
+the configuration coverage document for interaction limits.
 
 Automatic discovery supports the declarative `.markdownlint-cli2.*` and
 `.markdownlint.*` names in the configuration contract. TOML requires `--config`.

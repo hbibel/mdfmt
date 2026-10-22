@@ -1,0 +1,1581 @@
+[
+  {
+    "pattern": "[[:alnum:]].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[[:alpha:]].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "F.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "F.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[[:ascii:]].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[[:blank:]].md",
+    "enumeration": [
+      " .md"
+    ],
+    "filtering": [
+      " .md"
+    ]
+  },
+  {
+    "pattern": "[[:cntrl:]].md",
+    "enumeration": [],
+    "filtering": []
+  },
+  {
+    "pattern": "[[:digit:]].md",
+    "enumeration": [
+      "1.md"
+    ],
+    "filtering": [
+      "1.md",
+      "[[:digit:]].md"
+    ]
+  },
+  {
+    "pattern": "[[:graph:]].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[[:lower:]].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[[:print:]].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[[:punct:]].md",
+    "enumeration": [
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md"
+    ],
+    "filtering": [
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md"
+    ]
+  },
+  {
+    "pattern": "[[:space:]].md",
+    "enumeration": [
+      " .md"
+    ],
+    "filtering": [
+      " .md"
+    ]
+  },
+  {
+    "pattern": "[[:upper:]].md",
+    "enumeration": [
+      "F.md"
+    ],
+    "filtering": [
+      "F.md"
+    ]
+  },
+  {
+    "pattern": "[[:word:]].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "_.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "_.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[[:xdigit:]].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "c.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "c.md"
+    ]
+  },
+  {
+    "pattern": "[[:alnum:]_].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "_.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "_.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[![:digit:]].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "1.md",
+      "!.md"
+    ]
+  },
+  {
+    "pattern": "[^[:digit:]].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[ab].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "[ab].md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "[ab].md"
+    ]
+  },
+  {
+    "pattern": "[a-z].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "[a-z].md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[!a].md",
+    "enumeration": [
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "!.md"
+    ]
+  },
+  {
+    "pattern": "[^a].md",
+    "enumeration": [
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[é].md",
+    "enumeration": [
+      "é.md"
+    ],
+    "filtering": [
+      "é.md"
+    ]
+  },
+  {
+    "pattern": "[é-ê].md",
+    "enumeration": [
+      "é.md",
+      "ê.md"
+    ],
+    "filtering": [
+      "é.md",
+      "ê.md"
+    ]
+  },
+  {
+    "pattern": "[🦀][🦀].md",
+    "enumeration": [
+      "🦀.md"
+    ],
+    "filtering": [
+      "🦀.md"
+    ]
+  },
+  {
+    "pattern": "[[:alpha:]🦀][[:alpha:]🦀].md",
+    "enumeration": [
+      "🦀.md",
+      "ab.md",
+      "aa.md"
+    ],
+    "filtering": [
+      "🦀.md",
+      "ab.md",
+      "aa.md"
+    ]
+  },
+  {
+    "pattern": "?.md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "??.md",
+    "enumeration": [
+      "🦀.md",
+      "ab.md",
+      "aa.md",
+      "@a.md",
+      "@b.md",
+      "!a.md",
+      "a+.md"
+    ],
+    "filtering": [
+      "🦀.md",
+      "ab.md",
+      "aa.md",
+      "@a.md",
+      "@b.md",
+      "!a.md",
+      "a+.md"
+    ]
+  },
+  {
+    "pattern": "file{1..3}.md",
+    "enumeration": [
+      "file1.md",
+      "file2.md",
+      "file3.md"
+    ],
+    "filtering": [
+      "file1.md",
+      "file2.md",
+      "file3.md",
+      "file{1..3}.md"
+    ]
+  },
+  {
+    "pattern": "file{1..12}.md",
+    "enumeration": [
+      "file1.md",
+      "file2.md",
+      "file3.md",
+      "file4.md"
+    ],
+    "filtering": [
+      "file1.md",
+      "file2.md"
+    ]
+  },
+  {
+    "pattern": "file{01..03}.md",
+    "enumeration": [
+      "file01.md",
+      "file02.md"
+    ],
+    "filtering": [
+      "file01xx03.md"
+    ]
+  },
+  {
+    "pattern": "file{1..4..2}.md",
+    "enumeration": [
+      "file1.md",
+      "file3.md"
+    ],
+    "filtering": [
+      "file1.md",
+      "file2.md",
+      "file4.md"
+    ]
+  },
+  {
+    "pattern": "file{-2..2}.md",
+    "enumeration": [
+      "file1.md",
+      "file2.md",
+      "file-1.md"
+    ],
+    "filtering": [
+      "file2.md"
+    ]
+  },
+  {
+    "pattern": "file{a..bc}.md",
+    "enumeration": [
+      "filea.md"
+    ],
+    "filtering": [
+      "file{a..bc}.md",
+      "filea.md"
+    ]
+  },
+  {
+    "pattern": "{b..a}.md",
+    "enumeration": [
+      "a.md",
+      "b.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md"
+    ]
+  },
+  {
+    "pattern": "!!a.md",
+    "enumeration": [
+      "a.md"
+    ],
+    "filtering": [
+      "a.md"
+    ]
+  },
+  {
+    "pattern": "!!!a.md",
+    "enumeration": [
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      "🦀.md",
+      "ab.md",
+      "[ab].md",
+      "[a-z].md",
+      "[[:digit:]].md",
+      "file1.md",
+      "file2.md",
+      "file3.md",
+      "file4.md",
+      "file01.md",
+      "file02.md",
+      "file01xx03.md",
+      "file-1.md",
+      "file{1..3}.md",
+      "file{a..bc}.md",
+      "a/b.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      ".md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "mdfmtGlobFragment0End1.md",
+      "\\xc3.md",
+      "c.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "@(a|b).md",
+      "@a.md",
+      "@b.md",
+      "(a|b).md",
+      "a/x.md",
+      "b/x.md",
+      "c/x.md",
+      "a/b/x.md",
+      "x.md",
+      "filea.md",
+      "!a.md",
+      "a+.md"
+    ],
+    "filtering": [
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      "🦀.md",
+      "ab.md",
+      "[ab].md",
+      "[a-z].md",
+      "[[:digit:]].md",
+      "file1.md",
+      "file2.md",
+      "file3.md",
+      "file4.md",
+      "file01.md",
+      "file02.md",
+      "file01xx03.md",
+      "file-1.md",
+      "file{1..3}.md",
+      "file{a..bc}.md",
+      "a/b.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      ".md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "mdfmtGlobFragment0End1.md",
+      "\\xc3.md",
+      "c.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "@(a|b).md",
+      "@a.md",
+      "@b.md",
+      "(a|b).md",
+      "a/x.md",
+      "b/x.md",
+      "c/x.md",
+      "a/b/x.md",
+      "x.md",
+      "filea.md",
+      "!a.md",
+      "a+.md"
+    ]
+  },
+  {
+    "pattern": "\\[ab\\].md",
+    "enumeration": [
+      "[ab].md"
+    ],
+    "filtering": [
+      "[ab].md"
+    ]
+  },
+  {
+    "pattern": "mdfmtGlobFragment0End{0..1}.md",
+    "enumeration": [
+      "mdfmtGlobFragment0End1.md"
+    ],
+    "filtering": [
+      "mdfmtGlobFragment0End1.md"
+    ]
+  },
+  {
+    "pattern": "[{1..3}].md",
+    "enumeration": [
+      "1.md",
+      "{.md",
+      "}.md"
+    ],
+    "filtering": [
+      "1.md",
+      "{.md",
+      "}.md"
+    ]
+  },
+  {
+    "pattern": "[[:alpha:]&&a].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "F.md",
+      "&.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "F.md",
+      "&.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "[[:alpha:]~~a].md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "F.md",
+      "~.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "F.md",
+      "~.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "@(a|b).md",
+    "enumeration": [
+      "a.md",
+      "b.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "@(a|b).md"
+    ]
+  },
+  {
+    "pattern": "@(a|@(b|c)).md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "c.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "c.md"
+    ]
+  },
+  {
+    "pattern": "@(a).md",
+    "enumeration": [
+      "a.md"
+    ],
+    "filtering": [
+      "a.md"
+    ]
+  },
+  {
+    "pattern": "@().md",
+    "enumeration": [
+      ".md"
+    ],
+    "filtering": [
+      ".md"
+    ]
+  },
+  {
+    "pattern": "@(a|).md",
+    "enumeration": [
+      "a.md",
+      ".md"
+    ],
+    "filtering": [
+      "a.md",
+      ".md"
+    ]
+  },
+  {
+    "pattern": "@(a*|b?).md",
+    "enumeration": [
+      "a.md",
+      "ab.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "a+.md"
+    ],
+    "filtering": [
+      "a.md",
+      "ab.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "a+.md"
+    ]
+  },
+  {
+    "pattern": "@(a|b)*.md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "ab.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "a+.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "ab.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "a+.md"
+    ]
+  },
+  {
+    "pattern": "@(a/b|c).md",
+    "enumeration": [
+      "a/b.md",
+      "c.md"
+    ],
+    "filtering": [
+      "a/b.md",
+      "c.md"
+    ]
+  },
+  {
+    "pattern": "@(a|b)/x.md",
+    "enumeration": [
+      "a/x.md",
+      "b/x.md"
+    ],
+    "filtering": [
+      "a/x.md",
+      "b/x.md"
+    ]
+  },
+  {
+    "pattern": "@({a,b}|c).md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "c.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "c.md"
+    ]
+  },
+  {
+    "pattern": "{a,@(b|c)}.md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "c.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "c.md"
+    ]
+  },
+  {
+    "pattern": "@(a,b|c).md",
+    "enumeration": [
+      "c.md",
+      "a,b.md"
+    ],
+    "filtering": [
+      "c.md",
+      "a,b.md"
+    ]
+  },
+  {
+    "pattern": "@(a\\|b|c).md",
+    "enumeration": [
+      "c.md",
+      "a|b.md"
+    ],
+    "filtering": [
+      "c.md",
+      "a|b.md"
+    ]
+  },
+  {
+    "pattern": "@(é|🦀).md",
+    "enumeration": [
+      "é.md",
+      "🦀.md"
+    ],
+    "filtering": [
+      "é.md",
+      "🦀.md"
+    ]
+  },
+  {
+    "pattern": "@([ab]|[[:digit:]]).md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "[ab].md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "[ab].md"
+    ]
+  },
+  {
+    "pattern": "@({1..3}|a).md",
+    "enumeration": [
+      "a.md",
+      "1.md"
+    ],
+    "filtering": []
+  },
+  {
+    "pattern": "!@(a|b).md",
+    "enumeration": [
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      "🦀.md",
+      "ab.md",
+      "[ab].md",
+      "[a-z].md",
+      "[[:digit:]].md",
+      "file1.md",
+      "file2.md",
+      "file3.md",
+      "file4.md",
+      "file01.md",
+      "file02.md",
+      "file01xx03.md",
+      "file-1.md",
+      "file{1..3}.md",
+      "file{a..bc}.md",
+      "a/b.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      ".md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "mdfmtGlobFragment0End1.md",
+      "\\xc3.md",
+      "c.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "@(a|b).md",
+      "@a.md",
+      "@b.md",
+      "(a|b).md",
+      "a/x.md",
+      "b/x.md",
+      "c/x.md",
+      "a/b/x.md",
+      "x.md",
+      "filea.md",
+      "!a.md",
+      "a+.md"
+    ],
+    "filtering": [
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      "🦀.md",
+      "ab.md",
+      "[ab].md",
+      "[a-z].md",
+      "[[:digit:]].md",
+      "file1.md",
+      "file2.md",
+      "file3.md",
+      "file4.md",
+      "file01.md",
+      "file02.md",
+      "file01xx03.md",
+      "file-1.md",
+      "file{1..3}.md",
+      "file{a..bc}.md",
+      "a/b.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      ".md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "mdfmtGlobFragment0End1.md",
+      "\\xc3.md",
+      "c.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "@(a|b).md",
+      "@a.md",
+      "@b.md",
+      "(a|b).md",
+      "a/x.md",
+      "b/x.md",
+      "c/x.md",
+      "a/b/x.md",
+      "x.md",
+      "filea.md",
+      "!a.md",
+      "a+.md"
+    ]
+  },
+  {
+    "pattern": "!!@(a|b).md",
+    "enumeration": [
+      "a.md",
+      "b.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md"
+    ]
+  },
+  {
+    "pattern": "@(a|b)@(a|b).md",
+    "enumeration": [
+      "ab.md",
+      "aa.md"
+    ],
+    "filtering": [
+      "ab.md",
+      "aa.md"
+    ]
+  },
+  {
+    "pattern": "@(a|b|).md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      ".md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      ".md"
+    ]
+  },
+  {
+    "pattern": "\\@\\(a\\|b\\).md",
+    "enumeration": [
+      "@(a|b).md"
+    ],
+    "filtering": [
+      "@(a|b).md"
+    ]
+  },
+  {
+    "pattern": "@(\\*|a).md",
+    "enumeration": [
+      "a.md"
+    ],
+    "filtering": [
+      "a.md"
+    ]
+  },
+  {
+    "pattern": "@(a|b){1..3}.md",
+    "enumeration": [],
+    "filtering": [
+      "1.md"
+    ]
+  },
+  {
+    "pattern": "@(**|a).md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      "🦀.md",
+      "ab.md",
+      "[ab].md",
+      "[a-z].md",
+      "[[:digit:]].md",
+      "file1.md",
+      "file2.md",
+      "file3.md",
+      "file4.md",
+      "file01.md",
+      "file02.md",
+      "file01xx03.md",
+      "file-1.md",
+      "file{1..3}.md",
+      "file{a..bc}.md",
+      "line\n.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      ".md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "mdfmtGlobFragment0End1.md",
+      "\\xc3.md",
+      "c.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "@(a|b).md",
+      "@a.md",
+      "@b.md",
+      "(a|b).md",
+      "x.md",
+      "filea.md",
+      "!a.md",
+      "a+.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      "🦀.md",
+      "ab.md",
+      "[ab].md",
+      "[a-z].md",
+      "[[:digit:]].md",
+      "file1.md",
+      "file2.md",
+      "file3.md",
+      "file4.md",
+      "file01.md",
+      "file02.md",
+      "file01xx03.md",
+      "file-1.md",
+      "file{1..3}.md",
+      "file{a..bc}.md",
+      "line\n.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      ".md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "mdfmtGlobFragment0End1.md",
+      "\\xc3.md",
+      "c.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "@(a|b).md",
+      "@a.md",
+      "@b.md",
+      "(a|b).md",
+      "x.md",
+      "filea.md",
+      "!a.md",
+      "a+.md"
+    ]
+  },
+  {
+    "pattern": "@(**)/x.md",
+    "enumeration": [
+      "a/x.md",
+      "b/x.md",
+      "c/x.md",
+      "a/b/x.md"
+    ],
+    "filtering": [
+      "a/x.md",
+      "b/x.md",
+      "c/x.md",
+      "a/b/x.md"
+    ]
+  },
+  {
+    "pattern": "@(**/*.md|a.md)",
+    "enumeration": [
+      "a.md",
+      "a/b.md",
+      "a/x.md",
+      "b/x.md",
+      "c/x.md",
+      "a/b/x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "a/b.md",
+      "a/x.md",
+      "b/x.md",
+      "c/x.md",
+      "a/b/x.md"
+    ]
+  },
+  {
+    "pattern": "**/@(a|b).md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "a/b.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "a/b.md"
+    ]
+  },
+  {
+    "pattern": "@(a|[[:digit:]]).md",
+    "enumeration": [
+      "1.md",
+      ".md"
+    ],
+    "filtering": [
+      "1.md",
+      ".md"
+    ]
+  },
+  {
+    "pattern": "@({a,b}|[0-9]).md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md"
+    ]
+  },
+  {
+    "pattern": "@(a|[ab]).md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "[ab].md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "[ab].md"
+    ]
+  },
+  {
+    "pattern": "@(a|*).md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      "🦀.md",
+      "ab.md",
+      "[ab].md",
+      "[a-z].md",
+      "[[:digit:]].md",
+      "file1.md",
+      "file2.md",
+      "file3.md",
+      "file4.md",
+      "file01.md",
+      "file02.md",
+      "file01xx03.md",
+      "file-1.md",
+      "file{1..3}.md",
+      "file{a..bc}.md",
+      "line\n.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      ".md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "mdfmtGlobFragment0End1.md",
+      "\\xc3.md",
+      "c.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "@(a|b).md",
+      "@a.md",
+      "@b.md",
+      "(a|b).md",
+      "x.md",
+      "filea.md",
+      "!a.md",
+      "a+.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      "🦀.md",
+      "ab.md",
+      "[ab].md",
+      "[a-z].md",
+      "[[:digit:]].md",
+      "file1.md",
+      "file2.md",
+      "file3.md",
+      "file4.md",
+      "file01.md",
+      "file02.md",
+      "file01xx03.md",
+      "file-1.md",
+      "file{1..3}.md",
+      "file{a..bc}.md",
+      "line\n.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      ".md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "mdfmtGlobFragment0End1.md",
+      "\\xc3.md",
+      "c.md",
+      "aa.md",
+      "a,b.md",
+      "a|b.md",
+      "@(a|b).md",
+      "@a.md",
+      "@b.md",
+      "(a|b).md",
+      "x.md",
+      "filea.md",
+      "!a.md",
+      "a+.md"
+    ]
+  },
+  {
+    "pattern": "@(a|?).md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "1.md",
+      "F.md",
+      "é.md",
+      "ê.md",
+      " .md",
+      "_.md",
+      "!.md",
+      "-.md",
+      "&.md",
+      "~.md",
+      "{.md",
+      "}.md",
+      "c.md",
+      "x.md"
+    ]
+  },
+  {
+    "pattern": "{a,@(b|)}.md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      ".md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      ".md"
+    ]
+  },
+  {
+    "pattern": "{@(a|b)}.md",
+    "enumeration": [],
+    "filtering": []
+  },
+  {
+    "pattern": "@(!a).md",
+    "enumeration": [
+      "!a.md"
+    ],
+    "filtering": [
+      "!a.md"
+    ]
+  },
+  {
+    "pattern": "@()!.md",
+    "enumeration": [
+      "!.md"
+    ],
+    "filtering": [
+      "!.md"
+    ]
+  },
+  {
+    "pattern": "@(*)*/x.md",
+    "enumeration": [
+      "a/x.md",
+      "b/x.md",
+      "c/x.md"
+    ],
+    "filtering": [
+      "a/x.md",
+      "b/x.md",
+      "c/x.md"
+    ]
+  },
+  {
+    "pattern": "*@(*)/x.md",
+    "enumeration": [
+      "a/x.md",
+      "b/x.md",
+      "c/x.md"
+    ],
+    "filtering": [
+      "a/x.md",
+      "b/x.md",
+      "c/x.md"
+    ]
+  },
+  {
+    "pattern": "@(*)@(*)/x.md",
+    "enumeration": [
+      "a/x.md",
+      "b/x.md",
+      "c/x.md"
+    ],
+    "filtering": [
+      "a/x.md",
+      "b/x.md",
+      "c/x.md"
+    ]
+  },
+  {
+    "pattern": "@(a|b)?.md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      ".md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      ".md"
+    ]
+  },
+  {
+    "pattern": "@(a|b)+.md",
+    "enumeration": [
+      "a.md",
+      "b.md",
+      "ab.md",
+      "aa.md"
+    ],
+    "filtering": [
+      "a.md",
+      "b.md",
+      "ab.md",
+      "aa.md"
+    ]
+  },
+  {
+    "pattern": "@(?|a).md",
+    "enumeration": [
+      "@a.md"
+    ],
+    "filtering": [
+      "@a.md"
+    ]
+  }
+]

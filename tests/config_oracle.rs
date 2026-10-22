@@ -42,7 +42,12 @@ fn configuration_matches_recorded_pinned_upstream_observations() {
             .iter()
             .map(|v| v.as_str().unwrap().into())
             .collect::<Vec<_>>();
-        let selection = select_inputs(&resolver, &patterns, false).unwrap();
+        let selection = select_inputs(&resolver, &patterns, false);
+        if let Some(code) = case["nativeError"].as_str() {
+            assert_eq!(selection.unwrap_err().code, code, "{}", case["id"]);
+            continue;
+        }
+        let selection = selection.unwrap();
         let mut files: Vec<_> = selection
             .files
             .iter()

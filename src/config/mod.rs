@@ -1,4 +1,6 @@
+mod brace;
 mod directives;
+mod extglob;
 mod glob;
 mod load;
 mod resolve;

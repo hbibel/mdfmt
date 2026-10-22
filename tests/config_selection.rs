@@ -101,13 +101,24 @@ fn gitignore_true_includes_ancestors_but_glob_string_does_not() {
 fn unsupported_globs_are_diagnosed_not_silently_approximated() {
     let dir = tempfile::tempdir().unwrap();
     let resolver = ConfigResolver::new(dir.path(), None, None).unwrap();
-    for pattern in ["@(a|b).md", "!(a).md", "file{1..3}.md"] {
+    for pattern in ["+(a|b).md", "?(a|b).md", "*(a|b).md", "!(a).md"] {
         assert_eq!(
             select_inputs(&resolver, &[pattern.into()], false)
                 .unwrap_err()
                 .code,
             "unsupported-glob"
         );
+    }
+}
+
+#[test]
+fn oversized_brace_ranges_are_rejected_before_enumeration() {
+    let dir = tempfile::tempdir().unwrap();
+    let resolver = ConfigResolver::new(dir.path(), None, None).unwrap();
+    for pattern in ["file{1..1002}.md", "file{-99999999999999999999..2}.md"] {
+        let error = select_inputs(&resolver, &[pattern.into()], false).unwrap_err();
+        assert_eq!(error.code, "invalid-config");
+        assert_eq!(error.property, pattern);
     }
 }
 
