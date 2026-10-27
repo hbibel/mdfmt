@@ -182,6 +182,46 @@ pub struct AppliedEdit {
 
 pub(crate) type Edit = AppliedEdit;
 
+pub(crate) fn compose_after_deletions(deletions: &[Edit], next: &[Edit]) -> Vec<Edit> {
+    let mut removed = 0;
+    let boundaries: Vec<_> = deletions
+        .iter()
+        .map(|edit| {
+            debug_assert!(edit.replacement.is_empty());
+            let output_start = edit.span.start - removed;
+            removed += edit.span.len();
+            (output_start, removed)
+        })
+        .collect();
+    let original_offset = |offset| {
+        let index = boundaries.partition_point(|&(start, _)| start <= offset);
+        offset + index.checked_sub(1).map_or(0, |index| boundaries[index].1)
+    };
+    let mut edits = deletions.to_vec();
+    edits.extend(next.iter().map(|edit| Edit {
+        span: original_offset(edit.span.start)..original_offset(edit.span.end),
+        replacement: edit.replacement.clone(),
+        origin: edit.origin.clone(),
+    }));
+    edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
+    let mut combined: Vec<Edit> = vec![];
+    for edit in edits {
+        if let Some(last) = combined.last_mut()
+            && last.span.end > edit.span.start
+        {
+            debug_assert!(last.replacement.is_empty() || edit.replacement.is_empty());
+            last.span.end = last.span.end.max(edit.span.end);
+            if !edit.replacement.is_empty() {
+                last.replacement = edit.replacement;
+                last.origin = edit.origin;
+            }
+        } else {
+            combined.push(edit);
+        }
+    }
+    combined
+}
+
 pub(crate) struct EditableRegions {
     protected: Vec<Range<usize>>,
     eligible: Vec<Range<usize>>,

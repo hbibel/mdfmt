@@ -18,6 +18,7 @@ const samples = [
   "Hello!", "```md\n# Hello!\n```", "    # Hello!", "| # Hello! |\n| --- |\n| data |",
   "---\ntitle: Hello!\n---\n\n# Hello!\n", "<!-- markdownlint-disable-next-line MD026 -->\n# Hello!",
   "<!-- markdownlint-disable-file headings -->\n# Hello!", "# Hello!\n\n# World!\n",
+  "#foo!\n---\n", "#foo\n---\n", "#foo\n===\n", "# Hi! ###!", "# Hi! # !",
 ];
 const configurations = [true, false, { punctuation: "" }, { punctuation: "?" }, { punctuation: ".,;:" },
   { severity: "warning" }, { punctuation: "!*]\\-" }, { punctuation: "o" }];

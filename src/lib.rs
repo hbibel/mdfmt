@@ -54,17 +54,20 @@ pub fn format_with_config(
     options: &FormatOptions,
     config: &config::ResolvedConfig,
 ) -> Result<FormatResult, ProcessingError> {
-    let mut result = process(
-        source,
-        options,
-        config,
-        |source, parsed, document| {
-            let mut edits = reflow::propose(source, parsed, document);
-            edits.extend(md026::propose(source, parsed, document));
-            edits
-        },
-        |_| vec![],
-    )?;
+    let mut current = source.to_owned();
+    let mut heading_edits = vec![];
+    loop {
+        let pass = process(&current, options, config, md026::propose, |_| vec![])?;
+        if pass.edits.is_empty() {
+            break;
+        }
+        heading_edits = edit::compose_after_deletions(&heading_edits, &pass.edits);
+        current = pass.output;
+    }
+    // Heading suffix deletions can expose closing markers or turn setext text
+    // into prose. Reparse that stable result before selecting prose gaps.
+    let mut result = process(&current, options, config, reflow::propose, |_| vec![])?;
+    result.edits = edit::compose_after_deletions(&heading_edits, &result.edits);
     let output = Source::new(result.output.clone());
     let parsed = parse::parse(&output).map_err(ProcessingError::Parse)?;
     let document = config

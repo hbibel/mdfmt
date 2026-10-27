@@ -21,7 +21,7 @@ static EMOJI: LazyLock<Regex> = LazyLock::new(|| {
 
 fn heading_text(source: &Source, span: Range<usize>) -> Option<Range<usize>> {
     let raw = source.text()[span.clone()].trim_start_matches([' ', '\t']);
-    if raw.starts_with('#') {
+    if raw.starts_with('#') && !raw.contains(['\r', '\n']) {
         let markers = raw.bytes().take_while(|&byte| byte == b'#').count();
         let text = raw[markers..].trim_start_matches([' ', '\t']);
         let start = span.end - text.len();

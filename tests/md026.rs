@@ -249,3 +249,61 @@ fn heading_fixes_and_multiline_reflow_share_a_safe_batch() {
         result.output
     );
 }
+
+#[test]
+fn hash_prefixed_setext_text_never_exposes_the_underline_to_suffix_edits() {
+    fixed("#foo!\n---\n", "#foo\n---\n", json!(true));
+    fixed("#foo\n---\n", "#foo\n---\n", json!({"punctuation":"-"}));
+    fixed("#foo\n===\n", "#foo\n===\n", json!({"punctuation":"="}));
+    let result = format_with_config(
+        "#foo!\n---\n",
+        &FormatOptions { fix: false },
+        &config(json!(true)),
+    )
+    .unwrap();
+    assert_eq!(result.diagnostics.len(), 1);
+    assert_eq!(result.diagnostics[0].span, Some(4..5));
+}
+
+#[test]
+fn exposed_closing_markers_settle_in_one_invocation() {
+    fixed("# Hi! ###!", "# Hi ###", json!(true));
+    fixed("# Hi! # !", "# Hi #", json!(true));
+}
+
+#[test]
+fn heading_deletions_expose_prose_to_reflow_in_the_same_invocation() {
+    let config = ResolvedConfig {
+        rules: RuleConfig::from_value(
+            json!({"default":false,"MD026":true,"MD013":{"line_length":10}}),
+        )
+        .unwrap(),
+        ..Default::default()
+    };
+    for (input, expected) in [
+        ("alpha beta gamma\n!\n---\n", "alpha beta\ngamma\n\n---\n"),
+        (
+            "> alpha beta gamma\n> !\n> ---\n",
+            "> alpha\n> beta\n> gamma\n> \n> ---\n",
+        ),
+        (
+            "<!-- markdownlint-disable-next-line MD013 -->\nalpha beta gamma\n!\n---\n",
+            "<!-- markdownlint-disable-next-line MD013 -->\nalpha beta gamma\n\n---\n",
+        ),
+    ] {
+        let first = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+        assert_eq!(first.output, expected, "{input:?}");
+        let second = format_with_config(&first.output, &FormatOptions::default(), &config).unwrap();
+        assert_eq!(second.output, first.output);
+        assert!(second.edits.is_empty());
+        let mut applied = String::new();
+        let mut cursor = 0;
+        for edit in &first.edits {
+            applied.push_str(&input[cursor..edit.span.start]);
+            applied.push_str(&edit.replacement);
+            cursor = edit.span.end;
+        }
+        applied.push_str(&input[cursor..]);
+        assert_eq!(applied, first.output);
+    }
+}
