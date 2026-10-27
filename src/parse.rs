@@ -95,6 +95,7 @@ pub(crate) enum RegionKind {
     FrontMatter,
     Protected,
     Heading,
+    ThematicBreak,
     Break,
 }
 
@@ -160,6 +161,25 @@ pub(crate) fn equivalent(
     candidate: &Source,
     reparsed: &ParsedDocument,
 ) -> bool {
+    equivalent_with_style_changes(source, parsed, candidate, reparsed, false)
+}
+
+pub(crate) fn equivalent_with_thematic_styles(
+    source: &Source,
+    parsed: &ParsedDocument,
+    candidate: &Source,
+    reparsed: &ParsedDocument,
+) -> bool {
+    equivalent_with_style_changes(source, parsed, candidate, reparsed, true)
+}
+
+fn equivalent_with_style_changes(
+    source: &Source,
+    parsed: &ParsedDocument,
+    candidate: &Source,
+    reparsed: &ParsedDocument,
+    thematic_styles: bool,
+) -> bool {
     fn normalize(node: &mut Node) {
         node.position_set(None);
         if let Node::Text(text) = node {
@@ -183,7 +203,9 @@ pub(crate) fn equivalent(
         parsed
             .regions
             .iter()
-            .filter(|r| r.kind.is_protected())
+            .filter(|r| {
+                r.kind.is_protected() && !(thematic_styles && r.kind == RegionKind::ThematicBreak)
+            })
             .map(|r| (r.kind, source.text()[r.span.clone()].to_owned()))
             .collect::<Vec<_>>()
     };
@@ -252,6 +274,7 @@ pub(crate) fn parse(source: &Source) -> Result<ParsedDocument, String> {
             Node::List(_) => RegionKind::List,
             Node::ListItem(_) => RegionKind::ListItem,
             Node::Heading(_) => RegionKind::Heading,
+            Node::ThematicBreak(_) => RegionKind::ThematicBreak,
             Node::Break(_) => RegionKind::Break,
             Node::Link(_) | Node::LinkReference(_) => RegionKind::Link,
             Node::Image(_) | Node::ImageReference(_) => RegionKind::Image,

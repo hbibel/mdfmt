@@ -5,6 +5,7 @@ mod heading_spaces;
 mod md012;
 mod md013;
 mod md026;
+mod md035;
 mod md047;
 mod parse;
 mod reflow;
@@ -89,6 +90,23 @@ pub fn format_with_config(
     // into prose. Reparse that stable result before selecting prose gaps.
     let mut result = process(&current, options, config, reflow::propose, |_| vec![])?;
     result.edits = edit::compose_after_deletions(&deletion_edits, &result.edits);
+    let before_style = Source::new(result.output.clone());
+    let before_style_parsed = parse::parse(&before_style).map_err(ProcessingError::Parse)?;
+    let before_style_document = config
+        .document(before_style.text())
+        .map_err(ProcessingError::Configuration)?;
+    let style_edits = if options.fix && config.fix {
+        md035::propose(&before_style, &before_style_parsed, &before_style_document)
+    } else {
+        vec![]
+    };
+    result.output = edit::apply_authorized_edits(
+        &before_style,
+        &before_style_parsed,
+        style_edits.clone(),
+        &style_edits,
+    )?;
+    result.edits = edit::append_disjoint_edits(&result.edits, &style_edits)?;
     let before_eof = Source::new(result.output.clone());
     let before_eof_parsed = parse::parse(&before_eof).map_err(ProcessingError::Parse)?;
     let before_eof_document = config
@@ -132,12 +150,16 @@ pub fn format_with_config(
     result
         .diagnostics
         .extend(md047::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
+        .extend(md035::diagnose(&output, &parsed, &document));
     result.coverage.implemented_rules = vec![
         "MD012".into(),
         "MD013".into(),
         "MD019".into(),
         "MD021".into(),
         "MD026".into(),
+        "MD035".into(),
         "MD047".into(),
     ];
     Ok(result)

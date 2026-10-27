@@ -48,6 +48,7 @@ fn safe_final_newlines_use_the_local_terminator_and_are_idempotent() {
         ("one\rtwo", "one\rtwo\r"),
         ("\u{feff}hello", "\u{feff}hello\n"),
         ("# Title", "# Title\n"),
+        ("***", "***\n"),
         ("[link](url)", "[link](url)\n"),
         ("`code`", "`code`\n"),
         ("hello ", "hello \n"),

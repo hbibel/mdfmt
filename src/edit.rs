@@ -182,6 +182,58 @@ pub struct AppliedEdit {
 
 pub(crate) type Edit = AppliedEdit;
 
+pub(crate) fn append_disjoint_edits(
+    prior: &[Edit],
+    next: &[Edit],
+) -> Result<Vec<Edit>, ProcessingError> {
+    let mut input_cursor = 0;
+    let mut output_cursor = 0;
+    let mut boundaries = vec![];
+    for edit in prior {
+        let output_start = output_cursor + edit.span.start - input_cursor;
+        output_cursor = output_start + edit.replacement.len();
+        input_cursor = edit.span.end;
+        boundaries.push((output_start, output_cursor, edit.span.start, input_cursor));
+    }
+    // A deletion's output boundary has two source positions: ranges end before
+    // the deleted bytes and start after them.
+    let original_offset = |offset, is_end: bool| {
+        let index = boundaries
+            .partition_point(|&(_, end, _, _)| end < offset || (!is_end && end == offset));
+        if let Some(&(start, end, original_start, original_end)) = boundaries.get(index) {
+            if start < offset && offset < end {
+                return Err(ProcessingError::EditConflict);
+            }
+            if offset == start {
+                return Ok(original_start);
+            }
+            if offset == end {
+                return Ok(original_end);
+            }
+        }
+        Ok(index.checked_sub(1).map_or(offset, |index| {
+            let (_, end, _, original_end) = boundaries[index];
+            original_end + offset - end
+        }))
+    };
+    let mut edits = prior.to_vec();
+    for edit in next {
+        edits.push(Edit {
+            span: original_offset(edit.span.start, false)?..original_offset(edit.span.end, true)?,
+            replacement: edit.replacement.clone(),
+            origin: edit.origin.clone(),
+        });
+    }
+    edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
+    if edits
+        .windows(2)
+        .any(|pair| pair[0].span.end > pair[1].span.start)
+    {
+        return Err(ProcessingError::EditConflict);
+    }
+    Ok(edits)
+}
+
 pub(crate) fn compose_after_deletions(deletions: &[Edit], next: &[Edit]) -> Vec<Edit> {
     let mut removed = 0;
     let boundaries: Vec<_> = deletions

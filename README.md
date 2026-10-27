@@ -25,6 +25,8 @@ MD012 reduces excess blank lines where reparsing confirms preservation;
 see [MD012 evidence](docs/compatibility/md012.md).
 MD019/MD021 normalize ATX heading separators without changing heading text;
 see [heading-spacing evidence](docs/compatibility/heading-spaces.md).
+MD035 normalizes thematic-break styles when contextual reparsing confirms safety;
+see [MD035 evidence](docs/compatibility/md035.md).
 Other rules are not implemented yet; a successful check does not mean the document is
 markdownlint-clean. See [MD013 evidence and limits](docs/compatibility/md013.md).
 

@@ -152,6 +152,43 @@ fn heading_separator_rules_work_in_all_modes_and_with_disabled_fixes() {
 }
 
 #[test]
+fn thematic_break_repairs_and_unfixable_styles_have_distinct_cli_outcomes() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"config":{"default":false,"MD035":{"style":"___"}}}"#,
+    )
+    .unwrap();
+    fs::write(root.join("doc.md"), "***\n").unwrap();
+    let output = run(root, &["-"], "***\n");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"___\n");
+    assert_eq!(run(root, &["--check", "doc.md"], "").status.code(), Some(1));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"***\n");
+    assert_eq!(run(root, &["--write", "doc.md"], "").status.code(), Some(0));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"___\n");
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r##"{"config":{"default":false,"MD035":{"style":"# heading"}}}"##,
+    )
+    .unwrap();
+    let output = run(root, &["-"], "***\n");
+    assert_eq!(output.status.code(), Some(1));
+    assert_eq!(output.stdout, b"***\n");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("MD035"));
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"fix":false,"config":{"default":false,"MD035":{"style":"___","severity":"warning"}}}"#,
+    )
+    .unwrap();
+    let output = run(root, &["-"], "***\n");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"***\n");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("Warning MD035"));
+}
+
+#[test]
 fn disabled_heading_fixes_still_report_errors_or_warnings_in_every_mode() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();
