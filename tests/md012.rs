@@ -161,3 +161,39 @@ fn all_implemented_rules_produce_stable_output_and_original_edit_coordinates() {
     assert_eq!(second.output, first.output);
     assert!(second.edits.is_empty());
 }
+
+#[test]
+fn reflow_does_not_reclassify_preserved_unicode_blank_lines() {
+    let input = "alpha\n\u{a0}\n\n\nbeta\n";
+    let first = mdfmt::format(input, &FormatOptions::default()).unwrap();
+    assert_eq!(first.output, input);
+    assert!(
+        first
+            .diagnostics
+            .iter()
+            .any(|finding| finding.code == "MD012")
+    );
+    let second = mdfmt::format(&first.output, &FormatOptions::default()).unwrap();
+    assert_eq!(second.output, first.output);
+    assert!(second.edits.is_empty());
+
+    let config = ResolvedConfig { rules: RuleConfig::from_value(json!({"default":false,"MD012":true,"MD013":{"line_length":10},"MD026":true,"MD047":true})).unwrap(), ..Default::default() };
+    let input = "# Title!\n\nalpha\n\u{a0}\n\n\nbeta gamma delta\n";
+    let first = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+    assert_eq!(
+        first.output,
+        "# Title\n\nalpha\n\u{a0}\n\n\nbeta gamma\ndelta\n"
+    );
+    let mut applied = String::new();
+    let mut cursor = 0;
+    for edit in &first.edits {
+        applied.push_str(&input[cursor..edit.span.start]);
+        applied.push_str(&edit.replacement);
+        cursor = edit.span.end;
+    }
+    applied.push_str(&input[cursor..]);
+    assert_eq!(applied, first.output);
+    let second = format_with_config(&first.output, &FormatOptions::default(), &config).unwrap();
+    assert_eq!(second.output, first.output);
+    assert!(second.edits.is_empty());
+}

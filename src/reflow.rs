@@ -30,6 +30,19 @@ pub(crate) fn propose(
             continue;
         }
         let position = source.position(paragraph.span.start).unwrap();
+        let last_line = source.position(paragraph.span.end).unwrap().line;
+        // Some Unicode-whitespace lines are paragraph content to GFM but blank
+        // to MD012. Joining them can make a rejected blank-line batch fixable.
+        if (position.line..=last_line).any(|line| {
+            document
+                .state("MD012", line)
+                .is_some_and(|state| state.enabled)
+                && source.text()[source.line_range(line).unwrap()]
+                    .chars()
+                    .all(crate::config::js_space)
+        }) {
+            continue;
+        }
         let Some(state) = document.state("MD013", position.line) else {
             continue;
         };
