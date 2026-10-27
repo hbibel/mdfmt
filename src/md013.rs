@@ -108,7 +108,7 @@ fn not_wrappable(text: &str) -> bool {
         .all(|ch| matches!(ch, '#' | '>') || js_space(ch))
 }
 
-fn covered_lines(source: &Source, span: Range<usize>) -> Range<usize> {
+pub(crate) fn covered_lines(source: &Source, span: Range<usize>) -> Range<usize> {
     let start = source.position(span.start).unwrap().line - 1;
     let last = source.text()[span.clone()]
         .char_indices()

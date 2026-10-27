@@ -141,6 +141,19 @@ pub(crate) struct ParsedDocument {
     pub tree: Node,
 }
 
+pub(crate) fn has_unmodeled_syntax(source: &Source, parsed: &ParsedDocument) -> bool {
+    parsed.regions.iter().any(|region| {
+        let literal = &source.text()[region.span.clone()];
+        (region.kind == RegionKind::Paragraph
+            && (literal.contains('$')
+                || literal
+                    .as_bytes()
+                    .windows(2)
+                    .any(|pair| pair[0] == b':' && pair[1].is_ascii_alphabetic())))
+            || (region.kind == RegionKind::Html && !literal.starts_with("<!--"))
+    })
+}
+
 pub(crate) fn equivalent(
     source: &Source,
     parsed: &ParsedDocument,

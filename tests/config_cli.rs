@@ -81,6 +81,37 @@ fn final_newline_fixes_and_unresolved_literal_eof_findings_reach_the_cli() {
 }
 
 #[test]
+fn blank_line_rules_reach_stdout_check_write_and_warning_diagnostics() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"config":{"default":false,"MD012":true}}"#,
+    )
+    .unwrap();
+    fs::write(root.join("doc.md"), "alpha\n\n\n# beta\n").unwrap();
+    let output = run(root, &["-"], "alpha\n\n\n# beta\n");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"alpha\n\n# beta\n");
+    assert_eq!(run(root, &["--check", "doc.md"], "").status.code(), Some(1));
+    assert_eq!(
+        fs::read(root.join("doc.md")).unwrap(),
+        b"alpha\n\n\n# beta\n"
+    );
+    assert_eq!(run(root, &["--write", "doc.md"], "").status.code(), Some(0));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"alpha\n\n# beta\n");
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"fix":false,"config":{"default":false,"MD012":{"severity":"warning"}}}"#,
+    )
+    .unwrap();
+    let output = run(root, &["-"], "alpha\n\n\n# beta\n");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"alpha\n\n\n# beta\n");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("3:1: Warning MD012"));
+}
+
+#[test]
 fn disabled_heading_fixes_still_report_errors_or_warnings_in_every_mode() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();

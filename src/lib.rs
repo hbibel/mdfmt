@@ -1,6 +1,7 @@
 pub mod config;
 mod diagnostic;
 mod edit;
+mod md012;
 mod md013;
 mod md026;
 mod md047;
@@ -56,19 +57,27 @@ pub fn format_with_config(
     config: &config::ResolvedConfig,
 ) -> Result<FormatResult, ProcessingError> {
     let mut current = source.to_owned();
-    let mut heading_edits = vec![];
+    let mut deletion_edits = vec![];
     loop {
         let pass = process(&current, options, config, md026::propose, |_| vec![])?;
         if pass.edits.is_empty() {
             break;
         }
-        heading_edits = edit::compose_after_deletions(&heading_edits, &pass.edits);
+        deletion_edits = edit::compose_after_deletions(&deletion_edits, &pass.edits);
+        current = pass.output;
+    }
+    loop {
+        let pass = process(&current, options, config, md012::propose, |_| vec![])?;
+        if pass.edits.is_empty() {
+            break;
+        }
+        deletion_edits = edit::compose_after_deletions(&deletion_edits, &pass.edits);
         current = pass.output;
     }
     // Heading suffix deletions can expose closing markers or turn setext text
     // into prose. Reparse that stable result before selecting prose gaps.
     let mut result = process(&current, options, config, reflow::propose, |_| vec![])?;
-    result.edits = edit::compose_after_deletions(&heading_edits, &result.edits);
+    result.edits = edit::compose_after_deletions(&deletion_edits, &result.edits);
     let before_eof = Source::new(result.output.clone());
     let before_eof_parsed = parse::parse(&before_eof).map_err(ProcessingError::Parse)?;
     let before_eof_document = config
@@ -102,11 +111,19 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(md012::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(md026::diagnose(&output, &parsed, &document));
     result
         .diagnostics
         .extend(md047::diagnose(&output, &parsed, &document));
-    result.coverage.implemented_rules = vec!["MD013".into(), "MD026".into(), "MD047".into()];
+    result.coverage.implemented_rules = vec![
+        "MD012".into(),
+        "MD013".into(),
+        "MD026".into(),
+        "MD047".into(),
+    ];
     Ok(result)
 }
 
@@ -133,7 +150,8 @@ fn process(
         vec![]
     };
     edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
-    let authorized = md026::propose(&source, &parsed, &document);
+    let mut authorized = md026::propose(&source, &parsed, &document);
+    authorized.extend(md012::propose(&source, &parsed, &document));
     let output = edit::apply_authorized_edits(&source, &parsed, edits.clone(), &authorized)?;
     let diagnostics = diagnose(&output);
     Ok(FormatResult {

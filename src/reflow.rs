@@ -4,7 +4,7 @@ use crate::{
     Source,
     config::DocumentConfig,
     edit::{Edit, apply_edits},
-    parse::{ParsedDocument, RegionKind, equivalent, parse},
+    parse::{ParsedDocument, equivalent, parse},
     utf16_len,
 };
 pub(crate) use layout::Layout;
@@ -17,16 +17,7 @@ pub(crate) fn propose(
     let text = source.text();
     // GFM reparsing cannot validate upstream math/directives or HTML rendering.
     // Preserve these documents until their complete source boundaries are modeled.
-    if parsed.regions.iter().any(|region| {
-        let literal = &text[region.span.clone()];
-        (region.kind == RegionKind::Paragraph
-            && (literal.contains('$')
-                || literal
-                    .as_bytes()
-                    .windows(2)
-                    .any(|pair| pair[0] == b':' && pair[1].is_ascii_alphabetic())))
-            || (region.kind == RegionKind::Html && !literal.starts_with("<!--"))
-    }) {
+    if crate::parse::has_unmodeled_syntax(source, parsed) {
         return vec![];
     }
     let layout = Layout::new(source, parsed);
