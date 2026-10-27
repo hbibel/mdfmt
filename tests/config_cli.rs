@@ -24,6 +24,68 @@ fn run(root: &Path, args: &[&str], text: &str) -> Output {
 }
 
 #[test]
+fn heading_punctuation_is_fixed_in_stdout_check_and_write_modes() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint.json"),
+        r#"{"default":false,"MD026":true}"#,
+    )
+    .unwrap();
+    fs::write(root.join("doc.md"), "# Hello!\r\n").unwrap();
+    let output = run(root, &["-"], "# Hello!\r\n");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"# Hello\r\n");
+    assert!(output.stderr.is_empty());
+    let output = run(root, &["--check", "doc.md"], "");
+    assert_eq!(output.status.code(), Some(1));
+    assert!(output.stdout.is_empty());
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"# Hello!\r\n");
+    let output = run(root, &["--write", "doc.md"], "");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"# Hello\r\n");
+    assert_eq!(run(root, &["--check", "doc.md"], "").status.code(), Some(0));
+}
+
+#[test]
+fn disabled_heading_fixes_still_report_errors_or_warnings_in_every_mode() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    for (severity, status) in [("error", 1), ("warning", 0)] {
+        fs::write(root.join(".markdownlint-cli2.jsonc"), format!(r#"{{"fix":false,"config":{{"default":false,"MD026":{{"severity":"{severity}"}}}}}}"#)).unwrap();
+        fs::write(root.join("doc.md"), "# Hello!\n").unwrap();
+        for args in [
+            vec!["-"],
+            vec!["--check", "doc.md"],
+            vec!["--write", "doc.md"],
+        ] {
+            let output = run(root, &args, "# Hello!\n");
+            assert_eq!(output.status.code(), Some(status));
+            assert!(String::from_utf8_lossy(&output.stderr).contains("1:8:"));
+            assert!(String::from_utf8_lossy(&output.stderr).contains("MD026"));
+            assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"# Hello!\n");
+        }
+    }
+}
+
+#[test]
+fn heading_findings_use_positions_after_multiline_reflow() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint.json"),
+        r#"{"default":false,"MD013":{"line_length":10},"MD026":true}"#,
+    )
+    .unwrap();
+    let output = run(root, &["-"], "alpha\nbeta\n\n# 😀 title!\n");
+    assert_eq!(output.stdout, "alpha beta\n\n# 😀 title\n".as_bytes());
+    // MD026 runs before final MD013 diagnostics, so heading punctuation no longer
+    // contributes to the reported width or excess span.
+    assert_eq!(output.status.code(), Some(0), "{:?}", output.stderr);
+    assert!(output.stderr.is_empty());
+}
+
+#[test]
 fn explicit_configuration_flags_and_stdin_are_supported() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();

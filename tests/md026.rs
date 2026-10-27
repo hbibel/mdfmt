@@ -5,6 +5,76 @@ use mdfmt::{
 };
 use serde_json::{Value, json};
 
+#[test]
+fn approved_acceptance_cases_are_idempotent_native_formatting_tests() {
+    let corpus: Value =
+        serde_json::from_str(include_str!("../docs/compatibility/acceptance.json")).unwrap();
+    let mut tested = 0;
+    for case in corpus["cases"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|case| case["id"].as_str().unwrap().starts_with("md026-"))
+    {
+        let config = ResolvedConfig {
+            rules: RuleConfig::from_value(case["config"].clone()).unwrap(),
+            ..Default::default()
+        };
+        let input = case["input"].as_str().unwrap();
+        let first = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+        assert_eq!(
+            first.output,
+            case["expectedOutput"].as_str().unwrap(),
+            "{}",
+            case["id"]
+        );
+        assert!(first.diagnostics.is_empty());
+        let second = format_with_config(&first.output, &FormatOptions::default(), &config).unwrap();
+        assert_eq!(second.output, first.output);
+        assert!(second.edits.is_empty());
+        tested += 1;
+    }
+    assert_eq!(tested, 7);
+}
+
+#[test]
+fn raw_heading_findings_and_fixes_match_recorded_upstream_runtime_evidence() {
+    let rows: Value = serde_json::from_str(include_str!(
+        "../tools/parser-oracle/md026-observations.json"
+    ))
+    .unwrap();
+    for row in rows.as_array().unwrap() {
+        let input = row["input"].as_str().unwrap();
+        let config = config(row["options"].clone());
+        let result = format_with_config(input, &FormatOptions { fix: false }, &config).unwrap();
+        let source = Source::new(input.into());
+        let findings: Vec<Value> = result.diagnostics.iter().map(|finding| {
+            let span = finding.span.clone().unwrap();
+            let position = source.position(span.start).unwrap();
+            let column = position.column_utf16 - usize::from(position.line == 1 && input.starts_with('\u{feff}'));
+            json!({"line":position.line,"column":column,"length":mdfmt::utf16_len(&input[span.clone()]),
+                "detail":format!("Punctuation: '{}'", &input[span]),
+                "severity":if finding.severity == Severity::Warning { "warning" } else { "error" }})
+        }).collect();
+        assert_eq!(
+            findings,
+            *row["findings"].as_array().unwrap(),
+            "{}",
+            row["id"]
+        );
+        let first = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+        assert_eq!(
+            first.output,
+            row["output"].as_str().unwrap(),
+            "{}",
+            row["id"]
+        );
+        let second = format_with_config(&first.output, &FormatOptions::default(), &config).unwrap();
+        assert_eq!(second.output, first.output, "{}", row["id"]);
+        assert!(second.edits.is_empty(), "{}", row["id"]);
+    }
+}
+
 fn config(options: Value) -> ResolvedConfig {
     ResolvedConfig {
         rules: RuleConfig::from_value(json!({"default":false,"MD026":options})).unwrap(),
@@ -36,6 +106,7 @@ fn default_and_configured_punctuation_are_fixed() {
     );
     for (input, expected) in [
         ("# Hello!", "# Hello"),
+        ("  # Hello!", "  # Hello"),
         ("## Hello.,;:!。，；：！", "## Hello"),
         ("Hello!\n---", "Hello\n---"),
         ("# Hello!  ###  ", "# Hello  ###  "),
@@ -83,6 +154,7 @@ fn exceptions_and_nonheadings_are_preserved() {
         fixed(input, input, json!(true));
     }
     fixed("# Hello &x;", "# Hello &x", json!(true));
+    fixed("# Hello &#١;", "# Hello &#١", json!(true));
     fixed("# Hello :invalid9:", "# Hello :invalid9", json!(true));
 }
 
@@ -91,6 +163,7 @@ fn source_boundaries_preserve_containers_bom_and_newlines() {
     for (input, expected) in [
         ("\u{feff}# 😀Hello!\r\n", "\u{feff}# 😀Hello\r\n"),
         ("First\nsecond!\n---\n", "First\nsecond\n---\n"),
+        ("First\n!\n---\n", "First\n\n---\n"),
         (
             "> First\r\n> second!\r\n> ---\r\n",
             "> First\r\n> second\r\n> ---\r\n",

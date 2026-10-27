@@ -11,7 +11,7 @@ const DEFAULT_PUNCTUATION: &str = ".,;:!。，；：！";
 
 static ENTITY: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(
-        r"&(?:#\d+|#[xX][\da-fA-F]+|[a-zA-Z]{2,31}|blk\d{2}|emsp1[34]|frac\d{2}|sup\d|there4);$",
+        r"&(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z]{2,31}|blk[0-9]{2}|emsp1[34]|frac[0-9]{2}|sup[0-9]|there4);$",
     )
     .unwrap()
 });
@@ -20,7 +20,7 @@ static EMOJI: LazyLock<Regex> = LazyLock::new(|| {
 });
 
 fn heading_text(source: &Source, span: Range<usize>) -> Option<Range<usize>> {
-    let raw = &source.text()[span.clone()];
+    let raw = source.text()[span.clone()].trim_start_matches([' ', '\t']);
     if raw.starts_with('#') {
         let markers = raw.bytes().take_while(|&byte| byte == b'#').count();
         let text = raw[markers..].trim_start_matches([' ', '\t']);
