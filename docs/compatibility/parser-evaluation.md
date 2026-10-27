@@ -67,7 +67,7 @@ protected source. A mismatch discards the wrapping batch. This is a conservative
 guard against introducing headings, lists, HTML blocks, or other syntax; it is
 not proof of parser parity. See [current MD013 evidence](md013.md).
 
-`tests/fixtures/reflow.json` contains 27 input/output cases checked by the Rust
+`tests/fixtures/reflow.json` contains 29 input/output cases checked by the Rust
 suite and a development-only pinned upstream oracle. The oracle executes the CLI,
 checks second-pass idempotence, compares selected micromark block/inline structure,
 and asserts upstream MD013 line findings before and after formatting. It covers

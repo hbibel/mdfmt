@@ -129,19 +129,21 @@ fn continuation(source: &Source, parsed: &ParsedDocument, index: usize) -> Strin
     let paragraph = &parsed.regions[index];
     let position = source.position(paragraph.span.start).unwrap();
     let line = source.line_range(position.line).unwrap();
-    let mut prefix = source.text().as_bytes()[line.start..paragraph.span.start].to_vec();
+    let start =
+        line.start + usize::from(position.line == 1 && source.text().starts_with('\u{feff}')) * 3;
+    let mut prefix = source.text().as_bytes()[start..paragraph.span.start].to_vec();
     let mut current = paragraph.parent;
     let mut container = false;
     while let Some(index) = current {
         let region = &parsed.regions[index];
         container |= matches!(region.kind, RegionKind::ListItem | RegionKind::Blockquote);
         if region.kind == RegionKind::ListItem
-            && line.start <= region.span.start
+            && start <= region.span.start
             && region.span.start < paragraph.span.start
         {
-            let start = region.span.start - line.start;
-            let mut end = start;
-            if prefix[start].is_ascii_digit() {
+            let marker = region.span.start - start;
+            let mut end = marker;
+            if prefix[marker].is_ascii_digit() {
                 while end < prefix.len() && prefix[end].is_ascii_digit() {
                     end += 1;
                 }
@@ -149,7 +151,7 @@ fn continuation(source: &Source, parsed: &ParsedDocument, index: usize) -> Strin
             if end < prefix.len() {
                 end += 1;
             }
-            prefix[start..end].fill(b' ');
+            prefix[marker..end].fill(b' ');
         }
         current = region.parent;
     }

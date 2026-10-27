@@ -25,5 +25,7 @@
   {"id":"quote-list","width":15,"input":"> - alpha beta gamma delta\n","output":"> - alpha beta\n>   gamma delta\n","before":[1],"after":[]},
   {"id":"list-quote","width":15,"input":"- > alpha beta gamma delta\n","output":"- > alpha beta\n  > gamma delta\n","before":[1],"after":[]},
   {"id":"task-list","width":16,"input":"- [x] alpha beta gamma delta\n","output":"- [x] alpha beta\n  gamma delta\n","before":[1],"after":[]},
-  {"id":"hard-break","width":15,"input":"> alpha beta gamma  \n> delta epsilon zeta\n","output":"> alpha beta\n> gamma  \n> delta epsilon\n> zeta\n","before":[1,2],"after":[]}
+  {"id":"hard-break","width":15,"input":"> alpha beta gamma  \n> delta epsilon zeta\n","output":"> alpha beta\n> gamma  \n> delta epsilon\n> zeta\n","before":[1,2],"after":[]},
+  {"id":"bom-list","width":10,"input":"﻿- alpha beta gamma delta\n\nalpha beta gamma delta\n","output":"﻿- alpha\n  beta\n  gamma\n  delta\n\nalpha beta\ngamma\ndelta\n","before":[1,3],"after":[]},
+  {"id":"bom-quote","width":10,"input":"﻿> alpha beta gamma delta\n\nalpha beta gamma delta\n","output":"﻿> alpha\n> beta\n> gamma\n> delta\n\nalpha beta\ngamma\ndelta\n","before":[1,3],"after":[]}
 ]

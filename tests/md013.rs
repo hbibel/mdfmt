@@ -92,6 +92,34 @@ fn definitions_and_non_strict_link_only_lines_are_exempt() {
 }
 
 #[test]
+fn only_direct_paragraph_data_defeats_the_link_only_exemption() {
+    for text in [
+        "[link](url)*alpha beta gamma*",
+        "[link](url)**alpha beta gamma**",
+        "![image](url)*alpha beta gamma*",
+    ] {
+        for options in [
+            json!({"line_length":10}),
+            json!({"line_length":10,"stern":true}),
+        ] {
+            assert!(findings(text, options).is_empty(), "{text:?}");
+        }
+        assert_eq!(
+            findings(text, json!({"line_length":10,"strict":true})).len(),
+            1
+        );
+    }
+    assert_eq!(
+        findings(
+            "[link](url) *alpha beta gamma*",
+            json!({"line_length":10,"stern":true})
+        )
+        .len(),
+        1
+    );
+}
+
+#[test]
 fn bom_and_front_matter_are_not_included_in_markdown_widths() {
     let text = "\u{feff}---\ntitle: a very long value\n---\n\nalpha beta gamma\n";
     assert_eq!(

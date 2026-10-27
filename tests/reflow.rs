@@ -209,6 +209,20 @@ fn continuation_prefixes_and_lazy_lines_are_not_prose() {
 }
 
 #[test]
+fn a_bom_is_not_a_container_prefix_or_a_document_reflow_blocker() {
+    check(
+        "\u{feff}- alpha beta gamma delta\n\nalpha beta gamma delta\n",
+        "\u{feff}- alpha\n  beta\n  gamma\n  delta\n\nalpha beta\ngamma\ndelta\n",
+        10,
+    );
+    check(
+        "\u{feff}> alpha beta gamma delta\n\nalpha beta gamma delta\n",
+        "\u{feff}> alpha\n> beta\n> gamma\n> delta\n\nalpha beta\ngamma\ndelta\n",
+        10,
+    );
+}
+
+#[test]
 fn hard_breaks_split_reflow_segments_without_being_changed() {
     check(
         "alpha beta gamma  \ndelta epsilon zeta\n",

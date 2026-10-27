@@ -124,13 +124,7 @@ fn covered_lines(source: &Source, span: Range<usize>) -> Range<usize> {
 
 fn classify(source: &Source, parsed: &ParsedDocument) -> Vec<u8> {
     let mut classes = vec![0; source.line_count()];
-    let mut paragraphs = vec![false; parsed.regions.len()];
-    let mut links = vec![false; parsed.regions.len()];
-    for (index, region) in parsed.regions.iter().enumerate() {
-        paragraphs[index] = region.kind == RegionKind::Paragraph
-            || region.parent.is_some_and(|parent| paragraphs[parent]);
-        links[index] = matches!(region.kind, RegionKind::Link | RegionKind::Image)
-            || region.parent.is_some_and(|parent| links[parent]);
+    for region in &parsed.regions {
         let class = match region.kind {
             RegionKind::Heading => HEADING,
             RegionKind::Code => CODE,
@@ -145,7 +139,11 @@ fn classify(source: &Source, parsed: &ParsedDocument) -> Vec<u8> {
                 classes[line] |= class;
             }
         }
-        if region.kind != RegionKind::Text || !paragraphs[index] || links[index] {
+        if region.kind != RegionKind::Text
+            || !region
+                .parent
+                .is_some_and(|parent| parsed.regions[parent].kind == RegionKind::Paragraph)
+        {
             continue;
         }
         for line in covered_lines(source, region.span.clone()) {

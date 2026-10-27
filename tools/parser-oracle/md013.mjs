@@ -18,6 +18,7 @@ const samples = [
   "&amp;[label](https://example.com/long)", "&unknown;[label](https://example.com/long)", "\\![label](https://example.com/long)",
   "&amp;[long label](https://example.com/long)", "&unknown;[long label](https://example.com/long)", "\\![long label](https://example.com/long)",
   "[label](https://example.com/long)  \n", "[label](url) .", "$$ alpha beta gamma $$", "::note[alpha beta gamma]",
+  "[link](url)*alpha beta gamma*", "[link](url)**alpha beta gamma**", "![image](url)*alpha beta gamma*", "[link](url) *alpha beta gamma*",
   "<!-- markdownlint-disable-next-line MD013 -->\nalpha beta gamma\n\nalpha beta gamma\n",
   "<!-- markdownlint-disable-file MD013 -->\nalpha beta gamma\n",
 ];
