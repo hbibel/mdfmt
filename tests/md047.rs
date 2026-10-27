@@ -184,3 +184,70 @@ fn combined_rules_can_edit_headings_reflow_and_insert_at_eof() {
             .is_empty()
     );
 }
+
+#[test]
+fn eof_newline_convention_survives_soft_line_joins() {
+    let config = ResolvedConfig {
+        rules: RuleConfig::from_value(json!({"default":false,"MD013":true,"MD047":true})).unwrap(),
+        ..Default::default()
+    };
+    for (input, expected) in [
+        ("alpha\r\nbeta", "alpha beta\r\n"),
+        ("alpha\rbeta", "alpha beta\r"),
+        ("first\r\n\r\nalpha\nbeta", "first\r\n\r\nalpha beta\n"),
+    ] {
+        let result = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+        assert_eq!(result.output, expected);
+        let mut applied = String::new();
+        let mut cursor = 0;
+        for edit in &result.edits {
+            applied.push_str(&input[cursor..edit.span.start]);
+            applied.push_str(&edit.replacement);
+            cursor = edit.span.end;
+        }
+        applied.push_str(&input[cursor..]);
+        assert_eq!(applied, result.output);
+        assert!(
+            format_with_config(&result.output, &FormatOptions::default(), &config)
+                .unwrap()
+                .edits
+                .is_empty()
+        );
+    }
+}
+
+#[test]
+fn reflow_does_not_change_line_scoped_final_newline_permissions() {
+    let config = ResolvedConfig {
+        rules: RuleConfig::from_value(
+            json!({"default":false,"MD013":{"line_length":10},"MD047":true}),
+        )
+        .unwrap(),
+        ..Default::default()
+    };
+    let input = "<!-- markdownlint-disable-next-line MD047 -->\nalpha beta gamma";
+    let result = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+    assert_eq!(result.output, input);
+    assert!(
+        format_with_config(&result.output, &FormatOptions::default(), &config)
+            .unwrap()
+            .edits
+            .is_empty()
+    );
+    let config = ResolvedConfig {
+        rules: RuleConfig::from_value(json!({"default":false,"MD013":true,"MD047":true})).unwrap(),
+        ..Default::default()
+    };
+    let input = "<!-- markdownlint-disable-next-line MD047 -->\nalpha\nbeta";
+    let result = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+    assert_eq!(
+        result.output,
+        "<!-- markdownlint-disable-next-line MD047 -->\nalpha\nbeta\n"
+    );
+    assert!(
+        format_with_config(&result.output, &FormatOptions::default(), &config)
+            .unwrap()
+            .edits
+            .is_empty()
+    );
+}

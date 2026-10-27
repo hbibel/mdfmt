@@ -20,6 +20,7 @@ pub struct DocumentConfig {
     rules: BTreeMap<String, RuleState>,
     lines: Vec<BTreeSet<String>>,
     directives: Vec<Range<usize>>,
+    line_overrides: Vec<BTreeSet<String>>,
 }
 
 struct Directive<'a> {
@@ -139,6 +140,7 @@ impl ResolvedConfig {
             }
             lines.push(enabled.clone());
         }
+        let mut line_overrides = vec![BTreeSet::new(); lines.len()];
         for (line, directives) in per_line.iter().enumerate() {
             for directive in directives {
                 let offset = match directive.action.as_str() {
@@ -147,7 +149,9 @@ impl ResolvedConfig {
                     _ => continue,
                 };
                 if let Some(state) = lines.get_mut(line + offset) {
+                    let before = state.clone();
                     toggle(state, directive, &rules);
+                    line_overrides[line + offset].extend(before.difference(state).cloned());
                 }
             }
         }
@@ -155,11 +159,27 @@ impl ResolvedConfig {
             rules,
             lines,
             directives: all_directives.into_iter().map(|d| d.span).collect(),
+            line_overrides,
         })
     }
 }
 
 impl DocumentConfig {
+    pub(crate) fn has_line_override(
+        &self,
+        rule: &str,
+        span: Range<usize>,
+        source: &Source,
+    ) -> bool {
+        let start = source.position(span.start).unwrap().line;
+        let end = source.position(span.end).unwrap().line;
+        (start..=end).any(|line| {
+            self.line_overrides
+                .get(line - 1)
+                .is_some_and(|rules| rules.contains(rule))
+        })
+    }
+
     pub fn state(&self, rule: &str, line: usize) -> Option<RuleState> {
         let targets = matching_rules(rule);
         if targets.len() != 1 {

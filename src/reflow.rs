@@ -32,7 +32,10 @@ pub(crate) fn propose(
     let layout = Layout::new(source, parsed);
     let mut edits = vec![];
     for paragraph in &layout.paragraphs {
-        if !paragraph.eligible || !document.allows_source("MD013", paragraph.span.clone(), source) {
+        if !paragraph.eligible
+            || !document.allows_source("MD013", paragraph.span.clone(), source)
+            || document.has_line_override("MD047", paragraph.span.clone(), source)
+        {
             continue;
         }
         let position = source.position(paragraph.span.start).unwrap();

@@ -89,6 +89,7 @@ pub(crate) fn propose(
     source: &Source,
     parsed: &ParsedDocument,
     document: &DocumentConfig,
+    newline: &str,
 ) -> Vec<Edit> {
     let end = source.text().len();
     if diagnose(source, parsed, document).is_empty()
@@ -110,18 +111,21 @@ pub(crate) fn propose(
     {
         return vec![];
     }
-    let newline = source.text().rfind(['\r', '\n']).map_or("\n", |index| {
-        if source.text().as_bytes()[index] == b'\r' {
-            "\r"
-        } else if index > 0 && source.text().as_bytes()[index - 1] == b'\r' {
-            "\r\n"
-        } else {
-            "\n"
-        }
-    });
     vec![Edit {
         span: end..end,
         replacement: newline.into(),
         origin: "MD047".into(),
     }]
+}
+
+pub(crate) fn preferred_newline(text: &str) -> &'static str {
+    text.rfind(['\r', '\n']).map_or("\n", |index| {
+        if text.as_bytes()[index] == b'\r' {
+            "\r"
+        } else if index > 0 && text.as_bytes()[index - 1] == b'\r' {
+            "\r\n"
+        } else {
+            "\n"
+        }
+    })
 }

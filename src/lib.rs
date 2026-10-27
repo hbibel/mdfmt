@@ -69,12 +69,31 @@ pub fn format_with_config(
     // into prose. Reparse that stable result before selecting prose gaps.
     let mut result = process(&current, options, config, reflow::propose, |_| vec![])?;
     result.edits = edit::compose_after_deletions(&heading_edits, &result.edits);
-    let eof = process(&result.output, options, config, md047::propose, |_| vec![])?;
-    result.edits.extend(eof.edits.into_iter().map(|mut edit| {
+    let before_eof = Source::new(result.output.clone());
+    let before_eof_parsed = parse::parse(&before_eof).map_err(ProcessingError::Parse)?;
+    let before_eof_document = config
+        .document(before_eof.text())
+        .map_err(ProcessingError::Configuration)?;
+    let eof_edits = if options.fix && config.fix {
+        md047::propose(
+            &before_eof,
+            &before_eof_parsed,
+            &before_eof_document,
+            md047::preferred_newline(source),
+        )
+    } else {
+        vec![]
+    };
+    result.output = edit::apply_authorized_edits(
+        &before_eof,
+        &before_eof_parsed,
+        eof_edits.clone(),
+        &eof_edits,
+    )?;
+    result.edits.extend(eof_edits.into_iter().map(|mut edit| {
         edit.span = source.len()..source.len();
         edit
     }));
-    result.output = eof.output;
     let output = Source::new(result.output.clone());
     let parsed = parse::parse(&output).map_err(ProcessingError::Parse)?;
     let document = config
@@ -114,8 +133,7 @@ fn process(
         vec![]
     };
     edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
-    let mut authorized = md026::propose(&source, &parsed, &document);
-    authorized.extend(md047::propose(&source, &parsed, &document));
+    let authorized = md026::propose(&source, &parsed, &document);
     let output = edit::apply_authorized_edits(&source, &parsed, edits.clone(), &authorized)?;
     let diagnostics = diagnose(&output);
     Ok(FormatResult {
