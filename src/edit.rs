@@ -265,7 +265,16 @@ pub(crate) fn validate_ranges(source: &Source, edits: &[Edit]) -> Result<(), Pro
 pub(crate) fn apply_edits(
     source: &Source,
     parsed: &ParsedDocument,
+    edits: Vec<Edit>,
+) -> Result<String, ProcessingError> {
+    apply_authorized_edits(source, parsed, edits, &[])
+}
+
+pub(crate) fn apply_authorized_edits(
+    source: &Source,
+    parsed: &ParsedDocument,
     mut edits: Vec<Edit>,
+    authorized: &[Edit],
 ) -> Result<String, ProcessingError> {
     edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
     validate_ranges(source, &edits)?;
@@ -273,6 +282,9 @@ pub(crate) fn apply_edits(
     let layout = std::cell::OnceCell::new();
     let mut expanded = false;
     for edit in &edits {
+        if authorized.contains(edit) {
+            continue;
+        }
         let span = &edit.span;
         if !editable.allows(span) {
             if !layout
@@ -292,16 +304,26 @@ pub(crate) fn apply_edits(
     }
     let mut output = String::new();
     let mut cursor = 0;
-    for edit in edits {
+    for edit in &edits {
         output.push_str(&source.text()[cursor..edit.span.start]);
         output.push_str(&edit.replacement);
         cursor = edit.span.end;
     }
     output.push_str(&source.text()[cursor..]);
     if expanded {
+        let mut baseline = String::new();
+        let mut cursor = 0;
+        for edit in edits.iter().filter(|edit| authorized.contains(edit)) {
+            baseline.push_str(&source.text()[cursor..edit.span.start]);
+            baseline.push_str(&edit.replacement);
+            cursor = edit.span.end;
+        }
+        baseline.push_str(&source.text()[cursor..]);
+        let baseline = Source::new(baseline);
+        let baseline_parsed = crate::parse::parse(&baseline).map_err(ProcessingError::Parse)?;
         let candidate = Source::new(output.clone());
         let reparsed = crate::parse::parse(&candidate).map_err(ProcessingError::Parse)?;
-        if !crate::parse::equivalent(source, parsed, &candidate, &reparsed) {
+        if !crate::parse::equivalent(&baseline, &baseline_parsed, &candidate, &reparsed) {
             return Err(ProcessingError::ProtectedRegion(0..source.text().len()));
         }
     }

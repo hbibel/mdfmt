@@ -2,6 +2,7 @@ pub mod config;
 mod diagnostic;
 mod edit;
 mod md013;
+mod md026;
 mod parse;
 mod reflow;
 mod source;
@@ -53,14 +54,27 @@ pub fn format_with_config(
     options: &FormatOptions,
     config: &config::ResolvedConfig,
 ) -> Result<FormatResult, ProcessingError> {
-    let mut result = process(source, options, config, reflow::propose, |_| vec![])?;
+    let mut result = process(
+        source,
+        options,
+        config,
+        |source, parsed, document| {
+            let mut edits = reflow::propose(source, parsed, document);
+            edits.extend(md026::propose(source, parsed, document));
+            edits
+        },
+        |_| vec![],
+    )?;
     let output = Source::new(result.output.clone());
     let parsed = parse::parse(&output).map_err(ProcessingError::Parse)?;
     let document = config
         .document(output.text())
         .map_err(ProcessingError::Configuration)?;
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
-    result.coverage.implemented_rules = vec!["MD013".into()];
+    result
+        .diagnostics
+        .extend(md026::diagnose(&output, &parsed, &document));
+    result.coverage.implemented_rules = vec!["MD013".into(), "MD026".into()];
     Ok(result)
 }
 
@@ -87,7 +101,8 @@ fn process(
         vec![]
     };
     edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
-    let output = edit::apply_edits(&source, &parsed, edits.clone())?;
+    let authorized = md026::propose(&source, &parsed, &document);
+    let output = edit::apply_authorized_edits(&source, &parsed, edits.clone(), &authorized)?;
     let diagnostics = diagnose(&output);
     Ok(FormatResult {
         output,

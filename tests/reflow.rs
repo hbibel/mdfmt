@@ -17,7 +17,7 @@ fn check(input: &str, expected: &str, width: usize) {
     let result = format_with_config(input, &FormatOptions::default(), &config).unwrap();
     assert_eq!(result.output, expected, "input: {input:?}");
     assert!(!result.coverage.complete);
-    assert_eq!(result.coverage.implemented_rules, vec!["MD013"]);
+    assert_eq!(result.coverage.implemented_rules, vec!["MD013", "MD026"]);
     let second = format_with_config(&result.output, &FormatOptions::default(), &config).unwrap();
     assert_eq!(second.output, result.output);
     assert!(second.edits.is_empty());

@@ -11,7 +11,7 @@ fn disabled_fixes_preserve_fixtures_without_claiming_lint_coverage() {
     for case in cases.as_array().unwrap() {
         let input = case["input"].as_str().unwrap();
         let disabled = ResolvedConfig {
-            rules: RuleConfig::from_value(serde_json::json!({"MD013": false})).unwrap(),
+            rules: RuleConfig::from_value(serde_json::json!({"default": false})).unwrap(),
             ..Default::default()
         };
         for (fix, config) in [(false, ResolvedConfig::default()), (true, disabled)] {
@@ -20,7 +20,7 @@ fn disabled_fixes_preserve_fixtures_without_claiming_lint_coverage() {
             assert!(!result.changed(input));
             assert!(result.edits.is_empty());
             assert!(result.diagnostics.is_empty());
-            assert_eq!(result.coverage.implemented_rules, vec!["MD013"]);
+            assert_eq!(result.coverage.implemented_rules, vec!["MD013", "MD026"]);
             assert!(!result.coverage.complete);
         }
     }

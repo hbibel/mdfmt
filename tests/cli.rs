@@ -17,7 +17,7 @@ fn run(args: &[&str], input: &[u8]) -> Output {
 
 #[test]
 fn stdin_preserves_bytes_and_check_emits_no_content() {
-    let text = "\u{feff}# Hello!\r\n\r\nDo not reflow yet.  \r\n".as_bytes();
+    let text = "\u{feff}# Hello?\r\n\r\nDo not reflow yet.  \r\n".as_bytes();
     let output = run(&["-"], text);
     assert_eq!(output.status.code(), Some(0));
     assert_eq!(output.stdout, text);
@@ -55,18 +55,18 @@ fn rejects_ambiguous_modes_and_unsupported_arguments() {
 fn files_are_unchanged_and_stdout_is_document_only() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.md");
-    std::fs::write(&path, b"# Hello!\r\nno newline").unwrap();
+    std::fs::write(&path, b"# Hello?\r\nno newline").unwrap();
     let path = path.to_str().unwrap();
     let output = run(&[path], b"");
     assert_eq!(output.status.code(), Some(0));
-    assert_eq!(output.stdout, b"# Hello!\r\nno newline");
+    assert_eq!(output.stdout, b"# Hello?\r\nno newline");
     assert!(output.stderr.is_empty());
     for mode in ["--write", "--check"] {
         let output = run(&[mode, path, path], b"");
         assert_eq!(output.status.code(), Some(0));
         assert!(output.stdout.is_empty());
         assert!(output.stderr.is_empty());
-        assert_eq!(std::fs::read(path).unwrap(), b"# Hello!\r\nno newline");
+        assert_eq!(std::fs::read(path).unwrap(), b"# Hello?\r\nno newline");
     }
 }
 

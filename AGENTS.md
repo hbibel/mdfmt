@@ -25,7 +25,6 @@
 
 ## Working practices
 
-- Never read `.env`; do not commit secrets or credentials.
 - Use the Rust toolchain declared in `mise.toml`. Keep `Cargo.lock` tracked when
   the CLI project is created.
 - Keep changes focused. Preserve unrelated user work.
