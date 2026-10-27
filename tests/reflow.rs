@@ -7,7 +7,8 @@ use serde_json::json;
 
 fn config(width: usize) -> ResolvedConfig {
     ResolvedConfig {
-        rules: RuleConfig::from_value(json!({"MD013": {"line_length": width}})).unwrap(),
+        rules: RuleConfig::from_value(json!({"default":false,"MD013": {"line_length": width}}))
+            .unwrap(),
         ..Default::default()
     }
 }
@@ -17,7 +18,10 @@ fn check(input: &str, expected: &str, width: usize) {
     let result = format_with_config(input, &FormatOptions::default(), &config).unwrap();
     assert_eq!(result.output, expected, "input: {input:?}");
     assert!(!result.coverage.complete);
-    assert_eq!(result.coverage.implemented_rules, vec!["MD013", "MD026"]);
+    assert_eq!(
+        result.coverage.implemented_rules,
+        vec!["MD013", "MD026", "MD047"]
+    );
     let second = format_with_config(&result.output, &FormatOptions::default(), &config).unwrap();
     assert_eq!(second.output, result.output);
     assert!(second.edits.is_empty());
@@ -319,9 +323,9 @@ fn configuration_and_fix_permissions_control_wrapping() {
         );
     }
     for rules in [
-        json!({"MD013": false}),
+        json!({"default":false,"MD013": false}),
         json!({"default": false}),
-        json!({"line-length": {"enabled": false}}),
+        json!({"default":false,"line-length": {"enabled": false}}),
     ] {
         cfg.fix = true;
         cfg.rules = RuleConfig::from_value(rules).unwrap();

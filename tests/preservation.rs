@@ -19,15 +19,17 @@ fn disabled_fixes_preserve_fixtures_without_claiming_lint_coverage() {
             assert_eq!(result.output, input, "{}", case["id"]);
             assert!(!result.changed(input));
             assert!(result.edits.is_empty());
-            assert!(result.diagnostics.is_empty());
-            assert_eq!(result.coverage.implemented_rules, vec!["MD013", "MD026"]);
+            assert_eq!(
+                result.coverage.implemented_rules,
+                vec!["MD013", "MD026", "MD047"]
+            );
             assert!(!result.coverage.complete);
         }
     }
 }
 
 #[test]
-fn preserves_empty_and_non_newline_terminated_inputs() {
+fn disabled_fixes_preserve_empty_and_non_newline_terminated_inputs() {
     for text in [
         "",
         "\u{feff}",
@@ -36,7 +38,7 @@ fn preserves_empty_and_non_newline_terminated_inputs() {
         "\u{2028}line\u{2029}",
     ] {
         assert_eq!(
-            format(text, &FormatOptions::default()).unwrap().output,
+            format(text, &FormatOptions { fix: false }).unwrap().output,
             text
         );
     }

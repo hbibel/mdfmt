@@ -48,6 +48,39 @@ fn heading_punctuation_is_fixed_in_stdout_check_and_write_modes() {
 }
 
 #[test]
+fn final_newline_fixes_and_unresolved_literal_eof_findings_reach_the_cli() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint.json"),
+        r#"{"default":false,"MD047":true}"#,
+    )
+    .unwrap();
+    fs::write(root.join("doc.md"), "hello").unwrap();
+    let output = run(root, &["-"], "hello");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"hello\n");
+    assert_eq!(run(root, &["--check", "doc.md"], "").status.code(), Some(1));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"hello");
+    assert_eq!(run(root, &["--write", "doc.md"], "").status.code(), Some(0));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"hello\n");
+    let output = run(root, &["-"], "```\ncode");
+    assert_eq!(output.status.code(), Some(1));
+    assert_eq!(output.stdout, b"```\ncode");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("2:4: Error MD047"));
+    fs::remove_file(root.join(".markdownlint.json")).unwrap();
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"fix":false,"config":{"default":false,"MD047":{"severity":"warning"}}}"#,
+    )
+    .unwrap();
+    let output = run(root, &["-"], "hello");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"hello");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("Warning MD047"));
+}
+
+#[test]
 fn disabled_heading_fixes_still_report_errors_or_warnings_in_every_mode() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();
@@ -231,8 +264,8 @@ fn config_errors_and_invalid_inline_configuration_prevent_output_and_writes() {
 fn globs_show_found_and_no_progress_keep_stdout_clean() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();
-    fs::write(root.join("a.md"), "a").unwrap();
-    fs::write(root.join("b.md"), "b").unwrap();
+    fs::write(root.join("a.md"), "a\n").unwrap();
+    fs::write(root.join("b.md"), "b\n").unwrap();
     fs::write(
         root.join(".markdownlint-cli2.jsonc"),
         r#"{"globs":["*.md"],"showFound":true,"fix":false}"#,

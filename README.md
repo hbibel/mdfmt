@@ -19,6 +19,8 @@ widths and inline permissions, preserves hard breaks and indivisible inline
 syntax, and checks the parsed structure before applying changes. MD026 removes
 configured trailing heading punctuation, respecting rule permissions and upstream
 entity/emoji exceptions; see [MD026 evidence](docs/compatibility/md026.md).
+MD047 adds a missing final newline where it is safe, preserving literal EOF
+boundaries with a remaining diagnostic; see [MD047 evidence](docs/compatibility/md047.md).
 Other rules are not implemented yet; a successful check does not mean the document is
 markdownlint-clean. See [MD013 evidence and limits](docs/compatibility/md013.md).
 
@@ -115,8 +117,8 @@ mise exec -- cargo clippy --all-targets -- -D warnings
 
 Tests cover preservation, source positions, protected regions, localized edits,
 idempotence, CLI streams, safe replacement, configuration and file selection.
-The MD013 and MD026 suites exercise applicable formatting acceptance examples and
-pinned upstream diagnostics. Other-rule and external-formatter examples remain future
+The MD013, MD026 and MD047 suites exercise applicable formatting acceptance examples
+and pinned upstream diagnostics. Other-rule and external-formatter examples remain future
 contracts, not completed rule tests.
 The parser evaluation documents a separate pinned Node development oracle; Node
 is not needed to build or run mdfmt.

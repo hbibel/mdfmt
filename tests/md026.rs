@@ -102,7 +102,7 @@ fn default_and_configured_punctuation_are_fixed() {
         format("# Hello!", &FormatOptions::default())
             .unwrap()
             .output,
-        "# Hello"
+        "# Hello\n"
     );
     for (input, expected) in [
         ("# Hello!", "# Hello"),

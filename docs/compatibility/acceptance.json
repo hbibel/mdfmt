@@ -1,6 +1,6 @@
 {
   "reference": "markdownlint-cli2 0.24.0 / markdownlint 0.42.0",
-  "status": "Source-reviewed target examples; no mdfmt implementation or full upstream oracle execution yet.",
+  "status": "Source-reviewed target examples; applicable MD013 and MD026 formatting cases now run as native tests. Other rules and external-formatting cases remain future contracts; full upstream equivalence is not claimed.",
   "errorCaseScope": "Deferred regex and installed-package extends errors specify first-release behavior only. Later releases must support these roadmap items; package resolution uses installed files, not npm fetching.",
   "policy": "Expected output specifies mdfmt behavior, not markdownlint-cli2 --fix output. All cases must be idempotent and preserve meaning except for explicitly authorized rule-prescribed edits such as MD026. Enabled MD013 supplies a prose wrapping target even when lint exceptions exempt the original line. expectedEffectiveConfig is the resolved rule object before rule defaults and per-line directives; cliOptions contains cli2 options separately. remainingRuleIds is a unique set after formatting, including warnings.",
   "cases": [

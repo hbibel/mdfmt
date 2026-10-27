@@ -3,6 +3,7 @@ mod diagnostic;
 mod edit;
 mod md013;
 mod md026;
+mod md047;
 mod parse;
 mod reflow;
 mod source;
@@ -68,6 +69,12 @@ pub fn format_with_config(
     // into prose. Reparse that stable result before selecting prose gaps.
     let mut result = process(&current, options, config, reflow::propose, |_| vec![])?;
     result.edits = edit::compose_after_deletions(&heading_edits, &result.edits);
+    let eof = process(&result.output, options, config, md047::propose, |_| vec![])?;
+    result.edits.extend(eof.edits.into_iter().map(|mut edit| {
+        edit.span = source.len()..source.len();
+        edit
+    }));
+    result.output = eof.output;
     let output = Source::new(result.output.clone());
     let parsed = parse::parse(&output).map_err(ProcessingError::Parse)?;
     let document = config
@@ -77,7 +84,10 @@ pub fn format_with_config(
     result
         .diagnostics
         .extend(md026::diagnose(&output, &parsed, &document));
-    result.coverage.implemented_rules = vec!["MD013".into(), "MD026".into()];
+    result
+        .diagnostics
+        .extend(md047::diagnose(&output, &parsed, &document));
+    result.coverage.implemented_rules = vec!["MD013".into(), "MD026".into(), "MD047".into()];
     Ok(result)
 }
 
@@ -104,7 +114,8 @@ fn process(
         vec![]
     };
     edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
-    let authorized = md026::propose(&source, &parsed, &document);
+    let mut authorized = md026::propose(&source, &parsed, &document);
+    authorized.extend(md047::propose(&source, &parsed, &document));
     let output = edit::apply_authorized_edits(&source, &parsed, edits.clone(), &authorized)?;
     let diagnostics = diagnose(&output);
     Ok(FormatResult {

@@ -2,7 +2,7 @@
   "reference": {"cli2": "0.24.0", "markdownlint": "0.42.0", "commit": "b67636d47f335cf124990faae4a72c5e9fadd613"},
   "sourceBase": "https://github.com/DavidAnson/markdownlint/blob/b67636d47f335cf124990faae4a72c5e9fadd613/",
   "schema": "schema/markdownlint-config-schema.json",
-  "implementationCoverage": "none",
+  "implementationCoverage": "partial: MD013 reflow/diagnostics, MD026 heading suffix fixes/diagnostics, MD047 safe final newlines/diagnostics; see per-rule compatibility evidence",
   "optionDefaults": "Defaults below are schema defaults. defaultFrom records source-level fallback to another option when omitted; sourceDefault/sourceFlags record differing source literals. Schema constraints and enums remain authoritative except documented source discrepancies.",
   "commonRuleOptions": [{"name":"enabled","type":"boolean","default":true},{"name":"severity","type":"string","default":"error","enum":["error","warning"]}],
   "fixabilityMeaning": {

@@ -93,7 +93,8 @@ quotes, preserves hard breaks and inline source, and reports remaining MD013
 violations on the formatted output. [MD013 evidence and limits](../../compatibility/md013.md)
 records tested behavior and conservative parser/preservation boundaries; full
 upstream parser equivalence is not claimed. Milestone 5 has started with
-[MD026's approved fix and diagnostics](../../compatibility/md026.md).
+[MD026's approved fix and diagnostics](../../compatibility/md026.md) and
+[safe MD047 final newlines](../../compatibility/md047.md).
 Remaining built-in rules, interactions and conflict detection are next.
 
 The first useful release includes local declarative configuration,

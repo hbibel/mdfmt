@@ -185,7 +185,10 @@ fn findings_respect_directives_severity_and_disabled_fix_permissions() {
     );
     let cfg = ResolvedConfig {
         fix: false,
-        rules: RuleConfig::from_value(json!({"MD013":{"line_length":10,"strict":true}})).unwrap(),
+        rules: RuleConfig::from_value(
+            json!({"default":false,"MD013":{"line_length":10,"strict":true}}),
+        )
+        .unwrap(),
         ..Default::default()
     };
     let result = format_with_config("alpha beta gamma", &FormatOptions::default(), &cfg).unwrap();
@@ -201,7 +204,10 @@ fn output_spans_use_utf8_boundaries_and_utf16_lengths() {
     assert_eq!(result[0].span, Some(1..6));
     assert!(result[0].message.contains("Expected: 2; Actual: 4"));
     let cfg = ResolvedConfig {
-        rules: RuleConfig::from_value(json!({"MD013":{"line_length":10,"strict":true}})).unwrap(),
+        rules: RuleConfig::from_value(
+            json!({"default":false,"MD013":{"line_length":10,"strict":true}}),
+        )
+        .unwrap(),
         ..Default::default()
     };
     let result =
