@@ -112,6 +112,46 @@ fn blank_line_rules_reach_stdout_check_write_and_warning_diagnostics() {
 }
 
 #[test]
+fn heading_separator_rules_work_in_all_modes_and_with_disabled_fixes() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"config":{"default":false,"MD019":true,"MD021":true}}"#,
+    )
+    .unwrap();
+    fs::write(root.join("doc.md"), "#  Open\r\n\r\n#  Closed  ###\r\n").unwrap();
+    let output = run(root, &["doc.md"], "");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"# Open\r\n\r\n# Closed ###\r\n");
+    assert!(output.stderr.is_empty());
+    assert_eq!(run(root, &["--check", "doc.md"], "").status.code(), Some(1));
+    assert_eq!(
+        fs::read(root.join("doc.md")).unwrap(),
+        b"#  Open\r\n\r\n#  Closed  ###\r\n"
+    );
+    assert_eq!(run(root, &["--write", "doc.md"], "").status.code(), Some(0));
+    assert_eq!(
+        fs::read(root.join("doc.md")).unwrap(),
+        b"# Open\r\n\r\n# Closed ###\r\n"
+    );
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"fix":false,"config":{"default":false,"MD021":{"severity":"warning"}}}"#,
+    )
+    .unwrap();
+    let output = run(root, &["-"], "#  Closed  ###");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"#  Closed  ###");
+    assert_eq!(
+        String::from_utf8_lossy(&output.stderr)
+            .matches("Warning MD021")
+            .count(),
+        2
+    );
+}
+
+#[test]
 fn disabled_heading_fixes_still_report_errors_or_warnings_in_every_mode() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();

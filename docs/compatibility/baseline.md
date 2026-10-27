@@ -36,7 +36,7 @@ not npm tarballs, and therefore does not claim independent tarball verification.
 - `rules.json`: all 53 built-in rules, aliases, tags, option names/types/schema
   defaults, fix-emission evidence, and proposed safe-repair classifications.
   Current implementation coverage is tracked in its `implementationCoverage`
-  field and the MD012/MD013/MD026/MD047 compatibility evidence, not the original audit counts.
+  field and per-rule compatibility evidence, not the original audit counts.
 - 33 rules can emit upstream fix information. That does not mean every
   violation they report is fixable, nor that every fix preserves meaning.
 - Proposed classification: 5 safe, 32 conditional, 16 diagnostic-only. These are

@@ -1,6 +1,7 @@
 pub mod config;
 mod diagnostic;
 mod edit;
+mod heading_spaces;
 mod md012;
 mod md013;
 mod md026;
@@ -59,7 +60,17 @@ pub fn format_with_config(
     let mut current = source.to_owned();
     let mut deletion_edits = vec![];
     loop {
-        let pass = process(&current, options, config, md026::propose, |_| vec![])?;
+        let pass = process(
+            &current,
+            options,
+            config,
+            |source, parsed, document| {
+                let mut edits = md026::propose(source, parsed, document);
+                edits.extend(heading_spaces::propose(source, parsed, document));
+                edits
+            },
+            |_| vec![],
+        )?;
         if pass.edits.is_empty() {
             break;
         }
@@ -117,10 +128,15 @@ pub fn format_with_config(
         .extend(md026::diagnose(&output, &parsed, &document));
     result
         .diagnostics
+        .extend(heading_spaces::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(md047::diagnose(&output, &parsed, &document));
     result.coverage.implemented_rules = vec![
         "MD012".into(),
         "MD013".into(),
+        "MD019".into(),
+        "MD021".into(),
         "MD026".into(),
         "MD047".into(),
     ];
@@ -139,19 +155,23 @@ fn process(
         .document(text)
         .map_err(ProcessingError::Configuration)?;
     let parsed = parse::parse(&source).map_err(ProcessingError::Parse)?;
+    let mut authorized = md026::propose(&source, &parsed, &document);
+    authorized.extend(heading_spaces::propose(&source, &parsed, &document));
+    authorized.extend(md012::propose(&source, &parsed, &document));
     let mut edits = if options.fix && config.fix {
         let proposed = produce(&source, &parsed, &document);
         edit::validate_ranges(&source, &proposed)?;
         proposed
             .into_iter()
-            .filter(|edit| document.allows_source(&edit.origin, edit.span.clone(), &source))
+            .filter(|edit| {
+                authorized.contains(edit)
+                    || document.allows_source(&edit.origin, edit.span.clone(), &source)
+            })
             .collect()
     } else {
         vec![]
     };
     edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
-    let mut authorized = md026::propose(&source, &parsed, &document);
-    authorized.extend(md012::propose(&source, &parsed, &document));
     let output = edit::apply_authorized_edits(&source, &parsed, edits.clone(), &authorized)?;
     let diagnostics = diagnose(&output);
     Ok(FormatResult {

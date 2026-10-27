@@ -95,7 +95,8 @@ records tested behavior and conservative parser/preservation boundaries; full
 upstream parser equivalence is not claimed. Milestone 5 has started with
 [MD026's approved fix and diagnostics](../../compatibility/md026.md) and
 [safe MD047 final newlines](../../compatibility/md047.md), followed by
-[conditional MD012 blank-line repairs](../../compatibility/md012.md).
+[conditional MD012 blank-line repairs](../../compatibility/md012.md) and
+[MD019/MD021 heading separators](../../compatibility/heading-spaces.md).
 Remaining built-in rules, interactions and conflict detection are next.
 
 The first useful release includes local declarative configuration,

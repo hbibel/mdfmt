@@ -183,5 +183,10 @@
   {"id":"36-1","input":"<!-- markdownlint-disable-file headings -->\n#  Hello  ###","config":{"default":false,"MD019":true},"findings":[],"output":"<!-- markdownlint-disable-file headings -->\n#  Hello  ###"},
   {"id":"36-2","input":"<!-- markdownlint-disable-file headings -->\n#  Hello  ###","config":{"default":false,"MD021":true},"findings":[],"output":"<!-- markdownlint-disable-file headings -->\n#  Hello  ###"},
   {"id":"36-3","input":"<!-- markdownlint-disable-file headings -->\n#  Hello  ###","config":{"default":false,"MD019":{"severity":"warning"},"MD021":{"severity":"warning"}},"findings":[],"output":"<!-- markdownlint-disable-file headings -->\n#  Hello  ###"},
-  {"id":"36-4","input":"<!-- markdownlint-disable-file headings -->\n#  Hello  ###","config":{"default":false},"findings":[],"output":"<!-- markdownlint-disable-file headings -->\n#  Hello  ###"}
+  {"id":"36-4","input":"<!-- markdownlint-disable-file headings -->\n#  Hello  ###","config":{"default":false},"findings":[],"output":"<!-- markdownlint-disable-file headings -->\n#  Hello  ###"},
+  {"id":"37-0","input":"#  <!-- markdownlint-disable-line MD026 -->","config":{"default":false,"MD019":true,"MD021":true},"findings":[{"rule":"MD019","line":1,"column":3,"length":1,"severity":"error"}],"output":"# <!-- markdownlint-disable-line MD026 -->"},
+  {"id":"37-1","input":"#  <!-- markdownlint-disable-line MD026 -->","config":{"default":false,"MD019":true},"findings":[{"rule":"MD019","line":1,"column":3,"length":1,"severity":"error"}],"output":"# <!-- markdownlint-disable-line MD026 -->"},
+  {"id":"37-2","input":"#  <!-- markdownlint-disable-line MD026 -->","config":{"default":false,"MD021":true},"findings":[],"output":"#  <!-- markdownlint-disable-line MD026 -->"},
+  {"id":"37-3","input":"#  <!-- markdownlint-disable-line MD026 -->","config":{"default":false,"MD019":{"severity":"warning"},"MD021":{"severity":"warning"}},"findings":[{"rule":"MD019","line":1,"column":3,"length":1,"severity":"warning"}],"output":"# <!-- markdownlint-disable-line MD026 -->"},
+  {"id":"37-4","input":"#  <!-- markdownlint-disable-line MD026 -->","config":{"default":false},"findings":[],"output":"#  <!-- markdownlint-disable-line MD026 -->"}
 ]

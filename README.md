@@ -23,6 +23,8 @@ MD047 adds a missing final newline where it is safe, preserving literal EOF
 boundaries with a remaining diagnostic; see [MD047 evidence](docs/compatibility/md047.md).
 MD012 reduces excess blank lines where reparsing confirms preservation;
 see [MD012 evidence](docs/compatibility/md012.md).
+MD019/MD021 normalize ATX heading separators without changing heading text;
+see [heading-spacing evidence](docs/compatibility/heading-spaces.md).
 Other rules are not implemented yet; a successful check does not mean the document is
 markdownlint-clean. See [MD013 evidence and limits](docs/compatibility/md013.md).
 
@@ -119,7 +121,7 @@ mise exec -- cargo clippy --all-targets -- -D warnings
 
 Tests cover preservation, source positions, protected regions, localized edits,
 idempotence, CLI streams, safe replacement, configuration and file selection.
-The MD012, MD013, MD026 and MD047 suites exercise applicable formatting acceptance examples
+Implemented-rule suites exercise applicable formatting acceptance examples
 and pinned upstream diagnostics. Other-rule and external-formatter examples remain future
 contracts, not completed rule tests.
 The parser evaluation documents a separate pinned Node development oracle; Node
