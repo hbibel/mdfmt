@@ -44,17 +44,60 @@ retains token types, source text, coordinates, and default front-matter lines.
 No unsafe protected-region mismatch remained in this bounded set after adapting
 front matter. Atomic/protected regions are never editable by the foundation.
 Unknown constructs are conservative; headings, emphasis, hard breaks, and other
-non-plain-prose nodes are protected pending their transformation designs.
-Multiline text ranges are not eligible for foundation edits: those ranges can
-contain source-level quote/list prefixes. Later reflow needs a container-aware
-segmentation design rather than permission to replace arbitrary text-node slices.
+non-plain-prose nodes remain protected. The strict foundation edit path still
+rejects multiline text ranges because they can contain quote/list prefixes. The
+reflow path now authorizes only explicitly modeled whitespace/container gaps and
+requires semantic-tree/protected-source equivalence before expanded edits apply.
 
 Limitations: upstream supports additional syntax (including math/directives) not
-proven equivalent here. Production proposes no edits. Later transformations must
-expand oracle coverage before admitting that syntax as editable prose. Documents
+proven equivalent here. Initial reflow proposes only whitespace edits inside
+paragraphs, including multiline/container text, subject to the guard described below. Later
+transformations must expand oracle coverage before admitting more syntax. Documents
 containing Unicode line/paragraph separators are protected as a whole because
 JavaScript multiline anchors and the Rust fixed-pattern port differ there.
 Do not use this fixture set to claim complete GFM or lint compatibility.
+
+## Initial reflow evidence
+
+MD013 retains the foundation edit guard and adds exact modeled whitespace gaps
+for soft joins and structural continuation prefixes. Links, images, inline code,
+and emphasis remain indivisible source units. After packing, a whole-document
+reparse must retain a position-independent mdast tree, normalized text, and exact
+protected source. A mismatch discards the wrapping batch. This is a conservative
+guard against introducing headings, lists, HTML blocks, or other syntax; it is
+not proof of parser parity. See [current MD013 evidence](md013.md).
+
+`tests/fixtures/reflow.json` contains 27 input/output cases checked by the Rust
+suite and a development-only pinned upstream oracle. The oracle executes the CLI,
+checks second-pass idempotence, compares selected micromark block/inline structure,
+and asserts upstream MD013 line findings before and after formatting. It covers
+UTF-16 widths, inline units, CRLF/BOM, reference syntax, structural hazards, and
+strict versus default lint exceptions, math/directive hazards, and raw HTML.
+Runtime comparisons passed locally on
+2026-10-27. Long links can remain lint errors under strict MD013; reflow does not
+convert or split them. Native remaining-violation reporting is now implemented
+and compared against the pinned rule, separately from the reflow policy.
+
+Reproduce after installing the pinned development oracle dependencies:
+
+```sh
+mise exec -- cargo build
+npm run test:reflow --prefix tools/parser-oracle
+npm run test:reflow-scaling --prefix tools/parser-oracle
+```
+
+Because native GFM cannot validate upstream extensions, the formatter currently
+preserves an entire document if any paragraph contains `$` or a colon immediately
+followed by an ASCII letter. It also preserves documents containing non-comment
+HTML, including inline tags whose content may be whitespace-sensitive. These
+deliberately broad guards can withhold wrapping for ordinary prose too; precise
+extension and HTML boundaries remain future work.
+
+Permission checks reuse source coordinates and indexed text/protected intervals.
+The development scaling smoke test checks exact output for 100, 500, and 1,000
+paragraphs with a generous per-process time budget. The local debug CLI took about
+0.06, 0.34, and 0.8 seconds respectively after replacing whole-document scans per
+edit; this is bounded performance evidence, not a release benchmark.
 
 ## Reproduction
 

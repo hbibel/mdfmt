@@ -1,7 +1,9 @@
 pub mod config;
 mod diagnostic;
 mod edit;
+mod md013;
 mod parse;
+mod reflow;
 mod source;
 
 pub use diagnostic::{Diagnostic, ProcessingError, Severity};
@@ -39,8 +41,8 @@ impl FormatResult {
     }
 }
 
-/// Process Markdown without filesystem I/O. The foundation currently implements
-/// no rule fixes or findings; empty diagnostics do not establish lint compliance.
+/// Process Markdown without filesystem I/O. Rule coverage remains incomplete;
+/// empty diagnostics do not establish lint compliance.
 pub fn format(source: &str, options: &FormatOptions) -> Result<FormatResult, ProcessingError> {
     format_with_config(source, options, &config::ResolvedConfig::default())
 }
@@ -51,14 +53,22 @@ pub fn format_with_config(
     options: &FormatOptions,
     config: &config::ResolvedConfig,
 ) -> Result<FormatResult, ProcessingError> {
-    process(source, options, config, |_| vec![], |_| vec![])
+    let mut result = process(source, options, config, reflow::propose, |_| vec![])?;
+    let output = Source::new(result.output.clone());
+    let parsed = parse::parse(&output).map_err(ProcessingError::Parse)?;
+    let document = config
+        .document(output.text())
+        .map_err(ProcessingError::Configuration)?;
+    result.diagnostics = md013::diagnose(&output, &parsed, &document);
+    result.coverage.implemented_rules = vec!["MD013".into()];
+    Ok(result)
 }
 
 fn process(
     text: &str,
     options: &FormatOptions,
     config: &config::ResolvedConfig,
-    produce: impl FnOnce(&Source) -> Vec<edit::Edit>,
+    produce: impl FnOnce(&Source, &parse::ParsedDocument, &config::DocumentConfig) -> Vec<edit::Edit>,
     diagnose: impl FnOnce(&str) -> Vec<Diagnostic>,
 ) -> Result<FormatResult, ProcessingError> {
     let source = Source::new(text.into());
@@ -67,11 +77,11 @@ fn process(
         .map_err(ProcessingError::Configuration)?;
     let parsed = parse::parse(&source).map_err(ProcessingError::Parse)?;
     let mut edits = if options.fix && config.fix {
-        let proposed = produce(&source);
+        let proposed = produce(&source, &parsed, &document);
         edit::validate_ranges(&source, &proposed)?;
         proposed
             .into_iter()
-            .filter(|edit| document.allows(&edit.origin, edit.span.clone(), text))
+            .filter(|edit| document.allows_source(&edit.origin, edit.span.clone(), &source))
             .collect()
     } else {
         vec![]
@@ -94,7 +104,11 @@ fn process(
 mod tests {
     use super::*;
 
-    fn replace_world(source: &Source) -> Vec<edit::Edit> {
+    fn replace_world(
+        source: &Source,
+        _: &parse::ParsedDocument,
+        _: &config::DocumentConfig,
+    ) -> Vec<edit::Edit> {
         source
             .text()
             .find("world")
@@ -198,7 +212,7 @@ mod tests {
             "Hello world",
             &FormatOptions::default(),
             &config::ResolvedConfig::default(),
-            |_| {
+            |_, _, _| {
                 vec![edit::Edit {
                     span: 0..99,
                     replacement: String::new(),

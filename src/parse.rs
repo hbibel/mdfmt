@@ -80,7 +80,9 @@ use std::{ops::Range, sync::LazyLock};
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum RegionKind {
     Root,
-    Container,
+    Blockquote,
+    List,
+    ListItem,
     Paragraph,
     Text,
     Link,
@@ -92,13 +94,20 @@ pub(crate) enum RegionKind {
     Definition,
     FrontMatter,
     Protected,
+    Heading,
+    Break,
 }
 
 impl RegionKind {
     pub(crate) fn is_protected(self) -> bool {
         !matches!(
             self,
-            Self::Root | Self::Container | Self::Paragraph | Self::Text
+            Self::Root
+                | Self::Blockquote
+                | Self::List
+                | Self::ListItem
+                | Self::Paragraph
+                | Self::Text
         )
     }
 
@@ -129,6 +138,43 @@ pub(crate) struct Region {
 #[derive(Debug)]
 pub(crate) struct ParsedDocument {
     pub regions: Vec<Region>,
+    pub tree: Node,
+}
+
+pub(crate) fn equivalent(
+    source: &Source,
+    parsed: &ParsedDocument,
+    candidate: &Source,
+    reparsed: &ParsedDocument,
+) -> bool {
+    fn normalize(node: &mut Node) {
+        node.position_set(None);
+        if let Node::Text(text) = node {
+            text.value = text
+                .value
+                .split_ascii_whitespace()
+                .collect::<Vec<_>>()
+                .join(" ");
+        }
+        if let Some(children) = node.children_mut() {
+            for child in children {
+                normalize(child);
+            }
+        }
+    }
+    let mut before = parsed.tree.clone();
+    let mut after = reparsed.tree.clone();
+    normalize(&mut before);
+    normalize(&mut after);
+    let protected = |source: &Source, parsed: &ParsedDocument| {
+        parsed
+            .regions
+            .iter()
+            .filter(|r| r.kind.is_protected())
+            .map(|r| (r.kind, source.text()[r.span.clone()].to_owned()))
+            .collect::<Vec<_>>()
+    };
+    before == after && protected(source, parsed) == protected(candidate, reparsed)
 }
 
 // Match upstream's built-in pattern after newline normalization, not the parser's
@@ -170,6 +216,7 @@ pub(crate) fn parse(source: &Source) -> Result<ParsedDocument, String> {
     let root = markdown::to_mdast(&text[front_end..], &markdown::ParseOptions::gfm())
         .map_err(|error| error.to_string())?;
     let mut parsed = ParsedDocument {
+        tree: root.clone(),
         regions: vec![Region {
             span: 0..text.len(),
             kind: RegionKind::Root,
@@ -188,7 +235,11 @@ pub(crate) fn parse(source: &Source) -> Result<ParsedDocument, String> {
             Node::Root(_) => RegionKind::Root,
             Node::Paragraph(_) => RegionKind::Paragraph,
             Node::Text(_) => RegionKind::Text,
-            Node::Blockquote(_) | Node::List(_) | Node::ListItem(_) => RegionKind::Container,
+            Node::Blockquote(_) => RegionKind::Blockquote,
+            Node::List(_) => RegionKind::List,
+            Node::ListItem(_) => RegionKind::ListItem,
+            Node::Heading(_) => RegionKind::Heading,
+            Node::Break(_) => RegionKind::Break,
             Node::Link(_) | Node::LinkReference(_) => RegionKind::Link,
             Node::Image(_) | Node::ImageReference(_) => RegionKind::Image,
             Node::InlineCode(_) => RegionKind::InlineCode,

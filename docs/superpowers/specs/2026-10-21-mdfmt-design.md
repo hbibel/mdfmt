@@ -84,11 +84,16 @@ reflow. Code and table handling must not silently disable configured checking.
 
 ## Release scope
 
-Implementation status (2026-10-22): milestones 1–3 are implemented for the
+Implementation status (2026-10-27): milestones 1–3 are implemented for the
 first-release contract. [Configuration completion evidence](../../compatibility/configuration-completion.md)
 records native/upstream comparisons, intentional policy differences and remote
-platform validation not executed locally. Milestone 4's MD013 prose reflow is next;
-no production rule fixes or diagnostics are implemented yet.
+platform validation not executed locally. Milestone 4's core is implemented:
+configuration-aware MD013 reflow handles multiline paragraphs, nested lists and
+quotes, preserves hard breaks and inline source, and reports remaining MD013
+violations on the formatted output. [MD013 evidence and limits](../../compatibility/md013.md)
+records tested behavior and conservative parser/preservation boundaries; full
+upstream parser equivalence is not claimed. Milestone 5's built-in rule batches
+are next, including MD026's approved fix.
 
 The first useful release includes local declarative configuration,
 filesystem-based `extends`, and configuration-aware prose reflow. It is not the
@@ -108,7 +113,7 @@ Later-release declarative compatibility work must include:
 These are committed roadmap items, not first-release requirements. Their exact
 release numbers and ordering relative to other later-release work remain open.
 
-## Current state and builder decisions
+## Initial audit context and builder decisions (historical)
 
 The workspace contains `mise.toml`, pinning Rust 1.99, and `opencode.jsonc`;
 there is no application scaffold or Git repository. Do not initialize a repository,

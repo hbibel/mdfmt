@@ -103,6 +103,68 @@ mod tests {
             assert!(apply_edits(&source, &parsed, vec![edit(7..10, "\n# ")]).is_err());
         }
     }
+
+    #[test]
+    fn indexed_permissions_match_the_original_region_policy() {
+        for text in [
+            "alpha [a *b*](url) omega `code` tail",
+            "> first\n> second\n\nplain text\n",
+            "| a |\n| - |\n| b |\n\nplain text\n",
+            "a😀 b\r\n\r\nhello world",
+            "---\ntitle: test\n---\n\nplain text",
+        ] {
+            let source = Source::new(text.into());
+            let parsed = parse(&source).unwrap();
+            let index = EditableRegions::new(&source, &parsed);
+            let boundaries: Vec<_> = (0..=text.len())
+                .filter(|&offset| text.is_char_boundary(offset))
+                .collect();
+            for &start in &boundaries {
+                for &end in boundaries.iter().filter(|&&end| end >= start) {
+                    let span = start..end;
+                    let protected = parsed.regions.iter().any(|region| {
+                        region.kind.is_protected()
+                            && if span.is_empty() {
+                                region.span.start <= start && start <= region.span.end
+                            } else {
+                                start < region.span.end && region.span.start < end
+                            }
+                    });
+                    let eligible = parsed.regions.iter().any(|region| {
+                        region.kind == RegionKind::Text
+                            && region.parent.is_some()
+                            && !text[region.span.clone()].contains(['\r', '\n'])
+                            && region.span.start <= start
+                            && end <= region.span.end
+                    });
+                    assert_eq!(
+                        index.allows(&span),
+                        !protected && eligible,
+                        "{text:?} {span:?}"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn expanded_reflow_permissions_only_allow_exact_modeled_gaps() {
+        let source = Source::new("- alpha\n  beta gamma\n".into());
+        let parsed = parse(&source).unwrap();
+        let mut join = edit(7..10, " ");
+        join.origin = "MD013".into();
+        assert_eq!(
+            apply_edits(&source, &parsed, vec![join.clone()]).unwrap(),
+            "- alpha beta gamma\n"
+        );
+        for replacement in ["\n> ", "\n- ", " text ", ""] {
+            let mut invalid = join.clone();
+            invalid.replacement = replacement.into();
+            assert!(apply_edits(&source, &parsed, vec![invalid]).is_err());
+        }
+        join.origin = "MD026".into();
+        assert!(apply_edits(&source, &parsed, vec![join]).is_err());
+    }
 }
 use crate::{
     Source,
@@ -119,6 +181,73 @@ pub struct AppliedEdit {
 }
 
 pub(crate) type Edit = AppliedEdit;
+
+pub(crate) struct EditableRegions {
+    protected: Vec<Range<usize>>,
+    eligible: Vec<Range<usize>>,
+}
+
+impl EditableRegions {
+    pub(crate) fn new(source: &Source, parsed: &ParsedDocument) -> Self {
+        let mut protected: Vec<_> = parsed
+            .regions
+            .iter()
+            .filter(|region| region.kind.is_protected())
+            .map(|region| region.span.clone())
+            .collect();
+        protected.sort_by_key(|span| (span.start, span.end));
+        let mut merged: Vec<Range<usize>> = vec![];
+        for span in protected {
+            if let Some(last) = merged.last_mut()
+                && span.start <= last.end
+            {
+                last.end = last.end.max(span.end);
+            } else {
+                merged.push(span);
+            }
+        }
+        let mut eligible: Vec<_> = parsed
+            .regions
+            .iter()
+            .filter(|region| {
+                region.kind == RegionKind::Text
+                    && region.parent.is_some()
+                    && !source.text()[region.span.clone()].contains(['\r', '\n'])
+            })
+            .map(|region| region.span.clone())
+            .collect();
+        eligible.sort_by_key(|span| (span.start, span.end));
+        Self {
+            protected: merged,
+            eligible,
+        }
+    }
+
+    pub(crate) fn allows(&self, span: &Range<usize>) -> bool {
+        let protected_index = self.protected.partition_point(|region| {
+            if span.is_empty() {
+                region.end < span.start
+            } else {
+                region.end <= span.start
+            }
+        });
+        let protected = self.protected.get(protected_index).is_some_and(|region| {
+            if span.is_empty() {
+                region.start <= span.start
+            } else {
+                region.start < span.end
+            }
+        });
+        let eligible_index = self
+            .eligible
+            .partition_point(|region| region.start <= span.start);
+        let eligible = eligible_index
+            .checked_sub(1)
+            .and_then(|index| self.eligible.get(index))
+            .is_some_and(|region| span.end <= region.end);
+        !protected && eligible
+    }
+}
 
 pub(crate) fn validate_ranges(source: &Source, edits: &[Edit]) -> Result<(), ProcessingError> {
     for edit in edits {
@@ -140,26 +269,19 @@ pub(crate) fn apply_edits(
 ) -> Result<String, ProcessingError> {
     edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
     validate_ranges(source, &edits)?;
+    let editable = EditableRegions::new(source, parsed);
+    let layout = std::cell::OnceCell::new();
+    let mut expanded = false;
     for edit in &edits {
         let span = &edit.span;
-        let protected = parsed.regions.iter().any(|region| {
-            region.kind.is_protected()
-                && if span.is_empty() {
-                    region.span.start <= span.start && span.start <= region.span.end
-                } else {
-                    span.start < region.span.end && region.span.start < span.end
-                }
-        });
-        let eligible = parsed.regions.iter().any(|region| {
-            region.kind == RegionKind::Text
-                && region.parent.is_some()
-                // Text-node ranges can include list/quote prefixes after soft breaks.
-                && !source.text()[region.span.clone()].contains(['\r', '\n'])
-                && region.span.start <= span.start
-                && span.end <= region.span.end
-        });
-        if protected || !eligible {
-            return Err(ProcessingError::ProtectedRegion(span.clone()));
+        if !editable.allows(span) {
+            if !layout
+                .get_or_init(|| crate::reflow::Layout::new(source, parsed))
+                .allows(edit)
+            {
+                return Err(ProcessingError::ProtectedRegion(span.clone()));
+            }
+            expanded = true;
         }
     }
     for pair in edits.windows(2) {
@@ -176,5 +298,12 @@ pub(crate) fn apply_edits(
         cursor = edit.span.end;
     }
     output.push_str(&source.text()[cursor..]);
+    if expanded {
+        let candidate = Source::new(output.clone());
+        let reparsed = crate::parse::parse(&candidate).map_err(ProcessingError::Parse)?;
+        if !crate::parse::equivalent(source, parsed, &candidate, &reparsed) {
+            return Err(ProcessingError::ProtectedRegion(0..source.text().len()));
+        }
+    }
     Ok(output)
 }

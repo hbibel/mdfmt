@@ -1,18 +1,26 @@
-use mdfmt::{FormatOptions, format};
+use mdfmt::{
+    FormatOptions,
+    config::{ResolvedConfig, RuleConfig},
+    format, format_with_config,
+};
 
 #[test]
-fn production_preserves_fixtures_without_claiming_lint_coverage() {
+fn disabled_fixes_preserve_fixtures_without_claiming_lint_coverage() {
     let cases: serde_json::Value =
         serde_json::from_str(include_str!("fixtures/parser/cases.json")).unwrap();
     for case in cases.as_array().unwrap() {
         let input = case["input"].as_str().unwrap();
-        for fix in [true, false] {
-            let result = format(input, &FormatOptions { fix }).unwrap();
+        let disabled = ResolvedConfig {
+            rules: RuleConfig::from_value(serde_json::json!({"MD013": false})).unwrap(),
+            ..Default::default()
+        };
+        for (fix, config) in [(false, ResolvedConfig::default()), (true, disabled)] {
+            let result = format_with_config(input, &FormatOptions { fix }, &config).unwrap();
             assert_eq!(result.output, input, "{}", case["id"]);
             assert!(!result.changed(input));
             assert!(result.edits.is_empty());
             assert!(result.diagnostics.is_empty());
-            assert!(result.coverage.implemented_rules.is_empty());
+            assert_eq!(result.coverage.implemented_rules, vec!["MD013"]);
             assert!(!result.coverage.complete);
         }
     }

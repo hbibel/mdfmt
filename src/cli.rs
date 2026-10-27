@@ -11,8 +11,8 @@ use std::{
 #[derive(Parser)]
 #[command(
     version,
-    about = "Source-preserving Markdown foundation (no rule fixes yet)",
-    after_help = "Declarative configuration and native file selection are supported. Rule fixes and lint findings are not implemented. Successful processing does not imply markdownlint compliance."
+    about = "Native Markdown formatter with configuration-aware MD013 reflow",
+    after_help = "MD013 prose reflow and remaining-violation reporting are supported, including lists and blockquotes. Unsafe syntax is preserved. Other rule fixes and findings are not implemented; successful processing does not imply full markdownlint compliance."
 )]
 struct Args {
     #[arg(long, conflicts_with = "check", help = "Update files in place")]
@@ -81,7 +81,10 @@ fn process_document(
             .as_ref()
             .and_then(|span| source.position(span.start).ok());
         let location = position
-            .map(|p| format!(":{}:{}", p.line, p.column_utf16))
+            .map(|p| {
+                let bom = usize::from(p.line == 1 && result.output.starts_with('\u{feff}'));
+                format!(":{}:{}", p.line, p.column_utf16 - bom)
+            })
             .unwrap_or_default();
         writeln!(
             stderr,

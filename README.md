@@ -13,10 +13,14 @@ localized edits, UTF-16 coordinate accounting, and safe file replacement.
 Declarative configuration loading, discovery/inheritance, inline rule permissions,
 and native file selection are implemented; see the
 [compatibility evidence and limits](docs/compatibility/configuration-completion.md).
-No production rule fixes or rule diagnostics exist yet. The CLI preserves input
-unchanged; a successful check does not mean the document is markdownlint-clean.
+MD013 prose reflow and remaining-violation diagnostics are implemented, including
+multiline paragraphs, nested lists, and blockquotes. Reflow respects configured
+widths and inline permissions, preserves hard breaks and indivisible inline
+syntax, and checks the parsed structure before applying changes. Other rules are
+not implemented yet; a successful check does not mean the document is
+markdownlint-clean. See [MD013 evidence and limits](docs/compatibility/md013.md).
 
-## Try the foundation
+## Usage
 
 With the toolchain from `mise.toml`:
 
@@ -49,7 +53,19 @@ filesystem-based `extends` is supported. `fix: false` prevents edits in every mo
 
 Diagnostics go to stderr. Exit codes are 0 for successful processing, 1 for
 needed changes in check mode or remaining error findings, and 2 for usage or
-processing failures. No rules currently produce changes or findings.
+processing failures. Warnings alone do not cause exit 1. `fix: false` prevents
+edits but does not suppress configured diagnostics.
+
+Reflow joins soft breaks and wraps at ordinary spaces, counting source widths in
+UTF-16 units, including container prefixes. It preserves existing horizontal
+spacing when it fits. Paragraphs containing tabs or multiline protected inline
+syntax are left alone. Non-breaking spaces, hard breaks, tables, code blocks, and
+protected inline content are not rewritten. If reparsing detects a structural or
+protected-content change, the document's wrapping batch is discarded. Unavoidable
+long tokens can remain MD013 findings according to the configured lint exceptions.
+Documents with non-comment HTML, or paragraphs containing `$` or a colon followed
+by an ASCII letter, are conservatively preserved until HTML, math, and directive
+boundaries are modeled. This also leaves some ordinary prose unwrapped.
 
 Writes reject symlinks and, on Unix, multiply linked files. Replacement preserves
 ordinary permissions and rejects observed changes since reading. It does not
@@ -97,7 +113,9 @@ mise exec -- cargo clippy --all-targets -- -D warnings
 
 Tests cover preservation, source positions, protected regions, localized edits,
 idempotence, CLI streams, safe replacement, configuration and file selection.
-Existing formatting acceptance examples remain future contracts, not passing rule tests.
+The MD013 suite exercises applicable formatting acceptance examples and pinned
+upstream diagnostics. Other-rule and external-formatter examples remain future
+contracts, not completed rule tests.
 The parser evaluation documents a separate pinned Node development oracle; Node
 is not needed to build or run mdfmt.
 

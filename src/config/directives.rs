@@ -172,8 +172,12 @@ impl DocumentConfig {
     }
 
     pub fn allows(&self, rule: &str, span: Range<usize>, source: &str) -> bool {
+        self.allows_source(rule, span, &Source::new(source.into()))
+    }
+
+    pub(crate) fn allows_source(&self, rule: &str, span: Range<usize>, source: &Source) -> bool {
         if span.start > span.end
-            || source.get(span.clone()).is_none()
+            || source.text().get(span.clone()).is_none()
             || self
                 .directives
                 .iter()
@@ -181,7 +185,6 @@ impl DocumentConfig {
         {
             return false;
         }
-        let source = Source::new(source.into());
         let Ok(start) = source.position(span.start) else {
             return false;
         };
@@ -190,7 +193,7 @@ impl DocumentConfig {
         } else {
             source.text()[..span.end]
                 .char_indices()
-                .last()
+                .next_back()
                 .map_or(0, |(i, _)| i)
         };
         let end = source.position(last).or_else(|_| source.position(span.end));

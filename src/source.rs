@@ -51,6 +51,27 @@ impl Source {
         &self.text
     }
 
+    pub(crate) fn line_count(&self) -> usize {
+        self.line_starts.len()
+    }
+
+    pub(crate) fn line_range(&self, line: usize) -> Option<std::ops::Range<usize>> {
+        let index = line.checked_sub(1)?;
+        let start = *self.line_starts.get(index)?;
+        let mut end = self
+            .line_starts
+            .get(index + 1)
+            .copied()
+            .unwrap_or(self.text.len());
+        if end > start && self.text.as_bytes()[end - 1] == b'\n' {
+            end -= 1;
+        }
+        if end > start && self.text.as_bytes()[end - 1] == b'\r' {
+            end -= 1;
+        }
+        Some(start..end)
+    }
+
     pub fn position(&self, byte: usize) -> Result<Position, PositionError> {
         if !self.text.is_char_boundary(byte)
             || (byte > 0

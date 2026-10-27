@@ -45,6 +45,108 @@ fn explicit_configuration_flags_and_stdin_are_supported() {
 }
 
 #[test]
+fn reflow_uses_discovered_configuration_in_stdout_check_and_write_modes() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint.json"),
+        r#"{"MD013":{"line_length":10}}"#,
+    )
+    .unwrap();
+    fs::write(root.join("doc.md"), "alpha beta gamma\r\n").unwrap();
+    let output = run(root, &["-"], "alpha beta gamma\r\n");
+    assert_eq!(output.status.code(), Some(0), "{:?}", output.stderr);
+    assert_eq!(output.stdout, b"alpha beta\r\ngamma\r\n");
+    assert!(output.stderr.is_empty());
+    let output = run(root, &["--check", "doc.md"], "");
+    assert_eq!(output.status.code(), Some(1), "{:?}", output.stderr);
+    assert!(output.stdout.is_empty());
+    assert_eq!(
+        fs::read(root.join("doc.md")).unwrap(),
+        b"alpha beta gamma\r\n"
+    );
+    let output = run(root, &["--write", "doc.md"], "");
+    assert_eq!(output.status.code(), Some(0), "{:?}", output.stderr);
+    assert!(output.stdout.is_empty());
+    assert_eq!(
+        fs::read(root.join("doc.md")).unwrap(),
+        b"alpha beta\r\ngamma\r\n"
+    );
+    let output = run(root, &["--check", "doc.md"], "");
+    assert_eq!(output.status.code(), Some(0), "{:?}", output.stderr);
+    assert!(output.stdout.is_empty());
+}
+
+#[test]
+fn cli2_fix_false_prevents_reflow_in_every_mode() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"fix":false,"config":{"MD013":{"line_length":10}}}"#,
+    )
+    .unwrap();
+    fs::write(root.join("doc.md"), "alpha beta gamma").unwrap();
+    let output = run(root, &["doc.md"], "");
+    assert_eq!(output.status.code(), Some(1));
+    assert_eq!(output.stdout, b"alpha beta gamma");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("MD013"));
+    for mode in ["--check", "--write"] {
+        let output = run(root, &[mode, "doc.md"], "");
+        assert_eq!(output.status.code(), Some(1));
+        assert!(output.stdout.is_empty());
+        assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"alpha beta gamma");
+    }
+}
+
+#[test]
+fn diagnostic_columns_ignore_a_leading_bom() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(
+        dir.path().join(".markdownlint-cli2.jsonc"),
+        r#"{"fix":false,"config":{"MD013":{"line_length":10,"strict":true}}}"#,
+    )
+    .unwrap();
+    let output = run(dir.path(), &["-"], "\u{feff}alpha beta gamma");
+    assert_eq!(output.status.code(), Some(1));
+    assert!(String::from_utf8_lossy(&output.stderr).starts_with("-:1:11: Error MD013:"));
+}
+
+#[test]
+fn remaining_error_and_warning_findings_control_status_without_losing_output() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    for (severity, expected_status) in [("error", 1), ("warning", 0)] {
+        fs::write(root.join(".markdownlint.json"), format!(r#"{{"default":false,"MD013":{{"line_length":10,"strict":true,"severity":"{severity}"}}}}"#)).unwrap();
+        let text = "alpha verylongtoken tail\n";
+        let expected = "alpha\nverylongtoken\ntail\n";
+        let output = run(root, &["-"], text);
+        assert_eq!(output.status.code(), Some(expected_status));
+        assert_eq!(output.stdout, expected.as_bytes());
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert!(stderr.contains("-:2:11:"));
+        assert!(stderr.contains("Expected: 10; Actual: 13"));
+        fs::write(root.join("doc.md"), text).unwrap();
+        let output = run(root, &["--write", "doc.md"], "");
+        assert_eq!(output.status.code(), Some(expected_status));
+        assert!(output.stdout.is_empty());
+        assert_eq!(fs::read_to_string(root.join("doc.md")).unwrap(), expected);
+        let output = run(root, &["--check", "doc.md"], "");
+        assert_eq!(output.status.code(), Some(expected_status));
+        assert!(output.stdout.is_empty());
+    }
+}
+
+#[test]
+fn help_describes_md013_without_claiming_all_rule_coverage() {
+    let dir = tempfile::tempdir().unwrap();
+    let output = run(dir.path(), &["--help"], "");
+    let help = String::from_utf8(output.stdout).unwrap();
+    assert!(help.contains("MD013"));
+    assert!(!help.contains("no rule fixes yet"));
+}
+
+#[test]
 fn config_errors_and_invalid_inline_configuration_prevent_output_and_writes() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();
