@@ -4,6 +4,7 @@ mod edit;
 mod heading_spaces;
 mod md004;
 mod md009;
+mod md010;
 mod md012;
 mod md013;
 mod md026;
@@ -62,10 +63,15 @@ pub fn format_with_config(
 ) -> Result<FormatResult, ProcessingError> {
     let mut current = source.to_owned();
     let mut deletion_edits = vec![];
-    // Heading removal can expose formerly protected suffix whitespace. Both
-    // deletion-only stages must settle before selecting prose gaps.
+    // Tab expansion and heading removal can expose suffix whitespace.
     loop {
-        let before = current.len();
+        let mut changed = false;
+        let pass = process(&current, options, config, md010::propose, |_| vec![])?;
+        if !pass.edits.is_empty() {
+            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            current = pass.output;
+            changed = true;
+        }
         loop {
             let pass = process(&current, options, config, md009::propose, |_| vec![])?;
             if pass.edits.is_empty() {
@@ -73,6 +79,7 @@ pub fn format_with_config(
             }
             deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
             current = pass.output;
+            changed = true;
         }
         loop {
             let pass = process(
@@ -91,8 +98,9 @@ pub fn format_with_config(
             }
             deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
             current = pass.output;
+            changed = true;
         }
-        if current.len() == before {
+        if !changed {
             break;
         }
     }
@@ -184,6 +192,9 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(md010::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(md009::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -206,6 +217,7 @@ pub fn format_with_config(
     result.coverage.implemented_rules = vec![
         "MD004".into(),
         "MD009".into(),
+        "MD010".into(),
         "MD012".into(),
         "MD013".into(),
         "MD019".into(),
@@ -233,6 +245,7 @@ fn process(
     authorized.extend(heading_spaces::propose(&source, &parsed, &document));
     authorized.extend(md012::propose(&source, &parsed, &document));
     authorized.extend(md009::propose(&source, &parsed, &document));
+    authorized.extend(md010::propose(&source, &parsed, &document));
     let mut edits = if options.fix
         && config.fix
         && !parse::has_uncertain_container_prefixes(&source, &parsed)
