@@ -170,3 +170,20 @@ fn all_rule_edits_reconstruct_original_source_and_are_stable() {
             .is_empty()
     );
 }
+
+#[test]
+fn unicode_whitespace_remains_part_of_raw_fence_language() {
+    for separator in ['\u{a0}', '\u{2003}'] {
+        let input = format!("```js{separator}extra\nalpha\tbeta\n```\n");
+        for include_code in [false, true] {
+            let config = config(json!({"code_blocks":include_code,"ignore_code_languages":["js"]}));
+            let result =
+                format_with_config(&input, &FormatOptions { fix: false }, &config).unwrap();
+            assert_eq!(result.diagnostics.len(), 1, "{input:?}");
+            assert_eq!(
+                result.diagnostics[0].span,
+                Some(input.find('\t').unwrap()..input.find('\t').unwrap() + 1)
+            );
+        }
+    }
+}

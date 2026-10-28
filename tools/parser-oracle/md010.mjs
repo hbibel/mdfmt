@@ -19,6 +19,8 @@ const samples = [
   "    \tcode\n", "\tcode\tvalue\n", "- item\n\n      code\tvalue\n",
   "`code`\t\t\n", "\t`code`\n", "alpha `a\tb`\tend\n",
   "```JS extra\ncode\tvalue\n```\n", "```js\ncode\tvalue\n", "~~~make\ncode\tvalue\n~~~\n",
+  "```js\u00a0extra\nalpha\tbeta\n```\n", "```js\u2003extra\nalpha\tbeta\n```\n",
+  "```js\u000bextra\nalpha\tbeta\n```\n", "```js\u000cextra\nalpha\tbeta\n```\n",
 ];
 const configurations = [true, false, {spaces_per_tab:0}, {spaces_per_tab:2}, {spaces_per_tab:4},
   {code_blocks:false}, {ignore_code_languages:["js"]}, {code_blocks:false,ignore_code_languages:["make"]},

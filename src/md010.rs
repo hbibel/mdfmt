@@ -38,7 +38,12 @@ fn code_ranges(source: &Source) -> Vec<CodeRange> {
                     .split(['\r', '\n'])
                     .next()
                     .unwrap_or("");
-                let language = info.split_whitespace().next().unwrap_or("").to_lowercase();
+                let language = info
+                    .trim_start_matches([' ', '\t'])
+                    .split([' ', '\t'])
+                    .next()
+                    .unwrap_or("")
+                    .to_lowercase();
                 let start_line = expanded.position(region.span.start).unwrap().line + 1;
                 let mut end_line = expanded
                     .position(region.span.end)
