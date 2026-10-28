@@ -1,3 +1,6 @@
+mod compose;
+pub(crate) use compose::compose_edits;
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -177,102 +180,11 @@ use std::ops::Range;
 pub struct AppliedEdit {
     pub span: Range<usize>,
     pub replacement: String,
+    /// Sorted `+`-joined rule IDs when multiple stages share one original region.
     pub origin: String,
 }
 
 pub(crate) type Edit = AppliedEdit;
-
-pub(crate) fn append_disjoint_edits(
-    prior: &[Edit],
-    next: &[Edit],
-) -> Result<Vec<Edit>, ProcessingError> {
-    let mut input_cursor = 0;
-    let mut output_cursor = 0;
-    let mut boundaries = vec![];
-    for edit in prior {
-        let output_start = output_cursor + edit.span.start - input_cursor;
-        output_cursor = output_start + edit.replacement.len();
-        input_cursor = edit.span.end;
-        boundaries.push((output_start, output_cursor, edit.span.start, input_cursor));
-    }
-    // A deletion's output boundary has two source positions: ranges end before
-    // the deleted bytes and start after them.
-    let original_offset = |offset, is_end: bool| {
-        let index = boundaries
-            .partition_point(|&(_, end, _, _)| end < offset || (!is_end && end == offset));
-        if let Some(&(start, end, original_start, original_end)) = boundaries.get(index) {
-            if start < offset && offset < end {
-                return Err(ProcessingError::EditConflict);
-            }
-            if offset == start {
-                return Ok(original_start);
-            }
-            if offset == end {
-                return Ok(original_end);
-            }
-        }
-        Ok(index.checked_sub(1).map_or(offset, |index| {
-            let (_, end, _, original_end) = boundaries[index];
-            original_end + offset - end
-        }))
-    };
-    let mut edits = prior.to_vec();
-    for edit in next {
-        edits.push(Edit {
-            span: original_offset(edit.span.start, false)?..original_offset(edit.span.end, true)?,
-            replacement: edit.replacement.clone(),
-            origin: edit.origin.clone(),
-        });
-    }
-    edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
-    if edits
-        .windows(2)
-        .any(|pair| pair[0].span.end > pair[1].span.start)
-    {
-        return Err(ProcessingError::EditConflict);
-    }
-    Ok(edits)
-}
-
-pub(crate) fn compose_after_deletions(deletions: &[Edit], next: &[Edit]) -> Vec<Edit> {
-    let mut removed = 0;
-    let boundaries: Vec<_> = deletions
-        .iter()
-        .map(|edit| {
-            debug_assert!(edit.replacement.is_empty());
-            let output_start = edit.span.start - removed;
-            removed += edit.span.len();
-            (output_start, removed)
-        })
-        .collect();
-    let original_offset = |offset| {
-        let index = boundaries.partition_point(|&(start, _)| start <= offset);
-        offset + index.checked_sub(1).map_or(0, |index| boundaries[index].1)
-    };
-    let mut edits = deletions.to_vec();
-    edits.extend(next.iter().map(|edit| Edit {
-        span: original_offset(edit.span.start)..original_offset(edit.span.end),
-        replacement: edit.replacement.clone(),
-        origin: edit.origin.clone(),
-    }));
-    edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
-    let mut combined: Vec<Edit> = vec![];
-    for edit in edits {
-        if let Some(last) = combined.last_mut()
-            && last.span.end > edit.span.start
-        {
-            debug_assert!(last.replacement.is_empty() || edit.replacement.is_empty());
-            last.span.end = last.span.end.max(edit.span.end);
-            if !edit.replacement.is_empty() {
-                last.replacement = edit.replacement;
-                last.origin = edit.origin;
-            }
-        } else {
-            combined.push(edit);
-        }
-    }
-    combined
-}
 
 pub(crate) struct EditableRegions {
     protected: Vec<Range<usize>>,

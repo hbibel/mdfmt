@@ -71,7 +71,7 @@ pub fn format_with_config(
             if pass.edits.is_empty() {
                 break;
             }
-            deletion_edits = edit::compose_after_deletions(&deletion_edits, &pass.edits);
+            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
             current = pass.output;
         }
         loop {
@@ -89,7 +89,7 @@ pub fn format_with_config(
             if pass.edits.is_empty() {
                 break;
             }
-            deletion_edits = edit::compose_after_deletions(&deletion_edits, &pass.edits);
+            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
             current = pass.output;
         }
         if current.len() == before {
@@ -101,13 +101,13 @@ pub fn format_with_config(
         if pass.edits.is_empty() {
             break;
         }
-        deletion_edits = edit::compose_after_deletions(&deletion_edits, &pass.edits);
+        deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
         current = pass.output;
     }
     // Heading suffix deletions can expose closing markers or turn setext text
     // into prose. Reparse that stable result before selecting prose gaps.
     let mut result = process(&current, options, config, reflow::propose, |_| vec![])?;
-    result.edits = edit::compose_after_deletions(&deletion_edits, &result.edits);
+    result.edits = edit::compose_edits(source, &deletion_edits, &result.edits)?;
     // Either contextual marker repair can make the other rule's rejected batch
     // safe without changing the parsed block tree.
     loop {
@@ -132,7 +132,7 @@ pub fn format_with_config(
             marker_edits.clone(),
             &marker_edits,
         )?;
-        result.edits = edit::append_disjoint_edits(&result.edits, &marker_edits)?;
+        result.edits = edit::compose_edits(source, &result.edits, &marker_edits)?;
         let before_style = Source::new(result.output.clone());
         let before_style_parsed = parse::parse(&before_style).map_err(ProcessingError::Parse)?;
         let before_style_document = config
@@ -149,7 +149,7 @@ pub fn format_with_config(
             style_edits.clone(),
             &style_edits,
         )?;
-        result.edits = edit::append_disjoint_edits(&result.edits, &style_edits)?;
+        result.edits = edit::compose_edits(source, &result.edits, &style_edits)?;
         if marker_edits.is_empty() && style_edits.is_empty() {
             break;
         }
@@ -175,10 +175,7 @@ pub fn format_with_config(
         eof_edits.clone(),
         &eof_edits,
     )?;
-    result.edits.extend(eof_edits.into_iter().map(|mut edit| {
-        edit.span = source.len()..source.len();
-        edit
-    }));
+    result.edits = edit::compose_edits(source, &result.edits, &eof_edits)?;
     let output = Source::new(result.output.clone());
     let parsed = parse::parse(&output).map_err(ProcessingError::Parse)?;
     let document = config
