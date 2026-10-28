@@ -189,6 +189,43 @@ fn thematic_break_repairs_and_unfixable_styles_have_distinct_cli_outcomes() {
 }
 
 #[test]
+fn list_marker_styles_fix_safely_and_report_preserved_boundaries() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"config":{"default":false,"ul-style":{"style":"plus"}}}"#,
+    )
+    .unwrap();
+    fs::write(root.join("doc.md"), "- one\n- two\n").unwrap();
+    let output = run(root, &["-"], "- one\n- two\n");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"+ one\n+ two\n");
+    assert_eq!(run(root, &["--check", "doc.md"], "").status.code(), Some(1));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"- one\n- two\n");
+    assert_eq!(run(root, &["--write", "doc.md"], "").status.code(), Some(0));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"+ one\n+ two\n");
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"config":{"default":false,"MD004":true}}"#,
+    )
+    .unwrap();
+    let output = run(root, &["-"], "* one\n+ two\n");
+    assert_eq!(output.status.code(), Some(1));
+    assert_eq!(output.stdout, b"* one\n+ two\n");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("MD004"));
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"fix":false,"config":{"default":false,"MD004":{"style":"plus","severity":"warning"}}}"#,
+    )
+    .unwrap();
+    let output = run(root, &["-"], "- one\n");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"- one\n");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("Warning MD004"));
+}
+
+#[test]
 fn disabled_heading_fixes_still_report_errors_or_warnings_in_every_mode() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();

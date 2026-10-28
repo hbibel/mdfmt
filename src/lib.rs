@@ -2,6 +2,7 @@ pub mod config;
 mod diagnostic;
 mod edit;
 mod heading_spaces;
+mod md004;
 mod md012;
 mod md013;
 mod md026;
@@ -90,23 +91,52 @@ pub fn format_with_config(
     // into prose. Reparse that stable result before selecting prose gaps.
     let mut result = process(&current, options, config, reflow::propose, |_| vec![])?;
     result.edits = edit::compose_after_deletions(&deletion_edits, &result.edits);
-    let before_style = Source::new(result.output.clone());
-    let before_style_parsed = parse::parse(&before_style).map_err(ProcessingError::Parse)?;
-    let before_style_document = config
-        .document(before_style.text())
-        .map_err(ProcessingError::Configuration)?;
-    let style_edits = if options.fix && config.fix {
-        md035::propose(&before_style, &before_style_parsed, &before_style_document)
-    } else {
-        vec![]
-    };
-    result.output = edit::apply_authorized_edits(
-        &before_style,
-        &before_style_parsed,
-        style_edits.clone(),
-        &style_edits,
-    )?;
-    result.edits = edit::append_disjoint_edits(&result.edits, &style_edits)?;
+    // Either contextual marker repair can make the other rule's rejected batch
+    // safe without changing the parsed block tree.
+    loop {
+        let before_markers = Source::new(result.output.clone());
+        let before_markers_parsed =
+            parse::parse(&before_markers).map_err(ProcessingError::Parse)?;
+        let before_markers_document = config
+            .document(before_markers.text())
+            .map_err(ProcessingError::Configuration)?;
+        let marker_edits = if options.fix && config.fix {
+            md004::propose(
+                &before_markers,
+                &before_markers_parsed,
+                &before_markers_document,
+            )
+        } else {
+            vec![]
+        };
+        result.output = edit::apply_authorized_edits(
+            &before_markers,
+            &before_markers_parsed,
+            marker_edits.clone(),
+            &marker_edits,
+        )?;
+        result.edits = edit::append_disjoint_edits(&result.edits, &marker_edits)?;
+        let before_style = Source::new(result.output.clone());
+        let before_style_parsed = parse::parse(&before_style).map_err(ProcessingError::Parse)?;
+        let before_style_document = config
+            .document(before_style.text())
+            .map_err(ProcessingError::Configuration)?;
+        let style_edits = if options.fix && config.fix {
+            md035::propose(&before_style, &before_style_parsed, &before_style_document)
+        } else {
+            vec![]
+        };
+        result.output = edit::apply_authorized_edits(
+            &before_style,
+            &before_style_parsed,
+            style_edits.clone(),
+            &style_edits,
+        )?;
+        result.edits = edit::append_disjoint_edits(&result.edits, &style_edits)?;
+        if marker_edits.is_empty() && style_edits.is_empty() {
+            break;
+        }
+    }
     let before_eof = Source::new(result.output.clone());
     let before_eof_parsed = parse::parse(&before_eof).map_err(ProcessingError::Parse)?;
     let before_eof_document = config
@@ -140,6 +170,9 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(md004::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(md012::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -154,6 +187,7 @@ pub fn format_with_config(
         .diagnostics
         .extend(md035::diagnose(&output, &parsed, &document));
     result.coverage.implemented_rules = vec![
+        "MD004".into(),
         "MD012".into(),
         "MD013".into(),
         "MD019".into(),
