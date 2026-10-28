@@ -22,6 +22,7 @@ const samples = [
   " # This heading has a rather long context to truncate\n", " # 123456789012345678901234567😀end\n",
   ">\t # Heading\n", "-\t # Heading\n", "  text\nnot a heading\n", "# Heading\n  ---\n",
   "   >   A\n   > B\n   > ===\n", "- a\n\n  - b\n\n     # Nested\n",
+  "-   \n    # H\n", "-\t\n   # H\n", "1. \t\n     # H\n", "> -   \n>     # H\n",
 ];
 const configurations = [true, false, {severity:"warning"}];
 const observations = samples.flatMap((input, sample) => configurations.map((options, configuration) => {

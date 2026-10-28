@@ -157,5 +157,17 @@
   {"id":"51-2","input":"   >   A\n   > B\n   > ===\n","options":{"severity":"warning"},"findings":[{"line":1,"column":6,"length":2,"context":"   >   A","severity":"warning"}],"output":"   > A\n   > B\n   > ===\n"},
   {"id":"52-0","input":"- a\n\n  - b\n\n     # Nested\n","options":true,"findings":[{"line":5,"column":5,"length":1,"context":"     # Nested","severity":"error"}],"output":"- a\n\n  - b\n\n    # Nested\n"},
   {"id":"52-1","input":"- a\n\n  - b\n\n     # Nested\n","options":false,"findings":[],"output":"- a\n\n  - b\n\n     # Nested\n"},
-  {"id":"52-2","input":"- a\n\n  - b\n\n     # Nested\n","options":{"severity":"warning"},"findings":[{"line":5,"column":5,"length":1,"context":"     # Nested","severity":"warning"}],"output":"- a\n\n  - b\n\n    # Nested\n"}
+  {"id":"52-2","input":"- a\n\n  - b\n\n     # Nested\n","options":{"severity":"warning"},"findings":[{"line":5,"column":5,"length":1,"context":"     # Nested","severity":"warning"}],"output":"- a\n\n  - b\n\n    # Nested\n"},
+  {"id":"53-0","input":"-   \n    # H\n","options":true,"findings":[{"line":2,"column":3,"length":2,"context":"    # H","severity":"error"}],"output":"-   \n  # H\n"},
+  {"id":"53-1","input":"-   \n    # H\n","options":false,"findings":[],"output":"-   \n    # H\n"},
+  {"id":"53-2","input":"-   \n    # H\n","options":{"severity":"warning"},"findings":[{"line":2,"column":3,"length":2,"context":"    # H","severity":"warning"}],"output":"-   \n  # H\n"},
+  {"id":"54-0","input":"-\t\n   # H\n","options":true,"findings":[{"line":2,"column":3,"length":1,"context":"   # H","severity":"error"}],"output":"-\t\n  # H\n"},
+  {"id":"54-1","input":"-\t\n   # H\n","options":false,"findings":[],"output":"-\t\n   # H\n"},
+  {"id":"54-2","input":"-\t\n   # H\n","options":{"severity":"warning"},"findings":[{"line":2,"column":3,"length":1,"context":"   # H","severity":"warning"}],"output":"-\t\n  # H\n"},
+  {"id":"55-0","input":"1. \t\n     # H\n","options":true,"findings":[{"line":2,"column":4,"length":2,"context":"     # H","severity":"error"}],"output":"1. \t\n   # H\n"},
+  {"id":"55-1","input":"1. \t\n     # H\n","options":false,"findings":[],"output":"1. \t\n     # H\n"},
+  {"id":"55-2","input":"1. \t\n     # H\n","options":{"severity":"warning"},"findings":[{"line":2,"column":4,"length":2,"context":"     # H","severity":"warning"}],"output":"1. \t\n   # H\n"},
+  {"id":"56-0","input":"> -   \n>     # H\n","options":true,"findings":[{"line":2,"column":5,"length":2,"context":">     # H","severity":"error"}],"output":"> -   \n>   # H\n"},
+  {"id":"56-1","input":"> -   \n>     # H\n","options":false,"findings":[],"output":"> -   \n>     # H\n"},
+  {"id":"56-2","input":"> -   \n>     # H\n","options":{"severity":"warning"},"findings":[{"line":2,"column":5,"length":2,"context":">     # H","severity":"warning"}],"output":"> -   \n>   # H\n"}
 ]

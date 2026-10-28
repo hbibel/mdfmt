@@ -114,3 +114,30 @@ fn heading_and_whitespace_rules_settle_with_original_coordinates() {
             .is_empty()
     );
 }
+
+#[test]
+fn empty_list_markers_use_default_continuation_padding() {
+    for (input, column, length, expected) in [
+        ("-   \n    # H\n", 3, 2, "-   \n  # H\n"),
+        ("-\t\n   # H\n", 3, 1, "-\t\n   # H\n"),
+        ("1. \t\n     # H\n", 4, 2, "1. \t\n     # H\n"),
+    ] {
+        let config = config(json!(true));
+        let result = format_with_config(input, &FormatOptions { fix: false }, &config).unwrap();
+        assert_eq!(result.diagnostics.len(), 1, "{input:?}");
+        let span = result.diagnostics[0].span.clone().unwrap();
+        let position = Source::new(input.into()).position(span.start).unwrap();
+        assert_eq!(
+            (position.line, position.column_utf16, span.len()),
+            (2, column, length)
+        );
+        let first = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+        assert_eq!(first.output, expected);
+        assert!(
+            format_with_config(&first.output, &FormatOptions::default(), &config)
+                .unwrap()
+                .edits
+                .is_empty()
+        );
+    }
+}

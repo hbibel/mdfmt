@@ -28,9 +28,11 @@ fn marker_width(text: &str) -> Option<usize> {
         .bytes()
         .take_while(|byte| *byte == b' ')
         .count();
+    let empty =
+        text[width + padding..].is_empty() || text[width + padding..].starts_with(['\r', '\n']);
     Some(
         width
-            + if (1..=4).contains(&padding) {
+            + if !empty && (1..=4).contains(&padding) {
                 padding
             } else {
                 1
