@@ -8,40 +8,34 @@ use std::ops::Range;
 
 struct List {
     depth: usize,
-    ambiguous: bool,
     markers: Vec<Range<usize>>,
 }
 
-fn column(source: &Source, offset: usize) -> usize {
-    let position = source.position(offset).unwrap();
-    let start = source.line_range(position.line).unwrap().start;
-    source.text()[start..offset]
-        .chars()
-        .fold(0, |column, ch| match ch {
-            '\t' => column + 4 - column % 4,
-            '\u{feff}' if position.line == 1 && column == 0 => column,
-            _ => column + ch.len_utf16(),
-        })
-}
-
-fn content_column(source: &Source, span: Range<usize>) -> usize {
-    let raw = source.text()[span.clone()].trim_start_matches([' ', '\t']);
-    let start = span.end - raw.len();
-    let digits = raw.bytes().take_while(u8::is_ascii_digit).count();
-    let width = if digits > 0 { digits + 1 } else { 1 };
-    let after_marker = start + width;
-    let separator = raw[width..]
-        .bytes()
-        .take_while(|byte| matches!(byte, b' ' | b'\t'))
-        .count();
-    let marker_column = column(source, after_marker);
-    let padding = column(source, after_marker + separator) - marker_column;
-    marker_column
-        + if (1..=4).contains(&padding) {
-            padding
-        } else {
-            1
+fn expanded_tabs(source: &Source) -> (Source, Vec<usize>) {
+    let mut expanded = String::new();
+    let mut offsets = vec![0];
+    let mut width = 0;
+    for (index, ch) in source.text().char_indices() {
+        match ch {
+            '\t' => {
+                let spaces = 4 - width % 4;
+                expanded.extend(std::iter::repeat_n(' ', spaces));
+                offsets.extend(std::iter::repeat_n(index, spaces - 1));
+                offsets.push(index + 1);
+                width += spaces;
+            }
+            _ => {
+                expanded.push(ch);
+                offsets.extend(index + 1..=index + ch.len_utf8());
+                if matches!(ch, '\r' | '\n') {
+                    width = 0;
+                } else if index != 0 || ch != '\u{feff}' {
+                    width += ch.len_utf16();
+                }
+            }
         }
+    }
+    (Source::new(expanded), offsets)
 }
 
 fn lists(source: &Source, parsed: &ParsedDocument) -> Vec<List> {
@@ -49,31 +43,16 @@ fn lists(source: &Source, parsed: &ParsedDocument) -> Vec<List> {
     let mut indices: Vec<Option<usize>> = vec![None; parsed.regions.len()];
     for (index, region) in parsed.regions.iter().enumerate() {
         if region.kind == RegionKind::List {
-            // Tab-expanded marker padding can disagree with native ancestry.
-            // Use source columns for depth and withhold repairs on disagreement.
             let mut depth = 0;
-            let mut native_depth = 0;
-            let mut found_parent = false;
-            let raw = source.text()[region.span.clone()].trim_start_matches([' ', '\t']);
-            let marker_column = column(source, region.span.end - raw.len());
             let mut parent = region.parent;
             while let Some(index) = parent {
                 let ancestor = &parsed.regions[index];
-                native_depth += usize::from(ancestor.kind == RegionKind::List);
-                if !found_parent
-                    && ancestor.kind == RegionKind::ListItem
-                    && marker_column >= content_column(source, ancestor.span.clone())
-                    && let Some(list) = ancestor.parent.and_then(|parent| indices[parent])
-                {
-                    depth = result[list].depth + 1;
-                    found_parent = true;
-                }
+                depth += usize::from(ancestor.kind == RegionKind::List);
                 parent = ancestor.parent;
             }
             indices[index] = Some(result.len());
             result.push(List {
                 depth,
-                ambiguous: depth != native_depth,
                 markers: vec![],
             });
         } else if region.kind == RegionKind::ListItem {
@@ -118,6 +97,29 @@ struct Finding {
 }
 
 fn findings(source: &Source, parsed: &ParsedDocument, document: &DocumentConfig) -> Vec<Finding> {
+    if source.text().contains('\t') {
+        // A diagnostic-only expanded parse avoids native tab/container boundary
+        // disagreements. Marker spans are mapped back; original bytes stay intact.
+        let (expanded, offsets) = expanded_tabs(source);
+        let Ok(parsed) = parse(&expanded) else {
+            return vec![];
+        };
+        return findings_in(&expanded, &parsed, document)
+            .into_iter()
+            .map(|mut finding| {
+                finding.span = offsets[finding.span.start]..offsets[finding.span.end];
+                finding
+            })
+            .collect();
+    }
+    findings_in(source, parsed, document)
+}
+
+fn findings_in(
+    source: &Source,
+    parsed: &ParsedDocument,
+    document: &DocumentConfig,
+) -> Vec<Finding> {
     let Some(global) = document.state("MD004", 1) else {
         return vec![];
     };
@@ -176,9 +178,7 @@ pub(crate) fn propose(
     parsed: &ParsedDocument,
     document: &DocumentConfig,
 ) -> Vec<Edit> {
-    if crate::parse::has_unmodeled_syntax(source, parsed)
-        || lists(source, parsed).iter().any(|list| list.ambiguous)
-    {
+    if crate::parse::has_unmodeled_syntax(source, parsed) {
         return vec![];
     }
     let mut edits: Vec<_> = findings(source, parsed, document)

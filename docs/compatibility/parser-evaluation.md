@@ -86,12 +86,31 @@ npm run test:reflow --prefix tools/parser-oracle
 npm run test:reflow-scaling --prefix tools/parser-oracle
 ```
 
-Because native GFM cannot validate upstream extensions, the formatter currently
-preserves an entire document if any paragraph contains `$` or a colon immediately
+Because native GFM cannot validate upstream extensions, contextual whitespace,
+list, thematic-break repairs and reflow are withheld if any paragraph contains `$` or a colon immediately
 followed by an ASCII letter. It also preserves documents containing non-comment
 HTML, including inline tags whose content may be whitespace-sensitive. These
 deliberately broad guards can withhold wrapping for ordinary prose too; precise
 extension and HTML boundaries remain future work.
+
+## Tabbed container boundaries
+
+The 2026-10-28 MD004 review found native/upstream disagreement about literal
+boundaries: in `"> 1.\t---\n >  \t+\n"`, the second line is indented code upstream
+but can be a list item natively. Native tree equality before/after an edit is
+therefore insufficient to authorize a rewrite in such a container.
+
+All rule edits are withheld when structural container prefixes contain tabs.
+MD004 diagnostics use a separate, tab-expanded parse with byte offsets mapped
+back to the original source; original bytes are never replaced with expanded
+text. This also preserves container-relative depth when quote indentation varies.
+Other diagnostic parser limitations remain; full upstream parser parity is not
+claimed. The guard can withhold unrelated safe fixes in the same document.
+
+Evidence includes 296 pinned MD004 cases, 500 additional generated quote/tab/list
+diagnostic comparisons, and regressions for preservation across heading, marker,
+thematic and EOF rules. Reproduce the recorded comparisons with
+`node tools/parser-oracle/md004.mjs` after rebuilding the CLI.
 
 Permission checks reuse source coordinates and indexed text/protected intervals.
 The development scaling smoke test checks exact output for 100, 500, and 1,000

@@ -17,6 +17,8 @@ const samples = [
   "-\troot\n  - child\n    - grandchild\n", "> -\troot\n>   - child\n", "-\troot\n    - child\n",
   "-     root\n  - child\n", "1.\troot\n  - child\n", "1.\troot\n    - child\n", "- root\n\t- child\n",
   " >\t-\troot\n >\t  - child\n", "- one\n  + child\n- two\n  * child\n",
+  "> 1.\t---\n >  \t+\n", " > - root\n>   - child\n", "> - root\n >   - child\n",
+  "- > - root\n  >   - child\n", " >\t- root\n>\t  - child\n",
 ];
 const configurations = [true, false, {style:"dash"}, {style:"plus"}, {style:"asterisk"}, {style:"sublist"},
   {severity:"warning"}, {style:"invalid"}];

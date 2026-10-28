@@ -143,15 +143,62 @@ pub(crate) struct ParsedDocument {
 }
 
 pub(crate) fn has_unmodeled_syntax(source: &Source, parsed: &ParsedDocument) -> bool {
+    has_uncertain_container_prefixes(source, parsed)
+        || parsed.regions.iter().any(|region| {
+            let literal = &source.text()[region.span.clone()];
+            (region.kind == RegionKind::Paragraph
+                && (literal.contains('$')
+                    || literal
+                        .as_bytes()
+                        .windows(2)
+                        .any(|pair| pair[0] == b':' && pair[1].is_ascii_alphabetic())))
+                || (region.kind == RegionKind::Html && !literal.starts_with("<!--"))
+        })
+}
+
+pub(crate) fn has_uncertain_container_prefixes(source: &Source, parsed: &ParsedDocument) -> bool {
     parsed.regions.iter().any(|region| {
-        let literal = &source.text()[region.span.clone()];
-        (region.kind == RegionKind::Paragraph
-            && (literal.contains('$')
-                || literal
-                    .as_bytes()
-                    .windows(2)
-                    .any(|pair| pair[0] == b':' && pair[1].is_ascii_alphabetic())))
-            || (region.kind == RegionKind::Html && !literal.starts_with("<!--"))
+        if !matches!(
+            region.kind,
+            RegionKind::List
+                | RegionKind::ListItem
+                | RegionKind::Blockquote
+                | RegionKind::Paragraph
+                | RegionKind::Heading
+                | RegionKind::Code
+                | RegionKind::ThematicBreak
+        ) {
+            return false;
+        }
+        let mut container = matches!(region.kind, RegionKind::ListItem | RegionKind::Blockquote);
+        let mut parent = region.parent;
+        while let Some(index) = parent {
+            let ancestor = &parsed.regions[index];
+            container |= matches!(ancestor.kind, RegionKind::ListItem | RegionKind::Blockquote);
+            parent = ancestor.parent;
+        }
+        if !container {
+            return false;
+        }
+        let line_start = source
+            .line_range(source.position(region.span.start).unwrap().line)
+            .unwrap()
+            .start;
+        if source.text()[line_start..region.span.start].contains('\t') {
+            return true;
+        }
+        if region.kind == RegionKind::ListItem {
+            let raw = source.text()[region.span.clone()].trim_start_matches([' ', '\t']);
+            let marker = region.span.end - raw.len();
+            let digits = raw.bytes().take_while(u8::is_ascii_digit).count();
+            let width = if digits > 0 { digits + 1 } else { 1 };
+            let separator = raw[width..]
+                .bytes()
+                .take_while(|byte| matches!(byte, b' ' | b'\t'))
+                .count();
+            return source.text()[line_start..marker + width + separator].contains('\t');
+        }
+        false
     })
 }
 

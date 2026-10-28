@@ -184,3 +184,55 @@ fn thematic_style_repairs_can_unlock_list_marker_repairs_in_the_same_invocation(
         assert_eq!(applied, first.output);
     }
 }
+
+#[test]
+fn tabbed_container_prefixes_do_not_expose_indented_code_as_list_markers() {
+    let input = "> 1.\t---\n >  \t+\n";
+    let config = config(json!({"style":"asterisk"}));
+    let first = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+    assert_eq!(first.output, input);
+    assert!(first.edits.is_empty());
+    assert!(first.diagnostics.is_empty());
+    assert!(
+        format_with_config(&first.output, &FormatOptions::default(), &config)
+            .unwrap()
+            .edits
+            .is_empty()
+    );
+}
+
+#[test]
+fn quote_indentation_does_not_change_container_relative_sublist_depth() {
+    let input = " > - root\n>   - child\n";
+    let config = config(json!({"style":"sublist"}));
+    let unchecked = format_with_config(input, &FormatOptions { fix: false }, &config).unwrap();
+    assert_eq!(unchecked.diagnostics.len(), 1);
+    let position = Source::new(input.into())
+        .position(unchecked.diagnostics[0].span.as_ref().unwrap().start)
+        .unwrap();
+    assert_eq!((position.line, position.column_utf16), (2, 5));
+    let first = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+    assert_eq!(first.output, " > - root\n>   + child\n");
+    assert!(first.diagnostics.is_empty());
+    assert!(
+        format_with_config(&first.output, &FormatOptions::default(), &config)
+            .unwrap()
+            .edits
+            .is_empty()
+    );
+}
+
+#[test]
+fn uncertain_tabbed_container_boundaries_also_block_other_rule_edits() {
+    let config = ResolvedConfig { rules: RuleConfig::from_value(json!({"default":false,"MD019":true,"MD021":true,"MD026":true,"MD035":{"style":"***"},"MD047":true})).unwrap(), ..Default::default() };
+    let input = "> 1.\t---\n >  \t#  Hello!";
+    let first = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+    assert_eq!(first.output, input);
+    assert!(first.edits.is_empty());
+    assert!(
+        format_with_config(&first.output, &FormatOptions::default(), &config)
+            .unwrap()
+            .edits
+            .is_empty()
+    );
+}

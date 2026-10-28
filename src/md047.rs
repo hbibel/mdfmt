@@ -92,7 +92,8 @@ pub(crate) fn propose(
     newline: &str,
 ) -> Vec<Edit> {
     let end = source.text().len();
-    if diagnose(source, parsed, document).is_empty()
+    if crate::parse::has_uncertain_container_prefixes(source, parsed)
+        || diagnose(source, parsed, document).is_empty()
         || !document.allows_source("MD047", end..end, source)
         || parsed.regions.iter().any(|region| {
             region.span.end == end

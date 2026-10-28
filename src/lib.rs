@@ -214,7 +214,10 @@ fn process(
     let mut authorized = md026::propose(&source, &parsed, &document);
     authorized.extend(heading_spaces::propose(&source, &parsed, &document));
     authorized.extend(md012::propose(&source, &parsed, &document));
-    let mut edits = if options.fix && config.fix {
+    let mut edits = if options.fix
+        && config.fix
+        && !parse::has_uncertain_container_prefixes(&source, &parsed)
+    {
         let proposed = produce(&source, &parsed, &document);
         edit::validate_ranges(&source, &proposed)?;
         proposed
