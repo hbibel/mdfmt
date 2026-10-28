@@ -100,7 +100,8 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [context-validated MD035 thematic-break styles](../../compatibility/md035.md), then
 [context-safe MD004 unordered-list markers](../../compatibility/md004.md) and
 [conditional MD009 trailing whitespace](../../compatibility/md009.md) and
-[conditional MD010 hard tabs](../../compatibility/md010.md).
+[conditional MD010 hard tabs](../../compatibility/md010.md) and
+[conditional MD023 heading indentation](../../compatibility/md023.md).
 Remaining built-in rules, interactions and conflict detection are next.
 
 The first useful release includes local declarative configuration,

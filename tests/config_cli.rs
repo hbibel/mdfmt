@@ -284,6 +284,35 @@ fn hard_tab_cli_modes_fix_prose_and_report_literal_code() {
 }
 
 #[test]
+fn heading_indentation_cli_modes_preserve_containers() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"config":{"default":false,"heading-start-left":true}}"#,
+    )
+    .unwrap();
+    let input = ">  # Heading\r\n";
+    fs::write(root.join("doc.md"), input).unwrap();
+    let output = run(root, &["-"], input);
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"> # Heading\r\n");
+    assert_eq!(run(root, &["--check", "doc.md"], "").status.code(), Some(1));
+    assert_eq!(fs::read_to_string(root.join("doc.md")).unwrap(), input);
+    assert_eq!(run(root, &["--write", "doc.md"], "").status.code(), Some(0));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"> # Heading\r\n");
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"fix":false,"config":{"default":false,"MD023":{"severity":"warning"}}}"#,
+    )
+    .unwrap();
+    let output = run(root, &["-"], input);
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, input.as_bytes());
+    assert!(String::from_utf8_lossy(&output.stderr).contains("Warning MD023"));
+}
+
+#[test]
 fn disabled_heading_fixes_still_report_errors_or_warnings_in_every_mode() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();

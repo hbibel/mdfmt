@@ -21,8 +21,8 @@ fn check(input: &str, expected: &str, width: usize) {
     assert_eq!(
         result.coverage.implemented_rules,
         vec![
-            "MD004", "MD009", "MD010", "MD012", "MD013", "MD019", "MD021", "MD026", "MD035",
-            "MD047"
+            "MD004", "MD009", "MD010", "MD012", "MD013", "MD019", "MD021", "MD023", "MD026",
+            "MD035", "MD047"
         ]
     );
     let second = format_with_config(&result.output, &FormatOptions::default(), &config).unwrap();

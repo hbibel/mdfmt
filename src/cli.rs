@@ -12,7 +12,7 @@ use std::{
 #[command(
     version,
     about = "Native Markdown formatter with configuration-aware MD013 reflow and safe rule fixes",
-    after_help = "MD013 prose reflow, safe MD004 list markers, conditional MD009 trailing-whitespace and MD010 hard-tab repairs, safe MD012 blank-line repairs, MD019/MD021 heading separators, MD026 heading-punctuation fixes, safe MD035 thematic-break styles, safe MD047 final newlines and remaining-violation reporting are supported, including lists and blockquotes. Unsafe syntax is preserved except for approved MD026 suffix edits. Other rule fixes and findings are not implemented; successful processing does not imply full markdownlint compliance."
+    after_help = "MD013 prose reflow, safe MD004 list markers, conditional MD009 trailing-whitespace and MD010 hard-tab repairs, safe MD012 blank-line repairs, MD019/MD021 heading separators, conditional MD023 heading indentation, MD026 heading-punctuation fixes, safe MD035 thematic-break styles, safe MD047 final newlines and remaining-violation reporting are supported, including lists and blockquotes. Unsafe syntax is preserved except for approved MD026 suffix edits. Other rule fixes and findings are not implemented; successful processing does not imply full markdownlint compliance."
 )]
 struct Args {
     #[arg(long, conflicts_with = "check", help = "Update files in place")]

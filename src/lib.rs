@@ -7,6 +7,7 @@ mod md009;
 mod md010;
 mod md012;
 mod md013;
+mod md023;
 mod md026;
 mod md035;
 mod md047;
@@ -67,6 +68,12 @@ pub fn format_with_config(
     loop {
         let mut changed = false;
         let pass = process(&current, options, config, md010::propose, |_| vec![])?;
+        if !pass.edits.is_empty() {
+            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            current = pass.output;
+            changed = true;
+        }
+        let pass = process(&current, options, config, md023::propose, |_| vec![])?;
         if !pass.edits.is_empty() {
             deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
             current = pass.output;
@@ -192,6 +199,9 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(md023::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(md010::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -222,6 +232,7 @@ pub fn format_with_config(
         "MD013".into(),
         "MD019".into(),
         "MD021".into(),
+        "MD023".into(),
         "MD026".into(),
         "MD035".into(),
         "MD047".into(),
@@ -246,6 +257,7 @@ fn process(
     authorized.extend(md012::propose(&source, &parsed, &document));
     authorized.extend(md009::propose(&source, &parsed, &document));
     authorized.extend(md010::propose(&source, &parsed, &document));
+    authorized.extend(md023::propose(&source, &parsed, &document));
     let mut edits = if options.fix
         && config.fix
         && !parse::has_uncertain_container_prefixes(&source, &parsed)
