@@ -98,7 +98,8 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [conditional MD012 blank-line repairs](../../compatibility/md012.md) and
 [MD019/MD021 heading separators](../../compatibility/heading-spaces.md) and
 [context-validated MD035 thematic-break styles](../../compatibility/md035.md), then
-[context-safe MD004 unordered-list markers](../../compatibility/md004.md).
+[context-safe MD004 unordered-list markers](../../compatibility/md004.md) and
+[conditional MD009 trailing whitespace](../../compatibility/md009.md).
 Remaining built-in rules, interactions and conflict detection are next.
 
 The first useful release includes local declarative configuration,

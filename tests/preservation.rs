@@ -22,7 +22,7 @@ fn disabled_fixes_preserve_fixtures_without_claiming_lint_coverage() {
             assert_eq!(
                 result.coverage.implemented_rules,
                 vec![
-                    "MD004", "MD012", "MD013", "MD019", "MD021", "MD026", "MD035", "MD047"
+                    "MD004", "MD009", "MD012", "MD013", "MD019", "MD021", "MD026", "MD035", "MD047"
                 ]
             );
             assert!(!result.coverage.complete);

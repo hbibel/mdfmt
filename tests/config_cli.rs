@@ -226,6 +226,39 @@ fn list_marker_styles_fix_safely_and_report_preserved_boundaries() {
 }
 
 #[test]
+fn trailing_whitespace_repairs_preserve_hard_breaks_in_cli_modes() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = dir.path();
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"config":{"default":false,"no-trailing-spaces":true}}"#,
+    )
+    .unwrap();
+    fs::write(root.join("doc.md"), "alpha \r\n").unwrap();
+    let output = run(root, &["-"], "alpha \r\n");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"alpha\r\n");
+    assert_eq!(run(root, &["--check", "doc.md"], "").status.code(), Some(1));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"alpha \r\n");
+    assert_eq!(run(root, &["--write", "doc.md"], "").status.code(), Some(0));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"alpha\r\n");
+    fs::write(root.join("doc.md"), "alpha   \nbeta\n").unwrap();
+    let output = run(root, &["--write", "doc.md"], "");
+    assert_eq!(output.status.code(), Some(1));
+    assert_eq!(fs::read(root.join("doc.md")).unwrap(), b"alpha   \nbeta\n");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("MD009"));
+    fs::write(
+        root.join(".markdownlint-cli2.jsonc"),
+        r#"{"fix":false,"config":{"default":false,"MD009":{"severity":"warning"}}}"#,
+    )
+    .unwrap();
+    let output = run(root, &["-"], "alpha ");
+    assert_eq!(output.status.code(), Some(0));
+    assert_eq!(output.stdout, b"alpha ");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("Warning MD009"));
+}
+
+#[test]
 fn disabled_heading_fixes_still_report_errors_or_warnings_in_every_mode() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();

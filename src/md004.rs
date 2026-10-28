@@ -11,33 +11,6 @@ struct List {
     markers: Vec<Range<usize>>,
 }
 
-fn expanded_tabs(source: &Source) -> (Source, Vec<usize>) {
-    let mut expanded = String::new();
-    let mut offsets = vec![0];
-    let mut width = 0;
-    for (index, ch) in source.text().char_indices() {
-        match ch {
-            '\t' => {
-                let spaces = 4 - width % 4;
-                expanded.extend(std::iter::repeat_n(' ', spaces));
-                offsets.extend(std::iter::repeat_n(index, spaces - 1));
-                offsets.push(index + 1);
-                width += spaces;
-            }
-            _ => {
-                expanded.push(ch);
-                offsets.extend(index + 1..=index + ch.len_utf8());
-                if matches!(ch, '\r' | '\n') {
-                    width = 0;
-                } else if index != 0 || ch != '\u{feff}' {
-                    width += ch.len_utf16();
-                }
-            }
-        }
-    }
-    (Source::new(expanded), offsets)
-}
-
 fn lists(source: &Source, parsed: &ParsedDocument) -> Vec<List> {
     let mut result: Vec<List> = vec![];
     let mut indices: Vec<Option<usize>> = vec![None; parsed.regions.len()];
@@ -100,7 +73,7 @@ fn findings(source: &Source, parsed: &ParsedDocument, document: &DocumentConfig)
     if source.text().contains('\t') {
         // A diagnostic-only expanded parse avoids native tab/container boundary
         // disagreements. Marker spans are mapped back; original bytes stay intact.
-        let (expanded, offsets) = expanded_tabs(source);
+        let (expanded, offsets) = crate::parse::expanded_tabs(source);
         let Ok(parsed) = parse(&expanded) else {
             return vec![];
         };

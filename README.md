@@ -29,6 +29,8 @@ MD035 normalizes thematic-break styles when contextual reparsing confirms safety
 see [MD035 evidence](docs/compatibility/md035.md).
 MD004 normalizes unordered-list markers without merging parsed lists or changing
 nesting; see [MD004 evidence](docs/compatibility/md004.md).
+MD009 removes incidental trailing whitespace while preserving hard breaks and
+protected source; see [MD009 evidence](docs/compatibility/md009.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is

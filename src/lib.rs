@@ -3,6 +3,7 @@ mod diagnostic;
 mod edit;
 mod heading_spaces;
 mod md004;
+mod md009;
 mod md012;
 mod md013;
 mod md026;
@@ -61,6 +62,14 @@ pub fn format_with_config(
 ) -> Result<FormatResult, ProcessingError> {
     let mut current = source.to_owned();
     let mut deletion_edits = vec![];
+    loop {
+        let pass = process(&current, options, config, md009::propose, |_| vec![])?;
+        if pass.edits.is_empty() {
+            break;
+        }
+        deletion_edits = edit::compose_after_deletions(&deletion_edits, &pass.edits);
+        current = pass.output;
+    }
     loop {
         let pass = process(
             &current,
@@ -170,6 +179,9 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(md009::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(md004::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -188,6 +200,7 @@ pub fn format_with_config(
         .extend(md035::diagnose(&output, &parsed, &document));
     result.coverage.implemented_rules = vec![
         "MD004".into(),
+        "MD009".into(),
         "MD012".into(),
         "MD013".into(),
         "MD019".into(),
@@ -214,6 +227,7 @@ fn process(
     let mut authorized = md026::propose(&source, &parsed, &document);
     authorized.extend(heading_spaces::propose(&source, &parsed, &document));
     authorized.extend(md012::propose(&source, &parsed, &document));
+    authorized.extend(md009::propose(&source, &parsed, &document));
     let mut edits = if options.fix
         && config.fix
         && !parse::has_uncertain_container_prefixes(&source, &parsed)
