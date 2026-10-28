@@ -170,3 +170,67 @@ fn incidental_deletions_compose_with_all_later_rule_stages() {
             .is_empty()
     );
 }
+
+#[test]
+fn heading_removal_exposes_whitespace_in_the_same_invocation() {
+    let config = ResolvedConfig {
+        rules: RuleConfig::from_value(json!({"default":false,"MD009":true,"MD026":true})).unwrap(),
+        ..Default::default()
+    };
+    let input = "!\n-- \n";
+    let first = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+    assert_eq!(first.output, "\n--\n");
+    assert!(first.diagnostics.is_empty());
+    let mut applied = String::new();
+    let mut cursor = 0;
+    for edit in &first.edits {
+        applied.push_str(&input[cursor..edit.span.start]);
+        applied.push_str(&edit.replacement);
+        cursor = edit.span.end;
+    }
+    applied.push_str(&input[cursor..]);
+    assert_eq!(applied, first.output);
+    assert!(
+        format_with_config(&first.output, &FormatOptions::default(), &config)
+            .unwrap()
+            .edits
+            .is_empty()
+    );
+}
+
+#[test]
+fn blank_quote_lines_remain_exempt_inside_list_item_content() {
+    let config = config(json!({"list_item_empty_lines":true}));
+    let input = "- > a \n  > \n";
+    for fix in [false, true] {
+        let result = format_with_config(input, &FormatOptions { fix }, &config).unwrap();
+        assert_eq!(result.output, input);
+        assert!(result.diagnostics.is_empty());
+    }
+}
+
+#[test]
+fn unterminated_container_fences_report_the_last_source_line_without_repairing_code() {
+    for (input, count) in [
+        ("> ```\n> x \n", 1),
+        ("- ```\n  x \n", 0),
+        ("> - ```\n>   x \n", 1),
+    ] {
+        for fix in [false, true] {
+            let result =
+                format_with_config(input, &FormatOptions { fix }, &config(json!(true))).unwrap();
+            assert_eq!(result.output, input);
+            assert_eq!(result.diagnostics.len(), count, "{input:?}");
+            if count == 0 {
+                continue;
+            }
+            let finding = &result.diagnostics[0];
+            let span = finding.span.clone().unwrap();
+            assert_eq!(&input[span.clone()], " ");
+            assert_eq!(
+                Source::new(input.into()).position(span.start).unwrap().line,
+                2
+            );
+        }
+    }
+}

@@ -15,6 +15,7 @@ const FRONT: u8 = 16;
 
 fn classify_in(source: &Source, parsed: &ParsedDocument) -> Vec<u8> {
     let mut classes = vec![0; source.line_count()];
+    // Empty quote-prefix lines remain item content; plain trailing indent does not.
     let mut content_ends = vec![0; parsed.regions.len()];
     for (index, region) in parsed.regions.iter().enumerate().rev() {
         if matches!(
@@ -26,6 +27,7 @@ fn classify_in(source: &Source, parsed: &ParsedDocument) -> Vec<u8> {
                 | RegionKind::Html
                 | RegionKind::Definition
                 | RegionKind::ThematicBreak
+                | RegionKind::Blockquote
         ) {
             content_ends[index] = content_ends[index]
                 .max(crate::md013::covered_lines(source, region.span.clone()).end);
@@ -46,12 +48,19 @@ fn classify_in(source: &Source, parsed: &ParsedDocument) -> Vec<u8> {
                             && trimmed.bytes().take_while(|byte| byte == marker).count() >= 3
                     });
                 let lines = if fenced {
-                    covered.start + 1
-                        ..source
-                            .position(region.span.end)
-                            .unwrap()
-                            .line
-                            .saturating_sub(1)
+                    let mut end_line = source.position(region.span.end).unwrap().line;
+                    let mut parent = region.parent;
+                    while let Some(index) = parent {
+                        let ancestor = &parsed.regions[index];
+                        if ancestor.kind == RegionKind::Blockquote {
+                            // Quoted fences end at the container's physical line,
+                            // unlike a root fence's virtual EOF line.
+                            end_line = end_line.min(covered.end);
+                            break;
+                        }
+                        parent = ancestor.parent;
+                    }
+                    covered.start + 1..end_line.saturating_sub(1)
                 } else {
                     covered
                 };

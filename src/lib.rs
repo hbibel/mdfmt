@@ -62,31 +62,39 @@ pub fn format_with_config(
 ) -> Result<FormatResult, ProcessingError> {
     let mut current = source.to_owned();
     let mut deletion_edits = vec![];
+    // Heading removal can expose formerly protected suffix whitespace. Both
+    // deletion-only stages must settle before selecting prose gaps.
     loop {
-        let pass = process(&current, options, config, md009::propose, |_| vec![])?;
-        if pass.edits.is_empty() {
+        let before = current.len();
+        loop {
+            let pass = process(&current, options, config, md009::propose, |_| vec![])?;
+            if pass.edits.is_empty() {
+                break;
+            }
+            deletion_edits = edit::compose_after_deletions(&deletion_edits, &pass.edits);
+            current = pass.output;
+        }
+        loop {
+            let pass = process(
+                &current,
+                options,
+                config,
+                |source, parsed, document| {
+                    let mut edits = md026::propose(source, parsed, document);
+                    edits.extend(heading_spaces::propose(source, parsed, document));
+                    edits
+                },
+                |_| vec![],
+            )?;
+            if pass.edits.is_empty() {
+                break;
+            }
+            deletion_edits = edit::compose_after_deletions(&deletion_edits, &pass.edits);
+            current = pass.output;
+        }
+        if current.len() == before {
             break;
         }
-        deletion_edits = edit::compose_after_deletions(&deletion_edits, &pass.edits);
-        current = pass.output;
-    }
-    loop {
-        let pass = process(
-            &current,
-            options,
-            config,
-            |source, parsed, document| {
-                let mut edits = md026::propose(source, parsed, document);
-                edits.extend(heading_spaces::propose(source, parsed, document));
-                edits
-            },
-            |_| vec![],
-        )?;
-        if pass.edits.is_empty() {
-            break;
-        }
-        deletion_edits = edit::compose_after_deletions(&deletion_edits, &pass.edits);
-        current = pass.output;
     }
     loop {
         let pass = process(&current, options, config, md012::propose, |_| vec![])?;

@@ -17,6 +17,9 @@ const samples = [
   "<!-- markdownlint-disable-next-line MD009 -->\nalpha beta gamma ",
   "> 1.\t---\n >  \t# Heading \n", " > - root \n>   - child \n", "-\troot \n  - child \n",
   "> ```md \n> code \n> ``` \n", "- one\n\t\n  continuation \n",
+  "!\n-- \n", "- > a \n  > \n", "- > > a \n  > > \n", "- > a \n  > \n  \n",
+  "> ```\n> x \n", "- ```\n  x \n", "> - ```\n>   x \n", "> ```\n> x \n> ``` \n",
+  "- ```\n  x \n  ``` \n", "```\ncode ",
 ];
 const configurations = [true, false, {br_spaces:0}, {br_spaces:1}, {br_spaces:3}, {strict:true},
   {code_blocks:true}, {list_item_empty_lines:true}, {strict:true,list_item_empty_lines:true}, {severity:"warning"}];
