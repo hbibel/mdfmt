@@ -35,6 +35,8 @@ MD010 replaces hard tabs where configured substitution preserves meaning;
 see [MD010 evidence](docs/compatibility/md010.md).
 MD023 removes heading indentation where container ownership is unchanged;
 see [MD023 evidence](docs/compatibility/md023.md).
+MD040 reports missing/disallowed fence languages and extra info without guessing
+replacements; see [MD040 evidence](docs/compatibility/md040.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is
