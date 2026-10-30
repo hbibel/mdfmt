@@ -24,6 +24,9 @@ const samples = [
   "# [<b>Same</b>](url)\n# [Same](url)\n", "# A\u00a0B\n# A B\n", "# A\u00a0B\n# A\u00a0B\n",
   "# Top\n<!-- markdownlint-disable-next-line MD024 -->\n## Child\n## Child\n",
   "# A\n## Same\n<!-- markdownlint-disable-next-line MD024 -->\n# B\n## Same\n",
+  "# ~~<b>A</b>~~\n# ~~A~~\n", "# ~<b>A</b>~\n# ~A~\n", "# ~~<b>A</b>~~\n# ~~<b>A</b>~~\n",
+  "> A  \n> B\n> ===\n\n# A   B\n", "> A  \n> B\n> ===\n\n# A   > B\n",
+  "- A  \n  B\n  ===\n\n# A     B\n", "> A\\\n> B\n> ===\n\n# A\\ > B\n",
 ];
 const configurations = [true, false, {siblings_only:true}, {severity:"warning"}];
 const observations = samples.flatMap((input, sample) => configurations.map((options, configuration) => ({

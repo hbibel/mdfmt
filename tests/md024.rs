@@ -129,3 +129,36 @@ fn cli_reports_duplicates_without_changing_heading_text() {
     assert_eq!(result.stdout, input.as_bytes());
     assert!(String::from_utf8_lossy(&result.stderr).contains("Warning MD024"));
 }
+
+#[test]
+fn raw_heading_keys_preserve_hard_break_prefixes_and_flatten_strikethrough_html() {
+    let mut failures = vec![];
+    for (input, expected) in [
+        ("# ~~<b>A</b>~~\n# ~~A~~\n", Some("~~A~~")),
+        ("# ~<b>A</b>~\n# ~A~\n", Some("~A~")),
+        ("# ~~<b>A</b>~~\n# ~~<b>A</b>~~\n", Some("~~A~~")),
+        ("> A  \n> B\n> ===\n\n# A   B\n", None),
+        ("> A  \n> B\n> ===\n\n# A   > B\n", Some("A   > B")),
+    ] {
+        let result =
+            format_with_config(input, &FormatOptions::default(), &config(json!(true))).unwrap();
+        assert_eq!(result.output, input);
+        let actual: Vec<_> = result
+            .diagnostics
+            .iter()
+            .map(|finding| {
+                finding
+                    .message
+                    .strip_prefix("Multiple headings with the same content [Context: \"")
+                    .unwrap()
+                    .strip_suffix("\"]")
+                    .unwrap()
+            })
+            .collect();
+        let expected: Vec<_> = expected.into_iter().collect();
+        if actual != expected {
+            failures.push(format!("{input:?}: got {actual:?}, expected {expected:?}"));
+        }
+    }
+    assert!(failures.is_empty(), "{failures:#?}");
+}

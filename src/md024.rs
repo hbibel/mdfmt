@@ -34,15 +34,36 @@ fn headings_in(
             && let Some(position) = node.position()
         {
             let mut text = String::new();
-            for child in &heading.children {
-                if !matches!(child, Node::Html(_))
-                    && let Some(position) = child.position()
+            fn html_tokens(node: &Node, output: &mut Vec<std::ops::Range<usize>>) {
+                if matches!(node, Node::Html(_))
+                    && let Some(position) = node.position()
                 {
-                    text.push_str(
-                        &source.text()[offset(base + position.start.offset)
-                            ..offset(base + position.end.offset)],
-                    );
+                    output.push(position.start.offset..position.end.offset);
+                } else if matches!(node, Node::Delete(_))
+                    && let Some(children) = node.children()
+                {
+                    for child in children {
+                        html_tokens(child, output);
+                    }
                 }
+            }
+            if let Some(first) = heading.children.first().and_then(Node::position)
+                && let Some(last) = heading.children.last().and_then(Node::position)
+            {
+                // mdast splits at hard breaks and groups strikethrough; pinned
+                // heading tokens keep the intervening source and expose its HTML.
+                let mut cursor = offset(base + first.start.offset);
+                let end = offset(base + last.end.offset);
+                let mut excluded = vec![];
+                for child in &heading.children {
+                    html_tokens(child, &mut excluded);
+                }
+                for span in excluded {
+                    let start = offset(base + span.start);
+                    text.push_str(&source.text()[cursor..start]);
+                    cursor = offset(base + span.end);
+                }
+                text.push_str(&source.text()[cursor..end]);
             }
             output.push(Heading {
                 start: offset(base + position.start.offset),
