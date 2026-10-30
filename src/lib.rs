@@ -8,6 +8,7 @@ mod md010;
 mod md012;
 mod md013;
 mod md023;
+mod md024;
 mod md026;
 mod md028;
 mod md035;
@@ -203,6 +204,9 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(md024::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(md028::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -249,6 +253,7 @@ pub fn format_with_config(
         "MD019".into(),
         "MD021".into(),
         "MD023".into(),
+        "MD024".into(),
         "MD026".into(),
         "MD028".into(),
         "MD035".into(),

@@ -105,7 +105,8 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [MD040 fenced-language diagnostics](../../compatibility/md040.md) and
 [MD042 empty-link diagnostics](../../compatibility/md042.md) and
 [MD045 missing-alt-text diagnostics](../../compatibility/md045.md) and
-[MD028 blockquote gap diagnostics](../../compatibility/md028.md).
+[MD028 blockquote gap diagnostics](../../compatibility/md028.md) and
+[MD024 duplicate-heading diagnostics](../../compatibility/md024.md).
 Remaining built-in rules, interactions and conflict detection are next.
 
 The first useful release includes local declarative configuration,

@@ -43,6 +43,8 @@ MD045 reports images missing alternate text without fabricating descriptions;
 see [MD045 evidence](docs/compatibility/md045.md).
 MD028 reports blank gaps between sibling blockquotes without merging quotations;
 see [MD028 evidence](docs/compatibility/md028.md).
+MD024 reports duplicate headings without renaming content or changing anchors;
+see [MD024 evidence](docs/compatibility/md024.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is
