@@ -16,6 +16,7 @@ mod md040;
 mod md042;
 mod md045;
 mod md047;
+mod md048;
 mod parse;
 mod reflow;
 mod source;
@@ -174,6 +175,27 @@ pub fn format_with_config(
             break;
         }
     }
+    let before_fences = Source::new(result.output.clone());
+    let before_fences_parsed = parse::parse(&before_fences).map_err(ProcessingError::Parse)?;
+    let before_fences_document = config
+        .document(before_fences.text())
+        .map_err(ProcessingError::Configuration)?;
+    let fence_edits = if options.fix && config.fix {
+        md048::propose(
+            &before_fences,
+            &before_fences_parsed,
+            &before_fences_document,
+        )
+    } else {
+        vec![]
+    };
+    result.output = edit::apply_authorized_edits(
+        &before_fences,
+        &before_fences_parsed,
+        fence_edits.clone(),
+        &fence_edits,
+    )?;
+    result.edits = edit::compose_edits(source, &result.edits, &fence_edits)?;
     let before_eof = Source::new(result.output.clone());
     let before_eof_parsed = parse::parse(&before_eof).map_err(ProcessingError::Parse)?;
     let before_eof_document = config
@@ -202,6 +224,9 @@ pub fn format_with_config(
         .document(output.text())
         .map_err(ProcessingError::Configuration)?;
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
+    result
+        .diagnostics
+        .extend(md048::diagnose(&output, &parsed, &document));
     result
         .diagnostics
         .extend(md024::diagnose(&output, &parsed, &document));
@@ -261,6 +286,7 @@ pub fn format_with_config(
         "MD042".into(),
         "MD045".into(),
         "MD047".into(),
+        "MD048".into(),
     ];
     Ok(result)
 }
