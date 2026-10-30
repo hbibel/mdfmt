@@ -39,6 +39,8 @@ MD040 reports missing/disallowed fence languages and extra info without guessing
 replacements; see [MD040 evidence](docs/compatibility/md040.md).
 MD042 reports empty links without inventing destinations;
 see [MD042 evidence](docs/compatibility/md042.md).
+MD045 reports images missing alternate text without fabricating descriptions;
+see [MD045 evidence](docs/compatibility/md045.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is

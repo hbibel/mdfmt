@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdtempSync, unlinkSync, rmdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 import { lint } from "markdownlint/sync";
 
 const samples = [
@@ -16,6 +18,13 @@ const samples = [
   "> <img src=image>\n", "- <img src=image>\n", "<img src=image> and ![](image)\n",
   "<!-- markdownlint-disable-next-line MD045 -->\n![](image)\n", "<!-- markdownlint-disable-file accessibility -->\n<img src=image>\n",
   "<img src=image aria-hidden=\" true\">\n", "<img src=image ALT = \"alt\">\n", "<img src=image\u00a0alt=\"alt\">\n",
+  "![![](inner)](outer)\n", "![<img src=image>](outer)\n", "![`<img src=image>`](outer)\n",
+  "<img src=x data-note=\" alt=ignored\">\n", "<img src=x aria-hidden=\"TrUe\">\n",
+  "<img src=x aria-hidden=\"true extra\">\n", "<img src=x aria-hidden=true/>\n",
+  "<![CDATA[<img src=x>]]>\n", "<?xml text='<img src=x>'?>\n", "<textarea><img src=x></textarea>\n",
+  "<pre>`<img src=x>`</pre>\n", "<img src=x>\n![](markdown)\n", "alpha <img src=x> ![](markdown)\n",
+  "![![](inner)][outer]\n\n[outer]: image\n", "> ![![](inner)](outer)\n", "![![alt](inner)](outer)\n",
+  "prefix <img src=x\n alt>\n", "<img src=x\u0085alt=\"alt\">\n", "<img src=x\u2003alt=\"alt\">\n",
 ];
 const configurations = [true, false, {severity:"warning"}];
 const observations = samples.flatMap((input, sample) => configurations.map((options, configuration) => ({
@@ -28,4 +37,24 @@ const receipt = new URL("md045-observations.json", import.meta.url);
 const serialized = "[\n" + observations.map(row => "  " + JSON.stringify(row)).join(",\n") + "\n]\n";
 if (process.argv.includes("--record")) writeFileSync(receipt, serialized);
 else assert.equal(serialized, readFileSync(receipt, "utf8"));
-console.log(`PASS: ${observations.length} pinned MD045 observations (native implementation pending)`);
+if (process.argv.includes("--source-only")) {
+  console.log(`PASS: ${observations.length} pinned MD045 observations (native implementation pending)`);
+} else {
+  const binary = fileURLToPath(new URL("../../target/debug/mdfmt", import.meta.url));
+  const directory = mkdtempSync("/tmp/opencode/mdfmt-md045-oracle-");
+  const configuration = directory + "/.markdownlint-cli2.jsonc";
+  try { for (const row of observations) {
+    for (const fix of [false, true]) {
+      writeFileSync(configuration, JSON.stringify({ fix, config: {default:false,MD045:row.options} }));
+      const native = spawnSync(binary, ["-"], { input: row.input, encoding: "utf8", cwd: directory });
+      assert.equal(native.stdout, row.input, row.id);
+      const expected = row.findings.map(finding => ({line:finding.line,column:finding.range?.[0] || 1,severity:finding.severity}))
+        .sort((left,right) => left.line-right.line || left.column-right.column);
+      const actual = [...native.stderr.matchAll(/^-:(\d+):(\d+): (Error|Warning) MD045: Images should have alternate text \(alt text\)$/gm)]
+        .map(match => ({line:Number(match[1]),column:Number(match[2]),severity:match[3].toLowerCase()}));
+      assert.deepEqual(actual, expected, `${row.id}: fix ${fix}: ${native.stderr}`);
+      assert.equal(native.status, expected.some(finding => finding.severity === "error") ? 1 : 0, native.stderr);
+    }
+  } } finally { unlinkSync(configuration); rmdirSync(directory); }
+  console.log(`PASS: ${observations.length} pinned MD045/native diagnostic and source-preservation cases`);
+}

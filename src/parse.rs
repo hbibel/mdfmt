@@ -73,6 +73,9 @@ mod tests {
         }
     }
 }
+mod inline;
+pub(crate) use inline::label_end;
+
 use crate::Source;
 use markdown::mdast::Node;
 use std::{ops::Range, sync::LazyLock};
