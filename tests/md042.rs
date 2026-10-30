@@ -34,20 +34,28 @@ fn empty_link_diagnostics_match_pinned_raw_source_semantics() {
         assert_eq!(result.output, input);
         assert!(result.edits.is_empty());
         let source = Source::new(input.into());
-        let actual: Vec<_> = result.diagnostics.iter().map(|finding| {
+        let actual: Vec<_> = result.diagnostics.iter().enumerate().map(|(index, finding)| {
             assert_eq!(finding.code, "MD042");
             let span = finding.span.clone().unwrap();
             let position = source.position(span.start).unwrap();
+            if !input[span.clone()].contains(['\r', '\n']) {
+                assert_eq!(mdfmt::utf16_len(&input[span.clone()]), row["findings"][index]["length"].as_u64().unwrap() as usize);
+            }
             json!({"line":position.line,"column":position.column_utf16 - usize::from(position.line == 1 && input.starts_with('\u{feff}')),
-                "length":mdfmt::utf16_len(&input[span]),"context":finding.message.strip_prefix("No empty links [Context: \"").unwrap().strip_suffix("\"]").unwrap(),
+                "context":finding.message.strip_prefix("No empty links [Context: \"").unwrap().strip_suffix("\"]").unwrap(),
                 "severity":if finding.severity == Severity::Warning {"warning"} else {"error"}})
         }).collect();
-        assert_eq!(
-            actual,
-            *row["findings"].as_array().unwrap(),
-            "{}",
-            row["id"]
-        );
+        let expected: Vec<_> = row["findings"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|finding| {
+                let mut finding = finding.clone();
+                finding.as_object_mut().unwrap().remove("length");
+                finding
+            })
+            .collect();
+        assert_eq!(actual, expected, "{}", row["id"]);
     }
 }
 
@@ -61,7 +69,7 @@ fn multiline_empty_links_report_valid_spans_instead_of_upstream_range_errors() {
         let span = first.diagnostics[0].span.clone().unwrap();
         assert!(input.get(span.clone()).is_some());
         assert!(input[span].contains("b]()"));
-        assert!(first.diagnostics[0].message.contains('\n'));
+        assert!(!first.diagnostics[0].message.contains('\n'));
         assert!(
             format_with_config(
                 &first.output,
@@ -155,4 +163,32 @@ fn cli_reports_empty_links_without_fabricating_destinations() {
     assert_eq!(result.status.code(), Some(0));
     assert_eq!(result.stdout, input.as_bytes());
     assert!(String::from_utf8_lossy(&result.stderr).contains("Warning MD042"));
+}
+
+#[test]
+fn quoted_empty_resources_ignore_continuation_container_markers() {
+    for input in ["> [a](\n> )\n", "> [a](\n> <>\n> )\n"] {
+        let first =
+            format_with_config(input, &FormatOptions::default(), &config(json!(true))).unwrap();
+        assert_eq!(first.output, input);
+        assert_eq!(first.diagnostics.len(), 1, "{input:?}");
+        let span = first.diagnostics[0].span.clone().unwrap();
+        assert_eq!(&input[span], input[2..].trim_end_matches('\n'));
+    }
+}
+
+#[test]
+fn empty_links_inside_image_descriptions_are_not_lost_with_image_alt_text() {
+    for (input, link) in [
+        ("![[a]()](image)\n", "[a]()"),
+        ("![[a](#)](image)\n", "[a](#)"),
+        ("![prefix [a]() suffix](image)\n", "[a]()"),
+    ] {
+        let first =
+            format_with_config(input, &FormatOptions::default(), &config(json!(true))).unwrap();
+        assert_eq!(first.output, input);
+        assert_eq!(first.diagnostics.len(), 1);
+        let span = first.diagnostics[0].span.clone().unwrap();
+        assert_eq!(&input[span], link);
+    }
 }

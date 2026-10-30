@@ -22,6 +22,10 @@ const samples = [
   "[a](<\u00a0#\u00a0>)\n", "[a](\u00a0#\u00a0)\n", "[a](#\\))\n",
   "> [a\n> b]()\n", "[a\r\nb]()\r\n", "---\ntitle: x\n---\n[label]()\n",
   " > 1.\t---\n >  \t[label]()\n", "😀\t[label]()\n",
+  "> [a](\n> )\n", "> [a](\n> <>\n> )\n", "![[a]()](image)\n", "![[a](#)](image)\n",
+  "![prefix [a]() suffix](image)\n", "![`[a]()`](image)\n", "![[a](url)](image)\n",
+  "![[a][id]](image)\n\n[id]: #\n", "![[a][ID]](image)\n\n[id]: #\n",
+  "![![inner [a]()](nested)](image)\n", "> ![[a]()](image)\n", "> > [a](\n> > <>\n> > )\n",
 ];
 const configurations = [true, false, {severity:"warning"}];
 const observations = samples.flatMap((input, sample) => configurations.map((options, configuration) => {

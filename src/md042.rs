@@ -69,13 +69,27 @@ fn destination(text: &str, literal: bool) -> &str {
         .unwrap_or("")
 }
 
-fn regions(source: &Source, parsed: &ParsedDocument) -> Vec<(RegionKind, Range<usize>)> {
+fn regions(source: &Source, parsed: &ParsedDocument) -> Vec<(RegionKind, Range<usize>, usize)> {
     let select = |parsed: &ParsedDocument| {
         parsed
             .regions
             .iter()
-            .filter(|region| matches!(region.kind, RegionKind::Link | RegionKind::Definition))
-            .map(|region| (region.kind, region.span.clone()))
+            .filter(|region| {
+                matches!(
+                    region.kind,
+                    RegionKind::Link | RegionKind::Definition | RegionKind::Image
+                )
+            })
+            .map(|region| {
+                let mut quotes = 0;
+                let mut parent = region.parent;
+                while let Some(index) = parent {
+                    let ancestor = &parsed.regions[index];
+                    quotes += usize::from(ancestor.kind == RegionKind::Blockquote);
+                    parent = ancestor.parent;
+                }
+                (region.kind, region.span.clone(), quotes)
+            })
             .collect::<Vec<_>>()
     };
     if source.text().contains('\t') {
@@ -85,10 +99,77 @@ fn regions(source: &Source, parsed: &ParsedDocument) -> Vec<(RegionKind, Range<u
         };
         return select(&parsed)
             .into_iter()
-            .map(|(kind, span)| (kind, offsets[span.start]..offsets[span.end]))
+            .map(|(kind, span, quotes)| (kind, offsets[span.start]..offsets[span.end], quotes))
             .collect();
     }
     select(parsed)
+}
+
+fn without_quote_prefixes(text: &str, quotes: usize) -> String {
+    let text = text.replace("\r\n", "\n").replace('\r', "\n");
+    text.split('\n')
+        .enumerate()
+        .map(|(line, mut text)| {
+            if line > 0 {
+                for _ in 0..quotes {
+                    if let Some(rest) = text.trim_start_matches([' ', '\t']).strip_prefix('>') {
+                        text = rest.strip_prefix([' ', '\t']).unwrap_or(rest);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            text
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+fn image_description_links(source: &Source, selected: &mut Vec<(RegionKind, Range<usize>, usize)>) {
+    let definitions = selected
+        .iter()
+        .filter(|(kind, _, _)| *kind == RegionKind::Definition)
+        .map(|(_, span, _)| &source.text()[span.clone()])
+        .collect::<Vec<_>>()
+        .join("\n");
+    let mut cursor = 0;
+    while cursor < selected.len() {
+        let (kind, span, quotes) = selected[cursor].clone();
+        cursor += 1;
+        if kind != RegionKind::Image {
+            continue;
+        }
+        let raw = &source.text()[span.clone()];
+        let Some(end) = raw
+            .strip_prefix('!')
+            .and_then(|label| label_end(label, true))
+        else {
+            continue;
+        };
+        let label = &raw[2..end + 1];
+        // mdast flattens image descriptions to alt text, losing nested links.
+        // Reparse the description with a prose prefix and original definitions.
+        let candidate = Source::new(format!("x {label}\n\n{definitions}"));
+        let Ok(parsed) = parse(&candidate) else {
+            continue;
+        };
+        selected.extend(
+            regions(&candidate, &parsed)
+                .into_iter()
+                .filter(|(kind, span, _)| {
+                    matches!(kind, RegionKind::Link | RegionKind::Image)
+                        && 2 <= span.start
+                        && span.end <= 2 + label.len()
+                })
+                .map(|(kind, inner, _)| {
+                    (
+                        kind,
+                        span.start + inner.start..span.start + inner.end,
+                        quotes,
+                    )
+                }),
+        );
+    }
 }
 
 pub(crate) fn diagnose(
@@ -96,13 +177,15 @@ pub(crate) fn diagnose(
     parsed: &ParsedDocument,
     document: &DocumentConfig,
 ) -> Vec<Diagnostic> {
-    let regions = regions(source, parsed);
+    let mut regions = regions(source, parsed);
+    image_description_links(source, &mut regions);
     let mut definitions = HashMap::new();
-    for (kind, span) in &regions {
+    for (kind, span, quotes) in &regions {
         if *kind != RegionKind::Definition {
             continue;
         }
-        let raw = source.text()[span.clone()].trim_start_matches([' ', '\t']);
+        let logical = without_quote_prefixes(&source.text()[span.clone()], *quotes);
+        let raw = logical.trim_start_matches([' ', '\t']);
         let Some(end) = label_end(raw, false) else {
             continue;
         };
@@ -120,7 +203,7 @@ pub(crate) fn diagnose(
             .or_insert_with(|| destination(rest, false).to_owned());
     }
     let mut result = vec![];
-    for (kind, span) in regions {
+    for (kind, span, quotes) in regions {
         if kind != RegionKind::Link {
             continue;
         }
@@ -130,7 +213,8 @@ pub(crate) fn diagnose(
         };
         let rest = &raw[end + 1..];
         let empty = if let Some(resource) = rest.strip_prefix('(') {
-            matches!(destination(resource, true).trim_matches(js_space), "" | "#")
+            let logical = without_quote_prefixes(resource, quotes);
+            matches!(destination(&logical, true).trim_matches(js_space), "" | "#")
         } else {
             let label = if rest.starts_with('[') {
                 let Some(reference_end) = label_end(rest, false) else {
@@ -164,6 +248,7 @@ pub(crate) fn diagnose(
         } else {
             context
         };
+        let context = context.replace('\n', " ");
         result.push(Diagnostic {
             code: "MD042".into(),
             rule_id: Some("MD042".into()),
