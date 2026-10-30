@@ -6,7 +6,16 @@ use crate::{
 use markdown::mdast::Node;
 use std::ops::Range;
 
-fn selected(source: &Source, parsed: &ParsedDocument) -> Vec<(RegionKind, Range<usize>, bool)> {
+#[derive(Clone)]
+struct Candidate {
+    kind: RegionKind,
+    span: Range<usize>,
+    flow: bool,
+    html_only: bool,
+    quotes: usize,
+}
+
+fn selected(source: &Source, parsed: &ParsedDocument) -> Vec<Candidate> {
     let select = |parsed: &ParsedDocument| {
         parsed
             .regions
@@ -18,16 +27,25 @@ fn selected(source: &Source, parsed: &ParsedDocument) -> Vec<(RegionKind, Range<
                 )
             })
             .map(|region| {
-                (
-                    region.kind,
-                    region.span.clone(),
-                    region.parent.is_some_and(|parent| {
+                let mut quotes = 0;
+                let mut parent = region.parent;
+                while let Some(index) = parent {
+                    let ancestor = &parsed.regions[index];
+                    quotes += usize::from(ancestor.kind == RegionKind::Blockquote);
+                    parent = ancestor.parent;
+                }
+                Candidate {
+                    kind: region.kind,
+                    span: region.span.clone(),
+                    quotes,
+                    html_only: false,
+                    flow: region.parent.is_some_and(|parent| {
                         matches!(
                             parsed.regions[parent].kind,
                             RegionKind::Root | RegionKind::Blockquote | RegionKind::ListItem
                         )
                     }),
-                )
+                }
             })
             .collect::<Vec<_>>()
     };
@@ -38,7 +56,10 @@ fn selected(source: &Source, parsed: &ParsedDocument) -> Vec<(RegionKind, Range<
         };
         return select(&parsed)
             .into_iter()
-            .map(|(kind, span, flow)| (kind, offsets[span.start]..offsets[span.end], flow))
+            .map(|mut item| {
+                item.span = offsets[item.span.start]..offsets[item.span.end];
+                item
+            })
             .collect();
     }
     select(parsed)
@@ -70,9 +91,32 @@ fn attribute<'a>(text: &'a str, name: &str) -> Option<&'a str> {
     None
 }
 
-fn html_text_spans(text: &str) -> Vec<Range<usize>> {
-    // Pinned HTML-flow diagnostics reparse non-comment blocks as Markdown,
-    // including apparent tags inside script/style strings, not as a DOM.
+fn mask_quote_prefixes(text: &str, quotes: usize) -> String {
+    let mut bytes = text.as_bytes().to_vec();
+    let mut cursor = 0;
+    while cursor < bytes.len() {
+        if matches!(bytes[cursor], b'\r' | b'\n') {
+            let mut start = cursor + 1;
+            for _ in 0..quotes {
+                while matches!(bytes.get(start), Some(b' ' | b'\t')) {
+                    start += 1;
+                }
+                if bytes.get(start) != Some(&b'>') {
+                    break;
+                }
+                bytes[start] = b' ';
+                start += 1;
+            }
+        }
+        cursor += 1;
+    }
+    String::from_utf8(bytes).unwrap()
+}
+
+fn inline_candidates(text: &str) -> Vec<Candidate> {
+    let source = Source::new(text.into());
+    let (expanded, offsets) = crate::parse::expanded_tabs(&source);
+    // Pinned non-comment HTML flow is reparsed as Markdown, not as a DOM.
     let options = markdown::ParseOptions {
         constructs: markdown::Constructs {
             html_flow: false,
@@ -81,24 +125,36 @@ fn html_text_spans(text: &str) -> Vec<Range<usize>> {
         },
         ..markdown::ParseOptions::gfm()
     };
-    let Ok(tree) = markdown::to_mdast(text, &options) else {
+    let Ok(tree) = markdown::to_mdast(expanded.text(), &options) else {
         return vec![];
     };
-    fn visit(node: &Node, spans: &mut Vec<Range<usize>>) {
-        if matches!(node, Node::Html(_))
+    fn visit(node: &Node, quotes: usize, offsets: &[usize], output: &mut Vec<Candidate>) {
+        let quotes = quotes + usize::from(matches!(node, Node::Blockquote(_)));
+        let kind = match node {
+            Node::Html(_) => Some(RegionKind::Html),
+            Node::Image(_) | Node::ImageReference(_) => Some(RegionKind::Image),
+            _ => None,
+        };
+        if let Some(kind) = kind
             && let Some(position) = node.position()
         {
-            spans.push(position.start.offset..position.end.offset);
+            output.push(Candidate {
+                kind,
+                span: offsets[position.start.offset]..offsets[position.end.offset],
+                flow: false,
+                html_only: false,
+                quotes,
+            });
         }
         if let Some(children) = node.children() {
             for child in children {
-                visit(child, spans);
+                visit(child, quotes, offsets, output);
             }
         }
     }
-    let mut spans = vec![];
-    visit(&tree, &mut spans);
-    spans
+    let mut output = vec![];
+    visit(&tree, 0, &offsets, &mut output);
+    output
 }
 
 pub(crate) fn diagnose(
@@ -109,17 +165,18 @@ pub(crate) fn diagnose(
     let mut queue = selected(source, parsed);
     let definitions = queue
         .iter()
-        .filter(|(kind, _, _)| *kind == RegionKind::Definition)
-        .map(|(_, span, _)| &source.text()[span.clone()])
+        .filter(|item| item.kind == RegionKind::Definition)
+        .map(|item| mask_quote_prefixes(&source.text()[item.span.clone()], item.quotes))
         .collect::<Vec<_>>()
         .join("\n");
     let mut result = vec![];
     let mut cursor = 0;
     while cursor < queue.len() {
-        let (kind, span, flow) = queue[cursor].clone();
+        let item = queue[cursor].clone();
         cursor += 1;
+        let span = item.span.clone();
         let raw = &source.text()[span.clone()];
-        let finding = if kind == RegionKind::Image {
+        let finding = if item.kind == RegionKind::Image {
             let Some(end) = raw
                 .strip_prefix('!')
                 .and_then(|label| label_end(label, true))
@@ -128,21 +185,24 @@ pub(crate) fn diagnose(
             };
             let label = &raw[2..end + 1];
             if !label.is_empty() {
-                let candidate = Source::new(format!("x {label}\n\n{definitions}"));
-                if let Ok(parsed) = parse(&candidate) {
-                    queue.extend(
-                        selected(&candidate, &parsed)
-                            .into_iter()
-                            .filter(|(kind, inner, _)| {
-                                matches!(kind, RegionKind::Image | RegionKind::Html)
-                                    && 2 <= inner.start
-                                    && inner.end <= 2 + label.len()
-                            })
-                            .map(|(kind, inner, flow)| {
-                                (kind, span.start + inner.start..span.start + inner.end, flow)
-                            }),
-                    );
-                }
+                // Mask only container markers, preserving byte offsets in the
+                // original flattened description for nested image/HTML findings.
+                let logical = mask_quote_prefixes(label, item.quotes);
+                let candidate = format!("x {logical}\n\n{definitions}");
+                queue.extend(
+                    inline_candidates(&candidate)
+                        .into_iter()
+                        .filter(|inner| 2 <= inner.span.start && inner.span.end <= 2 + label.len())
+                        .map(|mut inner| {
+                            inner.span = span.start + inner.span.start..span.start + inner.span.end;
+                            inner.html_only = item.html_only;
+                            inner.quotes = item.quotes;
+                            inner
+                        }),
+                );
+                continue;
+            }
+            if item.html_only {
                 continue;
             }
             if raw.contains(['\r', '\n']) {
@@ -153,15 +213,22 @@ pub(crate) fn diagnose(
             } else {
                 span
             }
-        } else if kind == RegionKind::Html {
-            if flow && !raw.starts_with("<!--") {
-                queue.extend(html_text_spans(raw).into_iter().map(|inner| {
-                    (
-                        RegionKind::Html,
-                        span.start + inner.start..span.start + inner.end,
-                        false,
-                    )
-                }));
+        } else if item.kind == RegionKind::Html {
+            if item.flow && !raw.starts_with("<!--") {
+                let first = source.position(span.start).unwrap().line;
+                let last = crate::md013::covered_lines(source, span.clone()).end;
+                let whole =
+                    source.line_range(first).unwrap().start..source.line_range(last).unwrap().end;
+                queue.extend(
+                    inline_candidates(&source.text()[whole.clone()])
+                        .into_iter()
+                        .map(|mut inner| {
+                            inner.span =
+                                whole.start + inner.span.start..whole.start + inner.span.end;
+                            inner.html_only = true;
+                            inner
+                        }),
+                );
                 continue;
             }
             let Some(tag) = raw.strip_prefix('<') else {

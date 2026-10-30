@@ -145,3 +145,36 @@ fn cli_reports_missing_alt_text_without_rewriting_images() {
     assert_eq!(result.stdout, input.as_bytes());
     assert!(String::from_utf8_lossy(&result.stderr).contains("Warning MD045"));
 }
+
+#[test]
+fn html_brackets_and_container_reparsing_keep_nested_image_findings() {
+    let mut failures = vec![];
+    for (input, line, column, length) in [
+        ("![<img title=\"]\">](out)\n", 1, 3, 15),
+        ("<div>\n![<img src=x>](out)\n</div>\n", 2, 3, 11),
+        ("> ![![](\n> inner\n> )](outer)\n", 1, 1, 0),
+        ("> <div><img\n> src=x></div>\n", 1, 8, 4),
+    ] {
+        let first =
+            format_with_config(input, &FormatOptions::default(), &config(json!(true))).unwrap();
+        assert_eq!(first.output, input);
+        if first.diagnostics.len() != 1 {
+            failures.push(format!(
+                "{input:?}: expected one finding, got {}",
+                first.diagnostics.len()
+            ));
+            continue;
+        }
+        let span = first.diagnostics[0].span.clone().unwrap();
+        let position = Source::new(input.into()).position(span.start).unwrap();
+        let actual = (
+            position.line,
+            position.column_utf16,
+            mdfmt::utf16_len(&input[span]),
+        );
+        if actual != (line, column, length) {
+            failures.push(format!("{input:?}: got {actual:?}"));
+        }
+    }
+    assert!(failures.is_empty(), "{failures:#?}");
+}

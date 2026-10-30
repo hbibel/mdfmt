@@ -25,6 +25,10 @@ const samples = [
   "<pre>`<img src=x>`</pre>\n", "<img src=x>\n![](markdown)\n", "alpha <img src=x> ![](markdown)\n",
   "![![](inner)][outer]\n\n[outer]: image\n", "> ![![](inner)](outer)\n", "![![alt](inner)](outer)\n",
   "prefix <img src=x\n alt>\n", "<img src=x\u0085alt=\"alt\">\n", "<img src=x\u2003alt=\"alt\">\n",
+  "![<img title=\"]\">](out)\n", "![<img title=\"[\">](out)\n",
+  "<div>\n![<img src=x>](out)\n</div>\n", "<script>![<img src=x>](out)</script>\n",
+  "> ![![](\n> inner\n> )](outer)\n", "> <div><img\n> src=x></div>\n",
+  "> ![<img\n> src=x>](outer)\n", "> ![![][id]](outer)\n>\n> [id]:\n>  image\n",
 ];
 const configurations = [true, false, {severity:"warning"}];
 const observations = samples.flatMap((input, sample) => configurations.map((options, configuration) => ({
