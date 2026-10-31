@@ -178,7 +178,7 @@ pub(crate) fn diagnostic_list_parse(
     let (mut expanded, offsets) = expanded_tabs(source);
     let mut parsed = parse(&expanded).ok()?;
     loop {
-        let invalid = invalid_ordered_interruptions(&expanded, &parsed);
+        let invalid = invalid_list_interruptions(&expanded, &parsed);
         if invalid.is_empty() {
             return Some((expanded, parsed, offsets));
         }
@@ -206,10 +206,7 @@ pub(crate) fn has_unmodeled_syntax(source: &Source, parsed: &ParsedDocument) -> 
         })
 }
 
-pub(crate) fn invalid_ordered_interruptions(
-    source: &Source,
-    parsed: &ParsedDocument,
-) -> Vec<usize> {
+pub(crate) fn invalid_list_interruptions(source: &Source, parsed: &ParsedDocument) -> Vec<usize> {
     // Native container recovery can lose interruption state, including across quotes.
     fn visit(
         node: &Node,
@@ -229,14 +226,17 @@ pub(crate) fn invalid_ordered_interruptions(
                 interrupt = None;
             }
             if let Node::List(list) = child
-                && list.ordered
                 && interrupt.is_some()
                 && let Some(item) = list.children.first().and_then(Node::position)
             {
                 let raw = &source.text()[base + item.start.offset..];
                 let digits = raw.trim_start_matches(' ');
-                let width = digits.bytes().take_while(u8::is_ascii_digit).count();
-                if &digits[..width] != "1"
+                let width = if list.ordered {
+                    digits.bytes().take_while(u8::is_ascii_digit).count()
+                } else {
+                    0
+                };
+                if (list.ordered && &digits[..width] != "1")
                     || list
                         .children
                         .first()
@@ -250,7 +250,10 @@ pub(crate) fn invalid_ordered_interruptions(
                 child,
                 base,
                 source,
-                if matches!(child, Node::Blockquote(_)) {
+                if matches!(
+                    child,
+                    Node::Blockquote(_) | Node::List(_) | Node::ListItem(_)
+                ) {
                     interrupt
                 } else {
                     None
@@ -284,7 +287,7 @@ pub(crate) fn invalid_ordered_interruptions(
 }
 
 pub(crate) fn has_uncertain_container_prefixes(source: &Source, parsed: &ParsedDocument) -> bool {
-    if !invalid_ordered_interruptions(source, parsed).is_empty() {
+    if !invalid_list_interruptions(source, parsed).is_empty() {
         return true;
     }
     parsed.regions.iter().any(|region| {

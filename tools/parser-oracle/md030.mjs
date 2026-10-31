@@ -18,7 +18,10 @@ const samples=[
   "-  one\n\n       literal\n", "-  # Heading\n-   [link](url)\n", "-  > quote\n   > more\n",
   "9.\ntext\n2.  a\n4.   b\n", "    code\n2.  a\n4.   b\n1. c\n", "text\n> 2.  a\n> 4.   b\n",
   "> - 01.\t\r\n>   01.item1\r\n>   01.  item2\r\n>   01.    \r\n>   01.\titem4\r\n",
+  "- one\n- two\n\nparagraph\n", "1. one\n2. two\n\nparagraph\n",
 ];
+for(const prefix of ["","text\n","    code\n","9.\ntext\n"])for(const item of ["1. 1.\n    2)  alpha\n","1. 2.\n    2)  alpha\n","1. -\n   -  alpha\n"])
+  samples.push(prefix+item);
 const configurations=[true,false,{ul_single:2,ol_single:3,ul_multi:4,ol_multi:2},{ul_single:0,ol_single:0,ul_multi:0,ol_multi:0},
   {ul_single:5,ol_single:5,ul_multi:5,ol_multi:5},{severity:"warning"}];
 const observations=samples.flatMap((input,sample)=>configurations.map((options,configuration)=>{

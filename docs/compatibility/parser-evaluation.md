@@ -133,6 +133,8 @@ for output. Blank-separated lists and valid `1` interruptions remain distinct.
 See [MD029 evidence](md029.md); other diagnostic rules retain native-parser limits.
 MD030 shares that diagnostic adapter and extends the guard to reject zero-padded
 `01` as an interrupting marker: numeric equality with `1` is insufficient.
+The adapter carries state through newly opened list/item containers as well as
+quotes, so empty nested markers do not create phantom lists inside prose.
 
 ## Reproduction
 

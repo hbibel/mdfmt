@@ -37,7 +37,11 @@ fn findings(source: &Source, document: &DocumentConfig) -> Vec<Finding> {
         if let Node::List(list) = node
             && let Some(position) = &list.position
         {
-            let single = position.end.line - position.start.line + 1 == list.children.len();
+            let raw = &expanded.text()[base + position.start.offset..base + position.end.offset];
+            let end =
+                base + position.start.offset + raw.trim_end_matches([' ', '\t', '\r', '\n']).len();
+            let end_line = expanded.position(end).unwrap().line;
+            let single = end_line - position.start.line + 1 == list.children.len();
             let first_line = source
                 .position(offsets[base + position.start.offset])
                 .unwrap()

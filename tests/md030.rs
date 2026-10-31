@@ -239,3 +239,27 @@ fn oversized_padding_is_reported_without_allocating_a_replacement() {
             .contains("Expected: 18446744073709551615")
     );
 }
+
+#[test]
+fn separator_blanks_do_not_make_a_single_line_list_multi_line() {
+    fixed(
+        "- one\n- two\n\nparagraph\n",
+        "-  one\n-  two\n\nparagraph\n",
+        json!({"ul_single":2,"ul_multi":3}),
+    );
+}
+
+#[test]
+fn interrupting_lists_carry_state_into_nested_empty_markers() {
+    for prefix in ["text\n", "    code\n", "9.\ntext\n"] {
+        let input = format!("{prefix}1. 1.\n    2)  alpha\n");
+        let first =
+            format_with_config(&input, &FormatOptions::default(), &config(json!(true))).unwrap();
+        assert_eq!(first.output, input);
+        assert!(
+            first.diagnostics.is_empty(),
+            "{input:?}: {:?}",
+            first.diagnostics
+        );
+    }
+}
