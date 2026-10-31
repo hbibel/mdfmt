@@ -110,7 +110,8 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [conditional MD048 code fence styles](../../compatibility/md048.md) and
 [conditional MD027 blockquote spacing](../../compatibility/md027.md) and
 [conditional MD029 ordered-list numbering](../../compatibility/md029.md) and
-[conditional MD030 list-marker spacing](../../compatibility/md030.md).
+[conditional MD030 list-marker spacing](../../compatibility/md030.md) and
+[MD018 missing-ATX-separator diagnostics](../../compatibility/md018.md).
 Remaining built-in rules, interactions and conflict detection are next.
 
 The first useful release includes local declarative configuration,
