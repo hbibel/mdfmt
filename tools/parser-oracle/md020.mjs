@@ -18,6 +18,10 @@ const samples=[
   "#Heading# <!-- markdownlint-disable-line MD020 -->\n",
   "#A long closed heading that must truncate context#\n","# A long closed heading that must truncate context#\n","#A long closed heading that must truncate context #\n",
 ];
+for(const prefix of ["- item\n","> text\n","- item\n\n","text\n"])
+  for(const tag of ["<span>","</span>","<span class=\"x\">","<div>","<!-- comment -->","<?instruction?>"])
+    for(const suffix of ["#Heading#\n","```\n#Hidden#\n```\n#Heading#\n","$$\n#Hidden#\n$$\n#Heading#\n","<span>\n#Hidden#\n"])
+      samples.push(prefix+tag+"\n"+suffix);
 const configurations=[true,false,{severity:"warning"}];
 const observations=samples.flatMap((input,sample)=>configurations.map((options,configuration)=>{
   const findings=lint({strings:{input},config:{default:false,MD020:options}}).input;

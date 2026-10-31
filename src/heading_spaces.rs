@@ -9,7 +9,11 @@ use std::ops::Range;
 pub(crate) fn excluded_flow_lines(source: &Source, parsed: &ParsedDocument) -> Vec<bool> {
     fn collect(source: &Source, parsed: &ParsedDocument) -> Vec<bool> {
         let mut ignored = vec![false; source.line_count()];
-        for region in &parsed.regions {
+        let mut siblings = std::collections::HashMap::new();
+        for (index, region) in parsed.regions.iter().enumerate() {
+            let previous = region
+                .parent
+                .and_then(|parent| siblings.insert(parent, index));
             let html_flow = region.kind == RegionKind::Html
                 && region.parent.is_some_and(|parent| {
                     matches!(
@@ -17,6 +21,56 @@ pub(crate) fn excluded_flow_lines(source: &Source, parsed: &ParsedDocument) -> V
                         RegionKind::Root | RegionKind::Blockquote | RegionKind::ListItem
                     )
                 });
+            let first = source.position(region.span.start).unwrap().line;
+            let after_container = html_flow
+                && previous.is_some_and(|previous| {
+                    let previous = &parsed.regions[previous];
+                    matches!(previous.kind, RegionKind::List | RegionKind::Blockquote)
+                        && source
+                            .position(
+                                previous.span.start
+                                    + source.text()[previous.span.clone()]
+                                        .trim_end_matches([' ', '\t', '\r', '\n'])
+                                        .len(),
+                            )
+                            .unwrap()
+                            .line
+                            + 1
+                            == first
+                });
+            if after_container {
+                let probe = Source::new(format!("x\n{}", &source.text()[region.span.clone()]));
+                let generic = crate::parse::parse(&probe).ok().is_some_and(|parsed| {
+                    parsed.regions.iter().any(|region| {
+                        region.kind == RegionKind::Paragraph
+                            && probe.position(region.span.start).unwrap().line == 1
+                            && probe.position(region.span.end).unwrap().line > 1
+                    })
+                });
+                if generic {
+                    ignored[first - 1] = true;
+                    let next = source
+                        .line_range(first + 1)
+                        .map(|span| span.start)
+                        .unwrap_or(region.span.end);
+                    if next < region.span.end {
+                        // The generic HTML line still belongs to the old container;
+                        // its remaining native HTML span must restart as root flow.
+                        let suffix =
+                            Source::new(format!("\n{}", &source.text()[next..region.span.end]));
+                        if let Ok(parsed) = crate::parse::parse_flow_diagnostics(&suffix) {
+                            for (line, excluded) in
+                                collect(&suffix, &parsed).into_iter().skip(1).enumerate()
+                            {
+                                if first + line < ignored.len() {
+                                    ignored[first + line] = excluded;
+                                }
+                            }
+                        }
+                    }
+                    continue;
+                }
+            }
             if matches!(region.kind, RegionKind::Code | RegionKind::FrontMatter) || html_flow {
                 for line in crate::md013::covered_lines(source, region.span.clone()) {
                     ignored[line] = true;

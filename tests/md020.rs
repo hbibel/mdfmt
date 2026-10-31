@@ -163,3 +163,19 @@ fn reflow_reports_missing_separators_on_the_final_physical_lines() {
     assert_eq!(second.output, first.output);
     assert!(second.edits.is_empty());
 }
+
+#[test]
+fn generic_html_after_a_container_does_not_hide_later_root_lines() {
+    for input in ["- item\n<span>\n#Heading#\n", "> text\n<span>\n#Heading#\n"] {
+        let first =
+            format_with_config(input, &FormatOptions { fix: false }, &config(json!(true))).unwrap();
+        assert_eq!(first.diagnostics.len(), 1, "{input:?}");
+        assert_eq!(
+            Source::new(input.into())
+                .position(first.diagnostics[0].span.as_ref().unwrap().start)
+                .unwrap()
+                .line,
+            3
+        );
+    }
+}

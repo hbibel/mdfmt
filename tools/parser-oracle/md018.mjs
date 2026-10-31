@@ -22,6 +22,10 @@ const samples=[
 ];
 for(const prefix of ["","- item\n  ","> ","1. item\n   "])for(const fence of ["$$","$$$","$$ info","$$ invalid$","    $$"])
   samples.push(prefix+fence+"\n#Heading\n$$\n#After\n");
+for(const prefix of ["- item\n","> text\n","- item\n\n","text\n"])
+  for(const tag of ["<span>","</span>","<span class=\"x\">","<div>","<!-- comment -->","<?instruction?>"])
+    for(const suffix of ["#Heading\n","```\n#Hidden\n```\n#Heading\n","$$\n#Hidden\n$$\n#Heading\n","<span>\n#Hidden\n"])
+      samples.push(prefix+tag+"\n"+suffix);
 const configurations=[true,false,{severity:"warning"}];
 const observations=samples.flatMap((input,sample)=>configurations.map((options,configuration)=>{
   const findings=lint({strings:{input},config:{default:false,MD018:options}}).input;
