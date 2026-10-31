@@ -80,9 +80,20 @@ fn spans_in(source: &Source, parsed: &ParsedDocument) -> Vec<(Range<usize>, bool
             parent = region.parent;
         }
         path.reverse();
-        let in_list = path
-            .iter()
-            .any(|index| parsed.regions[*index].kind == RegionKind::ListItem);
+        let html_flow = terminal_region.kind == RegionKind::Html
+            && terminal_region.parent.is_some_and(|parent| {
+                matches!(
+                    parsed.regions[parent].kind,
+                    RegionKind::Root | RegionKind::Blockquote | RegionKind::ListItem
+                )
+            });
+        let continuation_line =
+            source.position(terminal_region.span.start).unwrap().line < line + 1;
+        if html_flow && continuation_line {
+            continue;
+        }
+        let inline_code_continuation =
+            terminal_region.kind == RegionKind::InlineCode && continuation_line;
         let range = source.line_range(line + 1).unwrap();
         let text = &source.text()[range.clone()];
         let mut cursor = usize::from(line == 0 && text.starts_with('\u{feff}')) * 3;
@@ -103,7 +114,11 @@ fn spans_in(source: &Source, parsed: &ParsedDocument) -> Vec<(Range<usize>, bool
                 }
                 continue;
             }
-            cursor = spaces(text, cursor);
+            let marker = spaces(text, cursor);
+            if marker - cursor > 3 {
+                break;
+            }
+            cursor = marker;
             if text.as_bytes().get(cursor) != Some(&b'>') {
                 break;
             }
@@ -119,6 +134,14 @@ fn spans_in(source: &Source, parsed: &ParsedDocument) -> Vec<(Range<usize>, bool
             if continuation || cursor == end {
                 continue;
             }
+            let next_quote = path
+                .get(step + 1)
+                .is_some_and(|index| parsed.regions[*index].kind == RegionKind::Blockquote)
+                && end - cursor <= 3
+                && text.as_bytes().get(end) == Some(&b'>');
+            if inline_code_continuation && !next_quote {
+                continue;
+            }
             if step + 1 == path.len() {
                 if terminal_region.kind == RegionKind::Table
                     && source.position(terminal_region.span.start).unwrap().line + 1 == line + 1
@@ -132,11 +155,6 @@ fn spans_in(source: &Source, parsed: &ParsedDocument) -> Vec<(Range<usize>, bool
                             RegionKind::Root | RegionKind::Blockquote | RegionKind::ListItem
                         )
                     })
-                {
-                    continue;
-                }
-                if terminal_region.kind == RegionKind::InlineCode
-                    && source.position(terminal_region.span.start).unwrap().line < line + 1
                 {
                     continue;
                 }
@@ -169,6 +187,12 @@ fn spans_in(source: &Source, parsed: &ParsedDocument) -> Vec<(Range<usize>, bool
                 }
             }
             if length > 0 {
+                let in_list = path[..step]
+                    .iter()
+                    .any(|index| parsed.regions[*index].kind == RegionKind::ListItem)
+                    || path
+                        .get(step + 1)
+                        .is_some_and(|index| parsed.regions[*index].kind == RegionKind::ListItem);
                 output.push((range.start + cursor..range.start + cursor + length, in_list));
             }
         }

@@ -211,3 +211,44 @@ fn virtual_tab_prefixes_do_not_create_invalid_zero_length_findings() {
     assert_eq!(first.diagnostics.len(), 1);
     assert_eq!(first.diagnostics[0].span, Some(2..3));
 }
+
+#[test]
+fn each_quote_prefix_has_its_own_list_and_literal_ownership() {
+    let input = ">  > - text\n";
+    let settings = config(json!({"list_items":false}));
+    let diagnostic = format_with_config(input, &FormatOptions { fix: false }, &settings).unwrap();
+    assert_eq!(diagnostic.diagnostics.len(), 1);
+    assert_eq!(diagnostic.diagnostics[0].span, Some(2..3));
+    assert_eq!(
+        format_with_config(input, &FormatOptions::default(), &settings)
+            .unwrap()
+            .output,
+        "> > - text\n"
+    );
+}
+
+#[test]
+fn lazy_literal_interiors_do_not_gain_quote_prefix_findings() {
+    let mut failures = vec![];
+    for (input, spans) in [
+        ("> > `a\n>   b`\n", vec![]),
+        ("> > <div>\n>   >  more\n", vec![]),
+        ("> > text\n>     >  more\n", vec![(11, 15)]),
+    ] {
+        let first =
+            format_with_config(input, &FormatOptions::default(), &config(json!(true))).unwrap();
+        assert_eq!(first.output, input);
+        let actual: Vec<_> = first
+            .diagnostics
+            .iter()
+            .map(|finding| {
+                let span = finding.span.clone().unwrap();
+                (span.start, span.end)
+            })
+            .collect();
+        if actual != spans {
+            failures.push(format!("{input:?}: got {actual:?}, expected {spans:?}"));
+        }
+    }
+    assert!(failures.is_empty(), "{failures:#?}");
+}

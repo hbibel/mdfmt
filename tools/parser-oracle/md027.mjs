@@ -26,6 +26,7 @@ const samples = [
   ">  *a\n>   b*\n", ">  **a\n>   b**\n", ">  [a\n>   b](url)\n", ">  ![a\n>   b](img)\n",
   ">  ~~a\n>   b~~\n", ">  a [b](\n>   url)\n", ">  a <b\n>   x=\"y\">z</b>\n",
   ">  | a |\n>   | - |\n>   | b |\n", "> >  `a\n>  >   b`\n",
+  ">  > - text\n", "> > `a\n>   b`\n", "> > <div>\n>   >  more\n", "> > text\n>     >  more\n",
 ];
 const configurations = [true, false, {list_items:false}, {severity:"warning"}];
 const observations = samples.flatMap((input, sample) => configurations.map((options, configuration) => {
