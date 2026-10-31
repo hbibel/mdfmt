@@ -27,6 +27,7 @@ pub(crate) fn propose(
             || !document.allows_source("MD013", paragraph.span.clone(), source)
             || document.has_line_override("MD047", paragraph.span.clone(), source)
             || document.has_line_override("MD009", paragraph.span.clone(), source)
+            || document.has_line_override("MD027", paragraph.span.clone(), source)
         {
             continue;
         }

@@ -217,6 +217,33 @@ pub(crate) fn has_uncertain_container_prefixes(source: &Source, parsed: &ParsedD
         if source.text()[line_start..region.span.start].contains('\t') {
             return true;
         }
+        if region.kind == RegionKind::Blockquote {
+            let raw = source.text()[region.span.clone()].trim_start_matches([' ', '\t']);
+            if let Some(after_marker) = raw.strip_prefix('>') {
+                let marker = region.span.end - raw.len();
+                let separator = after_marker
+                    .bytes()
+                    .take_while(|byte| matches!(byte, b' ' | b'\t'))
+                    .count();
+                if source.text()[line_start..marker + 1 + separator].contains('\t') {
+                    return true;
+                }
+            }
+            for line in crate::md013::covered_lines(source, region.span.clone()).skip(1) {
+                let text = &source.text()[source.line_range(line + 1).unwrap()];
+                let mut cursor = text.len() - text.trim_start_matches([' ', '\t']).len();
+                let mut quoted = false;
+                while text.as_bytes().get(cursor) == Some(&b'>') {
+                    quoted = true;
+                    cursor += 1;
+                    cursor +=
+                        text[cursor..].len() - text[cursor..].trim_start_matches([' ', '\t']).len();
+                }
+                if quoted && text[..cursor].contains('\t') {
+                    return true;
+                }
+            }
+        }
         if region.kind == RegionKind::ListItem {
             let raw = source.text()[region.span.clone()].trim_start_matches([' ', '\t']);
             let marker = region.span.end - raw.len();

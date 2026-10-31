@@ -106,6 +106,8 @@ back to the original source; original bytes are never replaced with expanded
 text. This also preserves container-relative depth when quote indentation varies.
 Other diagnostic parser limitations remain; full upstream parser parity is not
 claimed. The guard can withhold unrelated safe fixes in the same document.
+MD027 coverage extends this check to optional quote-separator tabs and later
+physical quote-prefix lines, rather than checking only container-start offsets.
 
 Evidence includes 296 pinned MD004 cases, 500 additional generated quote/tab/list
 diagnostic comparisons, and regressions for preservation across heading, marker,
