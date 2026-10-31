@@ -23,7 +23,12 @@ const samples = [
   "\uFEFF009. \r\n999999999.item1\r\n10.    item2\r\n01.\r\n2.    \r\n",
   "9.\ntext\n2. item\n4. item\n", "> 9.\n> text\n> 2. item\n> 4. item\n",
   "9.\ntext\n1. item\n3. item\n", "9.\ntext\n\n2. item\n4. item\n",
+  "    code\n2. a\n4. b\n1. c\n", "9.\ntext\n> 2. a\n> 4. b\n",
+  "text\n> 2. a\n> 4. b\n> 1. c\n", "    code\n> 2. a\n> 4. b\n> 1. c\n",
 ];
+for(const prefix of ["text\n","9.\ntext\n","    code\n","# heading\n","---\n","```\ncode\n```\n","> text\n","- item\n","9. item\n","9.\n","\n"]) {
+  for(const quote of ["","> "]) samples.push(prefix+quote+"2. a\n"+quote+"4. b\n"+quote+"1. c\n");
+}
 const configurations = [true,false,{style:"one"},{style:"ordered"},{style:"zero"},{style:"one_or_ordered"},{severity:"warning"}];
 const observations=samples.flatMap((input,sample)=>configurations.map((options,configuration)=>{
   const findings=lint({strings:{input},config:{default:false,MD029:options}}).input;

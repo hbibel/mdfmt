@@ -190,16 +190,27 @@ pub(crate) fn invalid_ordered_interruptions(
     source: &Source,
     parsed: &ParsedDocument,
 ) -> Vec<usize> {
-    // Empty-item recovery can lose the native flow's paragraph-interruption state.
-    fn visit(node: &Node, base: usize, source: &Source, output: &mut Vec<usize>) {
+    // Native container recovery can lose interruption state, including across quotes.
+    fn visit(
+        node: &Node,
+        base: usize,
+        source: &Source,
+        mut interrupt: Option<usize>,
+        output: &mut Vec<usize>,
+    ) {
         let Some(children) = node.children() else {
             return;
         };
-        for pair in children.windows(2) {
-            if let (Node::Paragraph(paragraph), Node::List(list)) = (&pair[0], &pair[1])
+        for child in children {
+            let Some(position) = child.position() else {
+                continue;
+            };
+            if interrupt.is_some_and(|line| position.start.line > line + 1) {
+                interrupt = None;
+            }
+            if let Node::List(list) = child
                 && list.ordered
-                && let (Some(previous), Some(position)) = (&paragraph.position, &list.position)
-                && position.start.line == previous.end.line + 1
+                && interrupt.is_some()
                 && (list.start != Some(1)
                     || list
                         .children
@@ -215,9 +226,31 @@ pub(crate) fn invalid_ordered_interruptions(
                         + digits.bytes().take_while(u8::is_ascii_digit).count(),
                 );
             }
-        }
-        for child in children {
-            visit(child, base, source, output);
+            visit(
+                child,
+                base,
+                source,
+                if matches!(child, Node::Blockquote(_)) {
+                    interrupt
+                } else {
+                    None
+                },
+                output,
+            );
+            interrupt = match child {
+                Node::Paragraph(_) => Some(position.end.line),
+                Node::Code(_) => {
+                    let raw = source.text()
+                        [base + position.start.offset..base + position.end.offset]
+                        .trim_start_matches([' ', '\t']);
+                    if raw.starts_with("```") || raw.starts_with("~~~") {
+                        None
+                    } else {
+                        Some(position.end.line)
+                    }
+                }
+                _ => None,
+            };
         }
     }
     let base = parsed
@@ -226,7 +259,7 @@ pub(crate) fn invalid_ordered_interruptions(
         .find(|region| region.kind == RegionKind::Root && region.parent.is_some())
         .map_or(0, |region| region.span.start);
     let mut output = vec![];
-    visit(&parsed.tree, base, source, &mut output);
+    visit(&parsed.tree, base, source, None, &mut output);
     output
 }
 

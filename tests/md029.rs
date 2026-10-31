@@ -312,3 +312,29 @@ fn ambiguous_empty_item_boundaries_block_unrelated_edits() {
             .any(|finding| finding.code == "MD026")
     );
 }
+
+#[test]
+fn interruption_state_survives_indented_code_and_new_quote_boundaries() {
+    for (input, expected_lines) in [
+        ("    code\n2. a\n4. b\n1. c\n", vec![]),
+        ("9.\ntext\n> 2. a\n> 4. b\n", vec![1]),
+        ("text\n> 2. a\n> 4. b\n> 1. c\n", vec![]),
+        ("    code\n> 2. a\n> 4. b\n> 1. c\n", vec![]),
+    ] {
+        let result =
+            format_with_config(input, &FormatOptions::default(), &config(json!(true))).unwrap();
+        assert_eq!(result.output, input, "{input:?}");
+        let source = Source::new(input.into());
+        let lines: Vec<_> = result
+            .diagnostics
+            .iter()
+            .map(|finding| {
+                source
+                    .position(finding.span.as_ref().unwrap().start)
+                    .unwrap()
+                    .line
+            })
+            .collect();
+        assert_eq!(lines, expected_lines, "{input:?}");
+    }
+}
