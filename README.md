@@ -49,6 +49,8 @@ MD048 converts fence styles only when code and info strings remain unchanged;
 see [MD048 evidence](docs/compatibility/md048.md).
 MD027 removes incidental quote spacing only when container ownership and protected
 source remain intact; see [MD027 evidence](docs/compatibility/md027.md).
+MD029 normalizes later ordered-list markers while retaining rendered start values;
+see [MD029 evidence](docs/compatibility/md029.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is

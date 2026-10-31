@@ -186,7 +186,54 @@ pub(crate) fn has_unmodeled_syntax(source: &Source, parsed: &ParsedDocument) -> 
         })
 }
 
+pub(crate) fn invalid_ordered_interruptions(
+    source: &Source,
+    parsed: &ParsedDocument,
+) -> Vec<usize> {
+    // Empty-item recovery can lose the native flow's paragraph-interruption state.
+    fn visit(node: &Node, base: usize, source: &Source, output: &mut Vec<usize>) {
+        let Some(children) = node.children() else {
+            return;
+        };
+        for pair in children.windows(2) {
+            if let (Node::Paragraph(paragraph), Node::List(list)) = (&pair[0], &pair[1])
+                && list.ordered
+                && let (Some(previous), Some(position)) = (&paragraph.position, &list.position)
+                && position.start.line == previous.end.line + 1
+                && (list.start != Some(1)
+                    || list
+                        .children
+                        .first()
+                        .and_then(Node::children)
+                        .is_none_or(Vec::is_empty))
+                && let Some(item) = list.children.first().and_then(Node::position)
+            {
+                let raw = &source.text()[base + item.start.offset..];
+                let digits = raw.trim_start_matches(' ');
+                output.push(
+                    base + item.start.offset + raw.len() - digits.len()
+                        + digits.bytes().take_while(u8::is_ascii_digit).count(),
+                );
+            }
+        }
+        for child in children {
+            visit(child, base, source, output);
+        }
+    }
+    let base = parsed
+        .regions
+        .iter()
+        .find(|region| region.kind == RegionKind::Root && region.parent.is_some())
+        .map_or(0, |region| region.span.start);
+    let mut output = vec![];
+    visit(&parsed.tree, base, source, &mut output);
+    output
+}
+
 pub(crate) fn has_uncertain_container_prefixes(source: &Source, parsed: &ParsedDocument) -> bool {
+    if !invalid_ordered_interruptions(source, parsed).is_empty() {
+        return true;
+    }
     parsed.regions.iter().any(|region| {
         if !matches!(
             region.kind,

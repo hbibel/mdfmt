@@ -120,6 +120,16 @@ paragraphs with a generous per-process time budget. The local debug CLI took abo
 0.06, 0.34, and 0.8 seconds respectively after replacing whole-document scans per
 edit; this is bounded performance evidence, not a release benchmark.
 
+## Empty-item paragraph interruption
+
+MD029 testing exposed a native interruption-state mismatch: after `9.\ntext\n`,
+`2. item` must remain paragraph text but can become a new native list. Such
+adjacent paragraph/list boundaries with an invalid interrupting marker now
+withhold all edits. MD029 uses equal-width diagnostic-only delimiter masking
+and reparsing to recover paragraph ownership; original source is never masked
+for output. Blank-separated lists and valid `1` interruptions remain distinct.
+See [MD029 evidence](md029.md); other diagnostic rules retain native-parser limits.
+
 ## Reproduction
 
 From the repository root:
