@@ -172,6 +172,26 @@ pub(crate) fn expanded_tabs(source: &Source) -> (Source, Vec<usize>) {
     (Source::new(expanded), offsets)
 }
 
+pub(crate) fn diagnostic_list_parse(
+    source: &Source,
+) -> Option<(Source, ParsedDocument, Vec<usize>)> {
+    let (mut expanded, offsets) = expanded_tabs(source);
+    let mut parsed = parse(&expanded).ok()?;
+    loop {
+        let invalid = invalid_ordered_interruptions(&expanded, &parsed);
+        if invalid.is_empty() {
+            return Some((expanded, parsed, offsets));
+        }
+        let mut masked = expanded.text().to_owned();
+        // Equal-width masks restore paragraph interruption without moving source spans.
+        for marker in invalid {
+            masked.replace_range(marker..marker + 1, "x");
+        }
+        expanded = Source::new(masked);
+        parsed = parse(&expanded).ok()?;
+    }
+}
+
 pub(crate) fn has_unmodeled_syntax(source: &Source, parsed: &ParsedDocument) -> bool {
     has_uncertain_container_prefixes(source, parsed)
         || parsed.regions.iter().any(|region| {
@@ -211,20 +231,20 @@ pub(crate) fn invalid_ordered_interruptions(
             if let Node::List(list) = child
                 && list.ordered
                 && interrupt.is_some()
-                && (list.start != Some(1)
-                    || list
-                        .children
-                        .first()
-                        .and_then(Node::children)
-                        .is_none_or(Vec::is_empty))
                 && let Some(item) = list.children.first().and_then(Node::position)
             {
                 let raw = &source.text()[base + item.start.offset..];
                 let digits = raw.trim_start_matches(' ');
-                output.push(
-                    base + item.start.offset + raw.len() - digits.len()
-                        + digits.bytes().take_while(u8::is_ascii_digit).count(),
-                );
+                let width = digits.bytes().take_while(u8::is_ascii_digit).count();
+                if &digits[..width] != "1"
+                    || list
+                        .children
+                        .first()
+                        .and_then(Node::children)
+                        .is_none_or(Vec::is_empty)
+                {
+                    output.push(base + item.start.offset + raw.len() - digits.len() + width);
+                }
             }
             visit(
                 child,

@@ -131,6 +131,8 @@ breaks reset this state. MD029 uses equal-width diagnostic-only delimiter maskin
 and reparsing to recover paragraph ownership; original source is never masked
 for output. Blank-separated lists and valid `1` interruptions remain distinct.
 See [MD029 evidence](md029.md); other diagnostic rules retain native-parser limits.
+MD030 shares that diagnostic adapter and extends the guard to reject zero-padded
+`01` as an interrupting marker: numeric equality with `1` is insufficient.
 
 ## Reproduction
 

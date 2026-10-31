@@ -15,26 +15,9 @@ struct Prefix {
 }
 
 fn lists(source: &Source) -> Vec<Vec<Prefix>> {
-    let (mut expanded, offsets) = crate::parse::expanded_tabs(source);
-    let Ok(mut parsed) = parse(&expanded) else {
+    let Some((expanded, parsed, offsets)) = crate::parse::diagnostic_list_parse(source) else {
         return vec![];
     };
-    loop {
-        let invalid = crate::parse::invalid_ordered_interruptions(&expanded, &parsed);
-        if invalid.is_empty() {
-            break;
-        }
-        let mut masked = expanded.text().to_owned();
-        // Equal-width masks restore paragraph interruption without moving source spans.
-        for marker in invalid {
-            masked.replace_range(marker..marker + 1, "x");
-        }
-        expanded = Source::new(masked);
-        let Ok(next) = parse(&expanded) else {
-            return vec![];
-        };
-        parsed = next;
-    }
     let base = parsed
         .regions
         .iter()

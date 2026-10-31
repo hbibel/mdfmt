@@ -51,6 +51,8 @@ MD027 removes incidental quote spacing only when container ownership and protect
 source remain intact; see [MD027 evidence](docs/compatibility/md027.md).
 MD029 normalizes later ordered-list markers while retaining rendered start values;
 see [MD029 evidence](docs/compatibility/md029.md).
+MD030 normalizes list-marker spacing where continuation and code ownership remain
+unchanged; see [MD030 evidence](docs/compatibility/md030.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is
