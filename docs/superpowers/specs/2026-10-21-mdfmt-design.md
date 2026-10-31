@@ -111,7 +111,8 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [conditional MD027 blockquote spacing](../../compatibility/md027.md) and
 [conditional MD029 ordered-list numbering](../../compatibility/md029.md) and
 [conditional MD030 list-marker spacing](../../compatibility/md030.md) and
-[MD018 missing-ATX-separator diagnostics](../../compatibility/md018.md).
+[MD018 missing-ATX-separator diagnostics](../../compatibility/md018.md) and
+[MD020 closed-ATX-separator diagnostics](../../compatibility/md020.md).
 Remaining built-in rules, interactions and conflict detection are next.
 
 The first useful release includes local declarative configuration,

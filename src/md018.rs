@@ -1,30 +1,7 @@
-use crate::{
-    Diagnostic, Source,
-    config::DocumentConfig,
-    parse::{ParsedDocument, RegionKind, parse_flow_diagnostics},
-};
+use crate::{Diagnostic, Source, config::DocumentConfig, parse::ParsedDocument};
 
 fn js_space(ch: char) -> bool {
     ch == '\u{feff}' || (ch.is_whitespace() && ch != '\u{85}')
-}
-
-fn flow_lines(source: &Source, parsed: &ParsedDocument) -> Vec<bool> {
-    let mut ignored = vec![false; source.line_count()];
-    for region in &parsed.regions {
-        let html_flow = region.kind == RegionKind::Html
-            && region.parent.is_some_and(|parent| {
-                matches!(
-                    parsed.regions[parent].kind,
-                    RegionKind::Root | RegionKind::Blockquote | RegionKind::ListItem
-                )
-            });
-        if matches!(region.kind, RegionKind::Code | RegionKind::FrontMatter) || html_flow {
-            for line in crate::md013::covered_lines(source, region.span.clone()) {
-                ignored[line] = true;
-            }
-        }
-    }
-    ignored
 }
 
 pub(crate) fn diagnose(
@@ -74,13 +51,7 @@ pub(crate) fn diagnose(
     if result.is_empty() {
         return result;
     }
-    let ignored = if source.text().contains("$$") {
-        parse_flow_diagnostics(source)
-            .map(|parsed| flow_lines(source, &parsed))
-            .unwrap_or_else(|_| flow_lines(source, parsed))
-    } else {
-        flow_lines(source, parsed)
-    };
+    let ignored = crate::heading_spaces::excluded_flow_lines(source, parsed);
     result.retain(|finding| {
         !ignored[source
             .position(finding.span.as_ref().unwrap().start)

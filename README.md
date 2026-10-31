@@ -55,6 +55,8 @@ MD030 normalizes list-marker spacing where continuation and code ownership remai
 unchanged; see [MD030 evidence](docs/compatibility/md030.md).
 MD018 reports missing ATX separators without turning literal text into headings;
 see [MD018 evidence](docs/compatibility/md018.md).
+MD020 reports closed-ATX separator gaps without reinterpreting literal hashes;
+see [MD020 evidence](docs/compatibility/md020.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is
