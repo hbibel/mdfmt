@@ -444,6 +444,14 @@ static FRONT_MATTER: LazyLock<regex::Regex> = LazyLock::new(|| {
 });
 
 pub(crate) fn parse(source: &Source) -> Result<ParsedDocument, String> {
+    parse_with_math(source, false)
+}
+
+pub(crate) fn parse_flow_diagnostics(source: &Source) -> Result<ParsedDocument, String> {
+    parse_with_math(source, true)
+}
+
+fn parse_with_math(source: &Source, math_flow: bool) -> Result<ParsedDocument, String> {
     let text = source.text();
     let bom = usize::from(text.starts_with('\u{feff}')) * 3;
     let mut normalized = String::new();
@@ -469,8 +477,10 @@ pub(crate) fn parse(source: &Source) -> Result<ParsedDocument, String> {
         .find(&normalized)
         .filter(|m| m.start() == 0)
         .map_or(bom, |m| offsets[m.end()]);
-    let root = markdown::to_mdast(&text[front_end..], &markdown::ParseOptions::gfm())
-        .map_err(|error| error.to_string())?;
+    let mut options = markdown::ParseOptions::gfm();
+    options.constructs.math_flow = math_flow;
+    let root =
+        markdown::to_mdast(&text[front_end..], &options).map_err(|error| error.to_string())?;
     let mut parsed = ParsedDocument {
         tree: root.clone(),
         regions: vec![Region {
@@ -501,7 +511,7 @@ pub(crate) fn parse(source: &Source) -> Result<ParsedDocument, String> {
             Node::Image(_) | Node::ImageReference(_) => RegionKind::Image,
             Node::InlineCode(_) => RegionKind::InlineCode,
             Node::Table(_) => RegionKind::Table,
-            Node::Code(_) => RegionKind::Code,
+            Node::Code(_) | Node::Math(_) => RegionKind::Code,
             Node::Html(_) => RegionKind::Html,
             Node::Definition(_) => RegionKind::Definition,
             _ => RegionKind::Protected,

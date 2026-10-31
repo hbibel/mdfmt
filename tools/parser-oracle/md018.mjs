@@ -18,7 +18,10 @@ const samples=[
   "#A very long heading whose context must be truncated at thirty units\n",
   "$$$\n#Hidden\n$$\n#StillHidden\n$$$\n#Heading\n","$$ invalid$\n#Heading\n",
   "```\n$$\n#Hidden\n```\n#Heading\n","<div>\n$$\n#Hidden\n</div>\n\n#Heading\n",
+  "- item\n  $$\n#Heading\n","- item\n  $$\n#Heading\n$$\n#After\n",
 ];
+for(const prefix of ["","- item\n  ","> ","1. item\n   "])for(const fence of ["$$","$$$","$$ info","$$ invalid$","    $$"])
+  samples.push(prefix+fence+"\n#Heading\n$$\n#After\n");
 const configurations=[true,false,{severity:"warning"}];
 const observations=samples.flatMap((input,sample)=>configurations.map((options,configuration)=>{
   const findings=lint({strings:{input},config:{default:false,MD018:options}}).input;

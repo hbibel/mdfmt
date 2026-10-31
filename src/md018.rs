@@ -1,7 +1,7 @@
 use crate::{
     Diagnostic, Source,
     config::DocumentConfig,
-    parse::{ParsedDocument, RegionKind, parse},
+    parse::{ParsedDocument, RegionKind, parse_flow_diagnostics},
 };
 
 fn js_space(ch: char) -> bool {
@@ -27,63 +27,13 @@ fn flow_lines(source: &Source, parsed: &ParsedDocument) -> Vec<bool> {
     ignored
 }
 
-fn ignored_lines(source: &Source, parsed: &ParsedDocument) -> Vec<bool> {
-    let mut ignored = flow_lines(source, parsed);
-    let mut math = vec![false; source.line_count()];
-    let mut masked = source.text().to_owned();
-    let mut open = None;
-    for line in 0..source.line_count() {
-        let span = source.line_range(line + 1).unwrap();
-        let raw = &source.text()[span.clone()];
-        let text = if line == 0 {
-            raw.strip_prefix('\u{feff}').unwrap_or(raw)
-        } else {
-            raw
-        };
-        let trimmed = text.trim_start_matches(' ');
-        let indent = text.len() - trimmed.len();
-        let dollars = trimmed.bytes().take_while(|byte| *byte == b'$').count();
-        if let Some((first, width)) = open {
-            math[line] = true;
-            let closing = indent <= 3
-                && dollars >= width
-                && trimmed[dollars..].trim_matches([' ', '\t']).is_empty();
-            if closing || line + 1 == source.line_count() {
-                for number in first..=line {
-                    let span = source.line_range(number + 1).unwrap();
-                    masked.replace_range(span.clone(), &" ".repeat(span.len()));
-                }
-                // Native code/HTML inside math must not leak beyond the math fence.
-                let neutral = Source::new(masked.clone());
-                if let Ok(parsed) = parse(&neutral) {
-                    ignored = flow_lines(&neutral, &parsed);
-                }
-                open = None;
-            }
-        } else if !ignored[line] && indent <= 3 && dollars >= 2 && !trimmed[dollars..].contains('$')
-        {
-            open = Some((line, dollars));
-            math[line] = true;
-        }
-    }
-    ignored
-        .into_iter()
-        .zip(math)
-        .map(|(flow, math)| flow || math)
-        .collect()
-}
-
 pub(crate) fn diagnose(
     source: &Source,
     parsed: &ParsedDocument,
     document: &DocumentConfig,
 ) -> Vec<Diagnostic> {
-    let ignored = ignored_lines(source, parsed);
     let mut result = vec![];
-    for (line, ignored) in ignored.into_iter().enumerate() {
-        if ignored {
-            continue;
-        }
+    for line in 0..source.line_count() {
         let span = source.line_range(line + 1).unwrap();
         let base = span.start + usize::from(line == 0 && source.text().starts_with('\u{feff}')) * 3;
         let text = &source.text()[base..span.end];
@@ -121,5 +71,22 @@ pub(crate) fn diagnose(
             span: Some(base..base + hashes + ch.len_utf8()),
         });
     }
+    if result.is_empty() {
+        return result;
+    }
+    let ignored = if source.text().contains("$$") {
+        parse_flow_diagnostics(source)
+            .map(|parsed| flow_lines(source, &parsed))
+            .unwrap_or_else(|_| flow_lines(source, parsed))
+    } else {
+        flow_lines(source, parsed)
+    };
+    result.retain(|finding| {
+        !ignored[source
+            .position(finding.span.as_ref().unwrap().start)
+            .unwrap()
+            .line
+            - 1]
+    });
     result
 }

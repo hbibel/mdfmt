@@ -148,3 +148,52 @@ fn final_output_findings_survive_reflow_and_line_permissions() {
     assert_eq!(second.output, first.output);
     assert!(second.edits.is_empty());
 }
+
+#[test]
+fn list_owned_math_cannot_consume_unindented_root_candidates() {
+    for input in [
+        "- item\n  $$\n#Heading\n",
+        "- item\n  $$\n#Heading\n$$\n#After\n",
+    ] {
+        let result =
+            format_with_config(input, &FormatOptions { fix: false }, &config(json!(true))).unwrap();
+        assert_eq!(
+            result.diagnostics.len(),
+            1,
+            "{input:?}: {:?}",
+            result.diagnostics
+        );
+        assert_eq!(
+            Source::new(input.into())
+                .position(result.diagnostics[0].span.as_ref().unwrap().start)
+                .unwrap()
+                .line,
+            3
+        );
+    }
+}
+
+#[test]
+fn math_heavy_documents_do_not_reparse_once_per_math_block() {
+    use std::time::{Duration, Instant};
+    for options in [json!(false), json!(true)] {
+        let input = format!("{}#Heading\n", "$$\nx\n$$\n\n".repeat(500));
+        let start = Instant::now();
+        let result = format_with_config(
+            &input,
+            &FormatOptions { fix: false },
+            &config(options.clone()),
+        )
+        .unwrap();
+        assert_eq!(result.output, input);
+        assert_eq!(
+            result.diagnostics.len(),
+            usize::from(options == json!(true))
+        );
+        assert!(
+            start.elapsed() < Duration::from_secs(5),
+            "500 math blocks took {:?}",
+            start.elapsed()
+        );
+    }
+}
