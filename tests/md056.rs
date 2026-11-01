@@ -127,3 +127,65 @@ fn missing_cell_ranges_never_start_inside_an_astral_scalar() {
     assert_eq!(first.diagnostics[0].span, Some(21..25));
     assert_eq!(first.output, input);
 }
+
+#[test]
+fn nested_quote_recovery_preserves_the_surviving_list_and_paragraph_context() {
+    for (input, expected) in [
+        ("- > quote\n<span>\n  | a | b |\n  | - | - |\n  | c |\n", 1),
+        (
+            "- > quote\n<span>\n  owned\n| a | b |\n| - | - |\n| c |\n",
+            0,
+        ),
+    ] {
+        let result =
+            format_with_config(input, &FormatOptions { fix: false }, &config(json!(true))).unwrap();
+        assert_eq!(
+            result.diagnostics.len(),
+            expected,
+            "{input:?}: {:?}",
+            result.diagnostics
+        );
+        assert_eq!(result.output, input);
+    }
+}
+
+#[test]
+fn an_earlier_lazy_table_fragment_cannot_hide_a_separate_root_table() {
+    let input =
+        "> quote\n> <span>\n  | x | y |\n  | - | - |\n  | z |\n\n| a | b |\n| - | - |\n| c |\n";
+    let result =
+        format_with_config(input, &FormatOptions { fix: false }, &config(json!(true))).unwrap();
+    assert_eq!(result.diagnostics.len(), 1);
+    assert_eq!(
+        Source::new(input.into())
+            .position(result.diagnostics[0].span.as_ref().unwrap().start)
+            .unwrap()
+            .line,
+        9
+    );
+}
+
+#[test]
+fn nested_quote_markers_are_relative_to_surviving_ordered_list_padding() {
+    let input = "10. > quote\n<span>\n    > | a | b |\n    > | - | - |\n    > | c |\n";
+    let result =
+        format_with_config(input, &FormatOptions { fix: false }, &config(json!(true))).unwrap();
+    assert!(result.diagnostics.is_empty(), "{:?}", result.diagnostics);
+}
+
+#[test]
+fn completed_nonparagraph_containers_do_not_make_following_html_lazy() {
+    for input in [
+        "- ```\n  code\n  ```\n<span>\n| a | b |\n| - | - |\n| c |\n",
+        "- # heading\n<span>\n| a | b |\n| - | - |\n| c |\n",
+        "-\n<span>\n| a | b |\n| - | - |\n| c |\n",
+    ] {
+        let result =
+            format_with_config(input, &FormatOptions { fix: false }, &config(json!(true))).unwrap();
+        assert!(
+            result.diagnostics.is_empty(),
+            "{input:?}: {:?}",
+            result.diagnostics
+        );
+    }
+}

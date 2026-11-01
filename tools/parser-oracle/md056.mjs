@@ -19,6 +19,10 @@ const samples=[
   "<!-- markdownlint-disable-file table-column-count -->\n| a | b |\n| - | - |\n| c |\n",
   "| a | b |\n| - | - |\n|😀\n",
   "a | b\n--- | ---\nc\n","a | b\n--- | ---\nc | d | e\n",
+  "- > quote\n<span>\n  | a | b |\n  | - | - |\n  | c |\n","- > quote\n<span>\n  owned\n| a | b |\n| - | - |\n| c |\n",
+  "> quote\n> <span>\n  | x | y |\n  | - | - |\n  | z |\n\n| a | b |\n| - | - |\n| c |\n",
+  "10. > quote\n<span>\n    > | a | b |\n    > | - | - |\n    > | c |\n",
+  "- ```\n  code\n  ```\n<span>\n| a | b |\n| - | - |\n| c |\n","- # heading\n<span>\n| a | b |\n| - | - |\n| c |\n","-\n<span>\n| a | b |\n| - | - |\n| c |\n",
 ];
 for(let expected=1;expected<=4;expected++)for(let actual=0;actual<=6;actual++)for(const [leading,trailing]of [["",""],["|",""],["","|"],["|","|"]]){
   const row=Array.from({length:actual},(_,index)=>index===1?" `c|d` ":" c\\|d ").join("|");

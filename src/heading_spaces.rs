@@ -95,6 +95,40 @@ pub(crate) fn literal_exclusions(
             .find(|region| region.kind == RegionKind::Root && region.parent.is_some())
             .map_or(0, |region| region.span.start);
         snapshots(&parsed.tree, base, &mut code, &mut tables);
+        // A lazy paragraph in a finished container can leave native table state
+        // set across a blank separator; independent root paragraphs must reset it.
+        for region in &parsed.regions {
+            let first = source.position(region.span.start).unwrap().line;
+            if region.kind == RegionKind::Paragraph
+                && region
+                    .parent
+                    .is_some_and(|parent| parsed.regions[parent].kind == RegionKind::Root)
+                && first > 1
+                && source.text()[source.line_range(first - 1).unwrap()]
+                    .trim_matches([' ', '\t'])
+                    .is_empty()
+                && source.text()[region.span.clone()].contains('|')
+            {
+                let isolated = Source::new(format!("\n{}", &source.text()[region.span.clone()]));
+                if let Ok(parsed) = crate::parse::parse_flow_diagnostics(&isolated) {
+                    let mut found = vec![];
+                    snapshots(&parsed.tree, 0, &mut vec![], &mut found);
+                    for mut table in found {
+                        let shift = |span: Range<usize>| {
+                            region.span.start + span.start - 1..region.span.start + span.end - 1
+                        };
+                        table.span = shift(table.span);
+                        for row in &mut table.rows {
+                            row.span = shift(row.span.clone());
+                            for cell in &mut row.cells {
+                                *cell = shift(cell.clone());
+                            }
+                        }
+                        tables.push(table);
+                    }
+                }
+            }
+        }
         let mut siblings = std::collections::HashMap::new();
         for (index, region) in parsed.regions.iter().enumerate() {
             let previous = region
@@ -125,78 +159,130 @@ pub(crate) fn literal_exclusions(
                             == first
                 });
             if after_container {
-                let probe = Source::new(format!("x\n{}", &source.text()[region.span.clone()]));
-                let generic = crate::parse::parse(&probe).ok().is_some_and(|parsed| {
-                    parsed.regions.iter().any(|region| {
-                        region.kind == RegionKind::Paragraph
-                            && probe.position(region.span.start).unwrap().line == 1
-                            && probe.position(region.span.end).unwrap().line > 1
-                    })
+                let container = &parsed.regions[previous.unwrap()];
+                let last = container.span.start
+                    + source.text()[container.span.clone()]
+                        .trim_end_matches([' ', '\t', '\r', '\n'])
+                        .len();
+                let lazy = parsed.regions.iter().any(|region| {
+                    region.kind == RegionKind::Paragraph
+                        && region.span.start >= container.span.start
+                        && region.span.start < last
+                        && last <= region.span.end
                 });
-                if generic {
-                    let container = &parsed.regions[previous.unwrap()];
-                    fn columns(text: &str) -> usize {
-                        text.strip_prefix('\u{feff}').unwrap_or(text).chars().fold(
-                            0,
-                            |column, ch| {
-                                if ch == '\t' {
-                                    column + 4 - column % 4
-                                } else {
-                                    column + ch.len_utf16()
-                                }
-                            },
-                        )
-                    }
-                    let last = container.span.start
-                        + source.text()[container.span.clone()]
-                            .trim_end_matches([' ', '\t', '\r', '\n'])
-                            .len();
-                    let required = parsed
-                        .regions
-                        .iter()
-                        .filter(|item| {
-                            item.kind == RegionKind::ListItem
-                                && item.span.start < last
-                                && last <= item.span.end
+                let probe = Source::new(format!("x\n{}", &source.text()[region.span.clone()]));
+                let generic = lazy
+                    && crate::parse::parse(&probe).ok().is_some_and(|parsed| {
+                        parsed.regions.iter().any(|region| {
+                            region.kind == RegionKind::Paragraph
+                                && probe.position(region.span.start).unwrap().line == 1
+                                && probe.position(region.span.end).unwrap().line > 1
                         })
-                        .max_by_key(|item| item.span.start)
-                        .map_or(0, |item| {
-                            let raw = &source.text()[item.span.clone()];
-                            let trimmed = raw.trim_start_matches([' ', '\t']);
-                            let marker = item.span.start + raw.len() - trimmed.len();
-                            let start = source
-                                .line_range(source.position(marker).unwrap().line)
-                                .unwrap()
-                                .start;
-                            let digits = trimmed.bytes().take_while(u8::is_ascii_digit).count();
-                            let width = if digits > 0 { digits + 1 } else { 1 };
-                            let end = columns(&source.text()[start..marker + width]);
-                            let gap = &trimmed[width
-                                ..trimmed.len()
-                                    - trimmed[width..].trim_start_matches([' ', '\t']).len()];
-                            let padding = columns(&format!(
-                                "{}{}",
-                                &source.text()[start..marker + width],
-                                gap
-                            )) - end;
+                    });
+                if generic {
+                    fn expanded(text: &str) -> String {
+                        crate::parse::expanded_tabs(&Source::new(
+                            text.strip_prefix('\u{feff}').unwrap_or(text).into(),
+                        ))
+                        .0
+                        .text()
+                        .into()
+                    }
+                    fn spaces(text: &str, cursor: usize) -> usize {
+                        text[cursor..]
+                            .bytes()
+                            .take_while(|byte| *byte == b' ')
+                            .count()
+                    }
+                    fn quote_end(text: &str, cursor: usize) -> Option<usize> {
+                        let gap = spaces(text, cursor);
+                        let marker = cursor + gap;
+                        (gap <= 3 && text.as_bytes().get(marker) == Some(&b'>')).then(|| {
+                            marker + 1 + usize::from(text.as_bytes().get(marker + 1) == Some(&b' '))
+                        })
+                    }
+                    fn marker_end(text: &str, cursor: usize) -> Option<usize> {
+                        let gap = spaces(text, cursor);
+                        if gap > 3 {
+                            return None;
+                        }
+                        let start = cursor + gap;
+                        let digits = text[start..].bytes().take_while(u8::is_ascii_digit).count();
+                        let width = if digits > 0
+                            && matches!(text.as_bytes().get(start + digits), Some(b'.' | b')'))
+                        {
+                            digits + 1
+                        } else if matches!(text.as_bytes().get(start), Some(b'-' | b'+' | b'*')) {
+                            1
+                        } else {
+                            return None;
+                        };
+                        let end = start + width;
+                        let padding = spaces(text, end);
+                        Some(
                             end + if (1..=4).contains(&padding) {
                                 padding
                             } else {
                                 1
-                            }
-                        });
-                    let boundary = (first + 1..=source.line_count()).find(|line| {
-                        let raw = &source.text()[source.line_range(*line).unwrap()];
-                        let trimmed = raw.trim_start_matches([' ', '\t']);
-                        let indent = columns(&raw[..raw.len() - trimmed.len()]);
-                        raw.trim_matches([' ', '\t']).is_empty()
-                            || if container.kind == RegionKind::Blockquote {
-                                indent > 3 || !trimmed.starts_with('>')
+                            },
+                        )
+                    }
+                    let active: Vec<_> = parsed
+                        .regions
+                        .iter()
+                        .enumerate()
+                        .filter(|(_, region)| {
+                            matches!(region.kind, RegionKind::ListItem | RegionKind::Blockquote)
+                                && region.span.start >= container.span.start
+                                && region.span.start < last
+                                && last <= region.span.end
+                        })
+                        .map(|(index, _)| index)
+                        .collect();
+                    let mut widths = vec![0; active.len()];
+                    for (step, index) in active.iter().enumerate() {
+                        let item = &parsed.regions[*index];
+                        if item.kind != RegionKind::ListItem {
+                            continue;
+                        }
+                        let line = source.position(item.span.start).unwrap().line;
+                        let text = expanded(&source.text()[source.line_range(line).unwrap()]);
+                        let mut cursor = 0;
+                        for (prior, parent) in active[..step].iter().enumerate() {
+                            let region = &parsed.regions[*parent];
+                            cursor = if region.kind == RegionKind::Blockquote {
+                                quote_end(&text, cursor).unwrap_or(cursor)
+                            } else if source.position(region.span.start).unwrap().line == line {
+                                marker_end(&text, cursor).unwrap_or(cursor)
                             } else {
-                                indent < required
-                            }
+                                (cursor + widths[prior]).min(text.len())
+                            };
+                        }
+                        widths[step] = marker_end(&text, cursor).unwrap_or(cursor + 2) - cursor;
+                    }
+                    let boundary = (first + 1..=source.line_count()).find_map(|line| {
+                        let raw = &source.text()[source.line_range(line).unwrap()];
+                        if raw.trim_matches([' ', '\t']).is_empty() {
+                            return Some((line, None));
+                        }
+                        let text = expanded(raw);
+                        let mut cursor = 0;
+                        for (step, index) in active.iter().enumerate() {
+                            let region = &parsed.regions[*index];
+                            let next = if region.kind == RegionKind::Blockquote {
+                                quote_end(&text, cursor)
+                            } else {
+                                (spaces(&text, cursor) >= widths[step])
+                                    .then_some(cursor + widths[step])
+                            };
+                            let Some(next) = next else {
+                                return Some((line, Some(*index)));
+                            };
+                            cursor = next;
+                        }
+                        None
                     });
-                    let Some(boundary) = boundary else {
+                    let Some((boundary, failed)) = boundary else {
                         ignored[first - 1..].fill(true);
                         code.retain(|block| block.span.start < region.span.start);
                         tables.retain(|table| table.span.start < region.span.start);
@@ -217,6 +303,15 @@ pub(crate) fn literal_exclusions(
                     // unindented root flow without bounding a recovered fence at HTML's end.
                     let prefix = if blank {
                         format!("{}\n", &source.text()[container.span.clone()])
+                    } else if let Some(owner) = failed
+                        .map(|index| &parsed.regions[index])
+                        .filter(|owner| owner.span.start > container.span.start)
+                    {
+                        format!(
+                            "{}\n",
+                            source.text()[container.span.start..owner.span.start]
+                                .trim_end_matches([' ', '\t'])
+                        )
                     } else {
                         "\n".into()
                     };
