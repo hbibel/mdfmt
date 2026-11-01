@@ -28,7 +28,7 @@ pub(crate) fn literal_exclusions(
 ) -> LiteralExclusions {
     fn collect(source: &Source, parsed: &ParsedDocument) -> LiteralExclusions {
         let mut ignored = vec![false; source.line_count()];
-        let mut inline = vec![];
+        let mut inline: Vec<Range<usize>> = vec![];
         let mut code = vec![];
         fn code_blocks(node: &markdown::mdast::Node, base: usize, output: &mut Vec<CodeBlock>) {
             if let markdown::mdast::Node::Code(code) = node
@@ -90,36 +90,129 @@ pub(crate) fn literal_exclusions(
                     })
                 });
                 if generic {
-                    ignored[first - 1] = true;
-                    let next = source
-                        .line_range(first + 1)
-                        .map(|span| span.start)
-                        .unwrap_or(region.span.end);
-                    if next < region.span.end {
-                        // The generic HTML line still belongs to the old container;
-                        // its remaining native HTML span must restart as root flow.
-                        let suffix =
-                            Source::new(format!("\n{}", &source.text()[next..region.span.end]));
-                        if let Ok(parsed) = crate::parse::parse_flow_diagnostics(&suffix) {
-                            let recovered = collect(&suffix, &parsed);
-                            inline.extend(
-                                recovered
-                                    .inline
-                                    .into_iter()
-                                    .map(|span| next + span.start - 1..next + span.end - 1),
-                            );
-                            code.extend(recovered.code.into_iter().map(|mut code| {
-                                code.span = next + code.span.start - 1..next + code.span.end - 1;
-                                code
-                            }));
-                            for (line, excluded) in recovered.flow.into_iter().skip(1).enumerate() {
-                                if first + line < ignored.len() {
-                                    ignored[first + line] = excluded;
+                    let container = &parsed.regions[previous.unwrap()];
+                    fn columns(text: &str) -> usize {
+                        text.strip_prefix('\u{feff}').unwrap_or(text).chars().fold(
+                            0,
+                            |column, ch| {
+                                if ch == '\t' {
+                                    column + 4 - column % 4
+                                } else {
+                                    column + ch.len_utf16()
                                 }
+                            },
+                        )
+                    }
+                    let last = container.span.start
+                        + source.text()[container.span.clone()]
+                            .trim_end_matches([' ', '\t', '\r', '\n'])
+                            .len();
+                    let required = parsed
+                        .regions
+                        .iter()
+                        .filter(|item| {
+                            item.kind == RegionKind::ListItem
+                                && item.span.start < last
+                                && last <= item.span.end
+                        })
+                        .max_by_key(|item| item.span.start)
+                        .map_or(0, |item| {
+                            let raw = &source.text()[item.span.clone()];
+                            let trimmed = raw.trim_start_matches([' ', '\t']);
+                            let marker = item.span.start + raw.len() - trimmed.len();
+                            let start = source
+                                .line_range(source.position(marker).unwrap().line)
+                                .unwrap()
+                                .start;
+                            let digits = trimmed.bytes().take_while(u8::is_ascii_digit).count();
+                            let width = if digits > 0 { digits + 1 } else { 1 };
+                            let end = columns(&source.text()[start..marker + width]);
+                            let gap = &trimmed[width
+                                ..trimmed.len()
+                                    - trimmed[width..].trim_start_matches([' ', '\t']).len()];
+                            let padding = columns(&format!(
+                                "{}{}",
+                                &source.text()[start..marker + width],
+                                gap
+                            )) - end;
+                            end + if (1..=4).contains(&padding) {
+                                padding
+                            } else {
+                                1
+                            }
+                        });
+                    let boundary = (first + 1..=source.line_count()).find(|line| {
+                        let raw = &source.text()[source.line_range(*line).unwrap()];
+                        let trimmed = raw.trim_start_matches([' ', '\t']);
+                        let indent = columns(&raw[..raw.len() - trimmed.len()]);
+                        raw.trim_matches([' ', '\t']).is_empty()
+                            || if container.kind == RegionKind::Blockquote {
+                                indent > 3 || !trimmed.starts_with('>')
+                            } else {
+                                indent < required
+                            }
+                    });
+                    let Some(boundary) = boundary else {
+                        ignored[first - 1..].fill(true);
+                        code.retain(|block| block.span.start < region.span.start);
+                        inline.retain(|span| span.start < region.span.start);
+                        return LiteralExclusions {
+                            flow: ignored,
+                            inline,
+                            code,
+                        };
+                    };
+                    ignored[first - 1..boundary - 1].fill(true);
+                    let next = source.line_range(boundary).unwrap().start;
+                    let blank = source.text()[source.line_range(boundary).unwrap()]
+                        .trim_matches([' ', '\t'])
+                        .is_empty();
+                    // Keep the old container across blank separators, but restart
+                    // unindented root flow without bounding a recovered fence at HTML's end.
+                    let prefix = if blank {
+                        format!("{}\n", &source.text()[container.span.clone()])
+                    } else {
+                        "\n".into()
+                    };
+                    let prefix_lines = Source::new(prefix.clone()).line_count() - 1;
+                    let suffix = Source::new(format!("{}{}", prefix, &source.text()[next..]));
+                    if let Ok(parsed) = crate::parse::parse_flow_diagnostics(&suffix) {
+                        let recovered = collect(&suffix, &parsed);
+                        inline.retain(|span| span.start < next);
+                        code.retain(|block| block.span.start < next);
+                        inline.extend(
+                            recovered
+                                .inline
+                                .into_iter()
+                                .filter(|span| span.start >= prefix.len())
+                                .map(|span| {
+                                    next + span.start - prefix.len()..next + span.end - prefix.len()
+                                }),
+                        );
+                        code.extend(
+                            recovered
+                                .code
+                                .into_iter()
+                                .filter(|block| block.span.start >= prefix.len())
+                                .map(|mut block| {
+                                    block.span = next + block.span.start - prefix.len()
+                                        ..next + block.span.end - prefix.len();
+                                    block
+                                }),
+                        );
+                        for (line, excluded) in
+                            recovered.flow.into_iter().skip(prefix_lines).enumerate()
+                        {
+                            if boundary - 1 + line < ignored.len() {
+                                ignored[boundary - 1 + line] = excluded;
                             }
                         }
                     }
-                    continue;
+                    return LiteralExclusions {
+                        flow: ignored,
+                        inline,
+                        code,
+                    };
                 }
             }
             if matches!(region.kind, RegionKind::Code | RegionKind::FrontMatter) || html_flow {

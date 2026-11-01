@@ -24,6 +24,18 @@ pub(crate) fn diagnose(
         let raw = source.text()[block.span.clone()].trim_start_matches([' ', '\t']);
         let fenced = raw.starts_with("```") || raw.starts_with("~~~");
         let first = source.position(block.span.start).unwrap().line + usize::from(fenced);
+        // A consumed tab can leave an empty codeFlowValue, including at an
+        // unclosed fence's EOF where mdast drops the trailing empty value.
+        if fenced
+            && (first..=crate::md013::covered_lines(source, block.span.clone()).end).any(|line| {
+                source.line_range(line).is_some_and(|range| {
+                    let raw = &source.text()[range];
+                    raw.contains('\t') && raw.trim_matches([' ', '\t', '>']).is_empty()
+                })
+            })
+        {
+            continue;
+        }
         let values: Vec<_> = block
             .value
             .split('\n')

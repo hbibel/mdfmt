@@ -104,3 +104,45 @@ fn cli_write_retains_code_and_reports_remaining_prompt_findings() {
         assert!(String::from_utf8_lossy(&result.stderr).contains("MD014"));
     }
 }
+
+#[test]
+fn tab_only_fenced_values_still_suppress_whole_block_findings() {
+    for input in [
+        " ```\n$ hi\n\t\n ```\n",
+        "> ```\n> $ hi\n>\t\n> ```\n",
+        " ```\n$ hi\n\t",
+    ] {
+        let result =
+            format_with_config(input, &FormatOptions { fix: false }, &config(json!(true))).unwrap();
+        assert!(
+            result.diagnostics.is_empty(),
+            "{input:?}: {:?}",
+            result.diagnostics
+        );
+    }
+}
+
+#[test]
+fn recovered_fences_continue_through_blank_lines_to_the_actual_end() {
+    for (input, expected) in [
+        ("- item\n<span>\n```\n$ two\n\noutput\n```\n", 0),
+        ("- item\n<span>\n```\n$ two\n\n$ two\n```\n", 2),
+    ] {
+        let result =
+            format_with_config(input, &FormatOptions { fix: false }, &config(json!(true))).unwrap();
+        assert_eq!(result.diagnostics.len(), expected, "{input:?}");
+        assert_eq!(result.output, input);
+    }
+}
+
+#[test]
+fn indented_code_fences_still_owned_by_html_do_not_become_shell_blocks() {
+    for input in [
+        "- item\n<span>\n  ```\n  $ two\n  ```\n",
+        "\u{feff}- item\n<span>\n  ```\n  $ two\n  ```\n",
+    ] {
+        let result =
+            format_with_config(input, &FormatOptions { fix: false }, &config(json!(true))).unwrap();
+        assert!(result.diagnostics.is_empty(), "{:?}", result.diagnostics);
+    }
+}

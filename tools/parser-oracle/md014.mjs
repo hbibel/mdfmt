@@ -18,6 +18,11 @@ const samples=[
   "```\n$ one\n$ two\n```\n<!-- markdownlint-disable-file commands-show-output -->\n",
   "```\n$ echo a very long command whose context is truncated\n```\n",
   "- item\n<span>\n```sh\n$ echo hi\n```\n","> text\n<span>\n```sh\n$ echo hi\n```\n",
+  " ```\n$ hi\n\t\n ```\n","> ```\n> $ hi\n>\t\n> ```\n"," ```\n$ hi\n\t",
+  "- item\n<span>\n```\n$ two\n\noutput\n```\n","- item\n<span>\n```\n$ two\n\n$ two\n```\n",
+  "- item\n<span>\n  ```\n  $ two\n  ```\n","> text\n<span>\n  ```\n  $ two\n  ```\n",
+  "- item\n<span>\n\n      $ two\n",
+  "\uFEFF- item\n<span>\n  ```\n  $ two\n  ```\n",
 ];
 for(const [first,next]of [["",""],["> ","> "],["- ","  "],["> - ",">   "]])
   for(let indent=0;indent<4;indent++)for(const gap of [""," ","   ","\t"," \t"])
