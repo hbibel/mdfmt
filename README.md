@@ -63,6 +63,8 @@ MD014 reports command-only prompt prefixes while retaining literal code;
 see [MD014 evidence](docs/compatibility/md014.md).
 MD056 reports table cell-count mismatches without adding or discarding cells;
 see [MD056 evidence](docs/compatibility/md056.md).
+MD055 reports configured table edge-pipe styles without editing rows;
+see [MD055 evidence](docs/compatibility/md055.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is

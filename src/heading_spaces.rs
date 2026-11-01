@@ -25,6 +25,7 @@ pub(crate) struct CodeBlock {
 pub(crate) struct TableBlock {
     pub span: Range<usize>,
     pub rows: Vec<TableRow>,
+    pub delimiter: Range<usize>,
 }
 pub(crate) struct TableRow {
     pub span: Range<usize>,
@@ -60,6 +61,7 @@ pub(crate) fn literal_exclusions(
             {
                 tables.push(TableBlock {
                     span: base + position.start.offset..base + position.end.offset,
+                    delimiter: 0..0,
                     rows: table
                         .children
                         .iter()
@@ -95,6 +97,30 @@ pub(crate) fn literal_exclusions(
             .find(|region| region.kind == RegionKind::Root && region.parent.is_some())
             .map_or(0, |region| region.span.start);
         snapshots(&parsed.tree, base, &mut code, &mut tables);
+        fn delimiters(source: &Source, parsed: &ParsedDocument, tables: &mut [TableBlock]) {
+            for table in tables {
+                let Some(header) = table.rows.first() else {
+                    continue;
+                };
+                let line = source.position(header.span.start).unwrap().line + 1;
+                let Some(range) = source.line_range(line) else {
+                    continue;
+                };
+                let prefix = parsed
+                    .regions
+                    .iter()
+                    .position(|region| {
+                        region.kind == RegionKind::Table && region.span == table.span
+                    })
+                    .and_then(|index| {
+                        crate::parse::ContainerPath::for_region(source, parsed, index)
+                            .content_start(&source.text()[range.clone()])
+                    })
+                    .unwrap_or(0);
+                table.delimiter = range.start + prefix..range.end;
+            }
+        }
+        delimiters(source, parsed, &mut tables);
         // A lazy paragraph in a finished container can leave native table state
         // set across a blank separator; independent root paragraphs must reset it.
         for region in &parsed.regions {
@@ -113,11 +139,13 @@ pub(crate) fn literal_exclusions(
                 if let Ok(parsed) = crate::parse::parse_flow_diagnostics(&isolated) {
                     let mut found = vec![];
                     snapshots(&parsed.tree, 0, &mut vec![], &mut found);
+                    delimiters(&isolated, &parsed, &mut found);
                     for mut table in found {
                         let shift = |span: Range<usize>| {
                             region.span.start + span.start - 1..region.span.start + span.end - 1
                         };
                         table.span = shift(table.span);
+                        table.delimiter = shift(table.delimiter);
                         for row in &mut table.rows {
                             row.span = shift(row.span.clone());
                             for cell in &mut row.cells {
@@ -180,53 +208,6 @@ pub(crate) fn literal_exclusions(
                         })
                     });
                 if generic {
-                    fn expanded(text: &str) -> String {
-                        crate::parse::expanded_tabs(&Source::new(
-                            text.strip_prefix('\u{feff}').unwrap_or(text).into(),
-                        ))
-                        .0
-                        .text()
-                        .into()
-                    }
-                    fn spaces(text: &str, cursor: usize) -> usize {
-                        text[cursor..]
-                            .bytes()
-                            .take_while(|byte| *byte == b' ')
-                            .count()
-                    }
-                    fn quote_end(text: &str, cursor: usize) -> Option<usize> {
-                        let gap = spaces(text, cursor);
-                        let marker = cursor + gap;
-                        (gap <= 3 && text.as_bytes().get(marker) == Some(&b'>')).then(|| {
-                            marker + 1 + usize::from(text.as_bytes().get(marker + 1) == Some(&b' '))
-                        })
-                    }
-                    fn marker_end(text: &str, cursor: usize) -> Option<usize> {
-                        let gap = spaces(text, cursor);
-                        if gap > 3 {
-                            return None;
-                        }
-                        let start = cursor + gap;
-                        let digits = text[start..].bytes().take_while(u8::is_ascii_digit).count();
-                        let width = if digits > 0
-                            && matches!(text.as_bytes().get(start + digits), Some(b'.' | b')'))
-                        {
-                            digits + 1
-                        } else if matches!(text.as_bytes().get(start), Some(b'-' | b'+' | b'*')) {
-                            1
-                        } else {
-                            return None;
-                        };
-                        let end = start + width;
-                        let padding = spaces(text, end);
-                        Some(
-                            end + if (1..=4).contains(&padding) {
-                                padding
-                            } else {
-                                1
-                            },
-                        )
-                    }
                     let active: Vec<_> = parsed
                         .regions
                         .iter()
@@ -239,48 +220,13 @@ pub(crate) fn literal_exclusions(
                         })
                         .map(|(index, _)| index)
                         .collect();
-                    let mut widths = vec![0; active.len()];
-                    for (step, index) in active.iter().enumerate() {
-                        let item = &parsed.regions[*index];
-                        if item.kind != RegionKind::ListItem {
-                            continue;
-                        }
-                        let line = source.position(item.span.start).unwrap().line;
-                        let text = expanded(&source.text()[source.line_range(line).unwrap()]);
-                        let mut cursor = 0;
-                        for (prior, parent) in active[..step].iter().enumerate() {
-                            let region = &parsed.regions[*parent];
-                            cursor = if region.kind == RegionKind::Blockquote {
-                                quote_end(&text, cursor).unwrap_or(cursor)
-                            } else if source.position(region.span.start).unwrap().line == line {
-                                marker_end(&text, cursor).unwrap_or(cursor)
-                            } else {
-                                (cursor + widths[prior]).min(text.len())
-                            };
-                        }
-                        widths[step] = marker_end(&text, cursor).unwrap_or(cursor + 2) - cursor;
-                    }
+                    let path = crate::parse::ContainerPath::new(source, parsed, active);
                     let boundary = (first + 1..=source.line_count()).find_map(|line| {
                         let raw = &source.text()[source.line_range(line).unwrap()];
                         if raw.trim_matches([' ', '\t']).is_empty() {
                             return Some((line, None));
                         }
-                        let text = expanded(raw);
-                        let mut cursor = 0;
-                        for (step, index) in active.iter().enumerate() {
-                            let region = &parsed.regions[*index];
-                            let next = if region.kind == RegionKind::Blockquote {
-                                quote_end(&text, cursor)
-                            } else {
-                                (spaces(&text, cursor) >= widths[step])
-                                    .then_some(cursor + widths[step])
-                            };
-                            let Some(next) = next else {
-                                return Some((line, Some(*index)));
-                            };
-                            cursor = next;
-                        }
-                        None
+                        path.first_missing(raw).map(|index| (line, Some(index)))
                     });
                     let Some((boundary, failed)) = boundary else {
                         ignored[first - 1..].fill(true);
@@ -353,6 +299,7 @@ pub(crate) fn literal_exclusions(
                                             ..next + span.end - prefix.len()
                                     };
                                     table.span = shift(table.span);
+                                    table.delimiter = shift(table.delimiter);
                                     for row in &mut table.rows {
                                         row.span = shift(row.span.clone());
                                         for cell in &mut row.cells {

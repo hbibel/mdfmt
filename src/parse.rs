@@ -73,7 +73,9 @@ mod tests {
         }
     }
 }
+mod container_prefix;
 mod inline;
+pub(crate) use container_prefix::ContainerPath;
 pub(crate) use inline::label_end;
 
 use crate::Source;

@@ -115,7 +115,8 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [MD020 closed-ATX-separator diagnostics](../../compatibility/md020.md) and
 [MD011 reversed-link diagnostics](../../compatibility/md011.md) and
 [MD014 protected-code prompt diagnostics](../../compatibility/md014.md) and
-[MD056 table-column diagnostics](../../compatibility/md056.md).
+[MD056 table-column diagnostics](../../compatibility/md056.md) and
+[MD055 table-pipe-style diagnostics](../../compatibility/md055.md).
 Remaining built-in rules, interactions and conflict detection are next.
 
 The first useful release includes local declarative configuration,
