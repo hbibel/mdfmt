@@ -13,6 +13,12 @@ pub(crate) fn excluded_flow_lines(source: &Source, parsed: &ParsedDocument) -> V
 pub(crate) struct LiteralExclusions {
     pub flow: Vec<bool>,
     pub inline: Vec<Range<usize>>,
+    pub code: Vec<CodeBlock>,
+}
+
+pub(crate) struct CodeBlock {
+    pub span: Range<usize>,
+    pub value: String,
 }
 
 pub(crate) fn literal_exclusions(
@@ -23,6 +29,28 @@ pub(crate) fn literal_exclusions(
     fn collect(source: &Source, parsed: &ParsedDocument) -> LiteralExclusions {
         let mut ignored = vec![false; source.line_count()];
         let mut inline = vec![];
+        let mut code = vec![];
+        fn code_blocks(node: &markdown::mdast::Node, base: usize, output: &mut Vec<CodeBlock>) {
+            if let markdown::mdast::Node::Code(code) = node
+                && let Some(position) = &code.position
+            {
+                output.push(CodeBlock {
+                    span: base + position.start.offset..base + position.end.offset,
+                    value: code.value.clone(),
+                });
+            }
+            if let Some(children) = node.children() {
+                for child in children {
+                    code_blocks(child, base, output);
+                }
+            }
+        }
+        let base = parsed
+            .regions
+            .iter()
+            .find(|region| region.kind == RegionKind::Root && region.parent.is_some())
+            .map_or(0, |region| region.span.start);
+        code_blocks(&parsed.tree, base, &mut code);
         let mut siblings = std::collections::HashMap::new();
         for (index, region) in parsed.regions.iter().enumerate() {
             let previous = region
@@ -80,6 +108,10 @@ pub(crate) fn literal_exclusions(
                                     .into_iter()
                                     .map(|span| next + span.start - 1..next + span.end - 1),
                             );
+                            code.extend(recovered.code.into_iter().map(|mut code| {
+                                code.span = next + code.span.start - 1..next + code.span.end - 1;
+                                code
+                            }));
                             for (line, excluded) in recovered.flow.into_iter().skip(1).enumerate() {
                                 if first + line < ignored.len() {
                                     ignored[first + line] = excluded;
@@ -102,6 +134,7 @@ pub(crate) fn literal_exclusions(
         LiteralExclusions {
             flow: ignored,
             inline,
+            code,
         }
     }
     if source.text().contains(if inline_math { "$" } else { "$$" }) {

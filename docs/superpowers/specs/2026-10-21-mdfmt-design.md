@@ -113,7 +113,8 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [conditional MD030 list-marker spacing](../../compatibility/md030.md) and
 [MD018 missing-ATX-separator diagnostics](../../compatibility/md018.md) and
 [MD020 closed-ATX-separator diagnostics](../../compatibility/md020.md) and
-[MD011 reversed-link diagnostics](../../compatibility/md011.md).
+[MD011 reversed-link diagnostics](../../compatibility/md011.md) and
+[MD014 protected-code prompt diagnostics](../../compatibility/md014.md).
 Remaining built-in rules, interactions and conflict detection are next.
 
 The first useful release includes local declarative configuration,
