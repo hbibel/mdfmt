@@ -111,3 +111,28 @@ fn cli_preserves_reversed_link_text_in_check_and_write_modes() {
         assert!(String::from_utf8_lossy(&result.stderr).contains("MD011"));
     }
 }
+
+#[test]
+fn inline_literal_endpoints_exclude_adjacent_candidates_but_not_following_literals() {
+    for input in [
+        "`a`(text)[url]\n",
+        "$a$(text)[url]\n",
+        "`start\n`(text)[url]`\nend`\n",
+    ] {
+        let first =
+            format_with_config(input, &FormatOptions { fix: false }, &config(json!(true))).unwrap();
+        assert!(
+            first.diagnostics.is_empty(),
+            "{input:?}: {:?}",
+            first.diagnostics
+        );
+        assert_eq!(first.output, input);
+    }
+    let first = format_with_config(
+        "(text)[url]`a`\n",
+        &FormatOptions { fix: false },
+        &config(json!(true)),
+    )
+    .unwrap();
+    assert_eq!(first.diagnostics.len(), 1);
+}

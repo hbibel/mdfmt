@@ -16,6 +16,7 @@ const samples=[
   "<!-- markdownlint-disable-next-line MD011 -->\n(text)[url]\n(real)[url]\n",
   "<!-- markdownlint-disable-file no-reversed-links -->\n(text)[url]\n",
   "(a `b)[c]`\n","`(a`)[b]\n","$ (a $)[b]\n",
+  "`a`(text)[url]\n","$a$(text)[url]\n","`start\n`(text)[url]`\nend`\n","(text)[url]`a`\n",
 ];
 for(const prefix of ["- item\n","> text\n"])for(const literal of ["`(text)[url]`","$(text)[url]$","``(text)[url]``"])
   samples.push(prefix+"<span>\n"+literal+"\n(real)[url]\n");

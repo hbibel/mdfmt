@@ -47,11 +47,12 @@ pub(crate) fn diagnose(
     result.retain(|finding| {
         let span = finding.span.as_ref().unwrap();
         let line = source.position(span.start).unwrap().line - 1;
+        // Pinned overlap treats an inline token's exclusive end column as inclusive.
         !excluded.flow[line]
             && !excluded
                 .inline
                 .iter()
-                .any(|literal| literal.start < span.end && span.start < literal.end)
+                .any(|literal| literal.start < span.end && span.start <= literal.end)
     });
     result
 }
