@@ -24,6 +24,7 @@ mod md042;
 mod md045;
 mod md047;
 mod md048;
+mod md056;
 mod parse;
 mod reflow;
 mod source;
@@ -251,6 +252,9 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(md056::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(md014::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -340,6 +344,7 @@ pub fn format_with_config(
         "MD045".into(),
         "MD047".into(),
         "MD048".into(),
+        "MD056".into(),
     ];
     Ok(result)
 }

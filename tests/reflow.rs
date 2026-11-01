@@ -23,7 +23,7 @@ fn check(input: &str, expected: &str, width: usize) {
         vec![
             "MD004", "MD009", "MD010", "MD011", "MD012", "MD013", "MD014", "MD018", "MD019",
             "MD020", "MD021", "MD023", "MD024", "MD026", "MD027", "MD028", "MD029", "MD030",
-            "MD035", "MD040", "MD042", "MD045", "MD047", "MD048"
+            "MD035", "MD040", "MD042", "MD045", "MD047", "MD048", "MD056"
         ]
     );
     let second = format_with_config(&result.output, &FormatOptions::default(), &config).unwrap();

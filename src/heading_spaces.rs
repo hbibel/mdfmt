@@ -14,11 +14,21 @@ pub(crate) struct LiteralExclusions {
     pub flow: Vec<bool>,
     pub inline: Vec<Range<usize>>,
     pub code: Vec<CodeBlock>,
+    pub tables: Vec<TableBlock>,
 }
 
 pub(crate) struct CodeBlock {
     pub span: Range<usize>,
     pub value: String,
+}
+
+pub(crate) struct TableBlock {
+    pub span: Range<usize>,
+    pub rows: Vec<TableRow>,
+}
+pub(crate) struct TableRow {
+    pub span: Range<usize>,
+    pub cells: Vec<Range<usize>>,
 }
 
 pub(crate) fn literal_exclusions(
@@ -30,7 +40,13 @@ pub(crate) fn literal_exclusions(
         let mut ignored = vec![false; source.line_count()];
         let mut inline: Vec<Range<usize>> = vec![];
         let mut code = vec![];
-        fn code_blocks(node: &markdown::mdast::Node, base: usize, output: &mut Vec<CodeBlock>) {
+        let mut tables = vec![];
+        fn snapshots(
+            node: &markdown::mdast::Node,
+            base: usize,
+            output: &mut Vec<CodeBlock>,
+            tables: &mut Vec<TableBlock>,
+        ) {
             if let markdown::mdast::Node::Code(code) = node
                 && let Some(position) = &code.position
             {
@@ -39,9 +55,37 @@ pub(crate) fn literal_exclusions(
                     value: code.value.clone(),
                 });
             }
+            if let markdown::mdast::Node::Table(table) = node
+                && let Some(position) = &table.position
+            {
+                tables.push(TableBlock {
+                    span: base + position.start.offset..base + position.end.offset,
+                    rows: table
+                        .children
+                        .iter()
+                        .filter_map(|row| {
+                            let position = row.position()?;
+                            Some(TableRow {
+                                span: base + position.start.offset..base + position.end.offset,
+                                cells: row
+                                    .children()?
+                                    .iter()
+                                    .filter_map(|cell| {
+                                        let position = cell.position()?;
+                                        Some(
+                                            base + position.start.offset
+                                                ..base + position.end.offset,
+                                        )
+                                    })
+                                    .collect(),
+                            })
+                        })
+                        .collect(),
+                });
+            }
             if let Some(children) = node.children() {
                 for child in children {
-                    code_blocks(child, base, output);
+                    snapshots(child, base, output, tables);
                 }
             }
         }
@@ -50,7 +94,7 @@ pub(crate) fn literal_exclusions(
             .iter()
             .find(|region| region.kind == RegionKind::Root && region.parent.is_some())
             .map_or(0, |region| region.span.start);
-        code_blocks(&parsed.tree, base, &mut code);
+        snapshots(&parsed.tree, base, &mut code, &mut tables);
         let mut siblings = std::collections::HashMap::new();
         for (index, region) in parsed.regions.iter().enumerate() {
             let previous = region
@@ -155,11 +199,13 @@ pub(crate) fn literal_exclusions(
                     let Some(boundary) = boundary else {
                         ignored[first - 1..].fill(true);
                         code.retain(|block| block.span.start < region.span.start);
+                        tables.retain(|table| table.span.start < region.span.start);
                         inline.retain(|span| span.start < region.span.start);
                         return LiteralExclusions {
                             flow: ignored,
                             inline,
                             code,
+                            tables,
                         };
                     };
                     ignored[first - 1..boundary - 1].fill(true);
@@ -180,6 +226,7 @@ pub(crate) fn literal_exclusions(
                         let recovered = collect(&suffix, &parsed);
                         inline.retain(|span| span.start < next);
                         code.retain(|block| block.span.start < next);
+                        tables.retain(|table| table.span.start < next);
                         inline.extend(
                             recovered
                                 .inline
@@ -200,6 +247,26 @@ pub(crate) fn literal_exclusions(
                                     block
                                 }),
                         );
+                        tables.extend(
+                            recovered
+                                .tables
+                                .into_iter()
+                                .filter(|table| table.span.start >= prefix.len())
+                                .map(|mut table| {
+                                    let shift = |span: Range<usize>| {
+                                        next + span.start - prefix.len()
+                                            ..next + span.end - prefix.len()
+                                    };
+                                    table.span = shift(table.span);
+                                    for row in &mut table.rows {
+                                        row.span = shift(row.span.clone());
+                                        for cell in &mut row.cells {
+                                            *cell = shift(cell.clone());
+                                        }
+                                    }
+                                    table
+                                }),
+                        );
                         for (line, excluded) in
                             recovered.flow.into_iter().skip(prefix_lines).enumerate()
                         {
@@ -212,6 +279,7 @@ pub(crate) fn literal_exclusions(
                         flow: ignored,
                         inline,
                         code,
+                        tables,
                     };
                 }
             }
@@ -228,6 +296,7 @@ pub(crate) fn literal_exclusions(
             flow: ignored,
             inline,
             code,
+            tables,
         }
     }
     if source.text().contains(if inline_math { "$" } else { "$$" }) {

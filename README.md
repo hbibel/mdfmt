@@ -61,6 +61,8 @@ MD011 reports reversed link syntax without creating links from literal text;
 see [MD011 evidence](docs/compatibility/md011.md).
 MD014 reports command-only prompt prefixes while retaining literal code;
 see [MD014 evidence](docs/compatibility/md014.md).
+MD056 reports table cell-count mismatches without adding or discarding cells;
+see [MD056 evidence](docs/compatibility/md056.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is
