@@ -5,6 +5,7 @@ mod heading_spaces;
 mod md004;
 mod md009;
 mod md010;
+mod md011;
 mod md012;
 mod md013;
 mod md018;
@@ -249,6 +250,9 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(md011::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(md018::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -311,6 +315,7 @@ pub fn format_with_config(
         "MD004".into(),
         "MD009".into(),
         "MD010".into(),
+        "MD011".into(),
         "MD012".into(),
         "MD013".into(),
         "MD018".into(),

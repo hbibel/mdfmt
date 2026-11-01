@@ -7,8 +7,22 @@ use crate::{
 use std::ops::Range;
 
 pub(crate) fn excluded_flow_lines(source: &Source, parsed: &ParsedDocument) -> Vec<bool> {
-    fn collect(source: &Source, parsed: &ParsedDocument) -> Vec<bool> {
+    literal_exclusions(source, parsed, false).flow
+}
+
+pub(crate) struct LiteralExclusions {
+    pub flow: Vec<bool>,
+    pub inline: Vec<Range<usize>>,
+}
+
+pub(crate) fn literal_exclusions(
+    source: &Source,
+    parsed: &ParsedDocument,
+    inline_math: bool,
+) -> LiteralExclusions {
+    fn collect(source: &Source, parsed: &ParsedDocument) -> LiteralExclusions {
         let mut ignored = vec![false; source.line_count()];
+        let mut inline = vec![];
         let mut siblings = std::collections::HashMap::new();
         for (index, region) in parsed.regions.iter().enumerate() {
             let previous = region
@@ -59,9 +73,14 @@ pub(crate) fn excluded_flow_lines(source: &Source, parsed: &ParsedDocument) -> V
                         let suffix =
                             Source::new(format!("\n{}", &source.text()[next..region.span.end]));
                         if let Ok(parsed) = crate::parse::parse_flow_diagnostics(&suffix) {
-                            for (line, excluded) in
-                                collect(&suffix, &parsed).into_iter().skip(1).enumerate()
-                            {
+                            let recovered = collect(&suffix, &parsed);
+                            inline.extend(
+                                recovered
+                                    .inline
+                                    .into_iter()
+                                    .map(|span| next + span.start - 1..next + span.end - 1),
+                            );
+                            for (line, excluded) in recovered.flow.into_iter().skip(1).enumerate() {
                                 if first + line < ignored.len() {
                                     ignored[first + line] = excluded;
                                 }
@@ -76,10 +95,16 @@ pub(crate) fn excluded_flow_lines(source: &Source, parsed: &ParsedDocument) -> V
                     ignored[line] = true;
                 }
             }
+            if region.kind == RegionKind::InlineCode {
+                inline.push(region.span.clone());
+            }
         }
-        ignored
+        LiteralExclusions {
+            flow: ignored,
+            inline,
+        }
     }
-    if source.text().contains("$$") {
+    if source.text().contains(if inline_math { "$" } else { "$$" }) {
         crate::parse::parse_flow_diagnostics(source)
             .map(|parsed| collect(source, &parsed))
             .unwrap_or_else(|_| collect(source, parsed))

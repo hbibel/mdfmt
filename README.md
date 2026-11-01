@@ -57,6 +57,8 @@ MD018 reports missing ATX separators without turning literal text into headings;
 see [MD018 evidence](docs/compatibility/md018.md).
 MD020 reports closed-ATX separator gaps without reinterpreting literal hashes;
 see [MD020 evidence](docs/compatibility/md020.md).
+MD011 reports reversed link syntax without creating links from literal text;
+see [MD011 evidence](docs/compatibility/md011.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is

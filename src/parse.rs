@@ -479,6 +479,7 @@ fn parse_with_math(source: &Source, math_flow: bool) -> Result<ParsedDocument, S
         .map_or(bom, |m| offsets[m.end()]);
     let mut options = markdown::ParseOptions::gfm();
     options.constructs.math_flow = math_flow;
+    options.constructs.math_text = math_flow;
     let root =
         markdown::to_mdast(&text[front_end..], &options).map_err(|error| error.to_string())?;
     let mut parsed = ParsedDocument {
@@ -509,7 +510,7 @@ fn parse_with_math(source: &Source, math_flow: bool) -> Result<ParsedDocument, S
             Node::Break(_) => RegionKind::Break,
             Node::Link(_) | Node::LinkReference(_) => RegionKind::Link,
             Node::Image(_) | Node::ImageReference(_) => RegionKind::Image,
-            Node::InlineCode(_) => RegionKind::InlineCode,
+            Node::InlineCode(_) | Node::InlineMath(_) => RegionKind::InlineCode,
             Node::Table(_) => RegionKind::Table,
             Node::Code(_) | Node::Math(_) => RegionKind::Code,
             Node::Html(_) => RegionKind::Html,
