@@ -189,3 +189,16 @@ fn completed_nonparagraph_containers_do_not_make_following_html_lazy() {
         );
     }
 }
+
+#[test]
+fn native_flow_fast_paths_do_not_drop_extra_cells_from_table_rows() {
+    for row in ["e | f | extra", "`c | d | extra`"] {
+        let input = format!("| a | b |\n| --- | --- |\n| c | d |\n{row}\n");
+        let result =
+            format_with_config(&input, &FormatOptions { fix: false }, &config(json!(true)))
+                .unwrap();
+        assert_eq!(result.output, input);
+        assert_eq!(result.diagnostics.len(), 1, "{row:?}");
+        assert!(result.diagnostics[0].message.contains("Actual: 3"));
+    }
+}

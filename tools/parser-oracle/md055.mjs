@@ -17,12 +17,24 @@ const samples=[
   "<!-- markdownlint-disable-next-line MD055 -->\n| a | b |\n| - | - |\nc | d\n",
   "<!-- markdownlint-disable-file table-pipe-style -->\n| a | b |\n| - | - |\nc | d\n",
 ];
+for(const [first,next]of [["",""],["> ","> "],["- ","  "]]){
+  samples.push(first+"| a | b |\n"+next+"| --- | --- |\n"+next+"| c | d |\n"+next+"e | f\n");
+  samples.push(first+"| a | b |\n"+next+"| --- | --- |\n"+next+"`c | d`\n");
+  samples.push(first+"example | b\n"+next+"--- | ---\n"+next+"| c | d |\n");
+}
 for(const [first,next]of [["",""],["> ","> "],["- ","  "],["10. ","    "],["> - ",">   "],["- > ","  > "],["  - ","    "]])
   for(let indent=0;indent<3;indent++)for(const [leading,trailing]of [["",""],["|",""],["","|"],["|","|"]]){
     const gap=" ".repeat(indent),oppositeLeading=leading?"":"|",oppositeTrailing=trailing?"":"|";
     samples.push(first+gap+leading+" a | b "+trailing+"\n"+next+gap+leading+" --- | --- "+trailing+"\n"+next+gap+oppositeLeading+" c | d "+oppositeTrailing+"\n");
   }
 const configurations=[true,false,{style:"leading_and_trailing"},{style:"leading_only"},{style:"trailing_only"},{style:"no_leading_or_trailing"},{style:"per_table"},{severity:"warning"}];
+for(const start of ["#text","$text","`text`","~text","*text*","_text_","<text","example","inline","{text"]){
+  samples.push(`| a | b |\n| --- | --- |\n${start} | f\n`);
+  samples.push(`${start} | b\n--- | ---\n| c | d |\n`);
+}
+for(const prefix of ["\uFEFF","---\ntitle: table\n---\n","- item\n<span>\n"]){
+  samples.push(`${prefix}| a | b |\n| --- | --- |\nexample | 😀\n`);
+}
 const observations=samples.flatMap((input,sample)=>configurations.map((options,configuration)=>{
   const findings=lint({strings:{input},config:{default:false,MD055:options}}).input;
   return {id:`${sample}-${configuration}`,input,options,findings:findings.map(f=>({line:f.lineNumber,column:f.errorRange[0],length:f.errorRange[1],detail:f.errorDetail,severity:f.severity}))};
@@ -37,7 +49,11 @@ else{
   try{for(const row of observations){for(const fix of [false,true]){
     writeFileSync(configuration,JSON.stringify({fix,config:{default:false,MD055:row.options}}));
     const native=spawnSync(binary,["-"],{input:row.input,encoding:"utf8",cwd:directory});assert.equal(native.stdout,row.input,row.id);
-    const expected=row.findings.map(({length,...finding})=>({...finding,column:finding.column-Number(row.input.endsWith("\nc | 😀\n")&&finding.line===3&&finding.detail.includes("trailing pipe"))}));
+    const expected=row.findings.map(({length,...finding})=>{
+      const line=row.input.split(/\r\n|\r|\n/)[finding.line-1];
+      const last=[...line].at(-1);
+      return {...finding,column:finding.column-Number(last?.length===2&&finding.detail.includes("trailing pipe"))};
+    });
     const actual=[...native.stderr.matchAll(/^-:(\d+):(\d+): (Error|Warning) MD055: Table pipe style \[([^\r\n]*)\]$/gm)]
       .map(m=>({line:Number(m[1]),column:Number(m[2]),detail:m[4],severity:m[3].toLowerCase()}));
     assert.deepEqual(actual,expected,`${row.id}: fix ${fix}: ${native.stderr}`);assert.equal(native.status,expected.some(f=>f.severity==="error")?1:0,native.stderr);

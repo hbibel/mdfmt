@@ -75,6 +75,7 @@ mod tests {
 }
 mod container_prefix;
 mod inline;
+mod table_flow;
 pub(crate) use container_prefix::ContainerPath;
 pub(crate) use inline::label_end;
 
@@ -446,11 +447,32 @@ static FRONT_MATTER: LazyLock<regex::Regex> = LazyLock::new(|| {
 });
 
 pub(crate) fn parse(source: &Source) -> Result<ParsedDocument, String> {
-    parse_with_math(source, false)
+    let mut parsed = parse_with_math(source, false)?;
+    if !table_flow::candidates(source, &parsed).is_empty() {
+        let recovered = parse_flow_diagnostics(source)?;
+        for region in recovered
+            .regions
+            .into_iter()
+            .filter(|region| region.kind == RegionKind::Table)
+        {
+            if !parsed
+                .regions
+                .iter()
+                .any(|existing| existing.kind == RegionKind::Table && existing.span == region.span)
+            {
+                parsed.regions.push(Region {
+                    span: region.span,
+                    kind: RegionKind::Table,
+                    parent: Some(0),
+                });
+            }
+        }
+    }
+    Ok(parsed)
 }
 
 pub(crate) fn parse_flow_diagnostics(source: &Source) -> Result<ParsedDocument, String> {
-    parse_with_math(source, true)
+    table_flow::recover(source, parse_with_math(source, true)?)
 }
 
 fn parse_with_math(source: &Source, math_flow: bool) -> Result<ParsedDocument, String> {

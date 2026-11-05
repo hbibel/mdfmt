@@ -341,7 +341,7 @@ pub(crate) fn literal_exclusions(
             tables,
         }
     }
-    if source.text().contains(if inline_math { "$" } else { "$$" }) {
+    if source.text().contains(if inline_math { "$" } else { "$$" }) || source.text().contains('|') {
         crate::parse::parse_flow_diagnostics(source)
             .map(|parsed| collect(source, &parsed))
             .unwrap_or_else(|_| collect(source, parsed))

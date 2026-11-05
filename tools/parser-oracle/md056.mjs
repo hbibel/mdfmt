@@ -29,6 +29,9 @@ for(let expected=1;expected<=4;expected++)for(let actual=0;actual<=6;actual++)fo
   samples.push("|"+Array(expected).fill(" h ").join("|")+"|\n|"+Array(expected).fill(" - ").join("|")+"|\n"+leading+row+trailing+"\n");
 }
 const configurations=[true,false,{severity:"warning"}];
+for(const row of ["e | f | extra","`c | d | extra`","#text | f | extra","$text | f | extra","~text | f | extra","*text* | f | extra","_text_ | f | extra","<text | f | extra","inline | f | extra","{text | f | extra"]){
+  samples.push(`| a | b |\n| --- | --- |\n| c | d |\n${row}\n`);
+}
 const observations=samples.flatMap((input,sample)=>configurations.map((options,configuration)=>{
   const findings=lint({strings:{input},config:{default:false,MD056:options}}).input;
   return {id:`${sample}-${configuration}`,input,options,findings:findings.map(f=>({line:f.lineNumber,column:f.errorRange[0],length:f.errorRange[1],detail:f.errorDetail,severity:f.severity}))};

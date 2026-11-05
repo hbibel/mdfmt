@@ -124,3 +124,48 @@ fn cli_write_preserves_pipe_style_and_reports_remaining_findings() {
         assert!(String::from_utf8_lossy(&result.stderr).contains("MD055"));
     }
 }
+
+#[test]
+fn continuation_and_inline_code_body_rows_do_not_disappear_from_style_checks() {
+    for (first, next) in [("", ""), ("> ", "> "), ("- ", "  ")] {
+        for body in [
+            format!("{next}| c | d |\n{next}e | f\n"),
+            format!("{next}`c | d`\n"),
+        ] {
+            let input = format!("{first}| a | b |\n{next}| --- | --- |\n{body}");
+            let result =
+                format_with_config(&input, &FormatOptions { fix: false }, &config(json!(true)))
+                    .unwrap();
+            assert_eq!(result.output, input);
+            assert_eq!(
+                result.diagnostics.len(),
+                2,
+                "{input:?}: {:?}",
+                result.diagnostics
+            );
+        }
+    }
+}
+
+#[test]
+fn diagnostic_table_recovery_also_preserves_rows_during_prose_reflow() {
+    let table = "| a | b |\n| --- | --- |\n| c | d |\necho alpha beta gamma | delta\n";
+    let input = format!("# Heading!\n\n{table}");
+    let settings=ResolvedConfig {rules:RuleConfig::from_value(json!({"default":false,"MD055":true,"MD026":true,"MD013":{"line_length":12,"tables":false}})).unwrap(),..Default::default()};
+    let result = format_with_config(&input, &FormatOptions::default(), &settings).unwrap();
+    assert_eq!(result.output, format!("# Heading\n\n{table}"));
+    assert_eq!(
+        result
+            .diagnostics
+            .iter()
+            .filter(|finding| finding.code == "MD055")
+            .count(),
+        2
+    );
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .all(|finding| finding.code == "MD055")
+    );
+}

@@ -27,6 +27,21 @@ impl Layout {
         let mut paragraphs: Vec<Paragraph> = vec![];
         let mut owners = vec![None; parsed.regions.len()];
         let mut blocked = vec![false; parsed.regions.len()];
+        let mut tables: Vec<_> = parsed
+            .regions
+            .iter()
+            .filter(|region| region.kind == RegionKind::Table)
+            .map(|region| region.span.clone())
+            .collect();
+        tables.sort_by_key(|span| span.start);
+        let mut protected: Vec<std::ops::Range<usize>> = vec![];
+        for span in tables {
+            if let Some(last) = protected.last_mut().filter(|last| span.start <= last.end) {
+                last.end = last.end.max(span.end);
+            } else {
+                protected.push(span);
+            }
+        }
         for (index, region) in parsed.regions.iter().enumerate() {
             let parent_owner = region.parent.and_then(|parent| owners[parent]);
             blocked[index] =
@@ -37,7 +52,10 @@ impl Layout {
                     span: region.span.clone(),
                     continuation: continuation(source, parsed, index),
                     gaps: vec![],
-                    eligible: !source.text()[region.span.clone()].contains('\t'),
+                    eligible: !source.text()[region.span.clone()].contains('\t') && {
+                        let prior = protected.partition_point(|span| span.start < region.span.end);
+                        prior == 0 || protected[prior - 1].end <= region.span.start
+                    },
                 });
             } else {
                 owners[index] = parent_owner;

@@ -108,11 +108,13 @@ impl ContainerPath {
         Self::new(source, parsed, indices)
     }
 
-    fn walk(&self, text: &str) -> Result<usize, usize> {
+    fn walk(&self, text: &str, line: Option<usize>) -> Result<usize, usize> {
         let mut cursor = 0;
         for frame in &self.frames {
             let next = if frame.kind == RegionKind::Blockquote {
                 quote_end(text, cursor)
+            } else if line == Some(frame.line) {
+                marker_end(text, cursor).filter(|end| *end <= text.len())
             } else {
                 (spaces(text, cursor) >= frame.width).then_some(cursor + frame.width)
             };
@@ -125,12 +127,18 @@ impl ContainerPath {
     }
 
     pub(crate) fn first_missing(&self, text: &str) -> Option<usize> {
-        self.walk(&expanded(text).0).err()
+        self.walk(&expanded(text).0, None).err()
     }
 
     pub(crate) fn content_start(&self, text: &str) -> Option<usize> {
         let (expanded, offsets) = expanded(text);
-        let cursor = self.walk(&expanded).ok()?;
+        let cursor = self.walk(&expanded, None).ok()?;
+        Some(offsets[cursor] + usize::from(cursor > 0 && offsets[cursor] == offsets[cursor - 1]))
+    }
+
+    pub(crate) fn content_start_at(&self, text: &str, line: usize) -> Option<usize> {
+        let (expanded, offsets) = expanded(text);
+        let cursor = self.walk(&expanded, Some(line)).ok()?;
         Some(offsets[cursor] + usize::from(cursor > 0 && offsets[cursor] == offsets[cursor - 1]))
     }
 }

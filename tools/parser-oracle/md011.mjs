@@ -21,6 +21,9 @@ const samples=[
 for(const prefix of ["- item\n","> text\n"])for(const literal of ["`(text)[url]`","$(text)[url]$","``(text)[url]``"])
   samples.push(prefix+"<span>\n"+literal+"\n(real)[url]\n");
 const configurations=[true,false,{severity:"warning"}];
+for(const literal of ["`(text)[url]`","$(text)[url]$","example `(text)[url]`","inline $(text)[url]$"]){
+  samples.push(`| a | b |\n| --- | --- |\n${literal} | cell\n\n(real)[url]\n`);
+}
 const observations=samples.flatMap((input,sample)=>configurations.map((options,configuration)=>{
   const findings=lint({strings:{input},config:{default:false,MD011:options}}).input;
   const bom=input.startsWith("\uFEFF")?"\uFEFF":"";
