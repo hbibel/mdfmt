@@ -25,7 +25,7 @@ fn disabled_fixes_preserve_fixtures_without_claiming_lint_coverage() {
                     "MD004", "MD009", "MD010", "MD011", "MD012", "MD013", "MD014", "MD018",
                     "MD019", "MD020", "MD021", "MD023", "MD024", "MD026", "MD027", "MD028",
                     "MD029", "MD030", "MD035", "MD040", "MD042", "MD045", "MD047", "MD048",
-                    "MD055", "MD056"
+                    "MD055", "MD056", "MD058"
                 ]
             );
             assert!(!result.coverage.complete);

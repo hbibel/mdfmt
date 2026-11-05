@@ -65,6 +65,8 @@ MD056 reports table cell-count mismatches without adding or discarding cells;
 see [MD056 evidence](docs/compatibility/md056.md).
 MD055 reports configured table edge-pipe styles without editing rows;
 see [MD055 evidence](docs/compatibility/md055.md).
+MD058 adds table separators when block structure remains unchanged and reports
+unsafe cases; see [MD058 evidence](docs/compatibility/md058.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is

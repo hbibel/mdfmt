@@ -26,6 +26,7 @@ mod md047;
 mod md048;
 mod md055;
 mod md056;
+mod md058;
 mod parse;
 mod reflow;
 mod source;
@@ -223,6 +224,27 @@ pub fn format_with_config(
         &fence_edits,
     )?;
     result.edits = edit::compose_edits(source, &result.edits, &fence_edits)?;
+    let before_tables = Source::new(result.output.clone());
+    let before_tables_parsed = parse::parse(&before_tables).map_err(ProcessingError::Parse)?;
+    let before_tables_document = config
+        .document(before_tables.text())
+        .map_err(ProcessingError::Configuration)?;
+    let table_edits = if options.fix && config.fix {
+        md058::propose(
+            &before_tables,
+            &before_tables_parsed,
+            &before_tables_document,
+        )
+    } else {
+        vec![]
+    };
+    result.output = edit::apply_authorized_edits(
+        &before_tables,
+        &before_tables_parsed,
+        table_edits.clone(),
+        &table_edits,
+    )?;
+    result.edits = edit::compose_edits(source, &result.edits, &table_edits)?;
     let before_eof = Source::new(result.output.clone());
     let before_eof_parsed = parse::parse(&before_eof).map_err(ProcessingError::Parse)?;
     let before_eof_document = config
@@ -251,6 +273,9 @@ pub fn format_with_config(
         .document(output.text())
         .map_err(ProcessingError::Configuration)?;
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
+    result
+        .diagnostics
+        .extend(md058::diagnose(&output, &parsed, &document));
     result
         .diagnostics
         .extend(md055::diagnose(&output, &parsed, &document));
@@ -350,6 +375,7 @@ pub fn format_with_config(
         "MD048".into(),
         "MD055".into(),
         "MD056".into(),
+        "MD058".into(),
     ];
     Ok(result)
 }
