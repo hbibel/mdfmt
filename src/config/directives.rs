@@ -165,6 +165,12 @@ impl ResolvedConfig {
 }
 
 impl DocumentConfig {
+    pub(crate) fn has_any_line_override(&self, line: usize) -> bool {
+        self.line_overrides
+            .get(line - 1)
+            .is_some_and(|rules| !rules.is_empty())
+    }
+
     pub(crate) fn has_line_override(
         &self,
         rule: &str,

@@ -49,7 +49,13 @@ fn candidates(
         ] {
             if neighbor
                 .and_then(|line| source.line_range(line))
-                .is_some_and(|span| !blank_line(source.text()[span].into()))
+                .is_some_and(|span| {
+                    !parsed.regions.iter().any(|region| {
+                        region.kind == RegionKind::FrontMatter
+                            && region.span.start <= span.start
+                            && span.end <= region.span.end
+                    }) && !blank_line(source.text()[span].into())
+                })
                 && document
                     .state("MD058", line)
                     .is_some_and(|state| state.enabled)
@@ -133,6 +139,11 @@ pub(crate) fn propose(
             continue;
         };
         let offset = range.start;
+        // Inserting before a line targeted by disable-next-line changes the
+        // configuration of that original line, even for unrelated rules.
+        if document.has_any_line_override(candidate.insertion) {
+            continue;
+        }
         let row = source.line_range(candidate.line).unwrap();
         let raw = &source.text()[row.clone()];
         let prefix = crate::parse::ContainerPath::for_region(source, parsed, index)

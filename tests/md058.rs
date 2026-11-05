@@ -130,3 +130,44 @@ fn cli_check_and_write_apply_only_safe_table_separator_insertions() {
             .replace("d |\n#", "d |\n\n#")
     );
 }
+
+#[test]
+fn separator_insertions_do_not_retarget_other_rules_next_line_directives() {
+    let input = "| a |\n| --- |\n| c <!-- markdownlint-disable-next-line MD026 --> |\n# Heading!\n";
+    let settings = ResolvedConfig {
+        rules: RuleConfig::from_value(json!({"default":false,"MD058":true,"MD026":true})).unwrap(),
+        ..Default::default()
+    };
+    let first = format_with_config(input, &FormatOptions::default(), &settings).unwrap();
+    assert_eq!(first.output, input);
+    assert_eq!(first.diagnostics.len(), 1);
+    assert_eq!(first.diagnostics[0].code, "MD058");
+    let second = format_with_config(&first.output, &FormatOptions::default(), &settings).unwrap();
+    assert_eq!(second.output, first.output);
+    assert!(second.edits.is_empty());
+    assert_eq!(second.diagnostics[0].code, "MD058");
+}
+
+#[test]
+fn excluded_front_matter_is_not_a_nonblank_table_neighbor() {
+    for metadata in [
+        "---\ntitle: x\n---\n",
+        "+++\ntitle = 'x'\n+++\n",
+        "{\n\"title\": \"x\"\n}\n",
+    ] {
+        for bom in ["", "\u{feff}"] {
+            let input = format!("{bom}{metadata}| a | b |\n| --- | --- |\n| c | d |\n");
+            for fix in [false, true] {
+                let result =
+                    format_with_config(&input, &FormatOptions { fix }, &config(json!(true)))
+                        .unwrap();
+                assert_eq!(result.output, input);
+                assert!(
+                    result.diagnostics.is_empty(),
+                    "{input:?}: {:?}",
+                    result.diagnostics
+                );
+            }
+        }
+    }
+}

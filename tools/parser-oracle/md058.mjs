@@ -24,6 +24,9 @@ samples.push("\uFEFF# before\r\n"+table.replaceAll("\n","\r\n")+"# after\r\n",
   "<!-- markdownlint-disable-file blanks-around-tables -->\n# before\n"+table+"# after\n",
   "# before\n| 😀 | b |\n| --- | --- |\n| c | d |\n# after\n");
 const configurations=[true,false,{severity:"warning"}];
+for(const metadata of ["---\ntitle: x\n---\n","+++\ntitle = 'x'\n+++\n","{\n\"title\": \"x\"\n}\n"]){
+  for(const bom of ["","\uFEFF"])samples.push(bom+metadata+table);
+}
 const observations=samples.flatMap((input,sample)=>configurations.map((options,configuration)=>{
   const findings=lint({strings:{input},config:{default:false,MD058:options}}).input;
   const bom=input.startsWith("\uFEFF")?"\uFEFF":"";
