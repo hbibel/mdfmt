@@ -120,8 +120,9 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [conditional MD058 table separators](../../compatibility/md058.md).
 The next batch adds [MD001/MD025/MD036/MD041/MD043/MD059 content diagnostics](../../compatibility/content-diagnostics.md).
 This is followed by [conditional MD003 heading styles](../../compatibility/md003.md).
-There are now 34 covered built-ins out of 53; milestone 5 is still incomplete.
-Remaining built-ins are MD005, MD007, MD022, MD031, MD032, MD033,
+The literal-diagnostic batch adds [MD033 HTML findings](../../compatibility/md033.md).
+There are now 35 covered built-ins out of 53; milestone 5 is still incomplete.
+Remaining built-ins are MD005, MD007, MD022, MD031, MD032,
 MD034, MD037, MD038, MD039, MD044, MD046, MD049, MD050, MD051,
 MD052, MD053, MD054 and MD060. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
@@ -145,6 +146,12 @@ These are committed roadmap items, not first-release requirements. Their exact
 release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
+
+- MD033 consumes raw micromark tokens before markdownlint's comment sanitization;
+  using `clearHtmlCommentText` for its diagnostic parse can fabricate valid HTML
+  tags by hiding quotes inside comments. The MD033 differential regressions
+  caught this design error. Keep parser-specific preprocessing separate, including
+  upstream's diagnostic reparsing of unterminated comments and non-comment HTML.
 
 Findings from the 2026-11-06 diagnostic batch:
 

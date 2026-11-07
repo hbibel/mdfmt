@@ -72,6 +72,8 @@ required-structure, emphasis-as-heading and descriptive-link findings without
 inventing content; see [content diagnostic evidence](docs/compatibility/content-diagnostics.md).
 MD003 conditionally converts heading styles without changing levels or inline
 content; see [heading-style evidence](docs/compatibility/md003.md).
+MD033 reports disallowed HTML opening tags without deleting or escaping source;
+see [HTML diagnostic evidence](docs/compatibility/md033.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is

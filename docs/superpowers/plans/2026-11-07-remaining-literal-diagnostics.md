@@ -56,18 +56,22 @@ Task 1 verified: 335 Rust tests across 43 targets; fmt/clippy clean; 224 duplica
 
 Source-model decision: expose `parse::html_tokens(&Source, &ParsedDocument) ->
 Vec<HtmlToken>`, where `HtmlToken` contains original `span: Range<usize>` and
-`in_table: bool`. Match pinned comment masking only after front matter is
-excluded, with a UTF-16-aware map back to original bytes; never change the edit
-tree. Reparse image descriptions as inline content, masking quote prefixes and
+`in_table: bool`. Exclude front matter and retain raw comment text in a
+newline-normalized diagnostic view mapped back to original bytes; never change
+the edit tree. MD033 consumes raw micromark tokens, before comment sanitization.
+Reparse image descriptions as inline content, masking quote prefixes and
 flattening line endings without changing offsets, so labels cannot invent block
 or table ownership. These choices mirror the upstream diagnostic preprocessing,
 not HTML execution or a DOM interpretation.
 
-- [ ] Record pinned opening-tag findings for inline/block HTML, multiline attributes, nested images, quoted continuations, code/math exclusions, raw scripts, allowances, tables, aliases, directives and severity.
-- [ ] Add failing literal tests: `<b>x</b>\n` reports the opening `b` tag only; allowing `B` suppresses it case-insensitively; `table_allowed_elements: []` still reports `<b>` inside a table even when ordinary `b` is allowed. Assert unchanged source and original byte-safe ranges.
-- [ ] Run `mise exec -- cargo test --test md033`; expected missing findings.
-- [ ] Implement source-backed opening-tag selection and allowance precedence using existing recovery patterns, without deleting or escaping HTML. Multiline diagnostic spans cover only the first physical line as pinned.
-- [ ] Add CLI check/write/warning and final-output reflow stability tests. Run the focused suite and oracle, then full Rust tests/fmt/clippy; expected all pass.
+- [x] Record pinned opening-tag findings for inline/block HTML, multiline attributes, nested images, quoted continuations, code/math exclusions, raw scripts, allowances, tables, aliases, directives and severity.
+- [x] Add failing literal tests: `<b>x</b>\n` reports the opening `b` tag only; allowing `B` suppresses it case-insensitively; `table_allowed_elements: []` still reports `<b>` inside a table even when ordinary `b` is allowed. Assert unchanged source and original byte-safe ranges.
+- [x] Run `mise exec -- cargo test --test md033`; expected missing findings.
+- [x] Implement source-backed opening-tag selection and allowance precedence using existing recovery patterns, without deleting or escaping HTML. Multiline diagnostic spans cover only the first physical line as pinned.
+- [x] Add CLI check/write/warning and final-output reflow stability tests. Run the focused suite and oracle, then full Rust tests/fmt/clippy; expected all pass.
+
+Task 2 verified: 340 Rust tests across 44 targets; fmt/clippy clean; 602 HTML,
+207 image, 1,206 heading-style, 1,578 heading-structure and 554 content cases.
 
 ## Task 3: Table-column style findings
 
@@ -88,5 +92,5 @@ not HTML execution or a DOM interpretation.
 - [ ] Review the batch independently; fix Important/Critical issues with failing regressions and a green full suite.
 - [ ] Record verification commands/results and accurate remaining coverage. Do not count acceptance examples or unimplemented safe fixes as finished behavior.
 
-Status: Task 1 is implemented and verified. MD033, MD060 and the batch review
-remain pending; their fixtures do not establish implemented behavior.
+Status: Tasks 1 and 2 are implemented and verified. MD060 and the batch review
+remain pending; MD060 fixtures do not establish implemented behavior.
