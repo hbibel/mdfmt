@@ -110,3 +110,23 @@ The review's unassigned-scalar width boundary is documented, not claimed solved.
 
 Status: all four tasks are implemented and verified. Coverage remains 36/53;
 continue the roadmap with the block-separator plan, not a merge/push.
+
+## Rulings retained from execution
+
+- Final-position tests use approved MD026 edits, not speculative HTML-adjacent
+  MD012 cleanup. Cost: those blank-line rewrites remain unpromised.
+- MD033 consumes raw comments before sanitization. Cost if wrong: diagnostic
+  parity, not edit safety; the original masked-view plan was corrected by tests.
+- The native width adapter uses pinned ICU4X properties and segmentation rather
+  than a width crate's ligature defaults. Cost: dependencies and adapter maintenance.
+- Tab expansion determines diagnostic table ownership only; all ranges map back
+  to original source. Cost if wrong: diagnostic coverage/positions in tabbed tables.
+- Width differences for 990 unassigned scalars remain deferred under the bounded
+  compatibility claim. Cost: reserved code-point diagnostics may differ from Node.
+- HTML and table-content repairs remain diagnostic-only under the preservation
+  contract. Cost: author intervention is still required for those findings.
+- The review did not generally re-review older rules; the reproduced shared tab
+  defect was fixed in all four connected consumers. Cost: unrelated older-rule
+  defects remain for later hardening, not silently claimed reviewed.
+
+No deferred minor findings.
