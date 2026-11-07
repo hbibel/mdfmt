@@ -120,11 +120,12 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [conditional MD058 table separators](../../compatibility/md058.md).
 The next batch adds [MD001/MD025/MD036/MD041/MD043/MD059 content diagnostics](../../compatibility/content-diagnostics.md).
 This is followed by [conditional MD003 heading styles](../../compatibility/md003.md).
-The literal-diagnostic batch adds [MD033 HTML findings](../../compatibility/md033.md).
-There are now 35 covered built-ins out of 53; milestone 5 is still incomplete.
+The literal-diagnostic batch adds [MD033 HTML findings](../../compatibility/md033.md)
+and [MD060 table-column styles](../../compatibility/md060.md).
+There are now 36 covered built-ins out of 53; milestone 5 is still incomplete.
 Remaining built-ins are MD005, MD007, MD022, MD031, MD032,
 MD034, MD037, MD038, MD039, MD044, MD046, MD049, MD050, MD051,
-MD052, MD053, MD054 and MD060. Interactions and conflict detection remain
+MD052, MD053 and MD054. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
 The first useful release includes local declarative configuration,
@@ -192,6 +193,12 @@ Findings from the 2026-11-06 diagnostic batch:
   ANSI escapes are stripped. Native width-library defaults can differ (for
   example, documented Arabic ligature collapsing). Pin the oracle's Unicode
   environment and test an adapter rather than assuming a width crate is equivalent.
+- MD060 uses comment-sanitized lines for display widths while retaining raw
+  micromark token columns. Combining marks, tabs and ZWJ emoji inside comments
+  therefore need different width input from MD033. Pinned tests caught this
+  distinction and ANSI translation mistakes: JavaScript `\d` is ASCII, and
+  string-width skips stripping C1 OSC sequences unless ESC or CSI is also present.
+  The native adapter now covers all regional-indicator pairs and these cases.
 
 ## Critical implementation flaws
 

@@ -15,6 +15,11 @@ Hangul `ᅡ`, 0 for tabs, and strips ANSI escapes, while native libraries have
 different ligature policies. Add pinned differential fixtures before selecting
 the native adapter; document runtime-dependent compatibility boundaries.
 
+Adapter decision: use pinned ICU4X Unicode properties and Unicode grapheme
+segmentation, implementing the audited width rules rather than inheriting a
+terminal-width crate's ligature policy. MD060 display prefixes use sanitized
+comments; MD033's raw token view must not be reused for width calculations.
+
 **Spec:** `docs/superpowers/specs/2026-10-21-mdfmt-design.md`
 
 ## Global Constraints
@@ -79,11 +84,15 @@ Task 2 verified: 340 Rust tests across 44 targets; fmt/clippy clean; 602 HTML,
 
 **Interfaces:** `md060::diagnose(&Source, &ParsedDocument, &DocumentConfig) -> Vec<Diagnostic>`; reuse existing table rows/delimiters and source-backed pipe scanning.
 
-- [ ] Record pinned aligned/compact/tight/any selection, equal-error ties, `aligned_delimiter`, nesting/recovery, escaped/code pipes, extra/missing cells, Unicode display widths, ANSI escapes, comments, metadata, directives and severity.
-- [ ] Add failing literal tests on `| a |\n| --- |\n| b |\n`: aligned reports line 2 column 7, compact reports nothing, tight reports six padding findings, and any selects compact with no findings. Every mode preserves table bytes.
-- [ ] Run `mise exec -- cargo test --test md060`; expected missing findings.
-- [ ] Implement separate actual UTF-16 pipe columns and effective display columns, per-table candidate findings and upstream style/tie selection. Use a pinned native width dependency; document any verified Unicode-version or ANSI differences instead of claiming unsupported parity.
-- [ ] Add CLI status, warning, permission and final-output position tests. Run focused/native oracle and full Rust tests/fmt/clippy; expected all pass.
+- [x] Record pinned aligned/compact/tight/any selection, equal-error ties, `aligned_delimiter`, nesting/recovery, escaped/code pipes, extra/missing cells, Unicode display widths, ANSI escapes, comments, metadata, directives and severity.
+- [x] Add failing literal tests on `| a |\n| --- |\n| b |\n`: aligned reports line 2 column 7, compact reports nothing, tight reports six padding findings, and any selects compact with no findings. Every mode preserves table bytes.
+- [x] Run `mise exec -- cargo test --test md060`; expected missing findings.
+- [x] Implement separate actual UTF-16 pipe columns and effective display columns, per-table candidate findings and upstream style/tie selection. Use a pinned native width dependency; document any verified Unicode-version or ANSI differences instead of claiming unsupported parity.
+- [x] Add CLI status, warning, permission and final-output position tests. Run focused/native oracle and full Rust tests/fmt/clippy; expected all pass.
+
+Task 3 verified: 345 Rust tests across 45 targets; fmt/clippy clean; 1,067 MD060
+cases in both fix modes and 734 audited widths; 602 MD033, 1,112 MD055 and 477
+MD056 comparisons remain green. Coverage is 36/53, not complete.
 
 ## Task 4: Review and evidence
 
@@ -92,5 +101,5 @@ Task 2 verified: 340 Rust tests across 44 targets; fmt/clippy clean; 602 HTML,
 - [ ] Review the batch independently; fix Important/Critical issues with failing regressions and a green full suite.
 - [ ] Record verification commands/results and accurate remaining coverage. Do not count acceptance examples or unimplemented safe fixes as finished behavior.
 
-Status: Tasks 1 and 2 are implemented and verified. MD060 and the batch review
-remain pending; MD060 fixtures do not establish implemented behavior.
+Status: Tasks 1–3 are implemented and verified. The independent batch review
+remains pending.
