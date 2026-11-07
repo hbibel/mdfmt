@@ -21,7 +21,7 @@ pub(crate) fn diagnose(
     }) {
         return vec![];
     }
-    let mut tables = crate::heading_spaces::literal_exclusions(source, parsed, true).tables;
+    let mut tables = crate::heading_spaces::diagnostic_tables(source, parsed);
     tables.sort_by_key(|table| table.span.start);
     let mut expected = None;
     let mut result = vec![];

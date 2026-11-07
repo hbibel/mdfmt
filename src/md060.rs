@@ -123,7 +123,7 @@ pub(crate) fn diagnose(
     }
     let mut result = vec![];
     let display = comments::display_source(source, parsed);
-    for table in crate::heading_spaces::literal_exclusions(source, parsed, true).tables {
+    for table in crate::heading_spaces::diagnostic_tables(source, parsed) {
         let Some(header) = table.rows.first() else {
             continue;
         };

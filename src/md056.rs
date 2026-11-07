@@ -12,9 +12,8 @@ pub(crate) fn diagnose(
     }) {
         return vec![];
     }
-    let snapshots = crate::heading_spaces::literal_exclusions(source, parsed, true);
     let mut result = vec![];
-    for table in snapshots.tables {
+    for table in crate::heading_spaces::diagnostic_tables(source, parsed) {
         let Some(first) = table.rows.first() else {
             continue;
         };

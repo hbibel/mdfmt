@@ -39,7 +39,7 @@ fn candidates(
         return vec![];
     }
     let mut candidates = vec![];
-    for table in crate::heading_spaces::literal_exclusions(source, parsed, true).tables {
+    for table in crate::heading_spaces::diagnostic_tables(source, parsed) {
         let lines = crate::md013::covered_lines(source, table.span.clone());
         let first = lines.start + 1;
         let last = lines.end;

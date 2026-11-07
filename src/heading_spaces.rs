@@ -32,6 +32,31 @@ pub(crate) struct TableRow {
     pub cells: Vec<Range<usize>>,
 }
 
+pub(crate) fn diagnostic_tables(source: &Source, parsed: &ParsedDocument) -> Vec<TableBlock> {
+    if !source.text().contains('\t') {
+        return literal_exclusions(source, parsed, true).tables;
+    }
+    let (expanded, offsets) = crate::parse::expanded_tabs(source);
+    let Ok(parsed) = crate::parse::parse_flow_diagnostics(&expanded) else {
+        return vec![];
+    };
+    let mut tables = literal_exclusions(&expanded, &parsed, true).tables;
+    // Expansion determines ownership only. Width calculations and every emitted
+    // span must still use original tabs rather than synthetic display spaces.
+    let remap = |span: Range<usize>| offsets[span.start]..offsets[span.end];
+    for table in &mut tables {
+        table.span = remap(table.span.clone());
+        table.delimiter = remap(table.delimiter.clone());
+        for row in &mut table.rows {
+            row.span = remap(row.span.clone());
+            for cell in &mut row.cells {
+                *cell = remap(cell.clone());
+            }
+        }
+    }
+    tables
+}
+
 pub(crate) fn literal_exclusions(
     source: &Source,
     parsed: &ParsedDocument,

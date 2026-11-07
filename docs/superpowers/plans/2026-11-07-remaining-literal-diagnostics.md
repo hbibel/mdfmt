@@ -98,8 +98,15 @@ MD056 comparisons remain green. Coverage is 36/53, not complete.
 
 **Files:** update per-rule evidence and roadmap Important/Critical findings only.
 
-- [ ] Review the batch independently; fix Important/Critical issues with failing regressions and a green full suite.
-- [ ] Record verification commands/results and accurate remaining coverage. Do not count acceptance examples or unimplemented safe fixes as finished behavior.
+- [x] Review the batch independently; fix Important/Critical issues with failing regressions and a green full suite.
+- [x] Record verification commands/results and accurate remaining coverage. Do not count acceptance examples or unimplemented safe fixes as finished behavior.
 
-Status: Tasks 1–3 are implemented and verified. The independent batch review
-remains pending.
+Task 4: independent review found one Important tab-ownership defect and no new
+Critical flaw. The shared-selector fix covers MD055/MD056/MD058/MD060; both
+regressions failed first and now pass, including CLI success without edits.
+Final verification: 347 Rust tests across 46 targets, fmt/clippy clean; 1,133
+MD060 cases plus 734 widths, 1,112 MD055, 477 MD056 and 207 MD058 cases pass.
+The review's unassigned-scalar width boundary is documented, not claimed solved.
+
+Status: all four tasks are implemented and verified. Coverage remains 36/53;
+continue the roadmap with the block-separator plan, not a merge/push.

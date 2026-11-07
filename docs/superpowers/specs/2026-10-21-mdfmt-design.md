@@ -148,6 +148,15 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Independent MD060 review found false tables inside tab-indented list items:
+  `-\t| a |` followed by two-space continuations is not an upstream table.
+  The unexpanded native scan reported MD060 errors and falsely failed check/write;
+  confirmed variants also affected MD055, MD056 and MD058. The shared table
+  diagnostic selector now expands tabs for ownership and maps spans back to
+  original bytes. Display alignment still measures original/sanitized text, not
+  expanded spaces. Fixed and verified on 2026-11-08: 347 Rust tests pass, including
+  shared-rule and CLI regressions; all affected table oracles remain green.
+
 - MD033 consumes raw micromark tokens before markdownlint's comment sanitization;
   using `clearHtmlCommentText` for its diagnostic parse can fabricate valid HTML
   tags by hiding quotes inside comments. The MD033 differential regressions

@@ -35,6 +35,7 @@ for(const [first,next]of [["",""],["> ","> "],["- ","  "],["10. ","    "],["> - 
   }
 }
 for(const prefix of ["- item\n<span>\n","- > quote\n<span>\n","<div>\n"]) samples.push(`${prefix}| a |\n| --- |\n| b |\n`);
+for(const [first,next]of [["-\t","  "],["-\t","    "],["> -\t",">   "],["> -\t",">     "],["1.\t","   "],["1.\t","    "]]) samples.push(`${first}| a |\n${next}| --- |\n${next}| b | c |\n# After\n`);
 for(const comment of ["<!-- é -->","<!-- 👩‍💻 -->","<!-- \t -->",'<!-- " -->']) samples.push(`| ${comment} |\n| ${"-".repeat(comment.length)} |\n| ${"x".repeat(comment.length)} |\n`);
 for(const value of widths.filter(value=>!/[\r\n\u2028\u2029]/u.test(value))) samples.push(`| ${value} |\n| --- |\n| abc |\n`);
 const options=[true,false,...["aligned","compact","tight","any"].flatMap(style=>[{style},{style,aligned_delimiter:true}]),{style:"aligned",severity:"warning"}];
