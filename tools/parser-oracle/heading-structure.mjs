@@ -28,6 +28,8 @@ const samples = [
   " # [Tab](#tab/linux)\n# A\n# B\n", "  # [Tab](#tab/linux)\n# A\n# B\n", "# [Tab](#t&#97;b/linux)\n# A\n# B\n",
   "# [Tab](<#tab/linux>)\n# A\n# B\n", "# [Tab](  #tab/linux  )\n# A\n# B\n",
   "- item\n<span>\nA\nB\n===\n### C\n",
+  "# First\n# # Title\n", "# First\n# Title # #\n",
+  "# # [Tab](#tab/linux)\n# A\n# B\n",
 ];
 for (const metadata of ["---\ntitle: x\n---\n", "---\n\"TiTlE\": x\n---\n", "+++\nTITLE = 'x'\n+++\n", "{\n\"title\": \"x\"\n}\n", "---\nnot_title: x\n---\n"]) {
   for (const heading of ["# First\n# Second\n", "### Third\n"]) samples.push(metadata+heading);
@@ -49,6 +51,11 @@ const observations = Object.entries(options).flatMap(([rule, configurations])=>s
     return {...row,upstreamError:error.message,findings:lint({strings:{input:""},config:{default:false,[rule]:options}}).input.map(f=>({...project(f),line:3}))};
   }
 })));
+for(const [input,required] of [["# # Title\n","# # Title"],["# Title # #\n","# Title #"],["# # #\n","# #"]]) {
+  const options={headings:[required]};
+  observations.push({id:`literal-${required}`,rule:"MD043",input,options,
+    findings:lint({strings:{input},config:{default:false,MD043:options}}).input.map(f=>({line:f.lineNumber,context:f.errorContext??null,detail:f.errorDetail??null,severity:f.severity}))});
+}
 const receipt = new URL("heading-structure-observations.json", import.meta.url);
 const serialized = "[\n"+observations.map(row=>"  "+JSON.stringify(row)).join(",\n")+"\n]\n";
 if(process.argv.includes("--record")) writeFileSync(receipt,serialized);

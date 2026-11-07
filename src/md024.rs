@@ -35,6 +35,11 @@ pub(crate) fn headings_in(
             && let Some(position) = node.position()
         {
             let mut text = String::new();
+            let span = offset(base + position.start.offset)..offset(base + position.end.offset);
+            let raw = &source.text()[span.clone()];
+            let atx =
+                !raw.contains(['\r', '\n']) && raw.trim_start_matches([' ', '\t']).starts_with('#');
+            let lexical = atx.then(|| crate::parse::heading_content(source, span.clone(), false));
             fn html_tokens(node: &Node, output: &mut Vec<std::ops::Range<usize>>) {
                 if matches!(node, Node::Html(_))
                     && let Some(position) = node.position()
@@ -48,33 +53,45 @@ pub(crate) fn headings_in(
                     }
                 }
             }
-            if let Some(first) = heading.children.first().and_then(Node::position)
-                && let Some(last) = heading.children.last().and_then(Node::position)
-            {
+            let content = lexical.clone().or_else(|| {
+                heading
+                    .children
+                    .first()
+                    .and_then(Node::position)
+                    .zip(heading.children.last().and_then(Node::position))
+                    .map(|(first, last)| {
+                        offset(base + first.start.offset)..offset(base + last.end.offset)
+                    })
+            });
+            if let Some(content) = content {
                 // mdast splits at hard breaks and groups strikethrough; pinned
                 // heading tokens keep the intervening source and expose its HTML.
-                let mut cursor = offset(base + first.start.offset);
-                let end = offset(base + last.end.offset);
+                let mut cursor = content.start;
+                let end = content.end;
                 let mut excluded = vec![];
                 for child in &heading.children {
                     html_tokens(child, &mut excluded);
                 }
                 for span in excluded {
                     let start = offset(base + span.start);
+                    let finish = offset(base + span.end);
+                    if start < cursor || finish > end {
+                        continue;
+                    }
                     text.push_str(&source.text()[cursor..start]);
-                    cursor = offset(base + span.end);
+                    cursor = finish;
                 }
                 text.push_str(&source.text()[cursor..end]);
             }
-            let atx = source.text()[offset(base + position.start.offset)..]
-                .trim_start_matches([' ', '\t'])
-                .starts_with('#');
             let docfx_tab = atx
                 && heading.children.len() == 1
                 && matches!(heading.children[0], Node::Link(_))
                 && heading.children[0].position().is_some_and(|link| {
-                    let raw = &source.text()
-                        [offset(base + link.start.offset)..offset(base + link.end.offset)];
+                    let link = offset(base + link.start.offset)..offset(base + link.end.offset);
+                    if lexical.as_ref() != Some(&link) {
+                        return false;
+                    }
+                    let raw = &source.text()[link];
                     crate::parse::label_end(raw, true)
                         .and_then(|end| raw[end + 1..].strip_prefix('('))
                         .is_some_and(|destination| {

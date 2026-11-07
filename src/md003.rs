@@ -15,29 +15,6 @@ struct Heading {
     native_content_matches: bool,
 }
 
-fn lexical_content(source: &Source, span: Range<usize>, style: &str) -> Range<usize> {
-    if style == "setext" {
-        let underline = source.position(span.end).unwrap().line;
-        let end = source.line_range(underline - 1).unwrap().end;
-        let raw = &source.text()[span.start..end];
-        let text = raw.trim_start_matches([' ', '\t']);
-        let start = end - text.len();
-        return start..start + text.trim_end_matches([' ', '\t']).len();
-    }
-    let raw = source.text()[span.clone()].trim_start_matches([' ', '\t']);
-    let markers = raw.bytes().take_while(|byte| *byte == b'#').count();
-    let text = raw[markers..].trim_start_matches([' ', '\t']);
-    let start = span.end - text.len();
-    let mut text = text.trim_end_matches([' ', '\t']);
-    let without_hashes = text.trim_end_matches('#');
-    if without_hashes.len() < text.len()
-        && (without_hashes.is_empty() || without_hashes.ends_with([' ', '\t']))
-    {
-        text = without_hashes.trim_end_matches([' ', '\t']);
-    }
-    start..start + text.len()
-}
-
 fn headings(source: &Source, parsed: &ParsedDocument) -> Vec<Heading> {
     fn visit(node: &Node, source: &Source, base: usize, output: &mut Vec<Heading>) {
         if let Node::Heading(heading) = node
@@ -70,7 +47,7 @@ fn headings(source: &Source, parsed: &ParsedDocument) -> Vec<Heading> {
                         ..span.start + raw.len() - trimmed.len() + hashes
                 }
             };
-            let content = lexical_content(source, span.clone(), style);
+            let content = crate::parse::heading_content(source, span.clone(), style == "setext");
             // Native child ranges can omit literal hashes; disagreement cannot authorize edits.
             let native_content_matches =
                 content == native_content || (content.is_empty() && native_content.is_empty());

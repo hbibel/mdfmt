@@ -175,9 +175,10 @@ Findings from the 2026-11-06 diagnostic batch:
   regression tests; no generic repeated-pass engine was added.
 - The literal-hash range defect also causes false MD024 duplicates and MD043
   required-heading mismatches: `# # Title` has the upstream caption `# Title`,
-  not `Title`. This is runtime-confirmed and remains an immediate diagnostic
-  follow-up after MD003's safety fix; preserve existing multiline key semantics
-  while correcting single-line ATX source boundaries.
+  not `Title`. The 2026-11-07 diagnostic follow-up corrects single-line ATX source
+  boundaries while preserving existing multiline/HTML key semantics. MD025's
+  Docfx exception also requires a whole-caption link rather than trusting native
+  child counts. Pinned comparisons cover these caption/context corrections.
 - MD060 alignment uses upstream's grapheme/display-width algorithm, not MD013's
   UTF-16 length. The audited Node 24.19.0 runtime uses Unicode 17.0/ICU 78.3:
   Arabic `لا` measures 2, unmatched Hangul `ᅡ` measures 1, tabs contribute 0 and

@@ -162,3 +162,32 @@ fn raw_heading_keys_preserve_hard_break_prefixes_and_flatten_strikethrough_html(
     }
     assert!(failures.is_empty(), "{failures:#?}");
 }
+
+#[test]
+fn literal_atx_hashes_remain_part_of_duplicate_keys_and_context() {
+    for (input, context) in [
+        ("# # Title\n# Title\n", None),
+        ("# # Title\n# # Title\n", Some("# Title")),
+        ("# Title # #\n# Title\n", None),
+        ("# Title # #\n# Title # #\n", Some("Title #")),
+        ("# # #\n#\n", None),
+        ("# # #\n# # #\n", Some("#")),
+    ] {
+        let result =
+            format_with_config(input, &FormatOptions::default(), &config(json!(true))).unwrap();
+        assert_eq!(result.output, input);
+        let actual: Vec<_> = result
+            .diagnostics
+            .iter()
+            .map(|finding| {
+                finding
+                    .message
+                    .strip_prefix("Multiple headings with the same content [Context: \"")
+                    .unwrap()
+                    .strip_suffix("\"]")
+                    .unwrap()
+            })
+            .collect();
+        assert_eq!(actual, context.into_iter().collect::<Vec<_>>(), "{input:?}");
+    }
+}

@@ -72,6 +72,47 @@ fn disabled_heading_history_still_controls_later_increments() {
 }
 
 #[test]
+fn literal_hash_captions_satisfy_exact_required_headings() {
+    for (input, required) in [
+        ("# # Title\n", "# # Title"),
+        ("# Title # #\n", "# Title #"),
+        ("# # #\n", "# #"),
+    ] {
+        let result = format_with_config(
+            input,
+            &FormatOptions::default(),
+            &config(json!({"default":false,"MD043":{"headings":[required]}})),
+        )
+        .unwrap();
+        assert_eq!(result.output, input);
+        assert!(
+            result.diagnostics.is_empty(),
+            "{input:?}: {:?}",
+            result.diagnostics
+        );
+    }
+}
+
+#[test]
+fn literal_hash_prefix_does_not_turn_a_title_into_a_docfx_tab() {
+    let input = "# # [Tab](#tab/linux)\n# A\n# B\n";
+    let result = format_with_config(
+        input,
+        &FormatOptions::default(),
+        &config(json!({"default":false,"MD025":true})),
+    )
+    .unwrap();
+    assert_eq!(result.output, input);
+    assert_eq!(result.diagnostics.len(), 2);
+    assert!(
+        result
+            .diagnostics
+            .iter()
+            .all(|finding| finding.code == "MD025")
+    );
+}
+
+#[test]
 fn cli_checks_and_writes_preserve_author_owned_title_decisions() {
     use std::{fs, process::Command};
     let directory = tempfile::tempdir().unwrap();

@@ -31,7 +31,7 @@ exit 1 without changing the document.
 
 ## Evidence
 
-The pinned markdownlint 0.42.0 development oracle records 1,500 heading-structure
+The pinned markdownlint 0.42.0 development oracle records 1,578 heading-structure
 observations and 554 emphasis/link observations, exercised by native Rust tests
 and CLI comparisons. Coverage includes YAML/TOML/JSON metadata, custom title
 options, nested lists/quotes, multiline setext headings, HTML, math, image
@@ -42,6 +42,9 @@ source. Formatter edit authorization never uses this synthetic tree.
 Independent review found and regressions corrected indented HTML title handling,
 raw Docfx destination classification, setext headings after recovered HTML,
 quoted multiline image labels/reference definitions, and punctuation classes.
+The literal-caption follow-up preserves hashes in MD025 contexts and MD043
+requirements. A Docfx exception now requires that its link occupy the entire
+lexical caption, preventing a preceding literal hash from hiding duplicate titles.
 
 Reproduce from the repository root, with the pinned oracle dependencies installed:
 

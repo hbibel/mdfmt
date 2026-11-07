@@ -27,6 +27,9 @@ const samples = [
   "# ~~<b>A</b>~~\n# ~~A~~\n", "# ~<b>A</b>~\n# ~A~\n", "# ~~<b>A</b>~~\n# ~~<b>A</b>~~\n",
   "> A  \n> B\n> ===\n\n# A   B\n", "> A  \n> B\n> ===\n\n# A   > B\n",
   "- A  \n  B\n  ===\n\n# A     B\n", "> A\\\n> B\n> ===\n\n# A\\ > B\n",
+  "# # Title\n# Title\n", "# # Title\n# # Title\n", "# Title # #\n# Title\n", "# Title # #\n# Title # #\n",
+  "# # <b>Title</b>\n# # Title\n", "> # # Title\n\n# # Title\n",
+  "# # #\n#\n", "# # #\n# # #\n",
 ];
 const configurations = [true, false, {siblings_only:true}, {severity:"warning"}];
 const observations = samples.flatMap((input, sample) => configurations.map((options, configuration) => ({
@@ -40,7 +43,7 @@ const serialized = "[\n" + observations.map(row => "  " + JSON.stringify(row)).j
 if (process.argv.includes("--record")) writeFileSync(receipt, serialized);
 else assert.equal(serialized, readFileSync(receipt, "utf8"));
 if (process.argv.includes("--source-only")) {
-  console.log(`PASS: ${observations.length} pinned MD024 observations (native implementation pending)`);
+  console.log(`PASS: ${observations.length} pinned MD024 source observations`);
 } else {
   const binary = fileURLToPath(new URL("../../target/debug/mdfmt", import.meta.url));
   const directory = mkdtempSync("/tmp/opencode/mdfmt-md024-oracle-");
