@@ -116,6 +116,27 @@ impl RuleConfig {
                         "custom JavaScript regular expressions are deferred",
                     ));
                 }
+                if key == "headings"
+                    && parameter.as_array().is_some_and(|items| {
+                        items
+                            .iter()
+                            .any(|item| item.as_str().is_some_and(|s| s.starts_with('%')))
+                    })
+                {
+                    return Err(ConfigError::new(
+                        "unsupported-rule-pattern",
+                        property,
+                        "custom JavaScript regular expressions are deferred",
+                    ));
+                }
+                if key == "punctuation"
+                    && targets.contains(&"MD036")
+                    && let Some(punctuation) = parameter.as_str()
+                {
+                    crate::md036::punctuation_regex(punctuation).map_err(|message| {
+                        ConfigError::new("unsupported-rule-pattern", &property, message)
+                    })?;
+                }
             }
         }
         Ok(Self(map.clone()))

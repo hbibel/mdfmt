@@ -6,13 +6,14 @@ use crate::{
 use markdown::mdast::Node;
 use std::collections::HashSet;
 
-struct Heading {
-    start: usize,
-    level: usize,
-    text: String,
+pub(crate) struct Heading {
+    pub start: usize,
+    pub level: usize,
+    pub text: String,
+    pub docfx_tab: bool,
 }
 
-fn headings_in(
+pub(crate) fn headings_in(
     source: &Source,
     parsed: &ParsedDocument,
     offsets: Option<&[usize]>,
@@ -65,9 +66,29 @@ fn headings_in(
                 }
                 text.push_str(&source.text()[cursor..end]);
             }
+            let atx = source.text()[offset(base + position.start.offset)..]
+                .trim_start_matches([' ', '\t'])
+                .starts_with('#');
+            let docfx_tab = atx
+                && heading.children.len() == 1
+                && matches!(heading.children[0], Node::Link(_))
+                && heading.children[0].position().is_some_and(|link| {
+                    let raw = &source.text()
+                        [offset(base + link.start.offset)..offset(base + link.end.offset)];
+                    crate::parse::label_end(raw, true)
+                        .and_then(|end| raw[end + 1..].strip_prefix('('))
+                        .is_some_and(|destination| {
+                            destination
+                                .trim_start_matches([' ', '\t', '\r', '\n'])
+                                .strip_prefix('<')
+                                .unwrap_or(destination.trim_start_matches([' ', '\t', '\r', '\n']))
+                                .starts_with("#tab/")
+                        })
+                });
             output.push(Heading {
                 start: offset(base + position.start.offset),
                 level: usize::from(heading.depth),
+                docfx_tab,
                 text: text
                     .replace("\r\n", " ")
                     .replace(['\r', '\n'], " ")
@@ -86,12 +107,8 @@ fn headings_in(
     output
 }
 
-pub(crate) fn diagnose(
-    source: &Source,
-    parsed: &ParsedDocument,
-    document: &DocumentConfig,
-) -> Vec<Diagnostic> {
-    let headings = if source.text().contains('\t') {
+pub(crate) fn headings(source: &Source, parsed: &ParsedDocument) -> Vec<Heading> {
+    if source.text().contains('\t') {
         let (expanded, offsets) = crate::parse::expanded_tabs(source);
         match parse(&expanded) {
             Ok(parsed) => headings_in(source, &parsed, Some(&offsets)),
@@ -99,7 +116,15 @@ pub(crate) fn diagnose(
         }
     } else {
         headings_in(source, parsed, None)
-    };
+    }
+}
+
+pub(crate) fn diagnose(
+    source: &Source,
+    parsed: &ParsedDocument,
+    document: &DocumentConfig,
+) -> Vec<Diagnostic> {
+    let headings = headings(source, parsed);
     let mut global = HashSet::new();
     let mut levels: Vec<HashSet<String>> = (0..7).map(|_| HashSet::new()).collect();
     let mut last_level = 1;

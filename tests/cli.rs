@@ -89,14 +89,14 @@ fn invalid_utf8_and_missing_files_are_operational_failures() {
 #[test]
 fn double_dash_accepts_literal_dash_prefixed_filename() {
     let dir = tempfile::tempdir().unwrap();
-    std::fs::write(dir.path().join("-literal.md"), "original\n").unwrap();
+    std::fs::write(dir.path().join("-literal.md"), "# Original\n").unwrap();
     let output = Command::new(env!("CARGO_BIN_EXE_mdfmt"))
         .current_dir(dir.path())
         .args(["--", "-literal.md"])
         .output()
         .unwrap();
     assert_eq!(output.status.code(), Some(0));
-    assert_eq!(output.stdout, b"original\n");
+    assert_eq!(output.stdout, b"# Original\n");
 }
 
 #[cfg(target_os = "linux")]

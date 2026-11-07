@@ -91,7 +91,7 @@ fn attribute<'a>(text: &'a str, name: &str) -> Option<&'a str> {
     None
 }
 
-fn mask_quote_prefixes(text: &str, quotes: usize) -> String {
+pub(crate) fn mask_quote_prefixes(text: &str, quotes: usize) -> String {
     let mut bytes = text.as_bytes().to_vec();
     let mut cursor = 0;
     while cursor < bytes.len() {

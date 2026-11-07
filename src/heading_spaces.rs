@@ -202,7 +202,7 @@ pub(crate) fn literal_exclusions(
                 let generic = lazy
                     && crate::parse::parse(&probe).ok().is_some_and(|parsed| {
                         parsed.regions.iter().any(|region| {
-                            region.kind == RegionKind::Paragraph
+                            matches!(region.kind, RegionKind::Paragraph | RegionKind::Heading)
                                 && probe.position(region.span.start).unwrap().line == 1
                                 && probe.position(region.span.end).unwrap().line > 1
                         })

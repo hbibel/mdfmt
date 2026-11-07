@@ -2,6 +2,7 @@ pub mod config;
 mod diagnostic;
 mod edit;
 mod heading_spaces;
+mod heading_structure;
 mod md004;
 mod md009;
 mod md010;
@@ -19,6 +20,7 @@ mod md028;
 mod md029;
 mod md030;
 mod md035;
+mod md036;
 mod md040;
 mod md042;
 mod md045;
@@ -27,6 +29,7 @@ mod md048;
 mod md055;
 mod md056;
 mod md058;
+mod md059;
 mod parse;
 mod reflow;
 mod source;
@@ -275,6 +278,15 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(heading_structure::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
+        .extend(md036::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
+        .extend(md059::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(md058::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -349,6 +361,7 @@ pub fn format_with_config(
         .diagnostics
         .extend(md035::diagnose(&output, &parsed, &document));
     result.coverage.implemented_rules = vec![
+        "MD001".into(),
         "MD004".into(),
         "MD009".into(),
         "MD010".into(),
@@ -362,20 +375,25 @@ pub fn format_with_config(
         "MD021".into(),
         "MD023".into(),
         "MD024".into(),
+        "MD025".into(),
         "MD026".into(),
         "MD027".into(),
         "MD028".into(),
         "MD029".into(),
         "MD030".into(),
         "MD035".into(),
+        "MD036".into(),
         "MD040".into(),
+        "MD041".into(),
         "MD042".into(),
+        "MD043".into(),
         "MD045".into(),
         "MD047".into(),
         "MD048".into(),
         "MD055".into(),
         "MD056".into(),
         "MD058".into(),
+        "MD059".into(),
     ];
     Ok(result)
 }

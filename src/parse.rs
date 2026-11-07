@@ -74,9 +74,11 @@ mod tests {
     }
 }
 mod container_prefix;
+mod diagnostic;
 mod inline;
 mod table_flow;
 pub(crate) use container_prefix::ContainerPath;
+pub(crate) use diagnostic::diagnostic_parse;
 pub(crate) use inline::label_end;
 
 use crate::Source;

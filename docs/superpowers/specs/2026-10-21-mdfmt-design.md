@@ -118,7 +118,12 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [MD056 table-column diagnostics](../../compatibility/md056.md) and
 [MD055 table-pipe-style diagnostics](../../compatibility/md055.md) and
 [conditional MD058 table separators](../../compatibility/md058.md).
-Remaining built-in rules, interactions and conflict detection are next.
+The next batch adds [MD001/MD025/MD036/MD041/MD043/MD059 content diagnostics](../../compatibility/content-diagnostics.md).
+There are now 33 covered built-ins out of 53; milestone 5 is still incomplete.
+Remaining built-ins are MD003, MD005, MD007, MD022, MD031, MD032, MD033,
+MD034, MD037, MD038, MD039, MD044, MD046, MD049, MD050, MD051,
+MD052, MD053, MD054 and MD060. Interactions and conflict detection remain
+milestone 5 deliverables, followed by formatter integration and release hardening.
 
 The first useful release includes local declarative configuration,
 filesystem-based `extends`, and configuration-aware prose reflow. It is not the
@@ -137,6 +142,32 @@ Later-release declarative compatibility work must include:
 
 These are committed roadmap items, not first-release requirements. Their exact
 release numbers and ordering relative to other later-release work remain open.
+
+## Important implementation findings
+
+Findings from the 2026-11-06 diagnostic batch:
+
+- Upstream MD043 can crash while reporting missing headings on a metadata-only
+  document without a final newline; MD059 can crash on a prohibited empty link
+  label. Native regressions require valid source-backed findings rather than
+  reproducing either crash. Pinned receipts distinguish upstream errors from
+  native safety expectations.
+- MD043 regex-prefixed heading requirements were accepted without an explicit
+  compatibility boundary. They now fail explicitly until compatible JavaScript
+  rule-pattern execution is implemented. Include them in the later regex work,
+  not just front-matter title and fragment patterns.
+- Default MD041 coverage changes CLI outcomes for untitled prose: enabled
+  remaining errors yield exit 1 even when no safe edit exists or `fix: false`.
+  This is configured lint behavior, not an operational failure or an instruction
+  to fabricate a title.
+- Independent review found important false-positive/false-negative diagnostics
+  around indented HTML titles, raw Docfx link destinations, setext headings after
+  recovered HTML, and quoted multiline image labels/reference definitions. The
+  2026-11-07 fix pass adds pinned regressions for all of these boundaries.
+- MD036 punctuation is a JavaScript character class, not a literal character
+  set. Ranges, negation and escapes now use native ECMAScript matching with a
+  bounded suffix input. Invalid classes and arbitrary regex injection receive
+  explicit configuration errors; retain that boundary in later regex work.
 
 ## Initial audit context and builder decisions (historical)
 

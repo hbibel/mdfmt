@@ -354,7 +354,11 @@ fn heading_findings_use_positions_after_multiline_reflow() {
 fn explicit_configuration_flags_and_stdin_are_supported() {
     let dir = tempfile::tempdir().unwrap();
     let root = dir.path();
-    fs::write(root.join("config.toml"), "[nested]\nMD013 = false\n").unwrap();
+    fs::write(
+        root.join("config.toml"),
+        "[nested]\ndefault = false\nMD013 = false\n",
+    )
+    .unwrap();
     let output = run(
         root,
         &[
@@ -377,7 +381,7 @@ fn reflow_uses_discovered_configuration_in_stdout_check_and_write_modes() {
     let root = dir.path();
     fs::write(
         root.join(".markdownlint.json"),
-        r#"{"MD013":{"line_length":10}}"#,
+        r#"{"default":false,"MD013":{"line_length":10}}"#,
     )
     .unwrap();
     fs::write(root.join("doc.md"), "alpha beta gamma\r\n").unwrap();
@@ -500,7 +504,7 @@ fn globs_show_found_and_no_progress_keep_stdout_clean() {
     fs::write(root.join("b.md"), "b\n").unwrap();
     fs::write(
         root.join(".markdownlint-cli2.jsonc"),
-        r#"{"globs":["*.md"],"showFound":true,"fix":false}"#,
+        r#"{"globs":["*.md"],"showFound":true,"fix":false,"config":{"default":false}}"#,
     )
     .unwrap();
     let output = run(root, &["--check"], "");
@@ -511,7 +515,7 @@ fn globs_show_found_and_no_progress_keep_stdout_clean() {
     assert_eq!(output.status.code(), Some(2));
     fs::write(
         root.join(".markdownlint-cli2.jsonc"),
-        r#"{"globs":["*.md"],"showFound":true,"noProgress":true}"#,
+        r#"{"globs":["*.md"],"showFound":true,"noProgress":true,"config":{"default":false}}"#,
     )
     .unwrap();
     let output = run(root, &["--check"], "");
