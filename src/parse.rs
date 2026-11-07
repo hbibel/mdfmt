@@ -373,7 +373,7 @@ pub(crate) fn equivalent(
     candidate: &Source,
     reparsed: &ParsedDocument,
 ) -> bool {
-    equivalent_with_style_changes(source, parsed, candidate, reparsed, false, false)
+    equivalent_with_style_changes(source, parsed, candidate, reparsed, false, false, false)
 }
 
 pub(crate) fn equivalent_with_thematic_styles(
@@ -382,7 +382,7 @@ pub(crate) fn equivalent_with_thematic_styles(
     candidate: &Source,
     reparsed: &ParsedDocument,
 ) -> bool {
-    equivalent_with_style_changes(source, parsed, candidate, reparsed, true, false)
+    equivalent_with_style_changes(source, parsed, candidate, reparsed, true, false, false)
 }
 
 pub(crate) fn equivalent_with_fence_styles(
@@ -393,7 +393,18 @@ pub(crate) fn equivalent_with_fence_styles(
 ) -> bool {
     // Only the marker-only MD048 proposer uses this path. Code AST values,
     // languages and metadata stay exact; generic code-byte protection is unchanged.
-    equivalent_with_style_changes(source, parsed, candidate, reparsed, false, true)
+    equivalent_with_style_changes(source, parsed, candidate, reparsed, false, true, false)
+}
+
+pub(crate) fn equivalent_with_heading_styles(
+    source: &Source,
+    parsed: &ParsedDocument,
+    candidate: &Source,
+    reparsed: &ParsedDocument,
+) -> bool {
+    crate::md003::source_contents(source, parsed)
+        == crate::md003::source_contents(candidate, reparsed)
+        && equivalent_with_style_changes(source, parsed, candidate, reparsed, false, false, true)
 }
 
 fn equivalent_with_style_changes(
@@ -403,6 +414,7 @@ fn equivalent_with_style_changes(
     reparsed: &ParsedDocument,
     thematic_styles: bool,
     fence_styles: bool,
+    heading_styles: bool,
 ) -> bool {
     fn normalize(node: &mut Node) {
         node.position_set(None);
@@ -431,6 +443,7 @@ fn equivalent_with_style_changes(
                 r.kind.is_protected()
                     && !(thematic_styles && r.kind == RegionKind::ThematicBreak)
                     && !(fence_styles && r.kind == RegionKind::Code)
+                    && !(heading_styles && r.kind == RegionKind::Heading)
             })
             .map(|r| (r.kind, source.text()[r.span.clone()].to_owned()))
             .collect::<Vec<_>>()

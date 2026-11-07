@@ -119,8 +119,9 @@ upstream parser equivalence is not claimed. Milestone 5 has started with
 [MD055 table-pipe-style diagnostics](../../compatibility/md055.md) and
 [conditional MD058 table separators](../../compatibility/md058.md).
 The next batch adds [MD001/MD025/MD036/MD041/MD043/MD059 content diagnostics](../../compatibility/content-diagnostics.md).
-There are now 33 covered built-ins out of 53; milestone 5 is still incomplete.
-Remaining built-ins are MD003, MD005, MD007, MD022, MD031, MD032, MD033,
+This is followed by [conditional MD003 heading styles](../../compatibility/md003.md).
+There are now 34 covered built-ins out of 53; milestone 5 is still incomplete.
+Remaining built-ins are MD005, MD007, MD022, MD031, MD032, MD033,
 MD034, MD037, MD038, MD039, MD044, MD046, MD049, MD050, MD051,
 MD052, MD053, MD054 and MD060. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
@@ -168,6 +169,36 @@ Findings from the 2026-11-06 diagnostic batch:
   set. Ranges, negation and escapes now use native ECMAScript matching with a
   bounded suffix input. Invalid classes and arbitrary regex injection receive
   explicit configuration errors; retain that boundary in later regex work.
+- MD003 exposed two important idempotence interactions. MD058 table separators
+  must precede heading-style fixes, and generated empty closed headings must
+  already satisfy MD021 spacing. Both interactions have single-invocation
+  regression tests; no generic repeated-pass engine was added.
+- The literal-hash range defect also causes false MD024 duplicates and MD043
+  required-heading mismatches: `# # Title` has the upstream caption `# Title`,
+  not `Title`. This is runtime-confirmed and remains an immediate diagnostic
+  follow-up after MD003's safety fix; preserve existing multiline key semantics
+  while correcting single-line ATX source boundaries.
+- MD060 alignment uses upstream's grapheme/display-width algorithm, not MD013's
+  UTF-16 length. The audited Node 24.19.0 runtime uses Unicode 17.0/ICU 78.3:
+  Arabic `لا` measures 2, unmatched Hangul `ᅡ` measures 1, tabs contribute 0 and
+  ANSI escapes are stripped. Native width-library defaults can differ (for
+  example, documented Arabic ligature collapsing). Pin the oracle's Unicode
+  environment and test an adapter rather than assuming a width crate is equivalent.
+
+## Critical implementation flaws
+
+- Unreleased MD003 conversions initially deleted literal leading/trailing hashes
+  because
+  native heading-child ranges omit source text that upstream retains. Native AST
+  equivalence alone does not detect this loss when whole heading bytes are exempt.
+  Confirmed examples include `# # Title` and `# Title # #`; the latter can also
+  expose punctuation to MD026 on a second invocation. The fix requires lexical
+  source-caption preservation, rejects ambiguous native boundaries and compares
+  upstream heading identities before and after every oracle conversion. Failing
+  regressions now pass, including 1,206 pinned/generated cases. Fixed and verified
+  on 2026-11-07: 332 Rust tests pass, including direct safety-guard regressions,
+  content/level preservation and MD026 idempotence. Ambiguous captions remain
+  unchanged with an MD003 finding.
 
 ## Initial audit context and builder decisions (historical)
 

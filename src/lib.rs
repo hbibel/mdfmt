@@ -3,6 +3,7 @@ mod diagnostic;
 mod edit;
 mod heading_spaces;
 mod heading_structure;
+mod md003;
 mod md004;
 mod md009;
 mod md010;
@@ -248,6 +249,28 @@ pub fn format_with_config(
         &table_edits,
     )?;
     result.edits = edit::compose_edits(source, &result.edits, &table_edits)?;
+    // Table separators can make an ATX-to-setext conversion safe in the same call.
+    let before_headings = Source::new(result.output.clone());
+    let before_headings_parsed = parse::parse(&before_headings).map_err(ProcessingError::Parse)?;
+    let before_headings_document = config
+        .document(before_headings.text())
+        .map_err(ProcessingError::Configuration)?;
+    let heading_edits = if options.fix && config.fix {
+        md003::propose(
+            &before_headings,
+            &before_headings_parsed,
+            &before_headings_document,
+        )
+    } else {
+        vec![]
+    };
+    result.output = edit::apply_authorized_edits(
+        &before_headings,
+        &before_headings_parsed,
+        heading_edits.clone(),
+        &heading_edits,
+    )?;
+    result.edits = edit::compose_edits(source, &result.edits, &heading_edits)?;
     let before_eof = Source::new(result.output.clone());
     let before_eof_parsed = parse::parse(&before_eof).map_err(ProcessingError::Parse)?;
     let before_eof_document = config
@@ -276,6 +299,9 @@ pub fn format_with_config(
         .document(output.text())
         .map_err(ProcessingError::Configuration)?;
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
+    result
+        .diagnostics
+        .extend(md003::diagnose(&output, &parsed, &document));
     result
         .diagnostics
         .extend(heading_structure::diagnose(&output, &parsed, &document));
@@ -362,6 +388,7 @@ pub fn format_with_config(
         .extend(md035::diagnose(&output, &parsed, &document));
     result.coverage.implemented_rules = vec![
         "MD001".into(),
+        "MD003".into(),
         "MD004".into(),
         "MD009".into(),
         "MD010".into(),

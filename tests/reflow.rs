@@ -21,10 +21,10 @@ fn check(input: &str, expected: &str, width: usize) {
     assert_eq!(
         result.coverage.implemented_rules,
         vec![
-            "MD001", "MD004", "MD009", "MD010", "MD011", "MD012", "MD013", "MD014", "MD018",
-            "MD019", "MD020", "MD021", "MD023", "MD024", "MD025", "MD026", "MD027", "MD028",
-            "MD029", "MD030", "MD035", "MD036", "MD040", "MD041", "MD042", "MD043", "MD045",
-            "MD047", "MD048", "MD055", "MD056", "MD058", "MD059"
+            "MD001", "MD003", "MD004", "MD009", "MD010", "MD011", "MD012", "MD013", "MD014",
+            "MD018", "MD019", "MD020", "MD021", "MD023", "MD024", "MD025", "MD026", "MD027",
+            "MD028", "MD029", "MD030", "MD035", "MD036", "MD040", "MD041", "MD042", "MD043",
+            "MD045", "MD047", "MD048", "MD055", "MD056", "MD058", "MD059"
         ]
     );
     let second = format_with_config(&result.output, &FormatOptions::default(), &config).unwrap();
