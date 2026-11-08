@@ -124,9 +124,10 @@ The literal-diagnostic batch adds [MD033 HTML findings](../../compatibility/md03
 and [MD060 table-column styles](../../compatibility/md060.md).
 The separator batch adds [conditional MD022/MD031/MD032 heading/fence/list blanks](../../compatibility/block-separators.md).
 The inline-style batch adds [conditional MD049/MD050 emphasis/strong styles](../../compatibility/emphasis-styles.md).
-There are now 41 covered built-ins out of 53; milestone 5 is still incomplete.
+The inline-whitespace batch starts with [MD037 bare-marker diagnostics](../../compatibility/inline-whitespace.md).
+There are now 42 covered built-ins out of 53; milestone 5 is still incomplete.
 Remaining built-ins are MD005, MD007,
-MD034, MD037, MD038, MD039, MD044, MD046, MD051,
+MD034, MD038, MD039, MD044, MD046, MD051,
 MD052, MD053 and MD054. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
@@ -150,6 +151,18 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Pinned MD038 throws an invalid-range exception when both syntax-padding tokens
+  are newlines and the data line has edge spaces, for example a code span with
+  opening/closing backticks on separate lines around ` a `. Raw rule capture
+  confirms an end range of `[-1, 2]` on the data line. The planned native rule
+  must preserve code and use valid original data-space ranges rather than copy
+  newline-padding columns from another physical line. No MD038 coverage is claimed.
+- MD037 cannot treat every leftover delimiter run as a bare data token. Pinned
+  micromark merges adjacent data after resolving matched attention and labels,
+  but leaves paragraph-level residual markers separate. Blanket nested-scope
+  suppression also misses genuine findings next to code, escapes, entities and
+  quoted continuation prefixes. The shared model retains these boundaries without
+  granting source-edit authority; 915 pinned observations cover the distinction.
 - Independent MD049/MD050 review found missing alternate delimiter pairings and
   consistency anchors, image-label reparses without reference definitions, lost
   quote context in nested images, and marker edits unlocked only after MD026 had

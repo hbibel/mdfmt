@@ -1,14 +1,45 @@
-use super::Pair;
 use crate::{
     Source,
     config::js_space,
-    parse::{ParsedDocument, RegionKind},
+    parse::{ContainerPath, ParsedDocument, RegionKind},
 };
 use markdown::mdast::Node;
 use regex::Regex;
 use std::{ops::Range, sync::LazyLock};
 
 static PUNCTUATION: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^[\p{P}\p{S}]$").unwrap());
+static ENTITY: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"^&(?:#[0-9]{1,7}|#[xX][0-9a-fA-F]{1,6}|[A-Za-z][A-Za-z0-9]{1,31});").unwrap()
+});
+
+fn reference(text: &str) -> bool {
+    crate::parse::mdast(text, &markdown::ParseOptions::gfm())
+        .ok()
+        .is_some_and(|tree| {
+            tree.children()
+                .and_then(|children| children.first())
+                .and_then(Node::children)
+                .and_then(|children| children.first())
+                .is_some_and(|node| matches!(node, Node::Text(value) if value.value != text))
+        })
+}
+
+#[derive(Clone, PartialEq, Eq)]
+pub(crate) struct AttentionPair {
+    pub opening: Range<usize>,
+    pub closing: Range<usize>,
+}
+
+pub(crate) struct BareMarker {
+    pub span: Range<usize>,
+    pub parent: Range<usize>,
+}
+
+#[derive(Default)]
+pub(crate) struct InlineAnalysis {
+    pub attention: Vec<AttentionPair>,
+    pub bare: Vec<BareMarker>,
+}
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Class {
@@ -40,11 +71,19 @@ struct Run {
     active: bool,
 }
 
-fn resolve(text: &str, span: Range<usize>, excluded: &[Range<usize>], isolated: bool) -> Vec<Pair> {
+fn resolve(
+    text: &str,
+    span: Range<usize>,
+    excluded: &[Range<usize>],
+    prefixes: &[Range<usize>],
+    isolated: bool,
+) -> InlineAnalysis {
     let mut runs = vec![];
     let mut cursor = span.start;
     let bytes = text.as_bytes();
     let mut exclusion = 0;
+    let mut boundaries = excluded.to_vec();
+    boundaries.extend_from_slice(prefixes);
     while cursor < span.end {
         while exclusion < excluded.len() && excluded[exclusion].end <= cursor {
             exclusion += 1;
@@ -57,7 +96,16 @@ fn resolve(text: &str, span: Range<usize>, excluded: &[Range<usize>], isolated: 
             continue;
         }
         if bytes[cursor] == b'\\' && bytes.get(cursor + 1).is_some_and(u8::is_ascii_punctuation) {
+            boundaries.push(cursor..cursor + 2);
             cursor += 2;
+            continue;
+        }
+        if bytes[cursor] == b'&'
+            && let Some(entity) = ENTITY.find(&text[cursor..span.end])
+            && reference(entity.as_str())
+        {
+            boundaries.push(cursor..cursor + entity.end());
+            cursor += entity.end();
             continue;
         }
         let marker = bytes[cursor];
@@ -115,8 +163,7 @@ fn resolve(text: &str, span: Range<usize>, excluded: &[Range<usize>], isolated: 
         } else {
             1
         };
-        output.push(Pair {
-            rule: if width == 1 { "MD049" } else { "MD050" },
+        output.push(AttentionPair {
             opening: runs[open].span.end - width..runs[open].span.end,
             closing: runs[index].span.start..runs[index].span.start + width,
         });
@@ -133,14 +180,70 @@ fn resolve(text: &str, span: Range<usize>, excluded: &[Range<usize>], isolated: 
             index += 1;
         }
     }
-    output
+    output.sort_by_key(|pair| pair.opening.start);
+    boundaries.extend(
+        output
+            .iter()
+            .map(|pair| pair.opening.start..pair.closing.end),
+    );
+    let starts: std::collections::BTreeSet<_> =
+        boundaries.iter().map(|range| range.start).collect();
+    let ends: std::collections::BTreeSet<_> = boundaries.iter().map(|range| range.end).collect();
+    let mut bare = vec![];
+    let mut next = 0;
+    let mut parents: Vec<&AttentionPair> = vec![];
+    for run in runs.into_iter().filter(|run| !run.span.is_empty()) {
+        while next < output.len() && output[next].opening.end <= run.span.start {
+            let pair = &output[next];
+            while parents
+                .last()
+                .is_some_and(|parent| parent.closing.start <= pair.opening.start)
+            {
+                parents.pop();
+            }
+            parents.push(pair);
+            next += 1;
+        }
+        while parents
+            .last()
+            .is_some_and(|parent| parent.closing.start < run.span.end)
+        {
+            parents.pop();
+        }
+        let parent = parents.last().map_or_else(
+            || span.clone(),
+            |parent| parent.opening.end..parent.closing.start,
+        );
+        // Inner attention and labels run data coalescing after delimiter resolution.
+        if !isolated || parent != span {
+            let before = run.span.start > parent.start
+                && !ends.contains(&run.span.start)
+                && !text[..run.span.start].ends_with(['\r', '\n']);
+            let after = run.span.end < parent.end
+                && !starts.contains(&run.span.end)
+                && !text[run.span.end..].starts_with(['\r', '\n']);
+            if before || after {
+                continue;
+            }
+        }
+        bare.push(BareMarker {
+            span: run.span,
+            parent,
+        });
+    }
+    InlineAnalysis {
+        attention: output,
+        bare,
+    }
 }
 
 struct Scopes<'a> {
     source: &'a Source,
+    parsed: &'a ParsedDocument,
+    indices: std::collections::HashMap<(usize, usize), usize>,
     definitions: String,
     logical: std::collections::HashMap<usize, String>,
-    output: Vec<Pair>,
+    output: InlineAnalysis,
 }
 
 impl Scopes<'_> {
@@ -151,14 +254,24 @@ impl Scopes<'_> {
         span: Range<usize>,
         quotes: usize,
         isolated: bool,
+        inherited: Option<usize>,
     ) {
+        let owner = node
+            .position()
+            .and_then(|position| {
+                self.indices
+                    .get(&(base + position.start.offset, base + position.end.offset))
+            })
+            .copied()
+            .or(inherited);
         let mut excluded = vec![];
         if let Some(children) = node.children() {
             for child in children {
-                self.children(child, base, quotes, &mut excluded);
+                self.children(child, base, quotes, owner, &mut excluded);
             }
         }
         excluded.sort_by_key(|range| range.start);
+        let prefixes = self.prefixes(span.clone(), owner);
         let logical = if quotes == 0 {
             self.source.text()
         } else {
@@ -166,8 +279,30 @@ impl Scopes<'_> {
                 .entry(quotes)
                 .or_insert_with(|| crate::md045::mask_quote_prefixes(self.source.text(), quotes))
         };
-        self.output
-            .extend(resolve(logical, span, &excluded, isolated));
+        let analysis = resolve(logical, span, &excluded, &prefixes, isolated);
+        self.output.attention.extend(analysis.attention);
+        self.output.bare.extend(analysis.bare);
+    }
+
+    fn prefixes(&self, span: Range<usize>, owner: Option<usize>) -> Vec<Range<usize>> {
+        let path = owner.map(|index| ContainerPath::for_region(self.source, self.parsed, index));
+        let mut output = vec![];
+        for line in crate::md013::covered_lines(self.source, span) {
+            let line = line + 1;
+            let range = self.source.line_range(line).unwrap();
+            let raw = &self.source.text()[range.clone()];
+            let mut end = path
+                .as_ref()
+                .and_then(|path| path.content_start_at(raw, line))
+                .unwrap_or(0);
+            while matches!(raw.as_bytes().get(end), Some(b' ' | b'\t')) {
+                end += 1;
+            }
+            if end > 0 {
+                output.push(range.start..range.start + end);
+            }
+        }
+        output
     }
 
     fn children(
@@ -175,6 +310,7 @@ impl Scopes<'_> {
         node: &Node,
         base: usize,
         quotes: usize,
+        owner: Option<usize>,
         excluded: &mut Vec<Range<usize>>,
     ) {
         let Some(position) = node.position() else {
@@ -190,7 +326,14 @@ impl Scopes<'_> {
                 excluded.push(span.clone());
                 let raw = &self.source.text()[span.clone()];
                 if let Some(end) = crate::parse::label_end(raw, true) {
-                    self.scope(node, base, span.start + 1..span.start + end, quotes, false);
+                    self.scope(
+                        node,
+                        base,
+                        span.start + 1..span.start + end,
+                        quotes,
+                        false,
+                        owner,
+                    );
                 }
             }
             Node::Image(_) | Node::ImageReference(_) => {
@@ -219,6 +362,7 @@ impl Scopes<'_> {
                             span.start + 2..span.start + end + 1,
                             quotes,
                             false,
+                            owner,
                         );
                     }
                 }
@@ -226,7 +370,7 @@ impl Scopes<'_> {
             _ => {
                 if let Some(children) = node.children() {
                     for child in children {
-                        self.children(child, base, quotes, excluded);
+                        self.children(child, base, quotes, owner, excluded);
                     }
                 }
             }
@@ -256,7 +400,7 @@ impl Scopes<'_> {
             } else {
                 base + position.start.offset..base + position.end.offset
             };
-            self.scope(node, base, span, quotes, true);
+            self.scope(node, base, span, quotes, true, None);
         } else if !matches!(
             node,
             Node::Code(_) | Node::Math(_) | Node::Html(_) | Node::Definition(_)
@@ -269,7 +413,7 @@ impl Scopes<'_> {
     }
 }
 
-pub(super) fn pairs(source: &Source, parsed: &ParsedDocument) -> Vec<Pair> {
+pub(crate) fn inline_analysis(source: &Source, parsed: &ParsedDocument) -> InlineAnalysis {
     let base = parsed
         .regions
         .iter()
@@ -284,11 +428,22 @@ pub(super) fn pairs(source: &Source, parsed: &ParsedDocument) -> Vec<Pair> {
         .join("\n");
     let mut scopes = Scopes {
         source,
+        parsed,
+        indices: parsed
+            .regions
+            .iter()
+            .enumerate()
+            .map(|(index, region)| ((region.span.start, region.span.end), index))
+            .collect(),
         definitions,
         logical: std::collections::HashMap::new(),
-        output: vec![],
+        output: InlineAnalysis::default(),
     };
     scopes.blocks(&parsed.tree, base, 0);
-    scopes.output.sort_by_key(|pair| pair.opening.start);
+    scopes
+        .output
+        .attention
+        .sort_by_key(|pair| pair.opening.start);
+    scopes.output.bare.sort_by_key(|marker| marker.span.start);
     scopes.output
 }

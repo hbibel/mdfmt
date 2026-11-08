@@ -80,6 +80,8 @@ MD022/MD031/MD032 add heading/fence/list separators where block structure, prote
 directive targets remain unchanged; see [separator evidence](docs/compatibility/block-separators.md).
 MD049/MD050 conditionally normalize emphasis/strong markers while preserving inline structure
 and protected bytes; see [emphasis-style evidence](docs/compatibility/emphasis-styles.md).
+MD037 reports spaces beside paired bare emphasis markers without creating emphasis;
+see [inline-whitespace evidence](docs/compatibility/inline-whitespace.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is

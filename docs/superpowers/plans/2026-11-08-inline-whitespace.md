@@ -85,33 +85,33 @@ Interfaces:
 - Each rule consumes the source, effective document and shared snapshot. MD037
   additionally uses comment-masked display lines for its contexts.
 
-- [ ] Record source-only MD037 observations for one/two/three/four-marker runs,
+- [x] Record source-only MD037 observations for one/two/three/four-marker runs,
   unmatched/odd/different markers, nested parent scopes, escapes, code, links,
   images, tables, HTML/math, comments, metadata, tabs, Unicode, directives and warnings.
   Run `node tools/parser-oracle/inline-whitespace.mjs --record --source-only --rule MD037`.
   Expected: pinned receipt only.
-- [ ] Write `bare_emphasis_spaces_are_reported_without_creating_emphasis`:
+- [x] Write `bare_emphasis_spaces_are_reported_without_creating_emphasis`:
   `alpha * beta * omega\n` remains exact with fixes enabled/disabled, has no edits,
   and reports spans `7..8` and `12..13` with contexts `* b` and `a *`.
   Its second call has identical findings and no edits.
   Pin mismatched `*`/`**` markers as no finding and nested/direct-parent cases
   independently so a global marker regex cannot satisfy the test.
-- [ ] Run `mise exec -- cargo test --test md037`.
+- [x] Run `mise exec -- cargo test --test md037`.
   Expected: missing MD037 findings, not fixture/configuration errors.
-- [ ] Move/generalize the attention adapter and emit remaining data-marker tokens
+- [x] Move/generalize the attention adapter and emit remaining data-marker tokens
   with direct-parent identities after pinned resolution. Preserve document
   definitions and original container context in diagnostic image recovery;
   code/label records are added only with their consuming tasks' failing tests.
   Adapt MD049/MD050 to consume `AttentionPair` without changing their behavior.
-- [ ] Implement MD037's fixed marker order `_`, `__`, `___`, `*`, `**`, `***`,
+- [x] Implement MD037's fixed marker order `_`, `__`, `___`, `*`, `**`, `***`,
   sequential pairing within each direct parent, and same-line JS-whitespace checks.
   Never promote unmatched data markers into new emphasis as a formatter repair.
-- [ ] Add original-byte/UTF-16/BOM/CRLF, disabled-target and alias-warning cases.
+- [x] Add original-byte/UTF-16/BOM/CRLF, disabled-target and alias-warning cases.
   Exercise bare markers inside protected inline units and after recovered HTML.
-- [ ] Run focused MD037 plus MD049/MD050/review suites and native oracles, then
+- [x] Run focused MD037 plus MD049/MD050/review suites and native oracles, then
   full Rust tests/fmt/clippy. Expected: MD037 matches pinned findings, source
   remains exact, and both 1,145-case style oracles plus 180 combined cases pass.
-- [ ] Update truthful coverage/evidence/roadmap and commit.
+- [x] Update truthful coverage/evidence/roadmap and commit.
 
 ## Task 2: Literal code-span whitespace diagnostics
 
@@ -196,7 +196,9 @@ destinations and reference identifiers; no synthetic label grants edits.
 - [ ] Retain all rulings in this tracked plan, complete the batch and continue
   the roadmap without merging, pushing or routine approval questions.
 
-Status: planned only; no MD037/MD038/MD039 implementation or coverage claimed.
+Status: Task 1 complete: 412 Rust tests across 55 targets, fmt/clippy/diff clean;
+915 MD037, 1,145 MD049, 1,145 MD050 and 180 combined native observations pass.
+Coverage is 42/53. Tasks 2/3 remain unimplemented.
 
 Planning check: pinned source and runtime confirm the three literal diagnostic
 examples, byte/UTF-16 ranges, multiline context and line-only label findings.

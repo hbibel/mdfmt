@@ -1,10 +1,8 @@
-mod attention;
-
 use crate::{
     Diagnostic, Source,
     config::DocumentConfig,
     edit::{Edit, apply_authorized_edits},
-    parse::{ParsedDocument, RegionKind, diagnostic_parse, parse},
+    parse::{AttentionPair, ParsedDocument, RegionKind, diagnostic_parse, inline_analysis, parse},
 };
 use markdown::mdast::Node;
 use std::ops::Range;
@@ -14,6 +12,18 @@ struct Pair {
     rule: &'static str,
     opening: Range<usize>,
     closing: Range<usize>,
+}
+
+fn pairs(source: &Source, parsed: &ParsedDocument) -> Vec<Pair> {
+    inline_analysis(source, parsed)
+        .attention
+        .into_iter()
+        .map(|AttentionPair { opening, closing }| Pair {
+            rule: if opening.len() == 1 { "MD049" } else { "MD050" },
+            opening,
+            closing,
+        })
+        .collect()
 }
 
 fn native_pairs(source: &Source, parsed: &ParsedDocument) -> Vec<Pair> {
@@ -148,7 +158,7 @@ fn safe(
     normalize(&mut before);
     normalize(&mut after);
     before == after
-        && attention::pairs(source, parsed) == attention::pairs(&candidate, &reparsed)
+        && pairs(source, parsed) == pairs(&candidate, &reparsed)
         && crate::md026::propose(&candidate, &reparsed, document).is_empty()
 }
 
@@ -157,7 +167,7 @@ fn propose_once(source: &Source, parsed: &ParsedDocument, document: &DocumentCon
         return vec![];
     }
     let diagnostic = diagnostic_parse(source);
-    let selected = attention::pairs(source, diagnostic.as_ref().unwrap_or(parsed));
+    let selected = pairs(source, diagnostic.as_ref().unwrap_or(parsed));
     let anchors = anchors(source, &selected);
     let native = native_pairs(source, parsed);
     let mut groups = vec![];
@@ -272,7 +282,7 @@ pub(crate) fn diagnose(
     let Some(parsed) = diagnostic_parse(source) else {
         return vec![];
     };
-    let selected = attention::pairs(source, &parsed);
+    let selected = pairs(source, &parsed);
     let anchors = anchors(source, &selected);
     let mut output = vec![];
     for pair in selected {

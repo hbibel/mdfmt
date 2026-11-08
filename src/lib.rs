@@ -5,6 +5,7 @@ mod edit;
 mod emphasis_styles;
 mod heading_spaces;
 mod heading_structure;
+mod inline_spaces;
 mod md003;
 mod md004;
 mod md009;
@@ -348,6 +349,9 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(inline_spaces::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(emphasis_styles::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -473,6 +477,7 @@ pub fn format_with_config(
         "MD033".into(),
         "MD035".into(),
         "MD036".into(),
+        "MD037".into(),
         "MD040".into(),
         "MD041".into(),
         "MD042".into(),
