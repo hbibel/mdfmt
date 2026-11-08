@@ -7,7 +7,8 @@ without altering inline content, nesting, links, code or table bytes.
 
 Architecture: One source-mapped selector serves emphasis and strong styles.
 Each node produces paired marker edits; admit only complete permitted pairs
-whose individual and combined reparses preserve structure and protected content.
+whose batch reparses preserve structure and protected content, with bounded
+individual fallback for rejected batches of at most 16 pairs.
 Run before prose reflow and heading suffix/style edits so final diagnostics and
 wrapping use the formatted markers in one invocation.
 
@@ -30,9 +31,12 @@ Spec: `docs/superpowers/specs/2026-10-21-mdfmt-design.md`
   is diagnostic. Do not authorize whole protected regions for marker edits.
 - Preserve ambiguous recovered HTML/container ownership with findings. A read-only
   diagnostic view never grants edit authority.
-- Try individually safe pairs and validate their combined batch. If individually
-  unsafe nested pairs become safe only together, they may remain findings;
-  preservation is more important than edit coverage.
+- Validate preferred batches together to avoid one full reparse per pair. For
+  rejected batches of at most 16 pairs, try safe pairs and validate their combined
+  output; larger rejected batches remain findings. Preservation and bounded work
+  are more important than edit coverage.
+- Account for pinned micromark's UTF-16-unit flanking behavior at astral neighbors;
+  native AST equality alone cannot authorize underscore changes there.
 
 ## Global Constraints
 
@@ -72,31 +76,35 @@ Interfaces:
 - Private selector produces opening/closing original-byte ranges, native owner
   if available, rule ID, actual style and expected style. No public API added.
 
-- [ ] Record source-only MD049 observations for consistent/asterisk/underscore,
+- [x] Record source-only MD049 observations for consistent/asterisk/underscore,
   intraword ASCII/Unicode, nested/triple/adjacent runs, escapes/entities, multiline
   quotes/lists, HTML/comments, math, links/tables/code, metadata, BOM/mixed endings,
   aliases, disabled nodes, next-line directives and warnings.
   Run `node tools/parser-oracle/emphasis-styles.mjs --record --source-only --rule MD049`.
   Expected: pinned receipt only, not implemented-rule coverage.
-- [ ] Write `emphasis_pairs_change_only_markers_and_settle_once`:
+- [x] Write `emphasis_pairs_change_only_markers_and_settle_once`:
   `_one_ and *two*\n` with MD049 asterisk becomes `*one* and *two*\n`;
   no-fix diagnostics cover columns 1/5 with length 1 and expected/actual styles.
   Applied edits address original bytes, second call has no edits or diagnostics.
   Write preservation tests for `[a _b_](url)`, a table cell, literal code and
   a disabled closing line of multiline emphasis; findings remain where enabled.
-- [ ] Run `mise exec -- cargo test --test md049`.
+- [x] Run `mise exec -- cargo test --test md049`.
   Expected: missing MD049 diagnostics/repairs, not fixture/configuration errors.
-- [ ] Implement source-backed delimiter selection and per-rule style resolution.
+- [x] Implement source-backed delimiter selection and per-rule style resolution.
   Map diagnostic offsets through existing parser views; handle raw ownership
   separately for edit authorization. Validate complete pairs and their merged
   batch using existing source/structure/protected-byte checks.
-- [ ] Add literal regressions for `a*one*b` under underscore (no finding/edit),
+- [x] Add literal regressions for `a*one*b` under underscore (no finding/edit),
   non-ASCII neighbors, disabled first-style anchors, nested/triple runs, adjacent
   runs, active next-line targets, recovered HTML, tabs, BOM and final UTF-16 spans.
-- [ ] Run `mise exec -- cargo test --test md049`, the MD049 native oracle, full
+- [x] Run `mise exec -- cargo test --test md049`, the MD049 native oracle, full
   Rust tests/fmt/clippy. Expected: pinned findings and stable preservation-aware
   output, no link/table/code/metadata changes.
-- [ ] Update truthful coverage/evidence/roadmap and commit.
+- [x] Update truthful coverage/evidence/roadmap and commit.
+
+Task 1 verified: 394 Rust tests across 52 targets; fmt/clippy clean. All 540
+MD049 pinned/native comparisons pass, including supplementary-scalar safeguards;
+1,206 MD003, 288 MD013 and 440 MD026 comparisons remain green. Coverage is 40/53.
 
 ## Task 2: MD050 and shared-rule interactions
 
@@ -133,7 +141,8 @@ nodes and two-character sequences, with its own consistency anchor and options.
 - [ ] Retain ledger rulings in the tracked plan, complete the batch, and continue
   the roadmap without merging, pushing or routine approval prompts.
 
-Status: planned only; no MD049/MD050 implementation or coverage claimed.
+Status: Task 1 is implemented and verified. Task 2 remains unimplemented; the
+emphasis batch has not yet received its independent review.
 
 Planning check: reviewed the shared pinned upstream source and runtime findings
 for consistency, intraword exclusions and nested/triple sequences. Those are

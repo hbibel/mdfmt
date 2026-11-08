@@ -123,9 +123,10 @@ This is followed by [conditional MD003 heading styles](../../compatibility/md003
 The literal-diagnostic batch adds [MD033 HTML findings](../../compatibility/md033.md)
 and [MD060 table-column styles](../../compatibility/md060.md).
 The separator batch adds [conditional MD022/MD031/MD032 heading/fence/list blanks](../../compatibility/block-separators.md).
-There are now 39 covered built-ins out of 53; milestone 5 is still incomplete.
+The inline-style batch starts with [conditional MD049 emphasis styles](../../compatibility/emphasis-styles.md).
+There are now 40 covered built-ins out of 53; milestone 5 is still incomplete.
 Remaining built-ins are MD005, MD007,
-MD034, MD037, MD038, MD039, MD044, MD046, MD049, MD050, MD051,
+MD034, MD037, MD038, MD039, MD044, MD046, MD050, MD051,
 MD052, MD053 and MD054. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
@@ -148,6 +149,12 @@ These are committed roadmap items, not first-release requirements. Their exact
 release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
+
+- MD049 inherits two non-obvious diagnostic boundaries: native image alt text
+  loses the inline token tree that determines findings and consistency anchors,
+  while upstream strips BOM/newlines before producing token columns. A source-
+  mapped image-label view recovers diagnostics without permitting image edits;
+  receipt/CLI coordinate normalization must not shift original edit spans.
 
 - Independent separator review found that the 1 MiB replacement cap still admitted
   600,000 new lines on a tiny document, exhausting memory in downstream parser or
@@ -266,6 +273,15 @@ Findings from the 2026-11-06 diagnostic batch:
   The native adapter now covers all regional-indicator pairs and these cases.
 
 ## Critical implementation flaws
+
+- Provisional MD049 marker swaps could change upstream meaning despite identical
+  native ASTs: `😀*one*😀` became `😀_one_😀`, which the pinned parser treats as
+  literal text. Conversely, native-only underscore tokens could turn literal
+  `😀_one_😀` into emphasis. Pinned micromark classifies adjacent UTF-16 surrogate
+  units differently from the native scalar-based parser. Native regressions and
+  the independent token-structure oracle failed before the correction; such
+  underscore tokens are now excluded, and unsafe underscore repairs remain
+  findings. Apply this boundary to MD050 and later delimiter transformations.
 
 - Separator review exposed an existing native `markdown` parser panic on mixed
   list/fence boundaries, including

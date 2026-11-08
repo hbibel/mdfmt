@@ -2,6 +2,7 @@ mod blank_lines;
 pub mod config;
 mod diagnostic;
 mod edit;
+mod emphasis_styles;
 mod heading_spaces;
 mod heading_structure;
 mod md003;
@@ -85,8 +86,22 @@ pub fn format_with_config(
     options: &FormatOptions,
     config: &config::ResolvedConfig,
 ) -> Result<FormatResult, ProcessingError> {
-    let mut current = source.to_owned();
-    let mut deletion_edits = vec![];
+    let initial = Source::new(source.into());
+    let initial_parsed = parse::parse(&initial).map_err(ProcessingError::Parse)?;
+    let initial_document = config
+        .document(source)
+        .map_err(ProcessingError::Configuration)?;
+    let mut deletion_edits = if options.fix && config.fix {
+        emphasis_styles::propose(&initial, &initial_parsed, &initial_document)
+    } else {
+        vec![]
+    };
+    let mut current = edit::apply_authorized_edits(
+        &initial,
+        &initial_parsed,
+        deletion_edits.clone(),
+        &deletion_edits,
+    )?;
     // Tab expansion and heading removal can expose suffix whitespace.
     loop {
         let mut changed = false;
@@ -326,6 +341,9 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(emphasis_styles::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(blank_lines::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -455,6 +473,7 @@ pub fn format_with_config(
         "MD045".into(),
         "MD047".into(),
         "MD048".into(),
+        "MD049".into(),
         "MD055".into(),
         "MD056".into(),
         "MD058".into(),

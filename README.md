@@ -78,6 +78,8 @@ MD060 reports table-column alignment and spacing without changing table bytes;
 see [table-column-style evidence](docs/compatibility/md060.md).
 MD022/MD031/MD032 add heading/fence/list separators where block structure, protected source and
 directive targets remain unchanged; see [separator evidence](docs/compatibility/block-separators.md).
+MD049 conditionally normalizes emphasis markers while preserving inline structure
+and protected bytes; see [emphasis-style evidence](docs/compatibility/emphasis-styles.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is
