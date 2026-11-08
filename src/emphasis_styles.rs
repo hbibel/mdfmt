@@ -1,3 +1,5 @@
+mod attention;
+
 use crate::{
     Diagnostic, Source,
     config::DocumentConfig,
@@ -10,26 +12,17 @@ use std::ops::Range;
 #[derive(Clone, PartialEq, Eq)]
 struct Pair {
     rule: &'static str,
-    astral_context: bool,
     opening: Range<usize>,
     closing: Range<usize>,
 }
 
-fn pairs(source: &Source, parsed: &ParsedDocument) -> Vec<Pair> {
+fn native_pairs(source: &Source, parsed: &ParsedDocument) -> Vec<Pair> {
     let base = parsed
         .regions
         .iter()
         .find(|r| r.kind == RegionKind::Root && r.parent.is_some())
         .map_or(0, |r| r.span.start);
-    fn visit(
-        node: &Node,
-        source: &Source,
-        base: usize,
-        quotes: usize,
-        mut astral_context: bool,
-        output: &mut Vec<Pair>,
-    ) {
-        let quotes = quotes + usize::from(matches!(node, Node::Blockquote(_)));
+    fn visit(node: &Node, source: &Source, base: usize, output: &mut Vec<Pair>) {
         let kind = match node {
             Node::Emphasis(_) => Some(("MD049", 1)),
             Node::Strong(_) => Some(("MD050", 2)),
@@ -47,54 +40,22 @@ fn pairs(source: &Source, parsed: &ParsedDocument) -> Vec<Pair> {
                     .chain(&source.text().as_bytes()[end - width..end])
                     .all(|byte| *byte == source.text().as_bytes()[start])
             {
-                let mut pair = Pair {
+                let pair = Pair {
                     rule,
-                    astral_context,
                     opening: start..start + width,
                     closing: end - width..end,
                 };
-                astral_context |= astral_neighbors(source, &pair);
-                pair.astral_context = astral_context;
-                if source.text().as_bytes()[start] != b'_' || !astral_neighbors(source, &pair) {
-                    output.push(pair);
-                }
-            }
-        }
-        if matches!(node, Node::Image(_) | Node::ImageReference(_))
-            && let Some(position) = node.position()
-        {
-            let start = base + position.start.offset;
-            let raw = &source.text()[start..base + position.end.offset];
-            if let Some(end) = raw
-                .strip_prefix('!')
-                .and_then(|label| crate::parse::label_end(label, true))
-            {
-                let label = crate::md045::mask_quote_prefixes(&raw[2..end + 1], quotes);
-                let options = markdown::ParseOptions {
-                    constructs: markdown::Constructs {
-                        html_flow: false,
-                        math_text: true,
-                        ..markdown::Constructs::gfm()
-                    },
-                    ..markdown::ParseOptions::gfm()
-                };
-                // Image alt text is flattened by mdast, but upstream retains
-                // inline emphasis tokens. The two-byte prefix preserves offsets.
-                if let Ok(tree) = crate::parse::mdast(&format!("x {label}"), &options)
-                    && let Some(first) = tree.children().and_then(|children| children.first())
-                {
-                    visit(first, source, start, 0, astral_context, output);
-                }
+                output.push(pair);
             }
         }
         if let Some(children) = node.children() {
             for child in children {
-                visit(child, source, base, quotes, astral_context, output);
+                visit(child, source, base, output);
             }
         }
     }
     let mut output = vec![];
-    visit(&parsed.tree, source, base, 0, false, &mut output);
+    visit(&parsed.tree, source, base, &mut output);
     output
 }
 
@@ -143,29 +104,6 @@ fn intraword(source: &Source, pair: &Pair) -> bool {
             .is_some_and(word)
 }
 
-fn astral_neighbors(source: &Source, pair: &Pair) -> bool {
-    // Pinned micromark classifies adjacent UTF-16 code units, not Unicode scalars.
-    // An emoji's surrogate therefore acts like a word character for underscores.
-    let mut start = pair.opening.start;
-    let mut end = pair.closing.end;
-    if source.text().as_bytes()[start] == b'_' {
-        while start > 0 && source.text().as_bytes()[start - 1] == b'_' {
-            start -= 1;
-        }
-        while source.text().as_bytes().get(end) == Some(&b'_') {
-            end += 1;
-        }
-    }
-    source.text()[..start]
-        .chars()
-        .next_back()
-        .is_some_and(|ch| ch.len_utf16() == 2)
-        || source.text()[end..]
-            .chars()
-            .next()
-            .is_some_and(|ch| ch.len_utf16() == 2)
-}
-
 fn anchors(source: &Source, pairs: &[Pair]) -> std::collections::HashMap<&'static str, u8> {
     let mut output = std::collections::HashMap::new();
     for pair in pairs {
@@ -184,7 +122,12 @@ fn enabled(source: &Source, document: &DocumentConfig) -> bool {
     })
 }
 
-fn safe(source: &Source, parsed: &ParsedDocument, edits: &[Edit]) -> bool {
+fn safe(
+    source: &Source,
+    parsed: &ParsedDocument,
+    document: &DocumentConfig,
+    edits: &[Edit],
+) -> bool {
     let Ok(output) = apply_authorized_edits(source, parsed, edits.to_vec(), edits) else {
         return false;
     };
@@ -205,6 +148,8 @@ fn safe(source: &Source, parsed: &ParsedDocument, edits: &[Edit]) -> bool {
     normalize(&mut before);
     normalize(&mut after);
     before == after
+        && attention::pairs(source, parsed) == attention::pairs(&candidate, &reparsed)
+        && crate::md026::propose(&candidate, &reparsed, document).is_empty()
 }
 
 fn propose_once(source: &Source, parsed: &ParsedDocument, document: &DocumentConfig) -> Vec<Edit> {
@@ -212,9 +157,9 @@ fn propose_once(source: &Source, parsed: &ParsedDocument, document: &DocumentCon
         return vec![];
     }
     let diagnostic = diagnostic_parse(source);
-    let selected = pairs(source, diagnostic.as_ref().unwrap_or(parsed));
+    let selected = attention::pairs(source, diagnostic.as_ref().unwrap_or(parsed));
     let anchors = anchors(source, &selected);
-    let native = pairs(source, parsed);
+    let native = native_pairs(source, parsed);
     let mut groups = vec![];
     for pair in selected {
         let anchor = anchors[pair.rule];
@@ -223,9 +168,8 @@ fn propose_once(source: &Source, parsed: &ParsedDocument, document: &DocumentCon
             continue;
         };
         if expected == actual
-            || pair.astral_context
             || target(document, source, pair.rule, pair.closing.start, anchor) != Some(expected)
-            || (expected == b'_' && (intraword(source, &pair) || astral_neighbors(source, &pair)))
+            || (expected == b'_' && intraword(source, &pair))
             || !native.contains(&pair)
             || [pair.opening.clone(), pair.closing.clone()]
                 .iter()
@@ -260,7 +204,7 @@ fn propose_once(source: &Source, parsed: &ParsedDocument, document: &DocumentCon
         groups.push(edits);
     }
     let combined: Vec<_> = groups.iter().flatten().cloned().collect();
-    if safe(source, parsed, &combined) {
+    if safe(source, parsed, document, &combined) {
         return combined;
     }
     if groups.len() > 16 {
@@ -268,10 +212,10 @@ fn propose_once(source: &Source, parsed: &ParsedDocument, document: &DocumentCon
     }
     let output: Vec<_> = groups
         .into_iter()
-        .filter(|edits| safe(source, parsed, edits))
+        .filter(|edits| safe(source, parsed, document, edits))
         .flatten()
         .collect();
-    if safe(source, parsed, &output) {
+    if safe(source, parsed, document, &output) {
         output
     } else {
         vec![]
@@ -295,7 +239,7 @@ pub(crate) fn propose(
         let tree = reparsed.as_ref().unwrap_or(parsed);
         let proposal = propose_once(&current, tree, document);
         if proposal.is_empty() {
-            return if edits.is_empty() || safe(source, parsed, &edits) {
+            return if edits.is_empty() || safe(source, parsed, document, &edits) {
                 edits
             } else {
                 vec![]
@@ -328,7 +272,7 @@ pub(crate) fn diagnose(
     let Some(parsed) = diagnostic_parse(source) else {
         return vec![];
     };
-    let selected = pairs(source, &parsed);
+    let selected = attention::pairs(source, &parsed);
     let anchors = anchors(source, &selected);
     let mut output = vec![];
     for pair in selected {

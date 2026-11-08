@@ -150,6 +150,23 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Independent MD049/MD050 review found missing alternate delimiter pairings and
+  consistency anchors, image-label reparses without reference definitions, lost
+  quote context in nested images, and marker edits unlocked only after MD026 had
+  already run. Source-backed attention selection now handles diagnostics
+  independently of native ownership; label reparses retain definitions/context.
+  Marker normalization follows stable MD026 deletions and rejects generated
+  punctuation conflicts rather than withholding MD026's approved original edits.
+  Five literal review regressions and expanded ordinary-letter/nested-run
+  comparisons cover these boundaries.
+- Pinned MD052/MD053 declare `parser: "none"` but consume a micromark cache that
+  stays empty when no parser-backed rule is enabled. Direct runtime probes then
+  falsely report no missing/unused/duplicate reference findings. Enabling an inert
+  micromark rule restores those findings. The [reference-rule audit](../../compatibility/reference-rule-audit.md)
+  retains both outcomes and non-obvious label projections. The planned native
+  rules must work independently, and their oracle must distinguish direct runtime
+  behavior from parser-forced rule observations. Neither rule is implemented yet.
+
 - MD049/MD050 changes to adjacent runs can remove the other rule's ASCII intraword
   exclusion: `_one_**two**` under asterisk emphasis/underscore strong needs both
   changes in one call, not one per invocation. The marker stage now resolves its
@@ -282,6 +299,15 @@ Findings from the 2026-11-06 diagnostic batch:
 
 ## Critical implementation flaws
 
+- Independent emphasis review confirmed rendering loss beside ordinary letters,
+  not just astral text: converting `a***one***` to `a*__one__*` removes outer
+  emphasis, while `a***one* two**` to `a**_one_ two**` removes outer strong
+  emphasis under the pinned parser. Native AST equality approved both. A native
+  source-backed adapter now applies pinned UTF-16 attention flanking, delimiter
+  consumption and rule-of-three resolution; repairs preserve the entire
+  attention topology as well as the native AST and protected bytes. Regressions
+  cover both rules and conversion directions, with expanded pinned comparisons.
+
 - Provisional MD049 marker swaps could change upstream meaning despite identical
   native ASTs: `😀*one*😀` became `😀_one_😀`, which the pinned parser treats as
   literal text. Conversely, native-only underscore tokens could turn literal
@@ -290,8 +316,9 @@ Findings from the 2026-11-06 diagnostic batch:
   the independent token-structure oracle failed before the correction; such
   underscore tokens are now excluded, and unsafe underscore repairs remain
   findings. MD050's combined cases also exposed loss of outer emphasis when only
-  an inner strong run changed beside astral text; the entire sensitive attention
-  subtree now remains untouched. Apply this boundary to later delimiter changes.
+  an inner strong run changed beside astral text. The general attention-topology
+  guard supersedes the original astral-only ancestry exception. Apply this
+  boundary to later delimiter changes.
 
 - Separator review exposed an existing native `markdown` parser panic on mixed
   list/fence boundaries, including

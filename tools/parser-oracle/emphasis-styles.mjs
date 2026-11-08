@@ -45,6 +45,9 @@ for (const marker of ["*", "**", "_", "__"]) {
     samples.push(`${left}${marker}text${marker}${right}\n`);
   }
 }
+for(const prefix of ["","a","é","😀","!"])for(const body of ["***one***","***one* two**","**one *two***","*__one__*","**_one_ two**","__one__****two**","_a 😀_b_","_a _b_ c_","****one***","***one****","**one****two**","*one***two*","_one___two__","__one___two_","***one**two*","_!__x__!_"]) samples.push(`${prefix}${body}\n`);
+for(const body of ["***one***","***one* two**","_a 😀_b_","_!__x__!_","**!x!*","*!x!**"])for(const wrap of [s=>`[${s}](url)\n`,s=>`![${s}](img)\n`,s=>`| ${s} |\n| --- |\n`,s=>`|${s}|\n|---|\n`,s=>`> ${s}\n`,s=>`>${s}\n`]) samples.push(wrap(body));
+samples.push("![[a][*id*]](img)\n\n[*id*]: /u\n\n_one_\n","![[a][__id__]](img)\n\n[__id__]: /u\n\n**one**\n","> ![![a\n> _b_](inner)](outer)\n\n*two*\n","> ![![a\n> __b__](inner)](outer)\n\n**two**\n",`<!-- markdownlint-disable-next-line ${rule} -->\n_a 😀_b_\n\n*two*\n`);
 let options = [true, false, {style:"asterisk"}, {style:"underscore"}, {severity:"warning"}];
 if(combined) {
   samples=["***both***\n","___both___\n","**_both_**\n","__*both*__\n","*a _b_ c* and __d **e** f__\n","_one_ **two** *three* __four__\n","😀___both___😀\n","😀***both***😀\n","😀__one__😀 and *two*\n","*one*_*two*_\n","_one_**two**\n","[a ___b___](url) and ***two***\n","> ![a __b__\n> _c_](img) and ***two***\n","| ___one___ | ***two*** |\n| --- | --- |\n","_one_ and **two**\n\n*three* and __four__\n","\uFEFF___one___ and ***two***\r\n","> - ___one___ and ***two***\n","<span>___one___ and ***two***</span>\n","<!-- markdownlint-disable-next-line MD049 MD050 -->\n___one___\n\n***two***\n","***first <!-- markdownlint-disable-next-line MD050 -->\nsecond***\n"];

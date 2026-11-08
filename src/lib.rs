@@ -86,22 +86,8 @@ pub fn format_with_config(
     options: &FormatOptions,
     config: &config::ResolvedConfig,
 ) -> Result<FormatResult, ProcessingError> {
-    let initial = Source::new(source.into());
-    let initial_parsed = parse::parse(&initial).map_err(ProcessingError::Parse)?;
-    let initial_document = config
-        .document(source)
-        .map_err(ProcessingError::Configuration)?;
-    let mut deletion_edits = if options.fix && config.fix {
-        emphasis_styles::propose(&initial, &initial_parsed, &initial_document)
-    } else {
-        vec![]
-    };
-    let mut current = edit::apply_authorized_edits(
-        &initial,
-        &initial_parsed,
-        deletion_edits.clone(),
-        &deletion_edits,
-    )?;
+    let mut current = source.to_owned();
+    let mut deletion_edits = vec![];
     // Tab expansion and heading removal can expose suffix whitespace.
     loop {
         let mut changed = false;
@@ -175,6 +161,27 @@ pub fn format_with_config(
         deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
         current = pass.output;
     }
+    let before_inline = Source::new(current);
+    let before_inline_parsed = parse::parse(&before_inline).map_err(ProcessingError::Parse)?;
+    let before_inline_document = config
+        .document(before_inline.text())
+        .map_err(ProcessingError::Configuration)?;
+    let inline_edits = if options.fix && config.fix {
+        emphasis_styles::propose(
+            &before_inline,
+            &before_inline_parsed,
+            &before_inline_document,
+        )
+    } else {
+        vec![]
+    };
+    let current = edit::apply_authorized_edits(
+        &before_inline,
+        &before_inline_parsed,
+        inline_edits.clone(),
+        &inline_edits,
+    )?;
+    deletion_edits = edit::compose_edits(source, &deletion_edits, &inline_edits)?;
     // Heading suffix deletions can expose closing markers or turn setext text
     // into prose. Reparse that stable result before selecting prose gaps.
     let mut result = process(&current, options, config, reflow::propose, |_| vec![])?;

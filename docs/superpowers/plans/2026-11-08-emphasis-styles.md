@@ -9,7 +9,7 @@ Architecture: One source-mapped selector serves emphasis and strong styles.
 Each node produces paired marker edits; admit only complete permitted pairs
 whose batch reparses preserve structure and protected content, with bounded
 individual fallback for rejected batches of at most 16 pairs.
-Run before prose reflow and heading suffix/style edits so final diagnostics and
+Run after stable heading suffix deletion and before prose reflow/heading styles so final diagnostics and
 wrapping use the formatted markers in one invocation.
 
 Tech stack: Existing Rust toolchain and parser/configuration/edit pipeline;
@@ -26,6 +26,10 @@ Spec: `docs/superpowers/specs/2026-10-21-mdfmt-design.md`
   intraword exclusion when underscore is requested.
 - Marker swaps preserve byte length. Verify lexical opening/closing runs from
   original source rather than trusting rendered child ranges or global searches.
+- Final review adds `src/emphasis_styles/attention.rs`: a read-only pinned-compatible
+  UTF-16 attention resolver supplies diagnostics and full topology checks; native
+  ownership remains independently required for edits. Image label scopes include
+  document definitions and retain original quote depth through nested reparses.
 - Respect both ends' inline permissions; never change only one delimiter.
 - Preserve links/images and tables exactly, even when their contained emphasis
   is diagnostic. Do not authorize whole protected regions for marker edits.
@@ -36,8 +40,9 @@ Spec: `docs/superpowers/specs/2026-10-21-mdfmt-design.md`
   output; larger rejected batches remain findings. Preservation and bounded work
   are more important than edit coverage.
 - Account for pinned micromark's UTF-16-unit flanking behavior at astral neighbors;
-  native AST equality alone cannot authorize changes anywhere in the affected
-  attention subtree.
+  and ordinary nested runs; native AST equality alone cannot authorize them.
+- Run marker styles after stable MD026 deletions, retaining approved original
+  punctuation edits and withholding marker-generated punctuation conflicts.
 - Adjacent rules can remove each other's intraword exclusions. Resolve only the
   marker stage's dependencies, at most 16 rounds with original-byte composition;
   withhold atomically if it does not settle. This is not a generic repeated-pass
@@ -141,17 +146,61 @@ nodes and two-character sequences, with its own consistency anchor and options.
 - [x] Run both focused suites and native oracles, full Rust tests/fmt/clippy and
   affected MD003/MD013/MD026 comparisons.
   Expected: all pass, with unsafe fixes retained as findings.
-- [ ] Update coverage/evidence/roadmap and commit; request one independent review
+- [x] Update coverage/evidence/roadmap and commit; request one independent review
   of the whole emphasis-style batch. Fix Important/Critical findings in one
   RED-to-GREEN pass with a green full suite, and record them in the roadmap.
-- [ ] Retain ledger rulings in the tracked plan, complete the batch, and continue
+- [x] Retain ledger rulings in the tracked plan, complete the batch, and continue
   the roadmap without merging, pushing or routine approval prompts.
 
-Status: both rules are implemented; Task 2's independent batch review is pending.
-Before review: 402 Rust tests across 53 targets; fmt/clippy/diff clean. Both
-540-case per-rule oracles and 180 combined cases pass, as do 1,206 MD003,
-288 MD013 and 440 MD026 comparisons. Coverage is 41/53. Release probes for 400
-and 800 pairs take 0.183s and 0.518s respectively, with the expected literal output.
+Status: both tasks are complete; coverage is 41/53. The independent review of
+7942079..9456409 found one Critical and four Important issues, no minors and no
+declined-to-judge items. All five reproductions failed before the fix pass and
+pass after it. No second review was dispatched.
+
+Final verification: 407 Rust tests across 54 targets; fmt/clippy/diff clean. Both
+1,145-case per-rule native oracles and 180 combined cases pass. Affected MD003
+1,206, MD013 288, MD026 440, MD022 792, MD031 476 plus 16 explicit parser-error
+outcomes, and MD032 345 comparisons pass. Final scope-boundary corrections were
+followed by a fresh whole-suite run, not inferred from the earlier green run.
+Release probes for 400/800 pairs take 0.237s/0.664s and produce exact output.
+The roadmap also retains the next batch's pinned reference-rule cache finding.
+No merge/push; retain this branch/worktree and continue the roadmap.
+
+## Retained execution rulings
+
+- Task 1: recover flattened image-label emphasis with a mapped two-byte prefix.
+  Cost if wrong: diagnostic/consistency classification, not image edits. Final
+  review additionally requires definitions and retained nested quote context.
+- Task 1: preserve pinned astral-neighbor boundaries rather than trust native
+  scalar classification. Cost if wrong: conservative repairs or diagnostics;
+  the final general attention resolver supersedes the initial special case.
+- Task 1: batch preservation checks, with individual fallback for at most 16
+  pairs, instead of reparsing once per pair. Cost if wrong: larger rejected
+  mixed batches retain findings, not incremental progress.
+- Task 2: protect astral-sensitive enclosing attention, not just the edited run.
+  Cost if wrong: conservative repairs. The final topology gate generalizes this
+  to ordinary letters, alternate pairings and adjacent runs.
+- Task 2: resolve only marker-stage dependencies within 16 rounds and withhold
+  atomically on exhaustion. Cost if wrong: complex/cycling style requests keep
+  findings; no generic repeated-pass formatter engine is introduced.
+- Review scope: use 7942079..emphasis HEAD, not the earlier plan-creation commit.
+  Cost if wrong: missing review coverage. The intervening separator fix pass had
+  its own independent review; the reviewer received the full emphasis plan/scope.
+- Final review: keep one Critical and four Important grades based on rendering
+  loss, incorrect findings/anchors and second-call-only formatting. Cost if wrong:
+  a broader read-only source model, not a cosmetic fix pass.
+- Final review: source-backed UTF-16 attention resolution supplies diagnostics
+  and full topology validation separately from native edit ownership. Cost if
+  wrong: attention classification or repair availability; native AST/protected
+  bytes, permissions and matching native owners remain mandatory.
+- Final review: image-label reparses include document definitions and retain
+  original quote depth recursively. Cost if wrong: diagnostic scopes/anchors,
+  never permission to edit images. Appended definitions are excluded from labels.
+- Final review: marker normalization follows stable MD026 deletion and rejects
+  marker-generated punctuation conflicts. Cost if wrong: unresolved marker style
+  findings; MD026's approved original edits still apply.
+
+Deferred minors: none.
 
 Planning check: reviewed the shared pinned upstream source and runtime findings
 for consistency, intraword exclusions and nested/triple sequences. Those are
