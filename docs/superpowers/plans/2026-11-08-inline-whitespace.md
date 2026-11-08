@@ -167,27 +167,27 @@ Interfaces: extend `InlineAnalysis` with `labels: Vec<LinkLabel>` and
 reference/resource. Keep actual link labels distinct from an image's own label,
 destinations and reference identifiers; no synthetic label grants edits.
 
-- [ ] Record full/inline/collapsed/shortcut links, nested inline content, images,
+- [x] Record full/inline/collapsed/shortcut links, nested inline content, images,
   resolved/undefined references, tabs/Unicode/newlines, quoted labels, HTML/math,
   tables, metadata, disabled endpoints, aliases and warnings.
   Run the oracle's `--record --source-only --rule MD039` mode.
   Expected: pinned receipt only.
-- [ ] Write `link_label_findings_do_not_trim_indivisible_links`:
+- [x] Write `link_label_findings_do_not_trim_indivisible_links`:
   `[ label ](url)\n` remains exact with no edits and reports spans `1..2` and
   `7..8`, context `[ label ]`. Image-only labels do not produce MD039 findings.
   `[\n label\n](url)\n` reports twice on line 2 with no invented nonempty range.
-- [ ] Run `mise exec -- cargo test --test md039`.
+- [x] Run `mise exec -- cargo test --test md039`.
   Expected: missing MD039 findings.
-- [ ] Implement label endpoint whitespace selection under `lib/md039.mjs`.
+- [x] Implement label endpoint whitespace selection under `lib/md039.mjs`.
   Physical newlines can require line-only findings on the adjacent content line;
   horizontal-space findings retain exact original-byte spans. Collapse context
   whitespace and apply the pinned start/end ellipsis policy.
-- [ ] Add `alpha beta [ label ](url) gamma delta\n` with MD013 width 20: expected
+- [x] Add `alpha beta [ label ](url) gamma delta\n` with MD013 width 20: expected
   `alpha beta\n[ label ](url) gamma\ndelta\n`, unchanged link bytes, final MD039
   findings on line 2, original edit coordinates and identical second-call results.
   Add combined spacing/marker/MD026/separator cases and CLI check/write/error/
   warning-only/no-fix behavior; preserve literal code, labels and table bytes.
-- [ ] Run all three spacing/style/review suites, all three raw/final native oracles,
+- [x] Run all three spacing/style/review suites, all three raw/final native oracles,
   full Rust tests/fmt/clippy and affected MD013/MD026 comparisons.
   Expected: all pass; findings and output settle in one public invocation.
 - [ ] Update coverage/evidence/roadmap and commit. Request one independent review
@@ -201,8 +201,11 @@ Status: Task 1 complete: 412 Rust tests across 55 targets, fmt/clippy/diff clean
 Task 2's five tests, 1,203 ordinary pinned observations and three explicit
 upstream-error policy cases pass. Both spacing/style oracles pass; fmt/clippy/diff
 are clean. Fresh full suite passes 417 tests across 56 targets after the indexed
-prefix lookup. Task 2 is complete. Coverage is 43/53. Task 3 is
-unimplemented; batch review remains pending.
+prefix lookup. Task 2 is complete. Task 3's seven tests and 957 successful pinned
+observations pass; 42 upstream exceptions and six Unicode policy observations
+are retained separately. All spacing/style oracles plus MD013/MD026 pass;
+fmt/clippy/diff clean. Full suite passes 424 tests across 57 targets; coverage is 44/53. Batch review
+remains pending.
 
 Planning check: pinned source and runtime confirm the three literal diagnostic
 examples, byte/UTF-16 ranges, multiline context and line-only label findings.

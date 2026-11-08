@@ -124,10 +124,10 @@ The literal-diagnostic batch adds [MD033 HTML findings](../../compatibility/md03
 and [MD060 table-column styles](../../compatibility/md060.md).
 The separator batch adds [conditional MD022/MD031/MD032 heading/fence/list blanks](../../compatibility/block-separators.md).
 The inline-style batch adds [conditional MD049/MD050 emphasis/strong styles](../../compatibility/emphasis-styles.md).
-The inline-whitespace batch adds [MD037 bare-marker and MD038 code-span diagnostics](../../compatibility/inline-whitespace.md).
-There are now 43 covered built-ins out of 53; milestone 5 is still incomplete.
+The inline-whitespace batch adds [MD037/MD038/MD039 bare-marker, code-span and link-label diagnostics](../../compatibility/inline-whitespace.md).
+There are now 44 covered built-ins out of 53; milestone 5 is still incomplete.
 Remaining built-ins are MD005, MD007,
-MD034, MD039, MD044, MD046, MD051,
+MD034, MD044, MD046, MD051,
 MD052, MD053 and MD054. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
@@ -151,6 +151,12 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Pinned MD039 combines JavaScript Unicode-aware trimming with ASCII-only RE2JS
+  horizontal-whitespace matching. Unicode label spaces can then throw for line 0
+  or move findings to an adjacent blank line. Separate receipts retain 42 exceptions
+  across 21 inputs and six one-sided Unicode outcomes. The native rule selects
+  actual horizontal whitespace on the label's physical line and preserves links;
+  literal tests pin NBSP, U+2003 and BOM ranges instead of copying invalid anchors.
 - Pinned MD038 throws an invalid-range exception when both syntax-padding tokens
   are newlines and the data line has edge spaces, for example a code span with
   opening/closing backticks on separate lines around ` a `. Raw rule capture

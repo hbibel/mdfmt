@@ -80,8 +80,8 @@ MD022/MD031/MD032 add heading/fence/list separators where block structure, prote
 directive targets remain unchanged; see [separator evidence](docs/compatibility/block-separators.md).
 MD049/MD050 conditionally normalize emphasis/strong markers while preserving inline structure
 and protected bytes; see [emphasis-style evidence](docs/compatibility/emphasis-styles.md).
-MD037/MD038 report bare-emphasis and code-span whitespace without creating emphasis
-or trimming literal code;
+MD037/MD038/MD039 report inline whitespace without creating emphasis, trimming
+literal code or changing link text;
 see [inline-whitespace evidence](docs/compatibility/inline-whitespace.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).

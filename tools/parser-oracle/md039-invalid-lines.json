@@ -1,0 +1,716 @@
+[
+  {
+    "id": "185-0",
+    "input": "[ label ](u)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "185-2",
+    "input": "[ label ](u)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "187-0",
+    "input": "[ label ][id]\n\n[id]: /u\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "187-2",
+    "input": "[ label ][id]\n\n[id]: /u\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "188-0",
+    "input": "[ label ][]\n\n[ label ]: /u\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "188-2",
+    "input": "[ label ][]\n\n[ label ]: /u\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "189-0",
+    "input": "![ [ label ](u) ](i)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "189-2",
+    "input": "![ [ label ](u) ](i)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "190-0",
+    "input": "> [ label ](u)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "190-2",
+    "input": "> [ label ](u)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "191-0",
+    "input": "- [ label ](u)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "191-2",
+    "input": "- [ label ](u)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "192-0",
+    "input": "| [ label ](u) |\n| --- |\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "192-2",
+    "input": "| [ label ](u) |\n| --- |\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "193-0",
+    "input": "[ label ](u)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "193-2",
+    "input": "[ label ](u)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "195-0",
+    "input": "[ label ][id]\n\n[id]: /u\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "195-2",
+    "input": "[ label ][id]\n\n[id]: /u\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "196-0",
+    "input": "[ label ][]\n\n[ label ]: /u\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "196-2",
+    "input": "[ label ][]\n\n[ label ]: /u\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "197-0",
+    "input": "![ [ label ](u) ](i)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "197-2",
+    "input": "![ [ label ](u) ](i)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "198-0",
+    "input": "> [ label ](u)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "198-2",
+    "input": "> [ label ](u)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "199-0",
+    "input": "- [ label ](u)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "199-2",
+    "input": "- [ label ](u)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "200-0",
+    "input": "| [ label ](u) |\n| --- |\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "200-2",
+    "input": "| [ label ](u) |\n| --- |\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "209-0",
+    "input": "[﻿label﻿](u)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "209-2",
+    "input": "[﻿label﻿](u)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "211-0",
+    "input": "[﻿label﻿][id]\n\n[id]: /u\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "211-2",
+    "input": "[﻿label﻿][id]\n\n[id]: /u\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "212-0",
+    "input": "[﻿label﻿][]\n\n[﻿label﻿]: /u\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "212-2",
+    "input": "[﻿label﻿][]\n\n[﻿label﻿]: /u\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "213-0",
+    "input": "![ [﻿label﻿](u) ](i)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "213-2",
+    "input": "![ [﻿label﻿](u) ](i)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "214-0",
+    "input": "> [﻿label﻿](u)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "214-2",
+    "input": "> [﻿label﻿](u)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "215-0",
+    "input": "- [﻿label﻿](u)\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "215-2",
+    "input": "- [﻿label﻿](u)\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "216-0",
+    "input": "| [﻿label﻿](u) |\n| --- |\n",
+    "options": true,
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  },
+  {
+    "id": "216-2",
+    "input": "| [﻿label﻿](u) |\n| --- |\n",
+    "options": {
+      "severity": "warning"
+    },
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "[ label ]"
+      },
+      {
+        "lineNumber": 0,
+        "context": "[ label ]"
+      }
+    ]
+  }
+]

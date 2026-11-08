@@ -1,5 +1,6 @@
 mod md037;
 mod md038;
+mod md039;
 
 use crate::{
     Diagnostic, Source,
@@ -13,7 +14,7 @@ pub(crate) fn diagnose(
     document: &DocumentConfig,
 ) -> Vec<Diagnostic> {
     if !(1..=source.line_count()).any(|line| {
-        ["MD037", "MD038"].iter().any(|rule| {
+        ["MD037", "MD038", "MD039"].iter().any(|rule| {
             document
                 .state(rule, line)
                 .is_some_and(|state| state.enabled)
@@ -26,6 +27,7 @@ pub(crate) fn diagnose(
     let display = comment_masked_source(source, parsed);
     let mut output = md037::diagnose(source, &display, document, &analysis);
     output.extend(md038::diagnose(source, document, &analysis));
+    output.extend(md039::diagnose(source, document, &analysis));
     output
 }
 

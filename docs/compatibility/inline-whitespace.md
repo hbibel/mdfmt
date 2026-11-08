@@ -44,4 +44,29 @@ mise exec -- cargo test --test md038
 node tools/parser-oracle/inline-whitespace.mjs --rule MD038
 ```
 
-MD039 remains planned, not implemented by this evidence.
+## Link labels
+
+MD039 reports `lib/md039.mjs`'s leading/trailing link-label whitespace without
+trimming indivisible links. Actual link labels, including links recovered inside
+image descriptions, qualify; image-only alternate-text labels do not. Raw label
+contexts retain container prefixes, collapse JS whitespace and use endpoint
+ellipses. Newline-only endpoints have empty byte spans anchored to the adjacent
+physical content line rather than invented horizontal ranges.
+
+`tests/md039.rs` contains seven tests and consumes 957 successful pinned
+observations. It covers original-coordinate edit composition after MD013 reflow,
+combined heading punctuation/style/separator edits, preserved link/code bytes,
+aliases, warnings, check/write modes, disabled fixes and second-call stability.
+
+Upstream mixes Unicode-aware JS trimming with ASCII-only RE2JS range matching.
+The separate `md039-invalid-lines.json` receipt records 42 exceptions over 21
+inputs; `md039-unicode-policy.json` records six one-sided outcomes, including
+findings incorrectly moved to the next blank line. Native diagnostics instead
+select valid horizontal spaces on the actual label line. Literal tests cover
+NBSP, U+2003 and BOM. These intentional differences are not counted as ordinary
+matching observations.
+
+```sh
+mise exec -- cargo test --test md039
+node tools/parser-oracle/inline-whitespace.mjs --rule MD039
+```

@@ -1,0 +1,50 @@
+[
+  {
+    "input": "[ label](u)\n",
+    "findings": [
+      {
+        "line": 2,
+        "range": null,
+        "context": "[ label]",
+        "detail": null,
+        "severity": "error"
+      }
+    ]
+  },
+  {
+    "input": "[label ](u)\n",
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'."
+  },
+  {
+    "input": "[ label](u)\n",
+    "findings": [
+      {
+        "line": 2,
+        "range": null,
+        "context": "[ label]",
+        "detail": null,
+        "severity": "error"
+      }
+    ]
+  },
+  {
+    "input": "[label ](u)\n",
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'."
+  },
+  {
+    "input": "[﻿label](u)\n",
+    "findings": [
+      {
+        "line": 2,
+        "range": null,
+        "context": "[ label]",
+        "detail": null,
+        "severity": "error"
+      }
+    ]
+  },
+  {
+    "input": "[label﻿](u)\n",
+    "error": "Value of 'lineNumber' passed to onError by 'MD039' is incorrect for 'input'."
+  }
+]

@@ -40,11 +40,16 @@ pub(crate) struct CodeSpan {
     pub prefixes: Vec<Range<usize>>,
 }
 
+pub(crate) struct LinkLabel {
+    pub span: Range<usize>,
+}
+
 #[derive(Default)]
 pub(crate) struct InlineAnalysis {
     pub attention: Vec<AttentionPair>,
     pub bare: Vec<BareMarker>,
     pub code: Vec<CodeSpan>,
+    pub labels: Vec<LinkLabel>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -342,6 +347,9 @@ impl Scopes<'_> {
                 excluded.push(span.clone());
                 let raw = &self.source.text()[span.clone()];
                 if let Some(end) = crate::parse::label_end(raw, true) {
+                    self.output.labels.push(LinkLabel {
+                        span: span.start..span.start + end + 1,
+                    });
                     self.scope(
                         node,
                         base,
@@ -462,5 +470,6 @@ pub(crate) fn inline_analysis(source: &Source, parsed: &ParsedDocument) -> Inlin
         .sort_by_key(|pair| pair.opening.start);
     scopes.output.bare.sort_by_key(|marker| marker.span.start);
     scopes.output.code.sort_by_key(|code| code.span.start);
+    scopes.output.labels.sort_by_key(|label| label.span.start);
     scopes.output
 }
