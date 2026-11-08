@@ -122,8 +122,9 @@ The next batch adds [MD001/MD025/MD036/MD041/MD043/MD059 content diagnostics](..
 This is followed by [conditional MD003 heading styles](../../compatibility/md003.md).
 The literal-diagnostic batch adds [MD033 HTML findings](../../compatibility/md033.md)
 and [MD060 table-column styles](../../compatibility/md060.md).
-There are now 36 covered built-ins out of 53; milestone 5 is still incomplete.
-Remaining built-ins are MD005, MD007, MD022, MD031, MD032,
+The separator batch starts with [conditional MD022 heading blanks](../../compatibility/block-separators.md).
+There are now 37 covered built-ins out of 53; milestone 5 is still incomplete.
+Remaining built-ins are MD005, MD007, MD031, MD032,
 MD034, MD037, MD038, MD039, MD044, MD046, MD049, MD050, MD051,
 MD052, MD053 and MD054. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
@@ -147,6 +148,19 @@ These are committed roadmap items, not first-release requirements. Their exact
 release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
+
+- MD022's initial unreleased implementation could loop to a huge configured
+  blank-line count at virtual file boundaries or allocate a huge replacement.
+  Native timeout/allocation-limit regressions reproduced both failures. Count
+  virtual boundary blanks arithmetically and bound separator insertions to 1 MiB
+  per stage; oversized requirements retain diagnostics rather than exhausting
+  resources. Fixed and verified on 2026-11-08: 358 Rust tests pass, including
+  native bounded-process regressions and accepted large unsigned counts.
+- MD022 requests above and below adjacent headings can refer to the same existing
+  blank run at different byte offsets. Adding both independently overfilled that
+  run, violated MD012 and broke second-call stability. Canonical shared-run
+  insertion points now merge compatible requests; the regression failed before
+  the fix. Include this boundary in later fence/list separator interactions.
 
 - Independent MD060 review found false tables inside tab-indented list items:
   `-\t| a |` followed by two-space continuations is not an upstream table.

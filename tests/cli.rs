@@ -56,18 +56,18 @@ fn files_are_unchanged_and_stdout_is_document_only() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.md");
     std::fs::write(dir.path().join(".markdownlint.json"), r#"{"MD047":false}"#).unwrap();
-    std::fs::write(&path, b"# Hello?\r\nno newline").unwrap();
+    std::fs::write(&path, b"# Hello?\r\n\r\nno newline").unwrap();
     let path = path.to_str().unwrap();
     let output = run(&[path], b"");
     assert_eq!(output.status.code(), Some(0));
-    assert_eq!(output.stdout, b"# Hello?\r\nno newline");
+    assert_eq!(output.stdout, b"# Hello?\r\n\r\nno newline");
     assert!(output.stderr.is_empty());
     for mode in ["--write", "--check"] {
         let output = run(&[mode, path, path], b"");
         assert_eq!(output.status.code(), Some(0));
         assert!(output.stdout.is_empty());
         assert!(output.stderr.is_empty());
-        assert_eq!(std::fs::read(path).unwrap(), b"# Hello?\r\nno newline");
+        assert_eq!(std::fs::read(path).unwrap(), b"# Hello?\r\n\r\nno newline");
     }
 }
 

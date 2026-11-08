@@ -1,3 +1,4 @@
+mod blank_lines;
 pub mod config;
 mod diagnostic;
 mod edit;
@@ -230,6 +231,28 @@ pub fn format_with_config(
         &fence_edits,
     )?;
     result.edits = edit::compose_edits(source, &result.edits, &fence_edits)?;
+    let before_separators = Source::new(result.output.clone());
+    let before_separators_parsed =
+        parse::parse(&before_separators).map_err(ProcessingError::Parse)?;
+    let before_separators_document = config
+        .document(before_separators.text())
+        .map_err(ProcessingError::Configuration)?;
+    let separator_edits = if options.fix && config.fix {
+        blank_lines::propose(
+            &before_separators,
+            &before_separators_parsed,
+            &before_separators_document,
+        )
+    } else {
+        vec![]
+    };
+    result.output = edit::apply_authorized_edits(
+        &before_separators,
+        &before_separators_parsed,
+        separator_edits.clone(),
+        &separator_edits,
+    )?;
+    result.edits = edit::compose_edits(source, &result.edits, &separator_edits)?;
     let before_tables = Source::new(result.output.clone());
     let before_tables_parsed = parse::parse(&before_tables).map_err(ProcessingError::Parse)?;
     let before_tables_document = config
@@ -301,6 +324,9 @@ pub fn format_with_config(
         .document(output.text())
         .map_err(ProcessingError::Configuration)?;
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
+    result
+        .diagnostics
+        .extend(blank_lines::diagnose(&output, &parsed, &document));
     result
         .diagnostics
         .extend(md060::diagnose(&output, &parsed, &document));
@@ -408,6 +434,7 @@ pub fn format_with_config(
         "MD019".into(),
         "MD020".into(),
         "MD021".into(),
+        "MD022".into(),
         "MD023".into(),
         "MD024".into(),
         "MD025".into(),

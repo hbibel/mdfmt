@@ -5,20 +5,6 @@ use crate::{
     parse::{ParsedDocument, RegionKind, equivalent, parse},
 };
 
-fn blank_line(mut text: String) -> bool {
-    loop {
-        match (text.find("<!--"), text.find("-->")) {
-            (start, Some(end)) if start.is_none_or(|start| end < start) => {
-                text = text[end + 3..].into()
-            }
-            (Some(start), Some(end)) => text.replace_range(start..end + 3, ""),
-            (Some(start), None) => text.truncate(start),
-            (None, None) => return text.chars().all(|ch| ch == '>' || js_space(ch)),
-            _ => unreachable!(),
-        }
-    }
-}
-
 struct Candidate {
     line: usize,
     insertion: usize,
@@ -54,7 +40,7 @@ fn candidates(
                         region.kind == RegionKind::FrontMatter
                             && region.span.start <= span.start
                             && span.end <= region.span.end
-                    }) && !blank_line(source.text()[span].into())
+                    }) && !crate::blank_lines::is_blank(&source.text()[span])
                 })
                 && document
                     .state("MD058", line)

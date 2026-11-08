@@ -37,6 +37,9 @@ pipeline, pinned markdownlint 0.42.0 development oracle. No runtime dependency a
   ping-pong without silently disabling either configured rule.
 - Preserve any physical line targeted by a next-line/configuration override.
   Do not insert between the directive and its target, even for unrelated rules.
+- Count virtual boundary blanks arithmetically. Bound separator insertion bytes
+  to 1 MiB per stage; oversized requirements remain diagnostics without allocating
+  the requested replacement. This is resource safety, not a changed rule option.
 - The existing roadmap is the approved design. No new user-facing configuration,
   unsafe repair policy or runtime language is introduced.
 
@@ -84,12 +87,12 @@ Interfaces:
 - Each rule module produces `insertions(...) -> Vec<Insertion>` and
   `diagnose(...) -> Vec<Diagnostic>` with the same three reference parameters.
 
-- [ ] Record pinned MD022 observations for ATX/setext/closed headings, levels 1–6,
+- [x] Record pinned MD022 observations for ATX/setext/closed headings, levels 1–6,
   scalar/array/negative options, `include_front_matter`, BOM/mixed terminators,
   comments, quotes/lists, HTML, math, directives and warnings.
   Run: `node tools/parser-oracle/block-separators.mjs --record --source-only --rule MD022`.
   Expected: receipt written with no native implementation claim.
-- [ ] Add failing `heading_separators_preserve_caption_and_settle_once`:
+- [x] Add failing `heading_separators_preserve_caption_and_settle_once`:
   `before\n# Heading\nafter\n` has Above/Below
   findings with fixes disabled, and becomes `before\n\n# Heading\n\nafter\n`
   with MD022 alone. Both findings refer to line 2, have no invented range, and
@@ -103,25 +106,30 @@ Interfaces:
   assert_eq!(again.output, first.output);
   assert!(again.edits.is_empty());
   ```
-- [ ] Run: `mise exec -- cargo test --test md022`.
+- [x] Run: `mise exec -- cargo test --test md022`.
   Expected: missing MD022 findings/insertions, not fixture or configuration errors.
-- [ ] Extract the unchanged blank classifier, implement MD022's line counts and
+- [x] Extract the unchanged blank classifier, implement MD022's line counts and
   shared insertion safety, extract the unchanged MD060 comment masker for
   diagnostic contexts, and integrate the stage before MD058/MD003. Validate
   each candidate and the merged batch with `parse::equivalent`; reject uncertain
   prefixes, metadata edits, list-tightness changes and directive-target shifts.
-- [ ] Add literal preservation tests for `> before\n> # H\n> after\n`, list-contained
+- [x] Add literal preservation tests for `> before\n> # H\n> after\n`, list-contained
   headings, setext headings, EOF, an unrelated disabled-next-line target, and
   interior MD022 count 2 against MD012 maximum 1. Assert source-backed findings,
   original edit coordinates, unchanged protected bytes and second-call stability.
   Pin masked comment contexts independently; never use masked UTF-8 offsets as
   original-source spans or feed masked quotes into raw HTML tokenization.
-- [ ] Run: `mise exec -- cargo test --test md022 --test md058 --test md003 --test md012`;
+- [x] Run: `mise exec -- cargo test --test md022 --test md058 --test md003 --test md012`;
   `mise exec -- cargo build`; `node tools/parser-oracle/block-separators.mjs --rule MD022`;
   full Rust suite, fmt and clippy.
   Expected: all pass; native oracle checks raw diagnostics and preservation-aware
   fixed output rather than requiring unsafe upstream edits.
-- [ ] Update truthful MD022 evidence/coverage and commit the tested feature.
+- [x] Update truthful MD022 evidence/coverage and commit the tested feature.
+
+Task 1 verified: 358 Rust tests across 47 targets; fmt/clippy clean. All 657
+MD022 raw/fixed comparisons pass, plus 1,206 MD003, 125 MD012, 207 MD058,
+1,133 MD060/734 widths and 602 MD033 comparisons. Native-only regressions cover
+bounded huge counts, unsigned counts, atomic allocation admission and shared gaps.
 
 ## Task 2: Fence separators
 
@@ -213,9 +221,8 @@ this plan and the roadmap. Do not count unimplemented rule repairs as coverage.
 - [ ] Record verification and accurate coverage, commit, and continue the remaining
   roadmap in the existing worktree without a merge/push or routine approval pause.
 
-Status: planned, not implemented. The MD033/MD060 batch review found and fixed
-the shared tab-ownership defect; its full suite now passes 347 tests. Begin this
-plan only after that batch's final completion record and commit.
+Status: Task 1 is implemented and verified; coverage is 37/53. Tasks 2–4 remain
+pending. The prior MD033/MD060 batch was completed before this plan began.
 
 Planning check: pinned runtime observations confirm the three literal diagnostic
 examples and their upstream insertion locations. The shared interfaces, stage

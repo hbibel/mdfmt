@@ -122,7 +122,7 @@ pub(crate) fn diagnose(
         return vec![];
     }
     let mut result = vec![];
-    let display = comments::display_source(source, parsed);
+    let display = crate::parse::comment_masked_source(source, parsed);
     for table in crate::heading_spaces::diagnostic_tables(source, parsed) {
         let Some(header) = table.rows.first() else {
             continue;
