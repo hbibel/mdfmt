@@ -101,7 +101,7 @@ pub(crate) fn propose(
     if crate::parse::has_unmodeled_syntax(source, parsed) {
         return vec![];
     }
-    let mut selected: BTreeMap<usize, Option<Insertion>> = BTreeMap::new();
+    let mut selected: BTreeMap<usize, Vec<Insertion>> = BTreeMap::new();
     for mut candidate in md022::insertions(source, parsed, document)
         .into_iter()
         .chain(md031::insertions(source, parsed, document))
@@ -134,48 +134,44 @@ pub(crate) fn propose(
         if candidate.missing == 0 {
             continue;
         }
-        match selected.entry(candidate.at) {
-            std::collections::btree_map::Entry::Vacant(entry) => {
-                entry.insert(Some(candidate));
-            }
-            std::collections::btree_map::Entry::Occupied(mut entry) => {
-                if let Some(prior) = entry.get_mut() {
-                    if prior.prefix != candidate.prefix {
-                        *entry.get_mut() = None;
-                    } else if candidate.missing > prior.missing {
-                        *prior = candidate;
-                    }
-                }
-            }
-        }
+        selected.entry(candidate.at).or_default().push(candidate);
     }
     let newline = crate::md047::preferred_newline(source.text());
     // Valid configuration can request trillions of blanks. Keep the requested
     // diagnostic, but never allocate an unbounded replacement to satisfy it.
-    let total = selected
-        .values()
-        .flatten()
-        .try_fold(0usize, |total, candidate| {
-            total.checked_add(
-                (candidate.prefix.len() + newline.len()).checked_mul(candidate.missing)?,
-            )
-        });
+    let total = selected.values().try_fold(0usize, |total, candidates| {
+        let count = candidates.iter().map(|c| c.missing).max()?;
+        let width = candidates.iter().map(|c| c.prefix.len()).max()?;
+        total.checked_add((width + newline.len()).checked_mul(count)?)
+    });
     if total.is_none_or(|bytes| bytes > 1024 * 1024) {
         return vec![];
     }
     let edits: Vec<_> = selected
         .into_values()
-        .flatten()
-        .filter_map(|candidate| {
-            let edit = Edit {
-                span: candidate.at..candidate.at,
-                replacement: format!("{}{newline}", candidate.prefix).repeat(candidate.missing),
-                origin: candidate.rule.into(),
-            };
-            if !safe(source, parsed, std::slice::from_ref(&edit)) {
-                return None;
-            }
-            Some(edit)
+        .filter_map(|mut candidates| {
+            let count = candidates.iter().map(|c| c.missing).max()?;
+            candidates.sort_by(|a, b| {
+                a.prefix
+                    .len()
+                    .cmp(&b.prefix.len())
+                    .then(a.prefix.cmp(&b.prefix))
+            });
+            candidates.dedup_by(|a, b| a.prefix == b.prefix);
+            candidates.into_iter().find_map(|mut candidate| {
+                candidate.missing = count;
+                // A smaller plain-blank budget must not partially satisfy a
+                // quoted requirement and leave another edit for the next call.
+                if budget(source, document, &candidate) < count {
+                    return None;
+                }
+                let edit = Edit {
+                    span: candidate.at..candidate.at,
+                    replacement: format!("{}{newline}", candidate.prefix).repeat(count),
+                    origin: candidate.rule.into(),
+                };
+                safe(source, parsed, std::slice::from_ref(&edit)).then_some(edit)
+            })
         })
         .collect();
     if safe(source, parsed, &edits) {

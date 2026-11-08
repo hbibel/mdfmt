@@ -57,8 +57,10 @@ separators under `lib/md032.mjs`.
 
 Insertions use the document's preferred newline and a verified continuation
 prefix. Compatible requests sharing a blank run merge by the largest missing
-count rather than adding duplicate padding. Each insertion and the combined
-batch must preserve the native tree and exact protected source.
+count rather than adding duplicate padding. Different prefixes remain alternatives:
+choose the shortest safe prefix that admits the largest MD012-budgeted request,
+not a partial insertion that requires a second invocation. Each insertion and
+the combined batch must preserve the native tree and exact protected source.
 
 Root and quote-contained headings/fences/lists can gain separators without changing
 captions or code. List-tightness changes, ambiguous recovered ownership, metadata-region
@@ -90,6 +92,12 @@ positions after MD013 reflow.
 `tests/md032.rs` covers 345 pinned observations, outer-list fixes, visual ends,
 lazy HTML scope, original/final coordinates, active directive targets and CLI
 warning-only outcomes without writes.
+
+`tests/block_separators.rs` covers combined heading/fence/list boundaries,
+compatible root/quote prefixes, MD012 conflicts, protected directive targets,
+MD003 setext conversion, MD058 table neighbors, MD026/MD013 edit composition and
+CLI check/write/warning behavior. Every literal result is checked for stable
+second-call output, diagnostics and original-byte edit application.
 
 ```sh
 mise exec -- cargo test --test md022 --test md031 --test md032

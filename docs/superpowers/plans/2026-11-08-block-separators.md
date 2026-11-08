@@ -80,8 +80,8 @@ Interfaces:
 - `blank_lines::Insertion { at: usize, prefix: String, missing: usize,
   rule: &'static str }` describes a source boundary and missing blank lines.
 - `blank_lines::propose(&Source, &ParsedDocument, &DocumentConfig) -> Vec<Edit>`
-  collects rule insertions, checks permissions and MD012 budget, merges equal
-  prefixes by maximum missing count, and verifies native preservation.
+   collects rule insertions, checks permissions and MD012 budget, merges compatible
+   prefix alternatives by maximum missing count, and verifies native preservation.
 - `blank_lines::diagnose(&Source, &ParsedDocument, &DocumentConfig) -> Vec<Diagnostic>`
   collects enabled final-output findings; line-only spans are byte-valid line starts.
 - Each rule module produces `insertions(...) -> Vec<Insertion>` and
@@ -214,15 +214,17 @@ List-rule focused suites remain green. Coverage is 39/53; batch review is pendin
 
 ## Task 4: Interactions and independent batch review
 
-Files: create `tests/block_separators.rs`; extend per-rule oracle fixtures/evidence,
-this plan and the roadmap. Do not count unimplemented rule repairs as coverage.
+Files: create `tests/block_separators.rs`; modify `src/blank_lines.rs` for
+compatible prefix selection; extend per-rule evidence, this plan and the roadmap.
+Do not count unimplemented rule repairs as coverage.
 
-- [ ] Add literal combined-rule cases for a heading directly after a list, a fence
-  adjacent to a heading, overlapping above/below requirements, MD012 maximum 0/1,
+- [x] Add literal combined-rule cases for a heading directly after a list, a fence
+   adjacent to a heading, overlapping above/below requirements, MD012 maximum 1/2
+   and rejection of unsupported maximum 0,
   MD003 setext conversion exposed by separators, MD058 table neighbors and MD026
   punctuation removal followed by MD013 reflow. Add check/write/warning CLI cases.
   Watch any uncovered interaction fail before changing scheduling or safety logic.
-- [ ] Run the combined tests and all three raw/fixed native oracles, then full
+- [x] Run the combined tests and all three raw/fixed native oracles, then full
   Rust tests/fmt/clippy and affected MD003/MD012/MD048/MD058 comparisons.
   Expected: final output and diagnostics are stable on the second call, no
   directive changes target, no table/code bytes change, and unsafe findings remain.
@@ -234,7 +236,8 @@ this plan and the roadmap. Do not count unimplemented rule repairs as coverage.
   roadmap in the existing worktree without a merge/push or routine approval pause.
 
 Status: Tasks 1–3 are implemented and verified; coverage is 39/53. Task 4's
-combined interactions and independent review remain pending.
+combined interactions pass (378 Rust tests across 50 targets, fmt/clippy and all
+seven affected oracles). Independent review remains pending.
 
 Planning check: pinned runtime observations confirm the three literal diagnostic
 examples and their upstream insertion locations. The shared interfaces, stage

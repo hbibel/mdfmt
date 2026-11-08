@@ -149,6 +149,14 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Combined separator rules can request different but compatible prefixes at the
+  same boundary, such as a quoted list followed by a root heading. Discarding
+  all differing prefixes withheld safe repairs. Keep alternatives and choose an
+  AST-safe prefix that satisfies the largest admissible request; selecting a
+  shorter MD012-limited prefix can otherwise require a second invocation.
+  `tests/block_separators.rs` reproduces both cases and checks stable output,
+  diagnostics, protected bytes and edit coordinates.
+
 - MD032 exposed a distinct lazy-HTML scope boundary: upstream admits the first
   lazy generic HTML line as a block in the active list/quote chain, not as inline
   paragraph text. Native AST-only recovery split lists early, while a plain
