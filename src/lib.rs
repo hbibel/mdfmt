@@ -478,6 +478,7 @@ pub fn format_with_config(
         "MD035".into(),
         "MD036".into(),
         "MD037".into(),
+        "MD038".into(),
         "MD040".into(),
         "MD041".into(),
         "MD042".into(),

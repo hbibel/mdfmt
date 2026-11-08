@@ -124,26 +124,26 @@ Interfaces: extend Task 1's `InlineAnalysis` with `code: Vec<CodeSpan>` and
 source spans and original-byte container-prefix exclusions. Emit MD038 diagnostics
 through the same dispatcher. Code-span data is not an edit authority.
 
-- [ ] Record pinned code spans with varying backtick lengths, balanced/unbalanced
+- [x] Record pinned code spans with varying backtick lengths, balanced/unbalanced
   padding, all-space bodies, meaningful spaces/tabs/Unicode whitespace, literal
   leading/trailing backticks, newlines, quotes/lists, links/images, tables,
   comments/HTML/math, metadata, disabled endpoints and warnings.
   Run the oracle's `--record --source-only --rule MD038` mode.
   Expected: source-only receipt with no coverage claim.
-- [ ] Write `code_span_findings_preserve_literal_code_value`:
+- [x] Write `code_span_findings_preserve_literal_code_value`:
   `` `  text  `\n `` stays exact with no edits and reports byte spans `1..3`
   and `7..9`, both with context `` `  text  ` ``.
   Exactly one balanced padding space remains valid. All-space code is preserved.
   Assert stable second-call output/findings under enabled fixes.
-- [ ] Run `mise exec -- cargo test --test md038`.
+- [x] Run `mise exec -- cargo test --test md038`.
   Expected: missing MD038 findings.
-- [ ] Derive first/last code-data segments and syntax padding from original
+- [x] Derive first/last code-data segments and syntax padding from original
   source-backed code spans, excluding physical container prefixes without
   inventing edit offsets. Follow `lib/md038.mjs`'s backtick exception and
   conditional padding removal when selecting diagnostic ranges, not when editing.
   Preserve raw token context, upstream newline normalization and 30-unit head/tail
   ellipsizing independently of MD037's masked display text.
-- [ ] Add this quoted multiline literal, with findings on lines 1/2 at columns
+- [x] Add this quoted multiline literal, with findings on lines 1/2 at columns
   4/7, length 2:
   ```text
   > `  first
@@ -152,9 +152,9 @@ through the same dispatcher. Code-span data is not an edit authority.
   The normalized context is
   `` `  first > last  ` ``. Cover list indentation, nested image labels, tabs and
   non-BMP comment text, and test code bytes unchanged with MD013/MD049/MD050 active.
-- [ ] Run MD038/shared/style suites and native oracles, full Rust tests/fmt/clippy.
+- [x] Run MD038/shared/style suites and native oracles, full Rust tests/fmt/clippy.
   Expected: all pass, with no code/table/link modifications or source-map regressions.
-- [ ] Update truthful coverage/evidence/roadmap and commit.
+- [x] Update truthful coverage/evidence/roadmap and commit.
 
 ## Task 3: Link-label whitespace and batch review
 
@@ -198,7 +198,11 @@ destinations and reference identifiers; no synthetic label grants edits.
 
 Status: Task 1 complete: 412 Rust tests across 55 targets, fmt/clippy/diff clean;
 915 MD037, 1,145 MD049, 1,145 MD050 and 180 combined native observations pass.
-Coverage is 42/53. Tasks 2/3 remain unimplemented.
+Task 2's five tests, 1,203 ordinary pinned observations and three explicit
+upstream-error policy cases pass. Both spacing/style oracles pass; fmt/clippy/diff
+are clean. Fresh full suite passes 417 tests across 56 targets after the indexed
+prefix lookup. Task 2 is complete. Coverage is 43/53. Task 3 is
+unimplemented; batch review remains pending.
 
 Planning check: pinned source and runtime confirm the three literal diagnostic
 examples, byte/UTF-16 ranges, multiline context and line-only label findings.

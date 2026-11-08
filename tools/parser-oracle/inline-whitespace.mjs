@@ -47,6 +47,13 @@ const options=[true,false,{severity:"warning"}];
 if(rule==="MD037")for(const body of ["* *","*  *","*`x`*","`a`*\n*`b`","&amp;*\n*&amp;","&bogus;*\n*&bogus;","\\!*\n*\\!","*_*","**_**","* ** *","* *** *","* ~~x~~ *","* [x](u) *","* <i>x</i> *","* a * b * c *","*** a ***","_ a _","*\u2003x\u2003*","* 😀 *","*\t x \t*","**** a ****"]){
   for(const wrap of [s=>`alpha ${s} omega\n`,s=>`alpha _${s}_ omega\n`,s=>`alpha **${s}** omega\n`,s=>`[${s}](u)\n`,s=>`![${s}](i)\n`,s=>`> _${s.replaceAll("\n","\n>   ")}_\n`,s=>`- _${s.replaceAll("\n","\n  ")}_\n`,s=>`| ${s.replaceAll("\n"," ")} |\n| --- |\n`])samples.push(wrap(body));
 }
+if(rule==="MD038"){
+  for(const body of ["`text`","` text `","`  text  `","`  text`","`text  `","` `","`   `","` \t `","`\tfoo\t`","`\u00a0foo\u00a0`","`\u2003foo\u2003`","`` `x` ``","``  `x`  ``","`` `x``","``  `x``","``x` ``","``x`  ``","` first\nlast `","`  first\nlast  `","` first\n last `","`\ntext\n`","`\ntext `","` text\n`","`  a\nb`","`a\nb  `","`  "+"😀".repeat(20)+"  `","```  text  ```","\\`  text  `","`  text  \\`","``  a`b  ``","`  a | b  `"]){
+    for(const wrap of [s=>`alpha ${s} omega\n`,s=>`[${s}](u)\n`,s=>`![${s}](i)\n`,s=>`> ${s.replaceAll("\n","\n> ")}\n`,s=>`- ${s.replaceAll("\n","\n  ")}\n`,s=>`> - ${s.replaceAll("\n","\n>   ")}\n`,s=>`| ${s.replaceAll("\n"," ")} |\n| --- |\n`,s=>`<!-- 😀 --> ${s}\n`])samples.push(wrap(body));
+  }
+  samples.push("\uFEFF`  text  `\r\n","> `  first\r\n> last  `\r\n","![![`  first\n  last  `](inner)](outer)\n","$`  text  `$\n","<span>`  text  `</span>\n","<div>\n`  text  `\n</div>\n","---\ntitle: `  text  `\n---\n`  text  `\n",`<!-- markdownlint-disable-next-line ${rule} -->\n\`  text  \`\n`,`> \`  first <!-- markdownlint-disable-next-line ${rule} -->\n> last  \`\n`);
+}
+if(rule==="MD038")for(const input of ["`a\n  b  `\n","`  a\n  b`\n","> `a\n>   b  `\n","- `a\n    b  `\n","> - `a\n>     b  `\n","-\t`a\n    b  `\n","\t> `  a  `\n"])samples.push(input);
 function findings(input,options){return lint({strings:{input},config:{default:false,[rule]:options}}).input.map(f=>({
   line:f.lineNumber,range:f.errorRange,context:f.errorContext?.toWellFormed()??null,detail:f.errorDetail,severity:f.severity,
   ...(f.errorContext&&!f.errorContext.isWellFormed()?{contextUtf16:Array.from({length:f.errorContext.length},(_,i)=>f.errorContext.charCodeAt(i))}:{}),
@@ -55,6 +62,17 @@ const rows=samples.flatMap((input,sample)=>options.map((options,configuration)=>
 const receipt=new URL(`${rule.toLowerCase()}-observations.json`,import.meta.url);
 const serialized="[\n"+rows.map(row=>"  "+JSON.stringify(row)).join(",\n")+"\n]\n";
 if(process.argv.includes("--record"))writeFileSync(receipt,serialized);else assert.equal(serialized,readFileSync(receipt,"utf8"));
+if(rule==="MD038"){
+  const builtin=(await import("./node_modules/markdownlint/lib/md038.mjs")).default;
+  const failures=["`\n a \n`\n","`\n  a  \n`\n","> `\n>  a \n> `\n"].map(input=>{
+    let error;try{findings(input,true);}catch(thrown){error=thrown.message;}
+    assert.equal(error,"Value of 'range' passed to onError by 'MD038' is incorrect for 'input'.");
+    const raw=[];lint({strings:{input},customRules:[{...builtin,names:["TST038"],function(params){builtin.function(params,f=>raw.push(f));}}],config:{default:false,TST038:true}});
+    return {input,error,raw};
+  });
+  const path=new URL("md038-invalid-ranges.json",import.meta.url),text=JSON.stringify(failures,null,2)+"\n";
+  if(process.argv.includes("--record"))writeFileSync(path,text);else assert.equal(text,readFileSync(path,"utf8"));
+}
 if(!process.argv.includes("--source-only")){
   const directory=mkdtempSync("/tmp/opencode/mdfmt-inline-whitespace-"),configuration=directory+"/.markdownlint-cli2.jsonc";
   const binary=fileURLToPath(new URL("../../target/debug/mdfmt",import.meta.url));

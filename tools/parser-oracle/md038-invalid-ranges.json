@@ -1,0 +1,92 @@
+[
+  {
+    "input": "`\n a \n`\n",
+    "error": "Value of 'range' passed to onError by 'MD038' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "`\n a \n`",
+        "range": [
+          2,
+          2
+        ],
+        "fixInfo": {
+          "editColumn": 2,
+          "deleteCount": 2
+        }
+      },
+      {
+        "lineNumber": 2,
+        "context": "`\n a \n`",
+        "range": [
+          -1,
+          2
+        ],
+        "fixInfo": {
+          "editColumn": -1,
+          "deleteCount": 2
+        }
+      }
+    ]
+  },
+  {
+    "input": "`\n  a  \n`\n",
+    "error": "Value of 'range' passed to onError by 'MD038' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "`\n  a  \n`",
+        "range": [
+          2,
+          3
+        ],
+        "fixInfo": {
+          "editColumn": 2,
+          "deleteCount": 3
+        }
+      },
+      {
+        "lineNumber": 2,
+        "context": "`\n  a  \n`",
+        "range": [
+          -2,
+          3
+        ],
+        "fixInfo": {
+          "editColumn": -2,
+          "deleteCount": 3
+        }
+      }
+    ]
+  },
+  {
+    "input": "> `\n>  a \n> `\n",
+    "error": "Value of 'range' passed to onError by 'MD038' is incorrect for 'input'.",
+    "raw": [
+      {
+        "lineNumber": 2,
+        "context": "`\n>  a \n> `",
+        "range": [
+          4,
+          2
+        ],
+        "fixInfo": {
+          "editColumn": 4,
+          "deleteCount": 2
+        }
+      },
+      {
+        "lineNumber": 2,
+        "context": "`\n>  a \n> `",
+        "range": [
+          -1,
+          2
+        ],
+        "fixInfo": {
+          "editColumn": -1,
+          "deleteCount": 2
+        }
+      }
+    ]
+  }
+]

@@ -35,10 +35,16 @@ pub(crate) struct BareMarker {
     pub parent: Range<usize>,
 }
 
+pub(crate) struct CodeSpan {
+    pub span: Range<usize>,
+    pub prefixes: Vec<Range<usize>>,
+}
+
 #[derive(Default)]
 pub(crate) struct InlineAnalysis {
     pub attention: Vec<AttentionPair>,
     pub bare: Vec<BareMarker>,
+    pub code: Vec<CodeSpan>,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -234,6 +240,7 @@ fn resolve(
     InlineAnalysis {
         attention: output,
         bare,
+        ..Default::default()
     }
 }
 
@@ -271,7 +278,7 @@ impl Scopes<'_> {
             }
         }
         excluded.sort_by_key(|range| range.start);
-        let prefixes = self.prefixes(span.clone(), owner);
+        let prefixes = self.prefixes(span.clone(), owner, true);
         let logical = if quotes == 0 {
             self.source.text()
         } else {
@@ -284,7 +291,12 @@ impl Scopes<'_> {
         self.output.bare.extend(analysis.bare);
     }
 
-    fn prefixes(&self, span: Range<usize>, owner: Option<usize>) -> Vec<Range<usize>> {
+    fn prefixes(
+        &self,
+        span: Range<usize>,
+        owner: Option<usize>,
+        trim_indent: bool,
+    ) -> Vec<Range<usize>> {
         let path = owner.map(|index| ContainerPath::for_region(self.source, self.parsed, index));
         let mut output = vec![];
         for line in crate::md013::covered_lines(self.source, span) {
@@ -295,7 +307,7 @@ impl Scopes<'_> {
                 .as_ref()
                 .and_then(|path| path.content_start_at(raw, line))
                 .unwrap_or(0);
-            while matches!(raw.as_bytes().get(end), Some(b' ' | b'\t')) {
+            while trim_indent && matches!(raw.as_bytes().get(end), Some(b' ' | b'\t')) {
                 end += 1;
             }
             if end > 0 {
@@ -318,10 +330,14 @@ impl Scopes<'_> {
         };
         let span = base + position.start.offset..base + position.end.offset;
         match node {
-            Node::InlineCode(_)
-            | Node::InlineMath(_)
-            | Node::Html(_)
-            | Node::FootnoteReference(_) => excluded.push(span),
+            Node::InlineCode(_) => {
+                self.output.code.push(CodeSpan {
+                    span: span.clone(),
+                    prefixes: self.prefixes(span.clone(), owner, false),
+                });
+                excluded.push(span);
+            }
+            Node::InlineMath(_) | Node::Html(_) | Node::FootnoteReference(_) => excluded.push(span),
             Node::Link(_) | Node::LinkReference(_) => {
                 excluded.push(span.clone());
                 let raw = &self.source.text()[span.clone()];
@@ -445,5 +461,6 @@ pub(crate) fn inline_analysis(source: &Source, parsed: &ParsedDocument) -> Inlin
         .attention
         .sort_by_key(|pair| pair.opening.start);
     scopes.output.bare.sort_by_key(|marker| marker.span.start);
+    scopes.output.code.sort_by_key(|code| code.span.start);
     scopes.output
 }
