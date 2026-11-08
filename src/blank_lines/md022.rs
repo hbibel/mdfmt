@@ -74,6 +74,34 @@ fn findings(source: &Source, parsed: &ParsedDocument, document: &DocumentConfig)
         }
     }
     visit(&parsed.tree, base, &mut headings);
+    // Container recovery can promote a one-dash setext underline to an empty
+    // list. Keep its physical heading boundary without granting native ownership.
+    let mut siblings = std::collections::HashMap::new();
+    for (index, region) in parsed.regions.iter().enumerate() {
+        let previous = region
+            .parent
+            .and_then(|parent| siblings.insert(parent, index));
+        let first = source.position(region.span.start).unwrap().line;
+        let end = source.line_range(first).unwrap().end;
+        if region.kind != RegionKind::List
+            || source.text()[region.span.start..end].trim_matches([' ', '\t']) != "-"
+        {
+            continue;
+        }
+        let Some(paragraph) = previous
+            .map(|index| &parsed.regions[index])
+            .filter(|r| r.kind == RegionKind::Paragraph)
+        else {
+            continue;
+        };
+        if crate::md013::covered_lines(source, paragraph.span.clone()).end + 1 == first {
+            headings.push(Heading {
+                span: paragraph.span.start..end,
+                level: 2,
+            });
+        }
+    }
+    headings.sort_by_key(|heading| heading.span.start);
     let front = parsed
         .regions
         .iter()

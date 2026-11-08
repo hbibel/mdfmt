@@ -149,6 +149,26 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Independent separator review found that the 1 MiB replacement cap still admitted
+  600,000 new lines on a tiny document, exhausting memory in downstream parser or
+  per-line configuration state. A Linux 128 MiB regression reproduced the abort.
+  Admission now also caps generated lines at 4,096 per stage, atomically; larger
+  requirements remain findings. Both sides of that limit were checked under the
+  same memory bound.
+- Full-document preservation checks per separator made ordinary heading-heavy
+  documents quadratic. Validate preferred batches together, with at most 32
+  fallback subdivision/alternative checks and one final combined validation.
+  Work-budget exhaustion must discard the entire stage: keeping the already
+  explored subset caused further edits on a second invocation. Timed 800-heading
+  and mixed-safe/unsafe regressions cover performance and stable rejection.
+- Independent review also found wrong MD031 ending lines when an unterminated
+  quoted fence loses its container, and missing MD022 findings for a one-dash
+  setext heading after a quote. Token end points can include a newline beyond the
+  final code-content line; empty-list misclassification can hide a physical
+  setext boundary. Both selectors now retain source-backed diagnostic boundaries
+  without independently granting edit ownership; expanded pinned matrices cover
+  adjacent lists, quotes, terminators and repeated empty markers.
+
 - Combined separator rules can request different but compatible prefixes at the
   same boundary, such as a quoted list followed by a root heading. Discarding
   all differing prefixes withheld safe repairs. Keep alternatives and choose an
@@ -246,6 +266,19 @@ Findings from the 2026-11-06 diagnostic batch:
   The native adapter now covers all regional-indicator pairs and these cases.
 
 ## Critical implementation flaws
+
+- Separator review exposed an existing native `markdown` parser panic on mixed
+  list/fence boundaries, including
+  `- item\n---\n1. item\n-\n  ```\n    code\n1. item\n`.
+  It reproduced on the pre-batch baseline and crossed the public library API;
+  CLI processing exited 101 even with every rule disabled. All native AST entry
+  points now contain unwinding dependency panics: root failures become explicit
+  parsing errors and CLI exit 2, without file replacement. The host's panic hook
+  is not changed and may still log the caught panic. `tests/parser_failures.rs`
+  verifies containment and unchanged files. Full support for these valid inputs
+  remains a parser-hardening requirement; the MD031 receipt labels 16 error
+  outcomes separately from diagnostic parity. Abort-on-panic builds cannot offer
+  unwind containment.
 
 - Unreleased MD003 conversions initially deleted literal leading/trailing hashes
   because

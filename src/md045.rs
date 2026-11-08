@@ -125,7 +125,7 @@ fn inline_candidates(text: &str) -> Vec<Candidate> {
         },
         ..markdown::ParseOptions::gfm()
     };
-    let Ok(tree) = markdown::to_mdast(expanded.text(), &options) else {
+    let Ok(tree) = crate::parse::mdast(expanded.text(), &options) else {
         return vec![];
     };
     fn visit(node: &Node, quotes: usize, offsets: &[usize], output: &mut Vec<Candidate>) {

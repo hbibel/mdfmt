@@ -99,7 +99,7 @@ fn recover(text: &str, table: bool) -> Vec<Candidate> {
         },
         ..markdown::ParseOptions::gfm()
     };
-    markdown::to_mdast(text, &options)
+    super::mdast(text, &options)
         .map(|tree| candidates(&tree, 0, table))
         .unwrap_or_default()
 }

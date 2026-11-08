@@ -186,6 +186,14 @@ fn unsafe_inner_fence_findings_remain_after_safe_outer_list_repairs() {
 }
 
 #[test]
+fn exhausted_validation_work_withholds_the_batch_without_incremental_repairs() {
+    let input = "# H\n- item\n  ```rust\n  x\n  ```\n  tail\n\n".repeat(32);
+    let result = stable(&input, &input, &config(json!({"MD022":false})));
+    assert!(result.edits.is_empty());
+    assert!(!result.diagnostics.is_empty());
+}
+
+#[test]
 fn cli_check_write_and_warning_only_modes_share_separator_permissions() {
     use std::{fs, process::Command};
     let directory = tempfile::tempdir().unwrap();

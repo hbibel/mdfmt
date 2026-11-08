@@ -134,7 +134,7 @@ pub(crate) fn diagnose(
                     ..markdown::ParseOptions::gfm()
                 };
                 if let Ok(tree) =
-                    markdown::to_mdast(&format!("x {label}\n\n{definitions}"), &options)
+                    crate::parse::mdast(&format!("x {label}\n\n{definitions}"), &options)
                     && let Some(first) = tree.children().and_then(|children| children.first())
                 {
                     visit(first, source, start, document, definitions, quotes, output);

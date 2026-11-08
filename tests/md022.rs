@@ -239,7 +239,14 @@ fn large_unsigned_counts_are_not_silently_replaced_with_the_default() {
     );
 }
 
-fn bounded_cli(mut command: std::process::Command) -> std::process::Output {
+fn bounded_cli(command: std::process::Command) -> std::process::Output {
+    bounded_cli_with_timeout(command, std::time::Duration::from_secs(3))
+}
+
+fn bounded_cli_with_timeout(
+    mut command: std::process::Command,
+    timeout: std::time::Duration,
+) -> std::process::Output {
     use std::{
         process::Stdio,
         time::{Duration, Instant},
@@ -254,12 +261,91 @@ fn bounded_cli(mut command: std::process::Command) -> std::process::Output {
         if child.try_wait().unwrap().is_some() {
             return child.wait_with_output().unwrap();
         }
-        if start.elapsed() > Duration::from_secs(3) {
+        if start.elapsed() > timeout {
             child.kill().unwrap();
             let _ = child.wait();
             panic!("MD022 did not finish a tiny document with a large blank-line requirement");
         }
         std::thread::sleep(Duration::from_millis(10));
+    }
+}
+
+#[cfg(target_os = "linux")]
+#[test]
+fn admitted_replacement_bytes_do_not_allow_unbounded_generated_line_state() {
+    use std::{fs, process::Command};
+    let directory = tempfile::tempdir().unwrap();
+    let input = "before\n# H\nafter\n";
+    let path = directory.path().join("doc.md");
+    fs::write(&path, input).unwrap();
+    fs::write(
+        directory.path().join(".markdownlint-cli2.jsonc"),
+        r#"{"config":{"default":false,"MD022":{"lines_above":600000,"lines_below":0}}}"#,
+    )
+    .unwrap();
+    let mut command = Command::new("sh");
+    command.current_dir(directory.path()).args([
+        "-c",
+        "ulimit -v 131072; exec \"$1\" --write doc.md",
+        "mdfmt-resource-check",
+        env!("CARGO_BIN_EXE_mdfmt"),
+    ]);
+    let output = bounded_cli(command);
+    assert_eq!(
+        output.status.code(),
+        Some(1),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(!String::from_utf8_lossy(&output.stderr).contains("allocation"));
+    assert_eq!(fs::read_to_string(&path).unwrap(), input);
+}
+
+#[test]
+fn heading_heavy_documents_do_not_reparse_once_per_separator() {
+    use std::{fs, process::Command, time::Duration};
+    let directory = tempfile::tempdir().unwrap();
+    let path = directory.path().join("doc.md");
+    fs::write(&path, "# Heading\ntext\n".repeat(800)).unwrap();
+    fs::write(
+        directory.path().join(".markdownlint-cli2.jsonc"),
+        r#"{"config":{"default":false,"MD022":true}}"#,
+    )
+    .unwrap();
+    let mut command = Command::new(env!("CARGO_BIN_EXE_mdfmt"));
+    command
+        .current_dir(directory.path())
+        .args(["--write", "doc.md"]);
+    let output = bounded_cli_with_timeout(command, Duration::from_secs(30));
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert_eq!(
+        fs::read_to_string(&path).unwrap(),
+        format!(
+            "{}\n",
+            "# Heading\n\ntext\n\n".repeat(800).trim_end_matches('\n')
+        )
+    );
+}
+
+#[test]
+fn single_dash_setext_after_a_quote_remains_a_source_backed_finding() {
+    let input = "> # H\ntext\n-\n";
+    let settings = config(json!({"lines_above":1,"lines_below":0}));
+    for fix in [false, true] {
+        let result = format_with_config(input, &FormatOptions { fix }, &settings).unwrap();
+        assert_eq!(result.output, input);
+        assert!(result.edits.is_empty());
+        assert_eq!(result.diagnostics.len(), 1);
+        assert_eq!(result.diagnostics[0].span, Some(6..6));
+        assert_eq!(
+            result.diagnostics[0].message,
+            "Headings should be surrounded by blank lines [Expected: 1; Actual: 0; Above; Context: \"text\"]"
+        );
     }
 }
 

@@ -7,7 +7,7 @@ insertions without changing heading text, code, list tightness or container owne
 
 **Architecture:** A shared read-only separator model drives three rule modules.
 Merge compatible insertions at the same boundary, preserve physical directive
-targets, and validate both individual insertions and their combined native tree.
+targets, and validate preferred batches with bounded fallback and a final tree check.
 Run the separator stage after fence-style repairs and before MD058/MD003.
 
 **Tech Stack:** Existing Rust toolchain, native source/parser/configuration/edit
@@ -38,7 +38,7 @@ pipeline, pinned markdownlint 0.42.0 development oracle. No runtime dependency a
 - Preserve any physical line targeted by a next-line/configuration override.
   Do not insert between the directive and its target, even for unrelated rules.
 - Count virtual boundary blanks arithmetically. Bound separator insertion bytes
-  to 1 MiB per stage; oversized requirements remain diagnostics without allocating
+  to 1 MiB and generated lines to 4,096 per stage; oversized requirements remain diagnostics without allocating
   the requested replacement. This is resource safety, not a changed rule option.
 - The existing roadmap is the approved design. No new user-facing configuration,
   unsafe repair policy or runtime language is introduced.
@@ -228,16 +228,64 @@ Do not count unimplemented rule repairs as coverage.
   Rust tests/fmt/clippy and affected MD003/MD012/MD048/MD058 comparisons.
   Expected: final output and diagnostics are stable on the second call, no
   directive changes target, no table/code bytes change, and unsafe findings remain.
-- [ ] Request one independent review of this entire plan's commit range, including
+- [x] Request one independent review of this entire plan's commit range, including
   every Review Focus item and ledgered decision. Fix Important/Critical findings
-  in one RED→GREEN pass and rerun the complete suite; record substantial findings
+   in one RED→GREEN pass and rerun the complete suite; record substantial findings
   in the roadmap. Do not spend a fix pass on cosmetic issues.
-- [ ] Record verification and accurate coverage, commit, and continue the remaining
+- [x] Record verification and accurate coverage, commit, and continue the remaining
   roadmap in the existing worktree without a merge/push or routine approval pause.
 
-Status: Tasks 1–3 are implemented and verified; coverage is 39/53. Task 4's
-combined interactions pass (378 Rust tests across 50 targets, fmt/clippy and all
-seven affected oracles). Independent review remains pending.
+Status: all four tasks are complete; coverage remains 39/53. The independent
+5232655..a7bc8fc review found four Important issues, all reproduced and fixed in
+one pass with RED-to-GREEN tests. It found no new Critical issue or minor.
+The expanded matrix also reproduced an existing native parser panic; containment
+now returns explicit errors, but supporting those inputs remains roadmap work.
+
+Final verification: 385 Rust tests across 51 targets; fmt/clippy/diff checks clean.
+Pinned/native comparisons: MD022 792; MD031 476 plus 16 explicit native-error
+outcomes; MD032 345; MD003 1,206; MD012 125; MD048 220; MD058 207; content
+diagnostics 554; MD045 207; MD033 602. The combined oracle command timed out
+before finishing MD033; its separate rerun passed. Optimized release probes took
+0.451s for 400 headings and 0.969s for 800 headings (review baseline: over 8s for
+800). No merge or push; keep this branch/worktree and continue the emphasis plan.
+
+## Retained execution rulings
+
+- Task 1: cap generated whitespace rather than honor unbounded counts, initially
+  1 MiB and now also 4,096 new lines per stage. Cost if wrong: exceptionally large
+  spacing requests remain explicit findings, not edits.
+- Task 2: consume recovered code snapshots with retained list ownership. Native
+  code regions omit eligible recovered fences. Cost if wrong: diagnostic/list
+  exclusion classification, not independent edit authorization.
+- Task 2: exercise a realizable active MD040 next-line target at an opening fence,
+  not an invalid directive-bearing closing fence. Cost if wrong: the regression
+  covers opening-target retargeting rather than an impossible closing fixture.
+- Task 3: model lazy generic HTML as a source-mapped block in surviving containers,
+  not inline paragraph continuation. Cost if wrong: list diagnostic classification
+  and another read-only adapter to maintain; raw source/edit ownership stay intact.
+- Task 4: test MD012 maxima 1/2 and rejection of 0; retain MD003's three-marker
+  underlines. Cost if wrong: unsupported zero spacing and a new caption-width
+  underline policy are not covered or introduced.
+- Task 4: retain prefix alternatives and prefer the shortest safe one admitting
+  the largest budgeted requirement. Cost if wrong: repair availability or
+  second-call stability; existing structure/directive/resource guards remain.
+- Final review: keep all four findings Important, based on resource failure,
+  disproportionate cost and incorrect checks. Cost if wrong: conservative repair
+  limits and broader read-only selectors rather than cosmetic work.
+- Final review: batch validation with 32 fallback checks and atomic withholding
+  on exhaustion replaces per-boundary validation. Cost if wrong: complex mixed
+  stages retain findings rather than incrementally repairing on successive calls.
+- Final review: physical fence end points and paragraph/one-dash boundaries drive
+  diagnostics separately from edit ownership. Cost if wrong: diagnostic locations
+  or classification, not authorization to rewrite uncertain source.
+- Declined-to-judge baseline panic: guard all native AST calls instead of ignoring
+  the preexisting crash. Cost if wrong: unsupported valid inputs get operational
+  errors; panic hooks may still log and abort-on-panic builds cannot be contained.
+- Declined-to-judge emphasis work: preserve the next batch's unregistered module,
+  oracle/receipt and seven deferred RED tests separately. Cost if wrong: MD049
+  remains unfinished and unclaimed during separator verification.
+
+Deferred minors: none.
 
 Planning check: pinned runtime observations confirm the three literal diagnostic
 examples and their upstream insertion locations. The shared interfaces, stage

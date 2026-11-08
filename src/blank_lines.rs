@@ -93,6 +93,42 @@ fn safe(source: &Source, parsed: &ParsedDocument, edits: &[Edit]) -> bool {
         })
 }
 
+fn select_batches(
+    source: &Source,
+    parsed: &ParsedDocument,
+    choices: &[Vec<Edit>],
+    remaining: &mut usize,
+    output: &mut Vec<Edit>,
+) -> bool {
+    if choices.is_empty() {
+        return true;
+    }
+    if *remaining == 0 {
+        return false;
+    }
+    *remaining -= 1;
+    let batch: Vec<_> = choices.iter().map(|options| options[0].clone()).collect();
+    if safe(source, parsed, &batch) {
+        output.extend(batch);
+    } else if choices.len() == 1 {
+        for alternative in &choices[0][1..] {
+            if *remaining == 0 {
+                return false;
+            }
+            *remaining -= 1;
+            if safe(source, parsed, std::slice::from_ref(alternative)) {
+                output.push(alternative.clone());
+                break;
+            }
+        }
+    } else {
+        let middle = choices.len() / 2;
+        return select_batches(source, parsed, &choices[..middle], remaining, output)
+            && select_batches(source, parsed, &choices[middle..], remaining, output);
+    }
+    true
+}
+
 pub(crate) fn propose(
     source: &Source,
     parsed: &ParsedDocument,
@@ -139,15 +175,21 @@ pub(crate) fn propose(
     let newline = crate::md047::preferred_newline(source.text());
     // Valid configuration can request trillions of blanks. Keep the requested
     // diagnostic, but never allocate an unbounded replacement to satisfy it.
-    let total = selected.values().try_fold(0usize, |total, candidates| {
-        let count = candidates.iter().map(|c| c.missing).max()?;
-        let width = candidates.iter().map(|c| c.prefix.len()).max()?;
-        total.checked_add((width + newline.len()).checked_mul(count)?)
-    });
-    if total.is_none_or(|bytes| bytes > 1024 * 1024) {
+    let total = selected
+        .values()
+        .try_fold((0usize, 0usize), |(bytes, lines), candidates| {
+            let count = candidates.iter().map(|c| c.missing).max()?;
+            let width = candidates.iter().map(|c| c.prefix.len()).max()?;
+            Some((
+                bytes.checked_add((width + newline.len()).checked_mul(count)?)?,
+                lines.checked_add(count)?,
+            ))
+        });
+    // Newlines also allocate parser and per-line configuration state downstream.
+    if total.is_none_or(|(bytes, lines)| bytes > 1024 * 1024 || lines > 4096) {
         return vec![];
     }
-    let edits: Vec<_> = selected
+    let choices: Vec<_> = selected
         .into_values()
         .filter_map(|mut candidates| {
             let count = candidates.iter().map(|c| c.missing).max()?;
@@ -158,23 +200,30 @@ pub(crate) fn propose(
                     .then(a.prefix.cmp(&b.prefix))
             });
             candidates.dedup_by(|a, b| a.prefix == b.prefix);
-            candidates.into_iter().find_map(|mut candidate| {
-                candidate.missing = count;
-                // A smaller plain-blank budget must not partially satisfy a
-                // quoted requirement and leave another edit for the next call.
-                if budget(source, document, &candidate) < count {
-                    return None;
-                }
-                let edit = Edit {
-                    span: candidate.at..candidate.at,
-                    replacement: format!("{}{newline}", candidate.prefix).repeat(count),
-                    origin: candidate.rule.into(),
-                };
-                safe(source, parsed, std::slice::from_ref(&edit)).then_some(edit)
-            })
+            let options: Vec<_> = candidates
+                .into_iter()
+                .filter_map(|mut candidate| {
+                    candidate.missing = count;
+                    // A smaller plain-blank budget must not partially satisfy a
+                    // quoted requirement and leave another edit for the next call.
+                    if budget(source, document, &candidate) < count {
+                        return None;
+                    }
+                    Some(Edit {
+                        span: candidate.at..candidate.at,
+                        replacement: format!("{}{newline}", candidate.prefix).repeat(count),
+                        origin: candidate.rule.into(),
+                    })
+                })
+                .collect();
+            (!options.is_empty()).then_some(options)
         })
         .collect();
-    if safe(source, parsed, &edits) {
+    let mut edits = vec![];
+    // Most documents need one batch validation. Limit fallback work on mixed
+    // safe/unsafe boundaries instead of reparsing once for every separator.
+    if select_batches(source, parsed, &choices, &mut 32, &mut edits) && safe(source, parsed, &edits)
+    {
         edits
     } else {
         vec![]

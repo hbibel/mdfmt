@@ -28,7 +28,7 @@ fn html_token_end(text: &str) -> Option<usize> {
         end?
     };
     let candidate = format!("x {}", &text[..end]);
-    let tree = markdown::to_mdast(&candidate, &markdown::ParseOptions::gfm()).ok()?;
+    let tree = super::mdast(&candidate, &markdown::ParseOptions::gfm()).ok()?;
     fn is_html(node: &markdown::mdast::Node, end: usize) -> bool {
         if matches!(node, markdown::mdast::Node::Html(_))
             && node.position().is_some_and(|position| {

@@ -66,7 +66,7 @@ pub(crate) fn diagnose(
             let position = node.position().unwrap();
             let offset = base + position.start.offset;
             let raw = &source.text()[offset..base + position.end.offset];
-            if let Ok(tree) = markdown::to_mdast(raw, &options) {
+            if let Ok(tree) = crate::parse::mdast(raw, &options) {
                 paragraphs.extend(
                     tree.children()
                         .into_iter()

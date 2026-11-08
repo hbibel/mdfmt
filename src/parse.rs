@@ -469,6 +469,16 @@ static FRONT_MATTER: LazyLock<regex::Regex> = LazyLock::new(|| {
     regex::Regex::new(&format!(r"(?m)((^---{horizontal}*$[\s\S]+?^---{space}*)|(^\+\+\+{horizontal}*$[\s\S]+?^(\+\+\+|\.\.\.){space}*)|(^\{{{horizontal}*$[\s\S]+?^\}}{space}*))(\n|$)")).unwrap()
 });
 
+pub(crate) fn mdast(text: &str, options: &markdown::ParseOptions) -> Result<Node, String> {
+    // A dependency panic must not unwind through the public formatting API.
+    // Leave the host's panic hook intact rather than changing process-global state.
+    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        markdown::to_mdast(text, options)
+    }))
+    .map_err(|_| "native parser panicked; input was not formatted".to_owned())?
+    .map_err(|error| error.to_string())
+}
+
 pub(crate) fn parse(source: &Source) -> Result<ParsedDocument, String> {
     let mut parsed = parse_with_math(source, false)?;
     if !table_flow::candidates(source, &parsed).is_empty() {
@@ -527,8 +537,7 @@ fn parse_with_math(source: &Source, math_flow: bool) -> Result<ParsedDocument, S
     let mut options = markdown::ParseOptions::gfm();
     options.constructs.math_flow = math_flow;
     options.constructs.math_text = math_flow;
-    let root =
-        markdown::to_mdast(&text[front_end..], &options).map_err(|error| error.to_string())?;
+    let root = mdast(&text[front_end..], &options)?;
     let mut parsed = ParsedDocument {
         tree: root.clone(),
         regions: vec![Region {

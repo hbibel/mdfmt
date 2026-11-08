@@ -51,7 +51,7 @@ fn findings(source: &Source, parsed: &ParsedDocument, document: &DocumentConfig)
         }
         let span = offsets[region.span.start]..offsets[region.span.end];
         let first = source.position(span.start).unwrap().line;
-        let last = crate::md013::covered_lines(source, span.clone()).end;
+        let last = source.position(span.end).unwrap().line;
         let Some(settings) = document.state("MD031", first) else {
             continue;
         };
@@ -88,6 +88,9 @@ pub(super) fn insertions(
     findings(source, parsed, document)
         .into_iter()
         .filter_map(|finding| {
+            if finding.line > crate::md013::covered_lines(source, finding.span.clone()).end {
+                return None;
+            }
             Some(Insertion {
                 at: source.line_range(finding.insertion)?.start,
                 prefix: super::prefix_for(source, parsed, RegionKind::Code, &finding.span)?,

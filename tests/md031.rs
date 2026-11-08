@@ -45,6 +45,39 @@ fn fence_separators_preserve_code_and_settle_once() {
 }
 
 #[test]
+fn unterminated_quote_fence_uses_token_end_not_last_code_content_line() {
+    for (input, expected) in [
+        ("> ```\n- item\n>\n", vec![]),
+        ("> ```\n> x\n- item\n# H\n", vec![3]),
+    ] {
+        for fix in [false, true] {
+            let result =
+                format_with_config(input, &FormatOptions { fix }, &config(json!(true))).unwrap();
+            assert_eq!(result.output, input);
+            assert!(result.edits.is_empty());
+            let source = Source::new(input.into());
+            assert_eq!(
+                result
+                    .diagnostics
+                    .iter()
+                    .map(|d| source
+                        .position(d.span.as_ref().unwrap().start)
+                        .unwrap()
+                        .line)
+                    .collect::<Vec<_>>(),
+                expected
+            );
+            if !expected.is_empty() {
+                assert_eq!(
+                    result.diagnostics[0].message,
+                    "Fenced code blocks should be surrounded by blank lines [Context: \"- item\"]"
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn fence_boundaries_and_list_exceptions_match_pinned_observations() {
     let rows: Value = serde_json::from_str(include_str!(
         "../tools/parser-oracle/md031-observations.json"
@@ -58,8 +91,14 @@ fn fence_boundaries_and_list_exceptions_match_pinned_observations() {
             input,
             &FormatOptions { fix: false },
             &config(row["options"].clone()),
-        )
-        .unwrap();
+        );
+        if row["nativeError"] == "parse-error" {
+            assert!(
+                matches!(result,Err(mdfmt::ProcessingError::Parse(message)) if message.contains("native parser panicked"))
+            );
+            continue;
+        }
+        let result = result.unwrap();
         assert_eq!(result.output, input);
         let actual:Vec<_>=result.diagnostics.iter().map(|d|{
             assert_eq!(d.code,"MD031");let span=d.span.clone().unwrap();assert!(span.is_empty());
