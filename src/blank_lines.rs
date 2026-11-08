@@ -1,5 +1,6 @@
 mod md022;
 mod md031;
+mod md032;
 
 use crate::{
     Diagnostic, Source,
@@ -104,6 +105,7 @@ pub(crate) fn propose(
     for mut candidate in md022::insertions(source, parsed, document)
         .into_iter()
         .chain(md031::insertions(source, parsed, document))
+        .chain(md032::insertions(source, parsed, document))
     {
         let line = source.position(candidate.at).unwrap().line;
         if document.has_any_line_override(line)
@@ -190,5 +192,6 @@ pub(crate) fn diagnose(
 ) -> Vec<Diagnostic> {
     let mut diagnostics = md022::diagnose(source, parsed, document);
     diagnostics.extend(md031::diagnose(source, parsed, document));
+    diagnostics.extend(md032::diagnose(source, parsed, document));
     diagnostics
 }

@@ -444,6 +444,7 @@ pub fn format_with_config(
         "MD029".into(),
         "MD030".into(),
         "MD031".into(),
+        "MD032".into(),
         "MD033".into(),
         "MD035".into(),
         "MD036".into(),

@@ -122,9 +122,9 @@ The next batch adds [MD001/MD025/MD036/MD041/MD043/MD059 content diagnostics](..
 This is followed by [conditional MD003 heading styles](../../compatibility/md003.md).
 The literal-diagnostic batch adds [MD033 HTML findings](../../compatibility/md033.md)
 and [MD060 table-column styles](../../compatibility/md060.md).
-The separator batch starts with [conditional MD022 heading and MD031 fence blanks](../../compatibility/block-separators.md).
-There are now 38 covered built-ins out of 53; milestone 5 is still incomplete.
-Remaining built-ins are MD005, MD007, MD032,
+The separator batch adds [conditional MD022/MD031/MD032 heading/fence/list blanks](../../compatibility/block-separators.md).
+There are now 39 covered built-ins out of 53; milestone 5 is still incomplete.
+Remaining built-ins are MD005, MD007,
 MD034, MD037, MD038, MD039, MD044, MD046, MD049, MD050, MD051,
 MD052, MD053 and MD054. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
@@ -148,6 +148,14 @@ These are committed roadmap items, not first-release requirements. Their exact
 release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
+
+- MD032 exposed a distinct lazy-HTML scope boundary: upstream admits the first
+  lazy generic HTML line as a block in the active list/quote chain, not as inline
+  paragraph text. Native AST-only recovery split lists early, while a plain
+  masking workaround kept paragraphs alive too long. The list-specific diagnostic
+  view now uses source-mapped synthetic block boundaries; original HTML and edit
+  ownership remain unchanged. Pinned tests cover surviving/ended containers,
+  following text/closing tags, tabs, BOM, metadata and mixed line endings.
 
 - Native Code regions alone omit eligible fences after some recovered HTML
   boundaries. MD031 uses the existing recovered code snapshots, now retaining

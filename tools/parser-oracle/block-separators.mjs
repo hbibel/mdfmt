@@ -5,7 +5,7 @@ import {spawnSync} from "node:child_process";
 import {lint} from "markdownlint/sync";
 
 const ruleIndex=process.argv.indexOf("--rule"),rule=ruleIndex<0?"MD022":process.argv[ruleIndex+1];
-assert.ok(["MD022","MD031"].includes(rule),"Only MD022/MD031 are audited in this batch so far");
+assert.ok(["MD022","MD031","MD032"].includes(rule),"Unknown block-separator rule");
 let samples=[
   "before\n# Heading\nafter\n", "# Heading\n", "# Heading", "", "\uFEFF# Heading\r\nnext\r\n",
   "before\n\n# Heading\n\nafter\n", "before\n\n\n# H\n\n\nafter\n",
@@ -44,9 +44,18 @@ if(rule==="MD031"){
   samples.push("before\n   ```rust\n   x\n  ```\nafter\n","> before\n> ```rust\n> x\n> ```\n>\n","- > before\n\n  > ```rust\n  > x\n  > ```\n  > after\n","- > quote\n<span>\n  ```rust\n  x\n  ```\n  after\n","> - item\n<span>\n```rust\nx\n```\nafter\n");
   options=[true,false,{severity:"warning"},{list_items:false}];
 }
+if(rule==="MD032"){
+  samples=["before\n- item\n# After\n","before\n1. item\n# After\n","before\n2. item\n# After\n","# H\n2. item\n# After\n","before\n\n- item\n\n# After\n","- item\n","- item","","> - item\n>\n# After\n","- > item\n  >\n# After\n","- >\n# After\n","- *item\n  *\n# After\n","- item\n\n  [ref]: url\n# After\n","- item\n\n      >\n# After\n","- item\n  <!-- c -->\n# After\n","before\n- item\nlazy continuation\n# After\n","before\n- one\n  - two\n# After\n","before\n* one\n+ two\n# After\n","before\n- one\n\n- two\n# After\n","-\n-\n# After\n","before\n-\n# After\n","- item\n  [missing]\n# After\n","- [ref]\n# After\n\n[ref]: url\n","- ![missing]\n# After\n","---\ntitle: T\n---\n- item\n# After\n","+++\ntitle='T'\n+++\n1. item\n# After\n","\uFEFF- item\r\n# After\r\n","before\r- item\r# After\r","before\r\n- item\n# After\r","```\n- item\n```\n","    - item\n","$$\n- item\n$$\n","<div>\n- item\n</div>\n","<span>\n- item\n# After\n","- item\n<span>\n- next\n# After\n","> - item\n<span>\n- next\n# After\n","- > item\n<span>\n  - next\n# After\n","<!-- comment -->\n- item\n<!-- comment -->\n","<!-- markdownlint-disable-next-line MD032 -->\n- item\n# After\n","<!-- markdownlint-disable-next-line MD032 -->\n- one\n- two\n# After\n","<!-- markdownlint-disable-file blanks-around-lists -->\nbefore\n- item\n# After\n","before\n- item <!-- markdownlint-disable-line MD032 -->\n# After\n","before\n- item <!-- markdownlint-disable-next-line MD026 -->\n# After!\n","before\n- a very long item with many more words than thirty units\n# After\n","[^note]: - item\n    - next\n# After\n","before\n- ```rust\n  x\n  ```\n# After\n","before\n- | a |\n  | --- |\n  | b |\n# After\n"];
+  for(const [first,next]of [["",""],["> ","> "],["- ","  "],["1. ","   "],["> - ",">   "],["- > ","  > "],["-\t","  "],["-\t","    "]]){
+    for(const marker of ["-","*","1."]){samples.push(`${first}before\n${next}${marker} one\n${next}${marker} two\n${next}# After\n`);samples.push(`${first}${marker} one\n${next}  - nested\n${next}# After\n`);}
+  }
+  samples.push("- item\n<span title='😀'>\n</span>\n- next\n# After\n","- item\n<span>\nlazy text\n# After\n","1. item\n<span>\n2. next\n# After\n","- item\n<span>\n2. next\n# After\n","- item\n<span>\n1. next\n# After\n","> - item\n<span>\n> - next\n# After\n","- > item\n<span>\n  > - next\n# After\n","-\titem\n<span>\n    - next\n# After\n","-\n<span>\n- next\n# After\n","- # H\n<span>\n- next\n# After\n","- ```rust\n  x\n  ```\n<span>\n- next\n# After\n","- item\n<div>\n- next\n# After\n","- item\n<script>\n- next\n</script>\n# After\n","- item\n<?php?>\n- next\n# After\n");
+  options=[true,false,{severity:"warning"}];
+  samples.push("- item\nlazy continuation\n<span>\n- next\n# After\n","> - item\nlazy continuation\n<span>\n- next\n# After\n","\uFEFF- item\r\n<span>\r\n- next\r\n# After\r\n","---\ntitle: T\n---\n- item\n<span>\n- next\n# After\n","> - item\n> <span>\n> - next\n# After\n","  - item\n<span>\n  - next\n# After\n");
+}
 const observations=samples.flatMap((input,sample)=>options.map((options,configuration)=>({id:`${sample}-${configuration}`,input,options,findings:findings(input,options)})));
 function findings(input,options){return lint({strings:{input},config:{default:false,[rule]:options}}).input.map(f=>({line:f.lineNumber,range:f.errorRange,detail:f.errorDetail,context:f.errorContext,severity:f.severity}));}
-function message(f){return (rule==="MD022"?"Headings should be surrounded by blank lines":"Fenced code blocks should be surrounded by blank lines")+" ["+[f.detail,f.context===null?null:`Context: "${f.context}"`].filter(x=>x!==null).join("; ")+"]";}
+function message(f){return ({MD022:"Headings should be surrounded by blank lines",MD031:"Fenced code blocks should be surrounded by blank lines",MD032:"Lists should be surrounded by blank lines"}[rule])+" ["+[f.detail,f.context===null?null:`Context: "${f.context}"`].filter(x=>x!==null).join("; ")+"]";}
 const receipt=new URL(rule.toLowerCase()+"-observations.json",import.meta.url),serialized="[\n"+observations.map(row=>"  "+JSON.stringify(row)).join(",\n")+"\n]\n";
 if(process.argv.includes("--record"))writeFileSync(receipt,serialized);else assert.equal(serialized,readFileSync(receipt,"utf8"));
 if(!process.argv.includes("--source-only")){

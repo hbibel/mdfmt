@@ -173,17 +173,21 @@ comparisons retain literal-code preservation. Coverage is 38/53.
 ## Task 3: Outermost-list separators
 
 Files: create `src/blank_lines/md032.rs`, `tests/md032.rs` and MD032 receipt;
-modify the oracle, shared registration, coverage/evidence/help and roadmap.
+create `src/parse/list_flow.rs`; modify `src/parse.rs`, the oracle, shared
+registration, coverage/evidence/help and roadmap.
 
 Interfaces: consume Task 1's shared API; produce the same per-rule functions.
 Use source-mapped diagnostic list ownership, not raw marker regexes.
+The read-only adapter produces `parse::diagnostic_lists(&Source) ->
+Option<(Source, ParsedDocument, Vec<usize>)>`; its byte map composes synthetic
+container boundaries with existing tab expansion. No formatter edit consumes it.
 
-- [ ] Record pinned MD032 observations for ordered/unordered/mixed lists,
+- [x] Record pinned MD032 observations for ordered/unordered/mixed lists,
   nested lists, quote-contained outer lists, lazy continuations, empty items,
   definitions, trailing blanks/prefixes, HTML/math, metadata, directives and warnings.
   Run the oracle's `--record --source-only --rule MD032` mode.
   Expected: pinned receipt only.
-- [ ] Add failing `outer_list_separators_preserve_tightness_and_settle_once`:
+- [x] Add failing `outer_list_separators_preserve_tightness_and_settle_once`:
   `before\n- item\n# After\n` reports list lines 2
   twice (above and below), then becomes `before\n\n- item\n\n# After\n` with
   MD032 alone. A nested child list does not gain a separate separator requirement.
@@ -193,16 +197,20 @@ Use source-mapped diagnostic list ownership, not raw marker regexes.
   assert_eq!(again.output, first.output);
   assert!(again.edits.is_empty());
   ```
-- [ ] Run: `mise exec -- cargo test --test md032`.
+- [x] Run: `mise exec -- cargo test --test md032`.
   Expected: missing MD032 findings.
-- [ ] Implement outermost-list selection and visual-end recovery, using pinned
+- [x] Implement outermost-list selection and visual-end recovery, using pinned
   non-content-token boundaries. Keep unsafe lazy/ownership ambiguities diagnostic-only.
-- [ ] Add regressions for quote-only trailing lines, list-contained fences/tables,
+- [x] Add regressions for quote-only trailing lines, list-contained fences/tables,
   repeated empty markers, references and definitions, tabbed uncertain prefixes,
   neighboring enabled/disabled rules, original-coordinate edits and idempotence.
-- [ ] Run focused MD032/list-rule tests, the MD032 oracle, full Rust tests/fmt/clippy.
+- [x] Run focused MD032/list-rule tests, the MD032 oracle, full Rust tests/fmt/clippy.
   Expected: all pass, with list start values, item ownership and tightness unchanged.
-- [ ] Update truthful MD032 evidence/coverage and commit.
+- [x] Update truthful MD032 evidence/coverage and commit.
+
+Task 3 verified: 368 Rust tests across 49 targets; fmt/clippy clean. All 345
+MD032 raw/fixed comparisons pass, with 657 MD022 and 264 MD031 cases unchanged.
+List-rule focused suites remain green. Coverage is 39/53; batch review is pending.
 
 ## Task 4: Interactions and independent batch review
 
@@ -225,8 +233,8 @@ this plan and the roadmap. Do not count unimplemented rule repairs as coverage.
 - [ ] Record verification and accurate coverage, commit, and continue the remaining
   roadmap in the existing worktree without a merge/push or routine approval pause.
 
-Status: Tasks 1 and 2 are implemented and verified; coverage is 38/53. Tasks 3–4 remain
-pending. The prior MD033/MD060 batch was completed before this plan began.
+Status: Tasks 1–3 are implemented and verified; coverage is 39/53. Task 4's
+combined interactions and independent review remain pending.
 
 Planning check: pinned runtime observations confirm the three literal diagnostic
 examples and their upstream insertion locations. The shared interfaces, stage
