@@ -9,6 +9,8 @@ use std::ops::Range;
 
 #[derive(Clone, PartialEq, Eq)]
 struct Pair {
+    rule: &'static str,
+    astral_context: bool,
     opening: Range<usize>,
     closing: Range<usize>,
 }
@@ -19,21 +21,40 @@ fn pairs(source: &Source, parsed: &ParsedDocument) -> Vec<Pair> {
         .iter()
         .find(|r| r.kind == RegionKind::Root && r.parent.is_some())
         .map_or(0, |r| r.span.start);
-    fn visit(node: &Node, source: &Source, base: usize, quotes: usize, output: &mut Vec<Pair>) {
+    fn visit(
+        node: &Node,
+        source: &Source,
+        base: usize,
+        quotes: usize,
+        mut astral_context: bool,
+        output: &mut Vec<Pair>,
+    ) {
         let quotes = quotes + usize::from(matches!(node, Node::Blockquote(_)));
-        if matches!(node, Node::Emphasis(_))
+        let kind = match node {
+            Node::Emphasis(_) => Some(("MD049", 1)),
+            Node::Strong(_) => Some(("MD050", 2)),
+            _ => None,
+        };
+        if let Some((rule, width)) = kind
             && let Some(position) = node.position()
         {
             let start = base + position.start.offset;
             let end = base + position.end.offset;
-            if end >= start + 2
+            if end >= start + width * 2
                 && matches!(source.text().as_bytes().get(start), Some(b'*' | b'_'))
-                && source.text().as_bytes()[start] == source.text().as_bytes()[end - 1]
+                && source.text().as_bytes()[start..start + width]
+                    .iter()
+                    .chain(&source.text().as_bytes()[end - width..end])
+                    .all(|byte| *byte == source.text().as_bytes()[start])
             {
-                let pair = Pair {
-                    opening: start..start + 1,
-                    closing: end - 1..end,
+                let mut pair = Pair {
+                    rule,
+                    astral_context,
+                    opening: start..start + width,
+                    closing: end - width..end,
                 };
+                astral_context |= astral_neighbors(source, &pair);
+                pair.astral_context = astral_context;
                 if source.text().as_bytes()[start] != b'_' || !astral_neighbors(source, &pair) {
                     output.push(pair);
                 }
@@ -62,18 +83,18 @@ fn pairs(source: &Source, parsed: &ParsedDocument) -> Vec<Pair> {
                 if let Ok(tree) = crate::parse::mdast(&format!("x {label}"), &options)
                     && let Some(first) = tree.children().and_then(|children| children.first())
                 {
-                    visit(first, source, start, 0, output);
+                    visit(first, source, start, 0, astral_context, output);
                 }
             }
         }
         if let Some(children) = node.children() {
             for child in children {
-                visit(child, source, base, quotes, output);
+                visit(child, source, base, quotes, astral_context, output);
             }
         }
     }
     let mut output = vec![];
-    visit(&parsed.tree, source, base, 0, &mut output);
+    visit(&parsed.tree, source, base, 0, false, &mut output);
     output
 }
 
@@ -85,8 +106,14 @@ fn style(marker: u8) -> &'static str {
     }
 }
 
-fn target(document: &DocumentConfig, source: &Source, at: usize, anchor: u8) -> Option<u8> {
-    let state = document.state("MD049", source.position(at).ok()?.line)?;
+fn target(
+    document: &DocumentConfig,
+    source: &Source,
+    rule: &str,
+    at: usize,
+    anchor: u8,
+) -> Option<u8> {
+    let state = document.state(rule, source.position(at).ok()?.line)?;
     if !state.enabled {
         return None;
     }
@@ -119,14 +146,42 @@ fn intraword(source: &Source, pair: &Pair) -> bool {
 fn astral_neighbors(source: &Source, pair: &Pair) -> bool {
     // Pinned micromark classifies adjacent UTF-16 code units, not Unicode scalars.
     // An emoji's surrogate therefore acts like a word character for underscores.
-    source.text()[..pair.opening.start]
+    let mut start = pair.opening.start;
+    let mut end = pair.closing.end;
+    if source.text().as_bytes()[start] == b'_' {
+        while start > 0 && source.text().as_bytes()[start - 1] == b'_' {
+            start -= 1;
+        }
+        while source.text().as_bytes().get(end) == Some(&b'_') {
+            end += 1;
+        }
+    }
+    source.text()[..start]
         .chars()
         .next_back()
         .is_some_and(|ch| ch.len_utf16() == 2)
-        || source.text()[pair.closing.end..]
+        || source.text()[end..]
             .chars()
             .next()
             .is_some_and(|ch| ch.len_utf16() == 2)
+}
+
+fn anchors(source: &Source, pairs: &[Pair]) -> std::collections::HashMap<&'static str, u8> {
+    let mut output = std::collections::HashMap::new();
+    for pair in pairs {
+        output
+            .entry(pair.rule)
+            .or_insert(source.text().as_bytes()[pair.opening.start]);
+    }
+    output
+}
+
+fn enabled(source: &Source, document: &DocumentConfig) -> bool {
+    (1..=source.line_count()).any(|line| {
+        ["MD049", "MD050"]
+            .iter()
+            .any(|rule| document.state(rule, line).is_some_and(|s| s.enabled))
+    })
 }
 
 fn safe(source: &Source, parsed: &ParsedDocument, edits: &[Edit]) -> bool {
@@ -152,38 +207,30 @@ fn safe(source: &Source, parsed: &ParsedDocument, edits: &[Edit]) -> bool {
     before == after
 }
 
-pub(crate) fn propose(
-    source: &Source,
-    parsed: &ParsedDocument,
-    document: &DocumentConfig,
-) -> Vec<Edit> {
-    if !(1..=source.line_count())
-        .any(|line| document.state("MD049", line).is_some_and(|s| s.enabled))
-        || crate::parse::has_unmodeled_syntax(source, parsed)
-    {
+fn propose_once(source: &Source, parsed: &ParsedDocument, document: &DocumentConfig) -> Vec<Edit> {
+    if !enabled(source, document) || crate::parse::has_unmodeled_syntax(source, parsed) {
         return vec![];
     }
     let diagnostic = diagnostic_parse(source);
     let selected = pairs(source, diagnostic.as_ref().unwrap_or(parsed));
-    let Some(first) = selected.first() else {
-        return vec![];
-    };
-    let anchor = source.text().as_bytes()[first.opening.start];
+    let anchors = anchors(source, &selected);
     let native = pairs(source, parsed);
     let mut groups = vec![];
     for pair in selected {
+        let anchor = anchors[pair.rule];
         let actual = source.text().as_bytes()[pair.opening.start];
-        let Some(expected) = target(document, source, pair.opening.start, anchor) else {
+        let Some(expected) = target(document, source, pair.rule, pair.opening.start, anchor) else {
             continue;
         };
         if expected == actual
-            || target(document, source, pair.closing.start, anchor) != Some(expected)
+            || pair.astral_context
+            || target(document, source, pair.rule, pair.closing.start, anchor) != Some(expected)
             || (expected == b'_' && (intraword(source, &pair) || astral_neighbors(source, &pair)))
             || !native.contains(&pair)
             || [pair.opening.clone(), pair.closing.clone()]
                 .iter()
                 .any(|span| {
-                    !document.allows_source("MD049", span.clone(), source)
+                    !document.allows_source(pair.rule, span.clone(), source)
                         || parsed.regions.iter().any(|region| {
                             matches!(
                                 region.kind,
@@ -205,9 +252,9 @@ pub(crate) fn propose(
         let edits: Vec<_> = [pair.opening, pair.closing]
             .into_iter()
             .map(|span| Edit {
+                replacement: char::from(expected).to_string().repeat(span.len()),
                 span,
-                replacement: char::from(expected).to_string(),
-                origin: "MD049".into(),
+                origin: pair.rule.into(),
             })
             .collect();
         groups.push(edits);
@@ -231,44 +278,84 @@ pub(crate) fn propose(
     }
 }
 
+pub(crate) fn propose(
+    source: &Source,
+    parsed: &ParsedDocument,
+    document: &DocumentConfig,
+) -> Vec<Edit> {
+    if !enabled(source, document) {
+        return vec![];
+    }
+    let mut current = Source::new(source.text().into());
+    let mut reparsed = None;
+    let mut edits = vec![];
+    // A marker change can remove the other rule's ASCII-intraword exclusion.
+    // Resolve only this stage's byte-length-preserving dependencies, atomically.
+    for _ in 0..16 {
+        let tree = reparsed.as_ref().unwrap_or(parsed);
+        let proposal = propose_once(&current, tree, document);
+        if proposal.is_empty() {
+            return if edits.is_empty() || safe(source, parsed, &edits) {
+                edits
+            } else {
+                vec![]
+            };
+        }
+        let Ok(output) = apply_authorized_edits(&current, tree, proposal.clone(), &proposal) else {
+            return vec![];
+        };
+        let Ok(composed) = crate::edit::compose_edits(source.text(), &edits, &proposal) else {
+            return vec![];
+        };
+        edits = composed;
+        current = Source::new(output);
+        let Ok(tree) = parse(&current) else {
+            return vec![];
+        };
+        reparsed = Some(tree);
+    }
+    vec![]
+}
+
 pub(crate) fn diagnose(
     source: &Source,
     _parsed: &ParsedDocument,
     document: &DocumentConfig,
 ) -> Vec<Diagnostic> {
-    if !(1..=source.line_count())
-        .any(|line| document.state("MD049", line).is_some_and(|s| s.enabled))
-    {
+    if !enabled(source, document) {
         return vec![];
     }
     let Some(parsed) = diagnostic_parse(source) else {
         return vec![];
     };
     let selected = pairs(source, &parsed);
-    let Some(first) = selected.first() else {
-        return vec![];
-    };
-    let anchor = source.text().as_bytes()[first.opening.start];
+    let anchors = anchors(source, &selected);
     let mut output = vec![];
     for pair in selected {
+        let anchor = anchors[pair.rule];
         let actual = source.text().as_bytes()[pair.opening.start];
         let intraword = intraword(source, &pair);
         for span in [pair.opening, pair.closing] {
-            let Some(expected) = target(document, source, span.start, anchor) else {
+            let Some(expected) = target(document, source, pair.rule, span.start, anchor) else {
                 continue;
             };
             if expected == actual || (expected == b'_' && intraword) {
                 continue;
             }
             output.push(Diagnostic {
-                code: "MD049".into(),
-                rule_id: Some("MD049".into()),
+                code: pair.rule.into(),
+                rule_id: Some(pair.rule.into()),
                 severity: document
-                    .state("MD049", source.position(span.start).unwrap().line)
+                    .state(pair.rule, source.position(span.start).unwrap().line)
                     .unwrap()
                     .severity,
                 message: format!(
-                    "Emphasis style [Expected: {}; Actual: {}]",
+                    "{} style [Expected: {}; Actual: {}]",
+                    if pair.rule == "MD049" {
+                        "Emphasis"
+                    } else {
+                        "Strong"
+                    },
                     style(expected),
                     style(actual)
                 ),

@@ -1,13 +1,12 @@
 # Emphasis styles
 
-MD049 reports configured emphasis-marker styles under markdownlint 0.42.0's
-`lib/md049-md050.mjs`, with conditional paired marker changes. MD050 remains
-planned; a source observation alone does not implement either rule.
+MD049/MD050 report configured emphasis/strong-marker styles under markdownlint
+0.42.0's `lib/md049-md050.mjs`, with conditional paired marker changes.
 
 ## Diagnostics
 
 - `consistent`, `asterisk` and `underscore` follow original token order. A disabled
-  first token still anchors consistent style. Inline options and enabled states
+  first token still anchors each rule's independent consistent style. Inline options and enabled states
   apply independently to each reported endpoint.
 - Underscore requests exclude ASCII intraword markers under upstream's `\w`
   check. Unicode neighbors can still produce findings when a safe edit is absent.
@@ -17,6 +16,8 @@ planned; a source observation alone does not implement either rule.
   Underscores immediately next to an astral character such as emoji are literal;
   native AST equivalence alone can wrongly approve a swap that changes upstream
   emphasis. Exclude those native-only tokens and withhold such underscore repairs.
+  Protect the entire astral-adjacent attention subtree: changing an inner strong
+  run can break the outer emphasis even when its own delimiters remain intact.
 - Original byte spans identify each marker. Receipt columns exclude BOM as
   upstream does; native byte spans retain it. CLI presentation normalizes BOM.
 - Metadata, literal code, math and HTML block ownership follow existing diagnostic
@@ -34,7 +35,11 @@ with positions removed, not whitespace-normalized content. A rejected batch of
 at most 16 pairs may fall back to individual pair checks and one combined check;
 larger rejected batches remain unchanged. This bounds whole-document reparse work
 instead of repeating it for every marker. Marker changes precede prose reflow,
-heading punctuation and heading-style stages.
+heading punctuation and heading-style stages. Adjacent marker changes can remove
+the other rule's intraword exclusion; resolve only this stage's dependencies with
+at most 16 selection rounds and original-byte edit composition. If the stage does
+not settle within that budget, withhold it atomically. No generic repeated-pass
+formatter engine is introduced.
 
 ## Evidence
 
@@ -43,13 +48,20 @@ byte edit application, stable second-call output/findings, multiline paired
 permissions, protected regions, disabled anchors, astral-neighbor preservation
 and an 800-pair CLI work regression.
 
+`tests/md050.rs` covers eight tests and 540 pinned observations, independent
+styles on shared runs, astral ancestry, adjacent-rule dependencies, protected
+source, endpoint permissions, CLI aliases/warnings and combined MD003/MD013/
+MD026/separator behavior. The shared oracle also records 180 dual-rule cases.
+
 The development oracle compares raw/final findings, token structure and content,
 protected source, exit status and idempotence. Its low-level token snapshots use
 the same BOM/newline preprocessing as upstream linting. Node is not a runtime
 dependency.
 
 ```sh
-mise exec -- cargo test --test md049
+mise exec -- cargo test --test md049 --test md050
 mise exec -- cargo build
 node tools/parser-oracle/emphasis-styles.mjs --rule MD049
+node tools/parser-oracle/emphasis-styles.mjs --rule MD050
+node tools/parser-oracle/emphasis-styles.mjs --combined
 ```

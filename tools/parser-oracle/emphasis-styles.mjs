@@ -5,9 +5,10 @@ import { spawnSync } from "node:child_process";
 import { lint } from "markdownlint/sync";
 import { parse } from "./node_modules/markdownlint/lib/micromark-parse.mjs";
 
-const rule = process.argv[process.argv.indexOf("--rule") + 1];
-assert.ok(["MD049", "MD050"].includes(rule), "Use --rule MD049 or --rule MD050");
-const samples = [
+const combined = process.argv.includes("--combined");
+const rule = combined ? "combined" : process.argv[process.argv.indexOf("--rule") + 1];
+assert.ok(["MD049", "MD050", "combined"].includes(rule), "Use --rule MD049 or --rule MD050 or --combined");
+let samples = [
   "", "plain text\n", "_one_ and *two*\n", "*one* and _two_\n",
   "__one__ and **two**\n", "**one** and __two__\n", "***both***\n", "___both___\n",
   "**_both_**\n", "__*both*__\n", "*a _b_ c*\n", "_a *b* c_\n", "**a __b__ c**\n",
@@ -44,9 +45,15 @@ for (const marker of ["*", "**", "_", "__"]) {
     samples.push(`${left}${marker}text${marker}${right}\n`);
   }
 }
-const options = [true, false, {style:"asterisk"}, {style:"underscore"}, {severity:"warning"}];
+let options = [true, false, {style:"asterisk"}, {style:"underscore"}, {severity:"warning"}];
+if(combined) {
+  samples=["***both***\n","___both___\n","**_both_**\n","__*both*__\n","*a _b_ c* and __d **e** f__\n","_one_ **two** *three* __four__\n","😀___both___😀\n","😀***both***😀\n","😀__one__😀 and *two*\n","*one*_*two*_\n","_one_**two**\n","[a ___b___](url) and ***two***\n","> ![a __b__\n> _c_](img) and ***two***\n","| ___one___ | ***two*** |\n| --- | --- |\n","_one_ and **two**\n\n*three* and __four__\n","\uFEFF___one___ and ***two***\r\n","> - ___one___ and ***two***\n","<span>___one___ and ***two***</span>\n","<!-- markdownlint-disable-next-line MD049 MD050 -->\n___one___\n\n***two***\n","***first <!-- markdownlint-disable-next-line MD050 -->\nsecond***\n"];
+  options=["consistent","asterisk","underscore"].flatMap(emphasis=>["consistent","asterisk","underscore"].map(strong=>({MD049:{style:emphasis},MD050:{style:strong}})));
+}
+const settings = options => combined ? {default:false,...options} : {default:false,[rule]:options};
 function findings(input, options) {
-  return lint({strings:{input},config:{default:false,[rule]:options}}).input.map(f => ({
+  return lint({strings:{input},config:settings(options)}).input.map(f => ({
+    ...(combined?{code:f.ruleNames[0]}:{}),
     line:f.lineNumber, column:f.errorRange?.[0] ?? 1, length:f.errorRange?.[1] ?? 0,
     detail:f.errorDetail, severity:f.severity,
   }));
@@ -54,7 +61,7 @@ function findings(input, options) {
 const rows = samples.flatMap((input, sample) => options.map((options, configuration) => ({
   id:`${sample}-${configuration}`, input, options, findings:findings(input, options),
 })));
-const receipt = new URL(`${rule.toLowerCase()}-observations.json`, import.meta.url);
+const receipt = new URL(combined ? "emphasis-combined-observations.json" : `${rule.toLowerCase()}-observations.json`, import.meta.url);
 const serialized = "[\n" + rows.map(row => "  " + JSON.stringify(row)).join(",\n") + "\n]\n";
 if (process.argv.includes("--record")) writeFileSync(receipt, serialized);
 else assert.equal(serialized, readFileSync(receipt, "utf8"));
@@ -80,15 +87,16 @@ if (process.argv.includes("--source-only")) {
     visit(parse(sourceView(input))); return result;
   }
   try { for (const row of rows) for (const fix of [false, true]) {
-    writeFileSync(configuration, JSON.stringify({fix,config:{default:false,[rule]:row.options}}));
+    writeFileSync(configuration, JSON.stringify({fix,config:settings(row.options)}));
     const native=spawnSync(binary,["-"],{input:row.input,encoding:"utf8",cwd:directory});
     assert.equal(native.error,undefined,row.id);
     if(!fix) assert.equal(native.stdout,row.input,row.id);
     const expected=findings(native.stdout,row.options);
     const description=rule==="MD049"?"Emphasis style":"Strong style";
-    const pattern=new RegExp(`^-:(\\d+):(\\d+): (Error|Warning) ${rule}: ${description} \\[([^\\r\\n]*)\\]$`,"gm");
-    const actual=[...native.stderr.matchAll(pattern)].map(m=>({line:Number(m[1]),column:Number(m[2]),detail:m[4],severity:m[3].toLowerCase()}));
-    assert.deepEqual(actual,expected.map(({length,...f})=>f),`${row.id}: fix ${fix}: ${native.stderr}`);
+    const pattern=combined ? /^-:(\d+):(\d+): (Error|Warning) (MD049|MD050): (?:Emphasis|Strong) style \[([^\r\n]*)\]$/gm : new RegExp(`^-:(\\d+):(\\d+): (Error|Warning) ${rule}: ${description} \\[([^\\r\\n]*)\\]$`,"gm");
+    const actual=[...native.stderr.matchAll(pattern)].map(m=>({line:Number(m[1]),column:Number(m[2]),detail:m[combined?5:4],severity:m[3].toLowerCase(),...(combined?{code:m[4]}:{})}));
+    const order=(a,b)=>a.line-b.line||a.column-b.column||(a.code??"").localeCompare(b.code??"");
+    assert.deepEqual(actual.sort(order),expected.map(({length,...f})=>f).sort(order),`${row.id}: fix ${fix}: ${native.stderr}`);
     assert.equal(native.status,expected.some(f=>f.severity==="error")?1:0,`${row.id}: ${native.stderr}`);
     if(fix){
       assert.deepEqual(snapshot(native.stdout),snapshot(row.input),`${row.id}: inline structure/content`);

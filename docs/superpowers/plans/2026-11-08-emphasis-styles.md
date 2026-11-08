@@ -36,7 +36,12 @@ Spec: `docs/superpowers/specs/2026-10-21-mdfmt-design.md`
   output; larger rejected batches remain findings. Preservation and bounded work
   are more important than edit coverage.
 - Account for pinned micromark's UTF-16-unit flanking behavior at astral neighbors;
-  native AST equality alone cannot authorize underscore changes there.
+  native AST equality alone cannot authorize changes anywhere in the affected
+  attention subtree.
+- Adjacent rules can remove each other's intraword exclusions. Resolve only the
+  marker stage's dependencies, at most 16 rounds with original-byte composition;
+  withhold atomically if it does not settle. This is not a generic repeated-pass
+  engine for all formatter stages.
 
 ## Global Constraints
 
@@ -108,31 +113,32 @@ MD049 pinned/native comparisons pass, including supplementary-scalar safeguards;
 
 ## Task 2: MD050 and shared-rule interactions
 
-Files: modify `src/emphasis_styles.rs`, oracle and evidence; create `tests/md050.rs`
-and `tools/parser-oracle/md050-observations.json`; update registration/help,
+Files: modify `src/emphasis_styles.rs`, oracle and evidence; create `tests/md050.rs`,
+`tools/parser-oracle/md050-observations.json` and
+`tools/parser-oracle/emphasis-combined-observations.json`; update registration/help,
 coverage assertions, README, inventory and roadmap.
 
 Interfaces: consume Task 1's shared functions and selector; MD050 uses strong
 nodes and two-character sequences, with its own consistency anchor and options.
 
-- [ ] Record MD050 observations with the same input classes and independent
+- [x] Record MD050 observations with the same input classes and independent
   MD049/MD050 settings, including `***both***` and mixed nesting.
   Run the oracle's `--record --source-only --rule MD050`.
   Expected: pinned receipt only.
-- [ ] Write `strong_pairs_change_only_markers_and_settle_once`:
+- [x] Write `strong_pairs_change_only_markers_and_settle_once`:
   `__one__ and **two**\n` with MD050 asterisk becomes `**one** and **two**\n`;
   raw findings cover columns 1/6 with length 2. Second call is unchanged.
   Test MD049 underscore plus MD050 asterisk on `***both***\n` yielding
   `_**both**_\n`, with identical parsed nesting and protected bytes.
-- [ ] Run `mise exec -- cargo test --test md050`.
+- [x] Run `mise exec -- cargo test --test md050`.
   Expected: missing MD050 findings/repairs.
-- [ ] Register MD050 in the shared selector and diagnostics, retaining paired
+- [x] Register MD050 in the shared selector and diagnostics, retaining paired
   permission and preservation checks. Add no generic repeated-pass engine.
-- [ ] Add combined literal cases for heading punctuation, setext styles,
+- [x] Add combined literal cases for heading punctuation, setext styles,
   configured-width prose reflow and heading/fence/list separators. Check original
   edit application and stable final positions/output/findings on a second call.
   Add CLI check/write and warning-only no-fix cases using both rule aliases.
-- [ ] Run both focused suites and native oracles, full Rust tests/fmt/clippy and
+- [x] Run both focused suites and native oracles, full Rust tests/fmt/clippy and
   affected MD003/MD013/MD026 comparisons.
   Expected: all pass, with unsafe fixes retained as findings.
 - [ ] Update coverage/evidence/roadmap and commit; request one independent review
@@ -141,8 +147,11 @@ nodes and two-character sequences, with its own consistency anchor and options.
 - [ ] Retain ledger rulings in the tracked plan, complete the batch, and continue
   the roadmap without merging, pushing or routine approval prompts.
 
-Status: Task 1 is implemented and verified. Task 2 remains unimplemented; the
-emphasis batch has not yet received its independent review.
+Status: both rules are implemented; Task 2's independent batch review is pending.
+Before review: 402 Rust tests across 53 targets; fmt/clippy/diff clean. Both
+540-case per-rule oracles and 180 combined cases pass, as do 1,206 MD003,
+288 MD013 and 440 MD026 comparisons. Coverage is 41/53. Release probes for 400
+and 800 pairs take 0.183s and 0.518s respectively, with the expected literal output.
 
 Planning check: reviewed the shared pinned upstream source and runtime findings
 for consistency, intraword exclusions and nested/triple sequences. Those are
