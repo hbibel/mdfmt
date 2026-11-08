@@ -1,4 +1,5 @@
 mod md022;
+mod md031;
 
 use crate::{
     Diagnostic, Source,
@@ -28,6 +29,30 @@ pub(crate) fn is_blank(text: &str) -> bool {
             _ => unreachable!(),
         }
     }
+}
+
+fn prefix_for(
+    source: &Source,
+    parsed: &ParsedDocument,
+    kind: crate::parse::RegionKind,
+    span: &std::ops::Range<usize>,
+) -> Option<String> {
+    let index = parsed
+        .regions
+        .iter()
+        .position(|r| r.kind == kind && r.span == *span)?;
+    let line = source.position(span.start).ok()?.line;
+    let raw = &source.text()[source.line_range(line)?];
+    let end = crate::parse::ContainerPath::for_region(source, parsed, index)
+        .content_start_at(raw, line)?;
+    Some(
+        raw[..end]
+            .chars()
+            .map(|ch| if ch == '>' { '>' } else { ' ' })
+            .collect::<String>()
+            .trim_end()
+            .to_owned(),
+    )
 }
 
 fn budget(source: &Source, document: &DocumentConfig, insertion: &Insertion) -> usize {
@@ -76,7 +101,10 @@ pub(crate) fn propose(
         return vec![];
     }
     let mut selected: BTreeMap<usize, Option<Insertion>> = BTreeMap::new();
-    for mut candidate in md022::insertions(source, parsed, document) {
+    for mut candidate in md022::insertions(source, parsed, document)
+        .into_iter()
+        .chain(md031::insertions(source, parsed, document))
+    {
         let line = source.position(candidate.at).unwrap().line;
         if document.has_any_line_override(line)
             || !document.allows_source(candidate.rule, candidate.at..candidate.at, source)
@@ -160,5 +188,7 @@ pub(crate) fn diagnose(
     parsed: &ParsedDocument,
     document: &DocumentConfig,
 ) -> Vec<Diagnostic> {
-    md022::diagnose(source, parsed, document)
+    let mut diagnostics = md022::diagnose(source, parsed, document);
+    diagnostics.extend(md031::diagnose(source, parsed, document));
+    diagnostics
 }

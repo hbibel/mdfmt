@@ -122,9 +122,9 @@ The next batch adds [MD001/MD025/MD036/MD041/MD043/MD059 content diagnostics](..
 This is followed by [conditional MD003 heading styles](../../compatibility/md003.md).
 The literal-diagnostic batch adds [MD033 HTML findings](../../compatibility/md033.md)
 and [MD060 table-column styles](../../compatibility/md060.md).
-The separator batch starts with [conditional MD022 heading blanks](../../compatibility/block-separators.md).
-There are now 37 covered built-ins out of 53; milestone 5 is still incomplete.
-Remaining built-ins are MD005, MD007, MD031, MD032,
+The separator batch starts with [conditional MD022 heading and MD031 fence blanks](../../compatibility/block-separators.md).
+There are now 38 covered built-ins out of 53; milestone 5 is still incomplete.
+Remaining built-ins are MD005, MD007, MD032,
 MD034, MD037, MD038, MD039, MD044, MD046, MD049, MD050, MD051,
 MD052, MD053 and MD054. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
@@ -148,6 +148,12 @@ These are committed roadmap items, not first-release requirements. Their exact
 release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
+
+- Native Code regions alone omit eligible fences after some recovered HTML
+  boundaries. MD031 uses the existing recovered code snapshots, now retaining
+  list ownership for `list_items: false`; recovered diagnostics still do not
+  authorize edits without a matching native owner. Pinned MD031 regressions cover
+  this boundary and surviving/ended list-quote containers.
 
 - MD022's initial unreleased implementation could loop to a huge configured
   blank-line count at virtual file boundaries or allocate a huge replacement.

@@ -76,7 +76,7 @@ MD033 reports disallowed HTML opening tags without deleting or escaping source;
 see [HTML diagnostic evidence](docs/compatibility/md033.md).
 MD060 reports table-column alignment and spacing without changing table bytes;
 see [table-column-style evidence](docs/compatibility/md060.md).
-MD022 adds heading separators where block structure, protected source and
+MD022/MD031 add heading/fence separators where block structure, protected source and
 directive targets remain unchanged; see [separator evidence](docs/compatibility/block-separators.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).

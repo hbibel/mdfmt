@@ -139,12 +139,12 @@ modify the oracle, shared module registration, coverage/evidence/help and roadma
 Interfaces: consume Task 1's `Insertion`, blank classifier and shared stage;
 produce the two per-rule functions defined in Task 1.
 
-- [ ] Record pinned MD031 observations for both fence styles, longer closers,
+- [x] Record pinned MD031 observations for both fence styles, longer closers,
   indented-code exclusions, unclosed/empty fences, list/quote containment,
   `list_items: false`, HTML/math exclusions, comments, directives and severity.
   Run the oracle's `--record --source-only --rule MD031` mode.
   Expected: pinned receipt only.
-- [ ] Add failing `fence_separators_preserve_code_and_settle_once`:
+- [x] Add failing `fence_separators_preserve_code_and_settle_once`:
   `before\n```rust\nx\n```\nafter\n` reports line 2
   and line 4 with fixes disabled, then gains one blank above and below without
   changing `x\n`. `list_items: false` excludes list-contained fences only.
@@ -154,17 +154,21 @@ produce the two per-rule functions defined in Task 1.
   assert_eq!(again.output, first.output);
   assert!(again.edits.is_empty());
   ```
-- [ ] Run: `mise exec -- cargo test --test md031`.
+- [x] Run: `mise exec -- cargo test --test md031`.
   Expected: missing MD031 findings.
-- [ ] Implement fenced-block selection with tab-expanded original-byte mappings,
+- [x] Implement fenced-block selection with tab-expanded original-byte mappings,
   pinned first/last physical lines and neighbor blank checks. Reuse Task 1's
   proposal guard; never insert inside an unclosed fence or alter code bytes.
-- [ ] Add regressions for a quote nested in a list, closing-looking literal code,
-  CRLF/BOM, a next-line target at the closing neighbor, MD048 fence conversion
+- [x] Add regressions for a quote nested in a list, closing-looking literal code,
+  CRLF/BOM, an active next-line target at an insertion boundary, MD048 fence conversion
   and MD013 prose reflow. Assert stable final positions and byte preservation.
-- [ ] Run focused MD031/MD048 tests, the MD031 oracle, full Rust tests/fmt/clippy.
+- [x] Run focused MD031/MD048 tests, the MD031 oracle, full Rust tests/fmt/clippy.
   Expected: all pass, including unchanged code snapshots and second-call output.
-- [ ] Update truthful MD031 evidence/coverage and commit.
+- [x] Update truthful MD031 evidence/coverage and commit.
+
+Task 2 verified: 362 Rust tests across 48 targets; fmt/clippy clean. All 264
+MD031 and 657 MD022 raw/fixed comparisons pass; 363 MD014 and 220 MD048
+comparisons retain literal-code preservation. Coverage is 38/53.
 
 ## Task 3: Outermost-list separators
 
@@ -221,7 +225,7 @@ this plan and the roadmap. Do not count unimplemented rule repairs as coverage.
 - [ ] Record verification and accurate coverage, commit, and continue the remaining
   roadmap in the existing worktree without a merge/push or routine approval pause.
 
-Status: Task 1 is implemented and verified; coverage is 37/53. Tasks 2–4 remain
+Status: Tasks 1 and 2 are implemented and verified; coverage is 38/53. Tasks 3–4 remain
 pending. The prior MD033/MD060 batch was completed before this plan began.
 
 Planning check: pinned runtime observations confirm the three literal diagnostic

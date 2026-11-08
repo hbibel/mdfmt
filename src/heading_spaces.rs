@@ -20,6 +20,7 @@ pub(crate) struct LiteralExclusions {
 pub(crate) struct CodeBlock {
     pub span: Range<usize>,
     pub value: String,
+    pub in_list: bool,
 }
 
 pub(crate) struct TableBlock {
@@ -72,13 +73,16 @@ pub(crate) fn literal_exclusions(
             base: usize,
             output: &mut Vec<CodeBlock>,
             tables: &mut Vec<TableBlock>,
+            in_list: bool,
         ) {
+            let in_list = in_list || matches!(node, markdown::mdast::Node::List(_));
             if let markdown::mdast::Node::Code(code) = node
                 && let Some(position) = &code.position
             {
                 output.push(CodeBlock {
                     span: base + position.start.offset..base + position.end.offset,
                     value: code.value.clone(),
+                    in_list,
                 });
             }
             if let markdown::mdast::Node::Table(table) = node
@@ -112,7 +116,7 @@ pub(crate) fn literal_exclusions(
             }
             if let Some(children) = node.children() {
                 for child in children {
-                    snapshots(child, base, output, tables);
+                    snapshots(child, base, output, tables, in_list);
                 }
             }
         }
@@ -121,7 +125,7 @@ pub(crate) fn literal_exclusions(
             .iter()
             .find(|region| region.kind == RegionKind::Root && region.parent.is_some())
             .map_or(0, |region| region.span.start);
-        snapshots(&parsed.tree, base, &mut code, &mut tables);
+        snapshots(&parsed.tree, base, &mut code, &mut tables, false);
         fn delimiters(source: &Source, parsed: &ParsedDocument, tables: &mut [TableBlock]) {
             for table in tables {
                 let Some(header) = table.rows.first() else {
@@ -163,7 +167,7 @@ pub(crate) fn literal_exclusions(
                 let isolated = Source::new(format!("\n{}", &source.text()[region.span.clone()]));
                 if let Ok(parsed) = crate::parse::parse_flow_diagnostics(&isolated) {
                     let mut found = vec![];
-                    snapshots(&parsed.tree, 0, &mut vec![], &mut found);
+                    snapshots(&parsed.tree, 0, &mut vec![], &mut found, false);
                     delimiters(&isolated, &parsed, &mut found);
                     for mut table in found {
                         let shift = |span: Range<usize>| {

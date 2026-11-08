@@ -148,19 +148,8 @@ pub(super) fn insertions(
     findings(source, parsed, document)
         .into_iter()
         .filter_map(|finding| {
-            let index = parsed
-                .regions
-                .iter()
-                .position(|r| r.kind == RegionKind::Heading && r.span == finding.heading.span)?;
-            let raw = &source.text()[source.line_range(finding.line)?];
-            let prefix = crate::parse::ContainerPath::for_region(source, parsed, index)
-                .content_start_at(raw, finding.line)?;
-            let prefix = raw[..prefix]
-                .chars()
-                .map(|ch| if ch == '>' { '>' } else { ' ' })
-                .collect::<String>()
-                .trim_end()
-                .to_owned();
+            let prefix =
+                super::prefix_for(source, parsed, RegionKind::Heading, &finding.heading.span)?;
             Some(Insertion {
                 at: source.line_range(finding.insertion)?.start,
                 prefix,

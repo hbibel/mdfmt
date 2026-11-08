@@ -1,8 +1,8 @@
 # Block separators
 
 MD022 reports missing blank lines around headings under markdownlint 0.42.0's
-`lib/md022.mjs`, adding them only when reparsing preserves meaning. MD031 and
-MD032 are planned, not implemented by this evidence.
+`lib/md022.mjs`, adding them only when reparsing preserves meaning. MD031 adds
+conditional fence separators under `lib/md031.mjs`. MD032 remains planned.
 
 ## MD022 behavior
 
@@ -18,6 +18,23 @@ MD032 are planned, not implemented by this evidence.
 - Aliases, severity, inline permissions and disabled fixes apply normally.
   Remaining findings use empty spans at final-output line starts, excluding BOM.
 
+## MD031 behavior
+
+- Opening and ending physical fence lines are checked separately. Both fence
+  styles, longer closing markers, unclosed fences and empty blocks follow the
+  pinned parser's boundaries. Indented code, math and HTML-owned fences are not
+  promoted into eligible fenced blocks.
+- `list_items: false` excludes list-contained fences, including quoted/nested
+  lists. Recovered code snapshots retain that ownership independently of edit
+  authorization, covering fences after recovered HTML boundaries.
+- Comments, metadata, BOM and mixed line endings retain the existing source
+  model. Contexts are comment-masked and truncated under upstream's MD031 helper,
+  unlike MD022's untruncated contexts.
+- Code bytes and language/info strings remain exact. Adding separators must not
+  loosen a list or retarget an active next-line directive for another rule.
+- Fence-style repairs and prose reflow run before this separator stage; remaining
+  diagnostics refer to their final output. Aliases, severity and fix controls apply.
+
 ## Conditional repairs
 
 Insertions use the document's preferred newline and a verified continuation
@@ -25,8 +42,8 @@ prefix. Compatible requests sharing a blank run merge by the largest missing
 count rather than adding duplicate padding. Each insertion and the combined
 batch must preserve the native tree and exact protected source.
 
-Root and quote-contained headings can gain separators without changing their
-captions. List-tightness changes, ambiguous recovered ownership, metadata-region
+Root and quote-contained headings/fences can gain separators without changing
+captions or code. List-tightness changes, ambiguous recovered ownership, metadata-region
 changes, code/table edits and uncertain syntax are preserved with findings.
 An unsafe combined batch may withhold otherwise safe individual insertions.
 
@@ -48,10 +65,15 @@ and idempotence. Native-only process regressions bound huge-count checking and,
 on Linux, verify allocation safety under a 128 MiB virtual-memory limit. These
 resource tests do not claim parity with running huge counts upstream.
 
+`tests/md031.rs` covers 264 pinned observations, root repairs, list exclusions,
+code preservation, active directive targets, MD048 interactions and final warning
+positions after MD013 reflow.
+
 ```sh
-mise exec -- cargo test --test md022
+mise exec -- cargo test --test md022 --test md031
 mise exec -- cargo build
 node tools/parser-oracle/block-separators.mjs --rule MD022
+node tools/parser-oracle/block-separators.mjs --rule MD031
 ```
 
 The oracle checks raw findings, final-output findings, retained nonblank lines

@@ -443,6 +443,7 @@ pub fn format_with_config(
         "MD028".into(),
         "MD029".into(),
         "MD030".into(),
+        "MD031".into(),
         "MD033".into(),
         "MD035".into(),
         "MD036".into(),
