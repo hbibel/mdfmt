@@ -71,7 +71,7 @@ Spec: `docs/superpowers/specs/2026-10-21-mdfmt-design.md`
 
 ## Task 1: Source-backed reference model and MD052
 
-Files: create `src/parse/references.rs`, `src/reference_rules.rs`,
+Files: create `src/parse/references.rs`, `src/parse/references/scanner.rs`, `src/reference_rules.rs`,
 `src/reference_rules/md052.rs`, `tests/md052.rs`,
 `tools/parser-oracle/reference-diagnostics.mjs`, MD052 receipts and
 `docs/compatibility/reference-diagnostics.md`; modify `src/parse.rs`, `src/lib.rs`,
@@ -94,39 +94,39 @@ Interfaces:
   original source, comment-masked display source, effective states and the snapshot.
   It returns diagnostics; no candidate edit is produced.
 
-- [ ] Record direct and parser-forced MD052 observations for full/collapsed/
+- [x] Record direct and parser-forced MD052 observations for full/collapsed/
   shortcut links/images; ignored-label arrays; adjacent/nested/escaped brackets;
   entities, emphasis and code in unresolved labels; normalized/resolved keys;
   footnotes, quotes/lists/tabs, HTML/math, metadata, Unicode/BOM/CRLF, directives
   and warnings. Include `[ß]` against `[SS]: /url` and quote-prefix projections.
   Run `node tools/parser-oracle/reference-diagnostics.mjs --record --source-only --rule MD052`.
   Expected: separately labeled pinned evidence, no native coverage claim.
-- [ ] Write `missing_references_report_without_fabricating_destinations`:
+- [x] Write `missing_references_report_without_fabricating_destinations`:
   `[label][missing]\n` stays exact with fixes true/false, no edits, one MD052
   finding at `0..16`, context `[label][missing]`, detail
   `Missing link or image reference definition: "missing"`. The second invocation
   has identical output/findings. `[missing]\n` is quiet by default and reported
   under `shortcut_syntax: true`; a valid definition resolves independently of
   other enabled rules and its own disabled line.
-- [ ] Run `mise exec -- cargo test --test md052`.
+- [x] Run `mise exec -- cargo test --test md052`.
   Expected: missing MD052 findings, not import/configuration/receipt errors.
-- [ ] Implement the reference snapshot using source-backed inline scopes and
+- [x] Implement the reference snapshot using source-backed inline scopes and
   definition regions. Scan each scope once and reuse indexed exclusions/prefixes;
   preserve original definitions and container context in image-label recovery.
   Port the pinned shim's adjacent-label grouping and data/line-ending projection,
   not a document-wide bracket regex or native decoded text/identifier alone.
-- [ ] Implement configured MD052 finding selection, ignored-label exact matching,
+- [x] Implement configured MD052 finding selection, ignored-label exact matching,
   optional shortcuts and first-physical-line context/ranges from masked display
   columns. Keep original valid byte boundaries and source-order line permissions.
-- [ ] Add a dense same-line missing-label CLI budget regression with a substantial
+- [x] Add a dense same-line missing-label CLI budget regression with a substantial
   trailing text segment; cover malformed labels, 999/1,000 UTF-16-unit labels,
   nested image descriptions, disabled targets, warning aliases and line-only
   continuation hazards without per-reference full-document parsing.
-- [ ] Run MD052 tests/native oracle, existing spacing/style/review suites and
+- [x] Run MD052 tests/native oracle, existing spacing/style/review suites and
   native comparisons, then full Rust tests/fmt/clippy/diff.
   Expected: parser-forced diagnostic parity, explicit direct-cache difference,
   exact source/idempotence and no regression from the 426-test native baseline.
-- [ ] Update coverage/evidence/roadmap and commit.
+- [x] Update coverage/evidence/roadmap and commit.
 
 ## Task 2: Unused and duplicate definition diagnostics
 
@@ -223,8 +223,11 @@ emits findings without proposing conversions.
 - [ ] Retain all rulings/evidence in this plan, remove only its completed scratch
   workspace and continue the roadmap without merging, pushing or routine questions.
 
-Status: planned only. Baseline d9b4011 has 44/53 covered built-ins and 426 passing
-tests across 58 targets; no MD052/MD053/MD054 implementation is claimed here.
+Status: Task 1 complete: four MD052 tests and 2,037 paired direct/parser-forced
+native comparisons pass. Full suite passes 430 tests across 59 targets;
+fmt/clippy/diff clean. Prior spacing/style comparisons pass; coverage is 45/53.
+MD053/MD054 remain unimplemented.
+Baseline d9b4011 has 44/53 covered built-ins and 426 passing tests across 58 targets.
 
 Planning check: literal MD052/MD053/MD054 examples and ranges were confirmed with
 the pinned runtime (forced-parser mode for references). Task 1 produces the exact

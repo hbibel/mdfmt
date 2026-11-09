@@ -81,6 +81,7 @@ mod heading;
 mod html;
 mod inline;
 mod list_flow;
+mod references;
 mod table_flow;
 pub(crate) use attention::{
     AttentionPair, BareMarker, CodeSpan, InlineAnalysis, InlineFields, inline_analysis,
@@ -92,6 +93,7 @@ pub(crate) use heading::content as heading_content;
 pub(crate) use html::html_tokens;
 pub(crate) use inline::label_end;
 pub(crate) use list_flow::diagnostic_lists;
+pub(crate) use references::{ReferenceAnalysis, reference_analysis};
 
 use crate::Source;
 use markdown::mdast::Node;

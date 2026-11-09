@@ -83,6 +83,8 @@ and protected bytes; see [emphasis-style evidence](docs/compatibility/emphasis-s
 MD037/MD038/MD039 report inline whitespace without creating emphasis, trimming
 literal code or changing link text;
 see [inline-whitespace evidence](docs/compatibility/inline-whitespace.md).
+MD052 reports undefined reference labels without fabricating destinations;
+see [reference diagnostic evidence](docs/compatibility/reference-diagnostics.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is

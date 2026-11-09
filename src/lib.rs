@@ -37,6 +37,7 @@ mod md058;
 mod md059;
 mod md060;
 mod parse;
+mod reference_rules;
 mod reflow;
 mod source;
 
@@ -349,6 +350,9 @@ pub fn format_with_config(
     result.diagnostics = md013::diagnose(&output, &parsed, &document);
     result
         .diagnostics
+        .extend(reference_rules::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
         .extend(inline_spaces::diagnose(&output, &parsed, &document));
     result
         .diagnostics
@@ -489,6 +493,7 @@ pub fn format_with_config(
         "MD048".into(),
         "MD049".into(),
         "MD050".into(),
+        "MD052".into(),
         "MD055".into(),
         "MD056".into(),
         "MD058".into(),

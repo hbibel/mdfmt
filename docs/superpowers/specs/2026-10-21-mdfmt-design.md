@@ -125,10 +125,11 @@ and [MD060 table-column styles](../../compatibility/md060.md).
 The separator batch adds [conditional MD022/MD031/MD032 heading/fence/list blanks](../../compatibility/block-separators.md).
 The inline-style batch adds [conditional MD049/MD050 emphasis/strong styles](../../compatibility/emphasis-styles.md).
 The inline-whitespace batch adds [MD037/MD038/MD039 bare-marker, code-span and link-label diagnostics](../../compatibility/inline-whitespace.md).
-There are now 44 covered built-ins out of 53; milestone 5 is still incomplete.
+The reference batch starts with [MD052 missing-reference diagnostics](../../compatibility/reference-diagnostics.md).
+There are now 45 covered built-ins out of 53; milestone 5 is still incomplete.
 Remaining built-ins are MD005, MD007,
 MD034, MD044, MD046, MD051,
-MD052, MD053 and MD054. Interactions and conflict detection remain
+MD053 and MD054. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
 The first useful release includes local declarative configuration,
@@ -201,7 +202,8 @@ release numbers and ordering relative to other later-release work remain open.
   micromark rule restores those findings. The [reference-rule audit](../../compatibility/reference-rule-audit.md)
   retains both outcomes and non-obvious label projections. The planned native
   rules must work independently, and their oracle must distinguish direct runtime
-  behavior from parser-forced rule observations. Neither rule is implemented yet.
+  behavior from parser-forced rule observations. MD052 now does so with 2,037
+  paired observations; MD053 remains unimplemented.
 
 - MD049/MD050 changes to adjacent runs can remove the other rule's ASCII intraword
   exclusion: `_one_**two**` under asterisk emphasis/underscore strong needs both

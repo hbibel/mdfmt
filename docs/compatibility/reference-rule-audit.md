@@ -1,7 +1,8 @@
 # Reference-rule audit observations
 
-These are pinned upstream observations for planned MD052/MD053 work, not native
-implementation or coverage. The reference remains markdownlint 0.42.0.
+These are pinned upstream observations for MD052/MD053, not native implementation
+tests. MD052's separate [native evidence](reference-diagnostics.md) now exists;
+MD053 remains planned. The reference remains markdownlint 0.42.0.
 
 ## Parser-less cache dependency
 
@@ -32,6 +33,9 @@ runtime observations establish the following cases for the planned native model:
   not the raw escaped/entity spelling or the rendered `m*issing`/`m&issing`.
 - Undefined quoted multiline `[text][a` / `> b]` reports label `a > b`. This differs
   from the helper's explicit quote-prefix exclusion for resolved reference tokens.
+  Undefined shortcuts such as `[a` / `> b]` instead report `a b`: failed full-label
+  parsing includes prefixes in its line-ending tokens, while shortcut data uses
+  separate prefix tokens. Hard-break escapes omit their backslash from the key.
 - `[ß]` with `[SS]: url` produces a missing-reference finding and an unused `ss`
   definition under the forced-parser rule observation. Do not substitute the
   native parser's reference identity normalization for this helper's lowercase key.
