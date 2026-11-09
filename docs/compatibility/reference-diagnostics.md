@@ -45,4 +45,28 @@ mise exec -- cargo build
 node tools/parser-oracle/reference-diagnostics.mjs --rule MD052
 ```
 
-MD053/MD054 remain planned; their source audits are not native coverage.
+## Unused and duplicate definitions
+
+MD053 reports unused first definitions and later duplicates independently,
+including footnotes. Definitions and uses on disabled lines still contribute to
+identity/usage bookkeeping; only reporting permissions are filtered by line.
+Ignored-definition arrays match normalized helper keys exactly, without silently
+normalizing the option values.
+
+Findings cover the original whole physical definition line, including container
+prefixes. Contexts use masked display text and UTF-16 head ellipses; BOM columns
+exclude the leading marker. Unused/duplicate definition content is never deleted,
+including when destinations or titles differ.
+
+`tests/md053.rs` contains five tests and consumes 1,825 paired direct/parser-forced
+observations. It verifies disabled anchors/uses, quote/list and multiline records,
+Unicode/comment contexts, CLI aliases/warnings, MD052/MD013/MD026 composition and
+second-call stability. MD053 alone works despite the pinned parser-less cache bug.
+Task 2's full suite passes 435 tests across 60 targets; fmt/clippy are clean.
+
+```sh
+mise exec -- cargo test --test md053
+node tools/parser-oracle/reference-diagnostics.mjs --rule MD053
+```
+
+MD054 remains planned; its source audit is not native coverage.

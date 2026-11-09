@@ -1,8 +1,8 @@
 # Reference-rule audit observations
 
 These are pinned upstream observations for MD052/MD053, not native implementation
-tests. MD052's separate [native evidence](reference-diagnostics.md) now exists;
-MD053 remains planned. The reference remains markdownlint 0.42.0.
+tests. MD052/MD053's separate [native evidence](reference-diagnostics.md) now
+exists. The reference remains markdownlint 0.42.0.
 
 ## Parser-less cache dependency
 

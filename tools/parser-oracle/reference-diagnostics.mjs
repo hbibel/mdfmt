@@ -5,9 +5,9 @@ import {spawnSync} from "node:child_process";
 import {lint} from "markdownlint/sync";
 
 const rule=process.argv[process.argv.indexOf("--rule")+1];
-assert.equal(rule,"MD052","Use --rule MD052; later rules are added with their consuming tests");
+assert.ok(["MD052","MD053"].includes(rule),"Use --rule MD052 or MD053");
 const inert={names:["TST000"],description:"Populate the pinned parser cache",tags:["test"],parser:"micromark",function(){}};
-const options=[true,false,{severity:"warning"},{shortcut_syntax:true},{ignored_labels:[]},{ignored_labels:["MISSING","skip"]},{shortcut_syntax:true,ignored_labels:[]}];
+const options=rule==="MD052"?[true,false,{severity:"warning"},{shortcut_syntax:true},{ignored_labels:[]},{ignored_labels:["MISSING","skip"]},{shortcut_syntax:true,ignored_labels:[]}]:[true,false,{severity:"warning"},{ignored_definitions:[]},{ignored_definitions:["ID","skip"]}];
 let samples=[
   "","plain text\n","[label][missing]\n","![label][missing]\n","[missing][]\n","[missing]\n","![missing]\n",
   "[x]\n","[x][]\n","[label][x]\n","[X]\n","[label][skip]\n","[label][MISSING]\n",
@@ -37,6 +37,13 @@ for(const body of ["[a\\\nb]","[a  \nb]","[outer [inner]][missing]","[[a]][b]","
   for(const wrap of [s=>`${s}\n`,s=>`> ${s.replaceAll("\n","\n> ")}\n`,s=>`> - ${s.replaceAll("\n","\n>   ")}\n`,s=>`![${s}](img)\n`,s=>`[${s}](url)\n`,s=>`${s}\n\n[a]: /a\n[b]: /b\n[m\\*id]: /m\n[m&amp;id]: /m\n`])samples.push(wrap(body));
 }
 samples.push("\\![missing]\n","\\\\![missing]\n","[a]![b]\n","\\![[a]]\n");
+if(rule==="MD053"){
+  samples=samples.map(input=>input.replaceAll("MD052","MD053"));
+  samples.push("[unused]: /url\n","[id]: /url\n[id]: /url\n\n[text][id]\n","[id]: /one \"first\"\n[id]: /two \"second\"\n","[//]: comment\n","[skip]: /url\n","[ID]: /url\n","[id]:\n  /url\n  \"title\"\n","<!-- 😀 -->\n[id]: /url\n","\uFEFF[id]: /url\r\n","[id]: /url\r","[a\nb]: /url\n","[^id]: footnote\n","[^id]: first\n[^id]: second\n","[^id]\n\n[^id]: footnote\n","[id]: /url\n\n<!-- markdownlint-disable MD053 -->\n[text][id]\n","<!-- markdownlint-disable-next-line MD053 -->\n[id]: /one\n[id]: /two\n","[text][m\\*id]\n\n[m\\*id]: /url\n","[text][m&amp;id]\n\n[m&amp;id]: /url\n");
+  for(const definition of ["[id]: /url","[id]: /url\n[id]: /url","[A B]: /url\n[a  b]: /other","[m\\*id]: /url","[m&amp;id]: /url","[^id]: footnote","[id]: /url \""+"😀".repeat(20)+"\"","[id]: /url \"<!-- 😀 -->\""]){
+    for(const wrap of [s=>`${s}\n`,s=>`> ${s.replaceAll("\n","\n> ")}\n`,s=>`- ${s.replaceAll("\n","\n  ")}\n`,s=>`> - ${s.replaceAll("\n","\n>   ")}\n`,s=>`-\t${s.replaceAll("\n","\n    ")}\n`,s=>`~~~md\n${s}\n~~~\n`,s=>`---\ntitle: ${s.replaceAll("\n"," ")}\n---\n${s}\n`])samples.push(wrap(definition));
+  }
+}
 const rows=samples.flatMap((input,sample)=>options.map((options,configuration)=>({id:`${sample}-${configuration}`,input,options,direct:findings(input,options,false),parserForced:findings(input,options,true)})));
 const path=new URL(`${rule.toLowerCase()}-observations.json`,import.meta.url),text="[\n"+rows.map(row=>"  "+JSON.stringify(row)).join(",\n")+"\n]\n";
 if(process.argv.includes("--record"))writeFileSync(path,text);else assert.equal(text,readFileSync(path,"utf8"));
@@ -45,7 +52,8 @@ if(!process.argv.includes("--source-only")){
   try{for(const row of rows)for(const fix of [false,true]){
     writeFileSync(configuration,JSON.stringify({fix,config:{default:false,[rule]:row.options}}));
     const native=spawnSync(binary,["-"],{cwd:directory,input:row.input,encoding:"utf8"});assert.equal(native.stdout,row.input,`${row.id}: source`);
-    const pattern=/^-:(\d+):(\d+): (Error|Warning) MD052: Reference links and images should use a label that is defined \[(.*)\] \[Context: "(.*)"\]$/gm;
+    const description=rule==="MD052"?"Reference links and images should use a label that is defined":"Link and image reference definitions should be needed";
+    const pattern=new RegExp(`^-:(\\d+):(\\d+): (Error|Warning) ${rule}: ${description} \\[(.*)\\] \\[Context: "(.*)"\\]$`,"gm");
     const actual=[...native.stderr.matchAll(pattern)].map(m=>({line:Number(m[1]),column:Number(m[2]),severity:m[3].toLowerCase(),detail:m[4],context:m[5]}));
     const expected=row.parserForced.map(f=>({line:f.line,column:f.range?.[0]??1,severity:f.severity,detail:f.detail,context:f.context}));
     const order=(a,b)=>a.line-b.line||a.column-b.column||a.detail.localeCompare(b.detail);assert.deepEqual(actual.sort(order),expected.sort(order),`${row.id}: fix ${fix}: ${native.stderr}`);

@@ -138,32 +138,32 @@ Interfaces: consume Task 1's `ReferenceAnalysis`, `ReferenceDefinition` and
 `ReferenceUse` unchanged. `md053::diagnose(&Source, &Source, &DocumentConfig,
 &ReferenceAnalysis) -> Vec<Diagnostic>` reads original and masked display sources.
 
-- [ ] Record direct/parser-forced observations for used/unused definitions,
+- [x] Record direct/parser-forced observations for used/unused definitions,
   duplicate same/different destinations/titles, ignored-definition exact matching,
   case/whitespace/escape/entity identity, footnotes, multiline definitions and
   quote/list physical lines, comments/metadata, directives, warnings and aliases.
   Run the oracle's `--record --source-only --rule MD053` mode.
   Expected: retained parser-cache distinction, no implementation claim.
-- [ ] Write `unused_and_duplicate_definitions_remain_source_content`:
+- [x] Write `unused_and_duplicate_definitions_remain_source_content`:
   `[unused]: /url\n` stays exact, no edits, one finding at `0..14` with context
   `[unused]: /url` and detail `Unused link or image reference definition: "unused"`.
   `[id]: /url\n[id]: /url\n\n[text][id]\n` stays exact and reports only the second
   definition at `11..21`, detail `Duplicate link or image reference definition: "id"`.
   Assert stable output/findings under both fix settings and a second invocation.
-- [ ] Run `mise exec -- cargo test --test md053`.
+- [x] Run `mise exec -- cargo test --test md053`.
   Expected: missing MD053 findings.
-- [ ] Implement first-definition/duplicate bookkeeping and use-set membership
+- [x] Implement first-definition/duplicate bookkeeping and use-set membership
   independently of line enablement. Respect ignored definitions without silently
   normalizing option-array strings. Follow pinned whole-physical-line ranges and
   head-ellipsized contexts, mapping masked UTF-16 display units back to valid bytes.
   Report unused-first and duplicate-later independently; never delete content.
-- [ ] Add quoted/listed/multiline and footnote definitions, disabled-first-use/
+- [x] Add quoted/listed/multiline and footnote definitions, disabled-first-use/
   definition cases, non-BMP comments and combined MD052/MD053/MD013/MD026 scenarios.
   Assert no reference/definition bytes change and final coordinates/idempotence hold.
-- [ ] Run both reference suites/oracles, relevant prior suites and full Rust
+- [x] Run both reference suites/oracles, relevant prior suites and full Rust
   tests/fmt/clippy/diff. Expected: all pass; MD053 alone reports normally despite
   upstream's direct false-clean cache behavior.
-- [ ] Update coverage/evidence/roadmap and commit.
+- [x] Update coverage/evidence/roadmap and commit.
 
 ## Task 3: Source-preserving link-style diagnostics and batch review
 
@@ -226,7 +226,11 @@ emits findings without proposing conversions.
 Status: Task 1 complete: four MD052 tests and 2,037 paired direct/parser-forced
 native comparisons pass. Full suite passes 430 tests across 59 targets;
 fmt/clippy/diff clean. Prior spacing/style comparisons pass; coverage is 45/53.
-MD053/MD054 remain unimplemented.
+Task 2 complete: five MD053 tests and 1,825 paired native comparisons pass, together
+with the original 2,037 MD052 comparisons. Full suite passes 435 tests across 60
+targets; fmt/clippy/diff and all prior spacing/style/MD013/MD026 comparisons pass.
+Coverage is 46/53;
+MD054 remains unimplemented and the batch review remains pending.
 Baseline d9b4011 has 44/53 covered built-ins and 426 passing tests across 58 targets.
 
 Planning check: literal MD052/MD053/MD054 examples and ranges were confirmed with
