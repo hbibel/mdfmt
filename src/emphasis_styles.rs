@@ -2,7 +2,10 @@ use crate::{
     Diagnostic, Source,
     config::DocumentConfig,
     edit::{Edit, apply_authorized_edits},
-    parse::{AttentionPair, ParsedDocument, RegionKind, diagnostic_parse, inline_analysis, parse},
+    parse::{
+        AttentionPair, InlineFields, ParsedDocument, RegionKind, diagnostic_parse, inline_analysis,
+        parse,
+    },
 };
 use markdown::mdast::Node;
 use std::ops::Range;
@@ -15,7 +18,7 @@ struct Pair {
 }
 
 fn pairs(source: &Source, parsed: &ParsedDocument) -> Vec<Pair> {
-    inline_analysis(source, parsed)
+    inline_analysis(source, parsed, InlineFields::default())
         .attention
         .into_iter()
         .map(|AttentionPair { opening, closing }| Pair {

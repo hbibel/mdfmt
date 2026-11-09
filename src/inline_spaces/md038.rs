@@ -147,8 +147,13 @@ pub(super) fn diagnose(
                 continue;
             };
             if remove_padding && let Some(padding) = padding {
-                // Newline padding belongs to another line; upstream's columns can be invalid.
-                if !newline(&source.text()[padding.clone()]) {
+                // Even space padding can be separated from the data by a line ending.
+                let adjacent = if is_start {
+                    padding.end == span.start
+                } else {
+                    span.end == padding.start
+                };
+                if adjacent && !newline(&source.text()[padding.clone()]) {
                     if is_start {
                         span.start = padding.start;
                     } else {

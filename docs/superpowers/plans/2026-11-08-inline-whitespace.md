@@ -72,7 +72,9 @@ coverage assertions, inventory and roadmap.
 
 Interfaces:
 
-- `parse::inline_analysis(&Source, &ParsedDocument) -> InlineAnalysis` is read-only.
+- `parse::inline_analysis(&Source, &ParsedDocument, InlineFields) -> InlineAnalysis`
+  is read-only; review added explicit bare/code/label selection so existing style
+  consumers do not extract unused whitespace records.
 - `InlineAnalysis` initially owns `attention: Vec<AttentionPair>` and
   `bare: Vec<BareMarker>`. Tasks 2/3 extend it with their tested code/label records.
 - `AttentionPair { opening: Range<usize>, closing: Range<usize> }` is parser data,
@@ -190,10 +192,10 @@ destinations and reference identifiers; no synthetic label grants edits.
 - [x] Run all three spacing/style/review suites, all three raw/final native oracles,
   full Rust tests/fmt/clippy and affected MD013/MD026 comparisons.
   Expected: all pass; findings and output settle in one public invocation.
-- [ ] Update coverage/evidence/roadmap and commit. Request one independent review
+- [x] Update coverage/evidence/roadmap and commit. Request one independent review
   of this whole batch, including every Review Focus and ledger ruling; fix only
   Critical/Important findings in one RED-to-GREEN pass with a green full suite.
-- [ ] Retain all rulings in this tracked plan, complete the batch and continue
+- [x] Retain all rulings in this tracked plan, complete the batch and continue
   the roadmap without merging, pushing or routine approval questions.
 
 Status: Task 1 complete: 412 Rust tests across 55 targets, fmt/clippy/diff clean;
@@ -204,8 +206,45 @@ are clean. Fresh full suite passes 417 tests across 56 targets after the indexed
 prefix lookup. Task 2 is complete. Task 3's seven tests and 957 successful pinned
 observations pass; 42 upstream exceptions and six Unicode policy observations
 are retained separately. All spacing/style oracles plus MD013/MD026 pass;
-fmt/clippy/diff clean. Full suite passes 424 tests across 57 targets; coverage is 44/53. Batch review
-remains pending.
+fmt/clippy/diff clean. Pre-review full suite passes 424 tests across 57 targets;
+coverage is 44/53. One independent review found two Important issues and no
+Critical/minor findings. Both reproducing tests failed before the single fix pass
+and pass after it. All spacing/style/MD013/MD026 oracles pass after the fixes;
+the fresh post-fix whole suite passes 426 tests across 58 targets. Final fmt/clippy/
+diff checks are clean. No second review was dispatched. The dense 8,000-span
+release regression is restored to baseline (5.321s vs 5.458s); code/source and
+diagnostics remain exact. The batch is complete; keep the branch/worktree and
+continue the roadmap without merging or pushing.
+
+## Retained execution rulings
+
+- Preserve post-resolution data coalescing inside attention/labels, not every
+  unmatched delimiter run. Cost if wrong: MD037 pairing/scope findings, not edits.
+- Store well-formed UTF-8 display contexts plus optional raw UTF-16 units in
+  receipts. Cost if wrong: context display parity, not source ranges/content.
+- Exclude only mandatory container prefixes from code records; keep extra
+  indentation as data. Cost if wrong: code-whitespace ranges, not code edits.
+- Use valid physical data-space ranges where upstream MD038 throws. Cost if
+  wrong: documented diagnostic range differences on upstream-crashing inputs.
+- Select full JS horizontal whitespace for MD039 instead of copying RE2JS's
+  Unicode wrong-line behavior. Cost if wrong: documented coordinate differences,
+  never link-label edits.
+- Keep raw container prefixes in label contexts/endpoint tests, unlike code data.
+  Cost if wrong: label context/endpoint classification, not source edits.
+- Add private `InlineFields` selection to the snapshot interface so style-only
+  consumers skip unused whitespace records. Cost if wrong: adapter maintenance or
+  missing records; all spacing/style comparisons guard the change.
+- Keep automatic whitespace repairs outside this batch, as the reviewer set aside.
+  Cost if wrong: actionable findings remain instead of modifying meaning.
+- Keep valid native coordinates instead of upstream invalid MD038/Unicode MD039
+  anchors, as the reviewer set aside. Cost if wrong: intentional parity differences.
+- Defer pre-existing dense-line parser costs, as the reviewer set aside; remove
+  only this batch's regression. Cost if wrong: baseline slowness remains visible.
+- Leave other built-ins, external formatters and cross-platform runtime validation
+  outside this batch, as the reviewer set aside. Cost if wrong: explicit incomplete
+  rule/release coverage remains rather than an unsupported completion claim.
+
+Deferred minors: none.
 
 Planning check: pinned source and runtime confirm the three literal diagnostic
 examples, byte/UTF-16 ranges, multiline context and line-only label findings.

@@ -70,3 +70,23 @@ matching observations.
 mise exec -- cargo test --test md039
 node tools/parser-oracle/inline-whitespace.mjs --rule MD039
 ```
+
+## Independent review regressions
+
+`tests/inline_whitespace_review.rs` reproduces two Important findings before
+their fixes: code padding extended across physical lines (also consulting the
+wrong line's permissions), and repeated whole-line prefix expansion for each
+code span. Padding now extends a range only when adjacent to the selected data.
+The tests cover both directions, CRLF, quotes/lists and disabled opening lines.
+
+The shared snapshot accepts an `InlineFields` selection. Style-only consumers
+request attention without whitespace records; spacing consumers request only
+enabled fields. Container paths and prefix endpoints are cached per owner/line,
+empty paths bypass tab expansion, and line-number lookup does not count UTF-16
+columns unnecessarily. A dense-line CLI regression tests style-only and MD038
+configurations, including quoted code.
+
+For 8,000 code spans plus a 256 KiB tail, the optimized style-only run takes
+5.321s versus 5.458s on the pre-batch baseline; review's uncorrected batch took
+41.483s. Root/quoted MD038 runs take 5.226s/5.293s. Every probe preserves exact
+source, emits no findings and exits 0; baseline parser costs remain.

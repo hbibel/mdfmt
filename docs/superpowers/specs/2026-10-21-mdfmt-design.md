@@ -151,6 +151,22 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Independent inline-whitespace review reproduced MD038 ranges extending through
+  newlines and container prefixes to space padding on another line, also applying
+  the wrong line's permissions. Padding can now extend a diagnostic only when
+  adjacent to its selected data spaces. Bidirectional, CRLF, container and disabled-
+  opening-line regressions cover this physical-range invariant.
+- The same review measured an eightfold style-only slowdown from unused inline
+  whitespace records and whole-line prefix expansion per code span. Field-selected
+  snapshots, cached owner/line prefix endpoints and empty-path bypass restore
+  baseline timing: 8,000 spans plus a 256 KiB tail take 5.321s versus 5.458s before
+  the batch, instead of 41.483s. Dense root/quote regressions cover both style-only
+  and MD038 configurations; pre-existing dense-line parsing cost remains.
+- Planned MD054 work must not reuse upstream edits as authorization: a disallowed
+  inline-link fix can discard the label and title when converting to an autolink.
+  Source/runtime audit also found false-clean uppercase/entity-bearing reference
+  styles and empty inline destinations. The [link-style audit](../../compatibility/link-style-audit.md)
+  retains nine pinned source-only outcomes; no native MD054 coverage is claimed.
 - Pinned MD039 combines JavaScript Unicode-aware trimming with ASCII-only RE2JS
   horizontal-whitespace matching. Unicode label spaces can then throw for line 0
   or move findings to an adjacent blank line. Separate receipts retain 42 exceptions

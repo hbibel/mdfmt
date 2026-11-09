@@ -44,6 +44,13 @@ pub(crate) struct LinkLabel {
     pub span: Range<usize>,
 }
 
+#[derive(Default, Clone, Copy)]
+pub(crate) struct InlineFields {
+    pub bare: bool,
+    pub code: bool,
+    pub labels: bool,
+}
+
 #[derive(Default)]
 pub(crate) struct InlineAnalysis {
     pub attention: Vec<AttentionPair>,
@@ -88,12 +95,13 @@ fn resolve(
     excluded: &[Range<usize>],
     prefixes: &[Range<usize>],
     isolated: bool,
+    bare: bool,
 ) -> InlineAnalysis {
     let mut runs = vec![];
     let mut cursor = span.start;
     let bytes = text.as_bytes();
     let mut exclusion = 0;
-    let mut boundaries = excluded.to_vec();
+    let mut boundaries = if bare { excluded.to_vec() } else { vec![] };
     boundaries.extend_from_slice(prefixes);
     while cursor < span.end {
         while exclusion < excluded.len() && excluded[exclusion].end <= cursor {
@@ -107,11 +115,14 @@ fn resolve(
             continue;
         }
         if bytes[cursor] == b'\\' && bytes.get(cursor + 1).is_some_and(u8::is_ascii_punctuation) {
-            boundaries.push(cursor..cursor + 2);
+            if bare {
+                boundaries.push(cursor..cursor + 2);
+            }
             cursor += 2;
             continue;
         }
-        if bytes[cursor] == b'&'
+        if bare
+            && bytes[cursor] == b'&'
             && let Some(entity) = ENTITY.find(&text[cursor..span.end])
             && reference(entity.as_str())
         {
@@ -192,6 +203,12 @@ fn resolve(
         }
     }
     output.sort_by_key(|pair| pair.opening.start);
+    if !bare {
+        return InlineAnalysis {
+            attention: output,
+            ..Default::default()
+        };
+    }
     boundaries.extend(
         output
             .iter()
@@ -253,6 +270,9 @@ struct Scopes<'a> {
     source: &'a Source,
     parsed: &'a ParsedDocument,
     indices: std::collections::HashMap<(usize, usize), usize>,
+    fields: InlineFields,
+    paths: std::collections::HashMap<usize, ContainerPath>,
+    prefix_ends: std::collections::HashMap<(Option<usize>, usize), usize>,
     definitions: String,
     logical: std::collections::HashMap<usize, String>,
     output: InlineAnalysis,
@@ -283,7 +303,11 @@ impl Scopes<'_> {
             }
         }
         excluded.sort_by_key(|range| range.start);
-        let prefixes = self.prefixes(span.clone(), owner, true);
+        let prefixes = if self.fields.bare {
+            self.prefixes(span.clone(), owner, true)
+        } else {
+            vec![]
+        };
         let logical = if quotes == 0 {
             self.source.text()
         } else {
@@ -291,27 +315,49 @@ impl Scopes<'_> {
                 .entry(quotes)
                 .or_insert_with(|| crate::md045::mask_quote_prefixes(self.source.text(), quotes))
         };
-        let analysis = resolve(logical, span, &excluded, &prefixes, isolated);
+        let analysis = resolve(
+            logical,
+            span,
+            &excluded,
+            &prefixes,
+            isolated,
+            self.fields.bare,
+        );
         self.output.attention.extend(analysis.attention);
         self.output.bare.extend(analysis.bare);
     }
 
     fn prefixes(
-        &self,
+        &mut self,
         span: Range<usize>,
         owner: Option<usize>,
         trim_indent: bool,
     ) -> Vec<Range<usize>> {
-        let path = owner.map(|index| ContainerPath::for_region(self.source, self.parsed, index));
         let mut output = vec![];
-        for line in crate::md013::covered_lines(self.source, span) {
-            let line = line + 1;
+        let first = self.source.line_number(span.start).unwrap();
+        let last = self
+            .source
+            .line_number(span.end.saturating_sub(1).max(span.start))
+            .unwrap();
+        for line in first..=last {
             let range = self.source.line_range(line).unwrap();
             let raw = &self.source.text()[range.clone()];
-            let mut end = path
-                .as_ref()
-                .and_then(|path| path.content_start_at(raw, line))
-                .unwrap_or(0);
+            let mut end = if let Some(&end) = self.prefix_ends.get(&(owner, line)) {
+                end
+            } else {
+                let end = owner.map_or(0, |owner| {
+                    let path = self.paths.entry(owner).or_insert_with(|| {
+                        ContainerPath::for_region(self.source, self.parsed, owner)
+                    });
+                    if path.is_empty() {
+                        0
+                    } else {
+                        path.content_start_at(raw, line).unwrap_or(0)
+                    }
+                });
+                self.prefix_ends.insert((owner, line), end);
+                end
+            };
             while trim_indent && matches!(raw.as_bytes().get(end), Some(b' ' | b'\t')) {
                 end += 1;
             }
@@ -336,10 +382,13 @@ impl Scopes<'_> {
         let span = base + position.start.offset..base + position.end.offset;
         match node {
             Node::InlineCode(_) => {
-                self.output.code.push(CodeSpan {
-                    span: span.clone(),
-                    prefixes: self.prefixes(span.clone(), owner, false),
-                });
+                if self.fields.code {
+                    let prefixes = self.prefixes(span.clone(), owner, false);
+                    self.output.code.push(CodeSpan {
+                        span: span.clone(),
+                        prefixes,
+                    });
+                }
                 excluded.push(span);
             }
             Node::InlineMath(_) | Node::Html(_) | Node::FootnoteReference(_) => excluded.push(span),
@@ -347,9 +396,11 @@ impl Scopes<'_> {
                 excluded.push(span.clone());
                 let raw = &self.source.text()[span.clone()];
                 if let Some(end) = crate::parse::label_end(raw, true) {
-                    self.output.labels.push(LinkLabel {
-                        span: span.start..span.start + end + 1,
-                    });
+                    if self.fields.labels {
+                        self.output.labels.push(LinkLabel {
+                            span: span.start..span.start + end + 1,
+                        });
+                    }
                     self.scope(
                         node,
                         base,
@@ -437,7 +488,11 @@ impl Scopes<'_> {
     }
 }
 
-pub(crate) fn inline_analysis(source: &Source, parsed: &ParsedDocument) -> InlineAnalysis {
+pub(crate) fn inline_analysis(
+    source: &Source,
+    parsed: &ParsedDocument,
+    fields: InlineFields,
+) -> InlineAnalysis {
     let base = parsed
         .regions
         .iter()
@@ -453,12 +508,19 @@ pub(crate) fn inline_analysis(source: &Source, parsed: &ParsedDocument) -> Inlin
     let mut scopes = Scopes {
         source,
         parsed,
-        indices: parsed
-            .regions
-            .iter()
-            .enumerate()
-            .map(|(index, region)| ((region.span.start, region.span.end), index))
-            .collect(),
+        indices: if fields.bare || fields.code {
+            parsed
+                .regions
+                .iter()
+                .enumerate()
+                .map(|(index, region)| ((region.span.start, region.span.end), index))
+                .collect()
+        } else {
+            Default::default()
+        },
+        fields,
+        paths: Default::default(),
+        prefix_ends: Default::default(),
         definitions,
         logical: std::collections::HashMap::new(),
         output: InlineAnalysis::default(),

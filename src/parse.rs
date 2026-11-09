@@ -82,7 +82,9 @@ mod html;
 mod inline;
 mod list_flow;
 mod table_flow;
-pub(crate) use attention::{AttentionPair, BareMarker, CodeSpan, InlineAnalysis, inline_analysis};
+pub(crate) use attention::{
+    AttentionPair, BareMarker, CodeSpan, InlineAnalysis, InlineFields, inline_analysis,
+};
 pub(crate) use comments::masked_source as comment_masked_source;
 pub(crate) use container_prefix::ContainerPath;
 pub(crate) use diagnostic::diagnostic_parse;

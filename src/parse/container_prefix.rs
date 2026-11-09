@@ -57,6 +57,10 @@ fn marker_end(text: &str, cursor: usize) -> Option<usize> {
 }
 
 impl ContainerPath {
+    pub(crate) fn is_empty(&self) -> bool {
+        self.frames.is_empty()
+    }
+
     pub(crate) fn new(source: &Source, parsed: &ParsedDocument, indices: Vec<usize>) -> Self {
         let mut frames: Vec<Frame> = vec![];
         for index in indices {

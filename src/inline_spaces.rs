@@ -5,7 +5,9 @@ mod md039;
 use crate::{
     Diagnostic, Source,
     config::DocumentConfig,
-    parse::{ParsedDocument, comment_masked_source, diagnostic_parse, inline_analysis},
+    parse::{
+        InlineFields, ParsedDocument, comment_masked_source, diagnostic_parse, inline_analysis,
+    },
 };
 
 pub(crate) fn diagnose(
@@ -13,19 +15,29 @@ pub(crate) fn diagnose(
     parsed: &ParsedDocument,
     document: &DocumentConfig,
 ) -> Vec<Diagnostic> {
-    if !(1..=source.line_count()).any(|line| {
-        ["MD037", "MD038", "MD039"].iter().any(|rule| {
+    let enabled = |rule| {
+        (1..=source.line_count()).any(|line| {
             document
                 .state(rule, line)
                 .is_some_and(|state| state.enabled)
         })
-    }) {
+    };
+    let fields = InlineFields {
+        bare: enabled("MD037"),
+        code: enabled("MD038"),
+        labels: enabled("MD039"),
+    };
+    if !(fields.bare || fields.code || fields.labels) {
         return vec![];
     }
     let recovered = diagnostic_parse(source);
-    let analysis = inline_analysis(source, recovered.as_ref().unwrap_or(parsed));
-    let display = comment_masked_source(source, parsed);
-    let mut output = md037::diagnose(source, &display, document, &analysis);
+    let analysis = inline_analysis(source, recovered.as_ref().unwrap_or(parsed), fields);
+    let mut output = if fields.bare {
+        let display = comment_masked_source(source, parsed);
+        md037::diagnose(source, &display, document, &analysis)
+    } else {
+        vec![]
+    };
     output.extend(md038::diagnose(source, document, &analysis));
     output.extend(md039::diagnose(source, document, &analysis));
     output

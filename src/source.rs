@@ -72,6 +72,10 @@ impl Source {
         Some(start..end)
     }
 
+    pub(crate) fn line_number(&self, byte: usize) -> Option<usize> {
+        (byte <= self.text.len()).then(|| self.line_starts.partition_point(|&start| start <= byte))
+    }
+
     pub fn position(&self, byte: usize) -> Result<Position, PositionError> {
         if !self.text.is_char_boundary(byte)
             || (byte > 0
@@ -80,7 +84,7 @@ impl Source {
         {
             return Err(PositionError);
         }
-        let line = self.line_starts.partition_point(|&start| start <= byte) - 1;
+        let line = self.line_number(byte).unwrap() - 1;
         Ok(Position {
             line: line + 1,
             column_utf16: utf16_len(&self.text[self.line_starts[line]..byte]) + 1,

@@ -1,0 +1,121 @@
+[
+  {
+    "input": "[text][id]\n\n[id]: /url\n",
+    "options": {
+      "full": false
+    },
+    "findings": [
+      {
+        "line": 1,
+        "range": [
+          1,
+          10
+        ],
+        "context": "[text][id]",
+        "detail": null,
+        "fix": {
+          "editColumn": 1,
+          "deleteCount": 10,
+          "insertText": "[text](/url)"
+        }
+      }
+    ]
+  },
+  {
+    "input": "[text][ID]\n\n[id]: /url\n",
+    "options": {
+      "full": false
+    },
+    "findings": []
+  },
+  {
+    "input": "[TEXT][]\n\n[text]: /url\n",
+    "options": {
+      "collapsed": false
+    },
+    "findings": []
+  },
+  {
+    "input": "[TEXT]\n\n[text]: /url\n",
+    "options": {
+      "shortcut": false
+    },
+    "findings": []
+  },
+  {
+    "input": "[text]()\n\n[text]: /url\n",
+    "options": {
+      "inline": false
+    },
+    "findings": []
+  },
+  {
+    "input": "[text]( \"title\")\n\n[text]: /url\n",
+    "options": {
+      "inline": false
+    },
+    "findings": [
+      {
+        "line": 1,
+        "range": [
+          1,
+          16
+        ],
+        "context": "[text]( \"title\")",
+        "detail": null,
+        "fix": null
+      }
+    ]
+  },
+  {
+    "input": "[label](https://example.com \"title\")\n",
+    "options": {
+      "inline": false
+    },
+    "findings": [
+      {
+        "line": 1,
+        "range": [
+          1,
+          36
+        ],
+        "context": "[label](https://example.com \"t...",
+        "detail": null,
+        "fix": {
+          "editColumn": 1,
+          "deleteCount": 36,
+          "insertText": "<https://example.com>"
+        }
+      }
+    ]
+  },
+  {
+    "input": "[a *b*][id]\n\n[id]: /url\n",
+    "options": {
+      "full": false
+    },
+    "findings": [
+      {
+        "line": 1,
+        "range": [
+          1,
+          11
+        ],
+        "context": "[a *b*][id]",
+        "detail": null,
+        "fix": {
+          "editColumn": 1,
+          "deleteCount": 11,
+          "insertText": "[a *b*](/url)"
+        }
+      }
+    ]
+  },
+  {
+    "input": "[A &amp; B][]\n\n[A &amp; B]: /url\n",
+    "options": {
+      "collapsed": false
+    },
+    "findings": []
+  }
+]
