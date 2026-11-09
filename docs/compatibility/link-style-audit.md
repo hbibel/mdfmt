@@ -1,7 +1,9 @@
 # Link-style audit observations
 
-These are pinned markdownlint observations for planned MD054 work, not native
-implementation or coverage. The reference remains markdownlint 0.42.0.
+These are pinned markdownlint observations, not native implementation tests.
+MD054's separate [native evidence](reference-diagnostics.md) now records its
+diagnostic-only implementation and explicit policy corrections. The reference
+remains markdownlint 0.42.0.
 
 ## False-clean reference styles
 
@@ -14,8 +16,8 @@ labels likewise miss disallowed-style findings despite resolving as links.
 The source also distinguishes inline resources by a truthy destination string.
 `[text]()` is falsely clean under `MD054.inline: false` even if `[text]: /url`
 exists; the rule falls into its reference branch instead of classifying the empty
-inline resource. Future native classification must decide from syntax, not
-destination truthiness.
+inline resource. Native classification now decides from syntax, not destination
+truthiness, including references to empty definition destinations.
 
 ## Upstream edits can discard content
 

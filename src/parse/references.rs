@@ -1,4 +1,5 @@
 mod scanner;
+mod styles;
 
 use super::{ParsedDocument, RegionKind, label_end};
 use crate::{Source, config::js_space};
@@ -14,10 +15,30 @@ pub(crate) struct ReferenceUse {
     pub span: Range<usize>,
     pub shortcut: bool,
 }
+#[derive(Clone, Copy)]
+pub(crate) enum LinkKind {
+    Autolink,
+    Inline,
+    Full,
+    Collapsed,
+    Shortcut,
+}
+pub(crate) struct LinkStyle {
+    pub span: Range<usize>,
+    pub kind: LinkKind,
+    pub label: Option<Range<usize>>,
+    pub destination: Option<Range<usize>>,
+    pub title: Option<Range<usize>>,
+}
+pub(crate) struct ReferenceFields {
+    pub uses: bool,
+    pub styles: bool,
+}
 #[derive(Default)]
 pub(crate) struct ReferenceAnalysis {
     pub definitions: Vec<ReferenceDefinition>,
     pub uses: Vec<ReferenceUse>,
+    pub styles: Vec<LinkStyle>,
 }
 
 fn key(text: &str) -> String {
@@ -33,6 +54,7 @@ struct Scopes<'a> {
     definitions: String,
     logical: std::collections::HashMap<usize, String>,
     output: ReferenceAnalysis,
+    fields: ReferenceFields,
 }
 
 impl Scopes<'_> {
@@ -78,15 +100,34 @@ impl Scopes<'_> {
             return;
         };
         let span = base + position.start.offset..base + position.end.offset;
+        if self.fields.styles
+            && matches!(
+                node,
+                Node::Link(_) | Node::LinkReference(_) | Node::Image(_) | Node::ImageReference(_)
+            )
+        {
+            let logical = if quotes == 0 {
+                self.source.text()
+            } else {
+                self.logical.entry(quotes).or_insert_with(|| {
+                    crate::md045::mask_quote_prefixes(self.source.text(), quotes)
+                })
+            };
+            if let Some(style) = styles::record(node, self.source.text(), logical, span.clone()) {
+                self.output.styles.push(style);
+            }
+        }
         match node {
             Node::InlineCode(_) | Node::InlineMath(_) | Node::Html(_) => excluded.push(span),
             Node::FootnoteReference(_) => {
-                self.resolved(node, span.clone(), quotes);
+                if self.fields.uses {
+                    self.resolved(node, span.clone(), quotes);
+                }
                 excluded.push(span);
             }
             Node::Link(_) | Node::LinkReference(_) => {
                 excluded.push(span.clone());
-                if matches!(node, Node::LinkReference(_)) {
+                if self.fields.uses && matches!(node, Node::LinkReference(_)) {
                     self.resolved(node, span.clone(), quotes);
                 }
                 let raw = &self.source.text()[span.clone()];
@@ -96,7 +137,7 @@ impl Scopes<'_> {
             }
             Node::Image(_) | Node::ImageReference(_) => {
                 excluded.push(span.clone());
-                if matches!(node, Node::ImageReference(_)) {
+                if self.fields.uses && matches!(node, Node::ImageReference(_)) {
                     self.resolved(node, span.clone(), quotes);
                 }
                 let raw = &self.source.text()[span.clone()];
@@ -141,6 +182,9 @@ impl Scopes<'_> {
             }
         }
         excluded.sort_by_key(|range| range.start);
+        if !self.fields.uses {
+            return;
+        }
         let logical = if quotes == 0 {
             self.source.text()
         } else {
@@ -190,7 +234,11 @@ impl Scopes<'_> {
     }
 }
 
-pub(crate) fn reference_analysis(source: &Source, parsed: &ParsedDocument) -> ReferenceAnalysis {
+pub(crate) fn reference_analysis(
+    source: &Source,
+    parsed: &ParsedDocument,
+    fields: ReferenceFields,
+) -> ReferenceAnalysis {
     let base = parsed
         .regions
         .iter()
@@ -208,6 +256,7 @@ pub(crate) fn reference_analysis(source: &Source, parsed: &ParsedDocument) -> Re
         definitions,
         logical: Default::default(),
         output: Default::default(),
+        fields,
     };
     scopes.blocks(&parsed.tree, base, 0);
     scopes
@@ -218,5 +267,6 @@ pub(crate) fn reference_analysis(source: &Source, parsed: &ParsedDocument) -> Re
         .output
         .uses
         .sort_by_key(|reference| reference.span.start);
+    scopes.output.styles.sort_by_key(|style| style.span.start);
     scopes.output
 }

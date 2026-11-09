@@ -167,7 +167,8 @@ Interfaces: consume Task 1's `ReferenceAnalysis`, `ReferenceDefinition` and
 
 ## Task 3: Source-preserving link-style diagnostics and batch review
 
-Files: create `src/reference_rules/md054.rs`, `tests/md054.rs` and MD054 receipts;
+Files: create `src/reference_rules/md054.rs`, `src/parse/references/styles.rs`,
+`tests/md054.rs` and MD054 receipts;
 extend `src/parse/references.rs`, shared oracle/dispatcher and documentation;
 add `url` in Cargo.toml/Cargo.lock; update help/coverage, README, inventory and roadmap.
 
@@ -179,19 +180,20 @@ scan undefined uses, and reference-only calls do not extract unused styles.
 `LinkStyle { span: Range<usize>, kind: LinkKind, label: Option<Range<usize>>,
 destination: Option<Range<usize>>, title: Option<Range<usize>> }` retains original
 syntax fields. `LinkKind` distinguishes `Autolink`, `Inline`, `Full`, `Collapsed`,
-`Shortcut`. Reference styles use resolved native ownership plus Task 1's definition
-keys, not destination truthiness; literal autolinks remain distinct from bare URLs.
+`Shortcut`. Reference styles use resolved native ownership independently of Task
+1's helper-key quirks, not destination truthiness; literal autolinks remain distinct
+from bare URLs.
 `md054::diagnose(&Source, &DocumentConfig, &ReferenceAnalysis) -> Vec<Diagnostic>`
 emits findings without proposing conversions.
 
-- [ ] Record all six style options independently/in combination, nested links in
+- [x] Record all six style options independently/in combination, nested links in
   images, inline math/code/HTML, title-bearing resources, empty destinations,
   escaped/raw destination spelling, case/entity references, URL schemes/invalid
   absolutes, multiline/quoted/table source, directives and warnings. Keep audited
   false-clean cases in a native-policy section, separate from parity observations.
   Run the oracle's `--record --source-only --rule MD054` mode.
   Expected: source evidence with no native coverage claim.
-- [ ] Write `disallowed_link_styles_preserve_labels_titles_and_destinations`:
+- [x] Write `disallowed_link_styles_preserve_labels_titles_and_destinations`:
   `[text][id]\n\n[id]: /url\n` under `full: false` stays exact with no edits and
   reports MD054 at `0..10`, context `[text][id]`. `[text][ID]` against the same
   definition reports the same physical span under the explicit corrected policy.
@@ -199,20 +201,20 @@ emits findings without proposing conversions.
   retains both label/title and reports a finding rather than the audited upstream
   `<https://example.com>` replacement. `[text]()` under `inline: false` reports
   its actual `0..8` resource span instead of falling into reference classification.
-- [ ] Run `mise exec -- cargo test --test md054`.
+- [x] Run `mise exec -- cargo test --test md054`.
   Expected: missing MD054 findings.
-- [ ] Add source-backed style records and implement the six options with native
+- [x] Add source-backed style records and implement the six options with native
   `url::Url::parse` absolute-URL validation and pinned raw label/destination
   equality plus literal-space/angle-bracket exclusions. Preserve title/image
   exceptions, exact raw contexts and same-line ranges; multiline findings have
   a valid empty span on their opening line. No style grants edit authorization.
-- [ ] Pin `[https://example.com](https://example.com)\n` under `url_inline: false`
+- [x] Pin `[https://example.com](https://example.com)\n` under `url_inline: false`
   at `0..42`, context `[https://example.com](https://...`, unchanged source.
   Add original-byte MD013 reflow composition, all-three-rule CLI check/write/
   warning/no-fix cases, protected tables/code/labels and dense-prefix work budgets
   for both reference-only and style-only configurations.
   Assert one-invocation output/findings stability and no lost fields.
-- [ ] Run all reference/spacing/style/review suites and native oracles; full Rust
+- [x] Run all reference/spacing/style/review suites and native oracles; full Rust
   tests/fmt/clippy/diff and affected MD013/MD026 comparisons.
   Expected: green suites and truthful policy/parity separation; coverage 47/53
   only after the three native implementations and comparisons pass.
@@ -229,8 +231,14 @@ fmt/clippy/diff clean. Prior spacing/style comparisons pass; coverage is 45/53.
 Task 2 complete: five MD053 tests and 1,825 paired native comparisons pass, together
 with the original 2,037 MD052 comparisons. Full suite passes 435 tests across 60
 targets; fmt/clippy/diff and all prior spacing/style/MD013/MD026 comparisons pass.
-Coverage is 46/53;
-MD054 remains unimplemented and the batch review remains pending.
+Task 3's seven MD054 tests pass with 1,440 ordinary comparisons and ten corrected
+policy cases. All reference/spacing/style/MD013/MD026 native oracles pass;
+fmt/clippy/diff clean. Its full-suite run is pending before commit and the one
+independent batch review. A first full run passed 441 tests across 61 targets,
+then a new backslash/non-ASCII field regression reproduced and fixed a UTF-8
+panic. The fresh post-fix whole suite passes 442 tests across 61 targets;
+fmt/clippy/diff clean. Coverage is 47/53. Commit and the one independent review
+follow; no merge/push or routine approval prompt.
 Baseline d9b4011 has 44/53 covered built-ins and 426 passing tests across 58 targets.
 
 Planning check: literal MD052/MD053/MD054 examples and ranges were confirmed with

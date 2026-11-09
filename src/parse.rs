@@ -93,7 +93,7 @@ pub(crate) use heading::content as heading_content;
 pub(crate) use html::html_tokens;
 pub(crate) use inline::label_end;
 pub(crate) use list_flow::diagnostic_lists;
-pub(crate) use references::{ReferenceAnalysis, reference_analysis};
+pub(crate) use references::{LinkKind, ReferenceAnalysis, ReferenceFields, reference_analysis};
 
 use crate::Source;
 use markdown::mdast::Node;

@@ -22,4 +22,5 @@ walkdir = "2"
 ignore = "0.4"
 icu_properties = "=2.1.2"
 unicode-segmentation = "=1.13.3"
+url = "2.5"
 regress = { path = "vendor/regress", default-features = false, features = ["std", "prohibit-unsafe", "utf16"] }
