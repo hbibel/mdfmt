@@ -17,7 +17,7 @@ struct Candidate {
     in_table: bool,
 }
 
-fn diagnostic_view(source: &Source, parsed: &ParsedDocument) -> (Source, Vec<usize>) {
+pub(super) fn diagnostic_view(source: &Source, parsed: &ParsedDocument) -> (Source, Vec<usize>) {
     let front_end = parsed
         .regions
         .iter()

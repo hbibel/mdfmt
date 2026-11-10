@@ -126,10 +126,10 @@ The separator batch adds [conditional MD022/MD031/MD032 heading/fence/list blank
 The inline-style batch adds [conditional MD049/MD050 emphasis/strong styles](../../compatibility/emphasis-styles.md).
 The inline-whitespace batch adds [MD037/MD038/MD039 bare-marker, code-span and link-label diagnostics](../../compatibility/inline-whitespace.md).
 The reference batch adds [MD052/MD053/MD054 reference, definition and link-style diagnostics](../../compatibility/reference-diagnostics.md).
-The literal-content batch adds [MD046 code-block style diagnostics](../../compatibility/literal-content-diagnostics.md).
-There are now 48 covered built-ins out of 53; milestone 5 is still incomplete.
+The literal-content batch adds [MD034 bare-URL and MD046 code-block style diagnostics](../../compatibility/literal-content-diagnostics.md).
+There are now 49 covered built-ins out of 53; milestone 5 is still incomplete.
 Remaining built-ins are MD005, MD007,
-MD034, MD044 and MD051. Interactions and conflict detection remain
+MD044 and MD051. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
 The first useful release includes local declarative configuration,

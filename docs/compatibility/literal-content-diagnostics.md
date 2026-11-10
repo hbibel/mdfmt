@@ -36,8 +36,36 @@ mise exec -- cargo test --test md046
 node tools/parser-oracle/literal-content.mjs --rule MD046
 ```
 
-MD034 and MD044 remain unimplemented. The separate
-[MD044 audit](proper-name-audit.md) is source-only evidence, not native coverage.
+## Bare URLs
+
+MD034 reports exposed bare HTTP(S), WWW and email links without wrapping or
+rewriting them. Native literal-link ownership selects source ranges; explicit
+links, autolinks and image labels are not bare URLs. Paired inline HTML content is
+excluded using case-sensitive sibling matching, not a DOM or a document-wide URL
+regex. Unmatched and void tags retain the pinned rule's behavior.
+
+The content snapshot requests only bare URLs. It traverses each sibling list once
+to match HTML tags, then visits exposed content; it does not reparse images or
+definition payloads. Existing diagnostic-view normalization supplies math-aware
+ownership and original-byte mappings through BOM, CR/CRLF, metadata, tabs and
+generic HTML recovery. Escaped angle brackets are not ordinary neighboring data,
+even when the native text node's range omits its escape byte.
+
+`tests/md034.rs` has four tests consuming 1,740 pinned observations, with aliases,
+permissions, warnings, CLI check/write/no-fix, literal source preservation and
+second-call stability. A quoted 1,000-URL plus 256 KiB tail and 100-image budget
+case completes within 30 seconds, emits exactly 1,000 warnings and retains exact
+source. Full-suite verification passes 457 tests across 64 targets; fmt/clippy and
+all affected HTML/reference/inline/MD013/MD026 oracles pass. Coverage is 49/53;
+MD044, the batch review and the related MD014 correction remain pending.
+
+```sh
+mise exec -- cargo test --test md034
+node tools/parser-oracle/literal-content.mjs --rule MD034
+```
+
+MD044 remains unimplemented. Its separate [audit](proper-name-audit.md) is
+source-only evidence, not native coverage.
 
 ## Related open finding
 

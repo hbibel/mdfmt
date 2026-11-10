@@ -69,26 +69,26 @@
 
 **Files:** `src/parse/content.rs`, optional shared image recovery extraction, `src/md034.rs`, `tests/md034.rs`, shared oracle/receipt and integration/evidence files.
 
-**Interfaces:** Produce `ContentFields { bare_urls: bool, segments: bool }`, `ContentAnalysis { bare_urls: Vec<Range<usize>>, segments: Vec<ContentSegment> }`, `ContentSegment { span: Range<usize>, kind: ContentKind }`, `ContentKind::{Data, Code, Html}` and `content_analysis(&Source, &ParsedDocument, ContentFields) -> ContentAnalysis`. Task 2 requests only bare URLs; do not build unused segments. Produce `md034::diagnose(&Source, &ParsedDocument, &DocumentConfig) -> Vec<Diagnostic>`.
+**Interfaces:** Produce `ContentFields { bare_urls: bool }`, `ContentAnalysis { bare_urls: Vec<Range<usize>> }` and `content_analysis(&Source, &ParsedDocument, ContentFields) -> ContentAnalysis`. Task 3 adds segment fields and types with its consuming RED tests; Task 2 builds no unused segments. Produce `md034::diagnose(&Source, &ParsedDocument, &DocumentConfig) -> Vec<Diagnostic>`.
 
-- [ ] Record native-parser/pinned cases for HTTP(S)/WWW/email literals, punctuation/escapes/entities, explicit links/autolinks, math/code, inline/flow HTML, balanced/nested/unmatched/void HTML tags, images/reference images, tables, BOM/CRLF, directives and warnings.
+- [x] Record native-parser/pinned cases for HTTP(S)/WWW/email literals, punctuation/escapes/entities, explicit links/autolinks, math/code, inline/flow HTML, balanced/nested/unmatched/void HTML tags, images/reference images, tables, BOM/CRLF, directives and warnings.
   Run source-only `--rule MD034` mode; expected: ordinary observations plus separately named native-policy differences only if supported by the approved preservation contract.
-- [ ] Write `bare_urls_report_without_wrapping_or_changing_destinations`: `"go https://example.com now\n"` remains exact with MD034 span `3..22`, context `https://example.com`; `"![https://example.com](img)\n"` and `"[https://example.com](url)\n"` remain clean.
+- [x] Write `bare_urls_report_without_wrapping_or_changing_destinations`: `"go https://example.com now\n"` remains exact with MD034 span `3..22`, context `https://example.com`; `"![https://example.com](img)\n"` and `"[https://example.com](url)\n"` remain clean.
   Write `html_sibling_ownership_and_literal_scopes_match_recorded_observations`, source-range/directive/alias/CLI tests and dense-root/image work-budget tests.
-- [ ] Run `mise exec -- cargo test --test md034`.
+- [x] Run `mise exec -- cargo test --test md034`.
   Expected: missing MD034 diagnostics.
-- [ ] Implement a source-backed visitor selecting native literal links but excluding links/images and paired inline HTML content according to pinned sibling matching. Keep unmatched-tag/void-tag behavior source-backed. Use recovered diagnostic ownership with original-byte spans; no blanket URL regex over Markdown.
+- [x] Implement a source-backed visitor selecting native literal links but excluding links/images and paired inline HTML content according to pinned sibling matching. Keep unmatched-tag/void-tag behavior source-backed. Use recovered diagnostic ownership with original-byte spans; no blanket URL regex over Markdown.
   If sharing image recovery, extract `ImageRecovery::new(&Source, &Node, usize)` and `paragraph(&mut self, &str) -> Option<Arc<Node>>` from the existing reference implementation, retaining selected compact headers/native keys and paragraph-only cache. Retest both reference work budgets and all reference receipts immediately.
-- [ ] Emit `Bare URL used [Context: "..."]`, using pinned UTF-16 context ellipses and actual source URL ranges. No wrapping edits; preserve tables and URL spelling.
-- [ ] Run focused/native oracle and affected HTML/reference/inline tests; full suite, fmt/clippy/diff checks.
+- [x] Emit `Bare URL used [Context: "..."]`, using pinned UTF-16 context ellipses and actual source URL ranges. No wrapping edits; preserve tables and URL spelling.
+- [x] Run focused/native oracle and affected HTML/reference/inline tests; full suite, fmt/clippy/diff checks.
   Expected: unchanged source/idempotence and bounded diagnostic work; coverage 49/53 only after verification.
-- [ ] Update evidence/roadmap/coverage and commit `feat: report bare URLs without altering link or table content`.
+- [x] Update evidence/roadmap/coverage and commit `feat: report bare URLs without altering link or table content`.
 
 ## Task 3: MD044 proper names
 
 **Files:** `src/md044.rs`, `tests/md044.rs`; extend `src/parse/content.rs` with requested segments; shared oracle/receipt and integration/evidence files.
 
-**Interfaces:** Consume Task 2's exact content snapshot with `segments: true`; extend its visitor to produce source data/code/HTML segments only when requested. Produce `md044::diagnose(&Source, &ParsedDocument, &DocumentConfig) -> Vec<Diagnostic>`. Preserve Task 2's bare-only work bound and reference recovery contracts.
+**Interfaces:** Extend Task 2's `ContentFields` with `segments: bool` and `ContentAnalysis` with `segments: Vec<ContentSegment>`, defining `ContentSegment { span: Range<usize>, kind: ContentKind }` and `ContentKind::{Data, Code, Html}` together with consuming tests. Update MD034's caller to request `segments: false`; MD044 requests `segments: true`. Produce `md044::diagnose(&Source, &ParsedDocument, &DocumentConfig) -> Vec<Diagnostic>`. Preserve Task 2's bare-only work bound and reference recovery contracts.
 
 - [ ] Record ordinary name/boundary/priority/flags cases: empty arrays, mixed case, longest-first names, already accepted spellings, punctuation-bearing names, underscores, Unicode/BMP/astral/UTF-16, escapes/entities, labels versus destinations/definitions, HTML/code/math, directives, aliases and warnings. Never send empty names to the upstream oracle.
   Retain corrected native-policy rows for empty entries and actual-URL exclusions; compare ordinary source outcomes separately.
@@ -118,6 +118,12 @@ affected MD014/MD040/MD048/MD013/MD026 oracles. Full-suite verification passes
 453 tests across 63 targets; coverage is 48/53. Tasks 2/3 and the one independent
 review remain pending.
 
+Task 2's four native tests and 1,740 pinned comparisons pass; fmt/clippy, MD046
+and affected HTML/reference/inline/MD013/MD026 oracles also pass. The first combined
+reference-oracle command timed out after MD052/MD053; MD054 passed on a fresh
+standalone rerun. Full-suite verification passes 457 tests across 64 targets;
+coverage is 49/53. MD044 and the independent batch review remain pending.
+
 MD046 development reproduced native indented-code splits across blank container
 lines. Its local same-owner grouping has a RED→GREEN literal regression and no
 source edits. The same split causes an Important OPEN MD014 false positive on
@@ -131,3 +137,9 @@ Rulings so far:
 2. Keep the related MD014 defect an explicit Important roadmap correction rather
    than silently changing shared snapshots in Task 1. Cost if wrong: existing
    MD014 false positives remain until that required regression-first correction.
+3. Add segment types/fields only with Task 3's consuming tests. Cost if wrong: one
+   planned private interface extension; no unused extraction is introduced now.
+4. MD034 traverses exposed native literal links and does not recover image labels;
+   pinned labels contain no exposed bare links. Reuse the existing normalized
+   diagnostic view and match HTML sibling pairs once. Cost if wrong: ownership/
+   range classification, gated by pinned and dense-source comparisons; no edits.
