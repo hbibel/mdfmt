@@ -1,0 +1,9 @@
+{
+  "reference": "markdownlint 0.42.0",
+  "kind": "single bounded source-only runtime probe, not a native application test",
+  "input": "hello github\n",
+  "control": {"names":["GitHub"],"status":0,"signal":null},
+  "unsafe": {"names":[""],"timeoutMilliseconds":1000,"maximumOldSpaceMiB":64,"status":null,"signal":"SIGABRT","error":"ETIMEDOUT"},
+  "sourceCause": "MD044 builds a global regular expression capable of matching zero characters and repeats exec without advancing lastIndex. The schema permits empty strings in names.",
+  "replay": "Deliberately not included in the ordinary oracle; any manual reproduction must remain process-, memory- and time-bounded."
+}

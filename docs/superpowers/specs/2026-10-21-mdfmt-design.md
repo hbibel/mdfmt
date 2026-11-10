@@ -151,6 +151,35 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Independent reference review found nested resources erased reference-key data,
+  falsely resolving missing labels and hiding unrelated unused definitions.
+  Separate structural exclusions and data projection now preserve nested label
+  data, literal bare-URL markers and inactive outer-link grouping without treating
+  resource destinations as data. Literal regressions and expanded pinned
+  comparisons cover the correction; no source-edit authority changes.
+- The same review found math-internal brackets discarded already-owned link/image
+  labels, suppressing MD054 and falsely reporting used definitions under MD053.
+  Owned-label boundaries now skip inline math, while unrelated scanner callers
+  retain their previous behavior.
+- Quoted image recovery reparsed raw multiline definitions outside their containers,
+  changing helper identity and losing native reference style. Compact logical
+  definition headers now restore native resolution while preserving raw helper
+  keys and original-byte ranges separately; root/image/nested quote/list cases
+  retain independent MD052/MD053/MD054 checks.
+- Every image also reparsed unrelated definition destinations/titles. Plain labels
+  now skip recovery; other labels select referenced compact headers and reuse a
+  cached paragraph. Deterministic parser-work tests vary both axes and distinct
+  labels. Release probes restore near-disabled-rule timing, but pre-existing
+  baseline image cost remains a later hardening requirement. The four review
+  findings have regression-first fixes; the post-review suite passes 447 tests
+  across 62 targets, with 6,305 reference comparisons and prior native oracles.
+- Pinned MD044 URL exclusions can extend beyond the actual URL, hiding following
+  proper-name findings in inline/fenced code. Its schema also permits empty names;
+  zero-length global regex matches can fail to advance and exhaust resources.
+  [Source/runtime evidence](../../compatibility/proper-name-audit.md) retains six
+  ordinary observations and one bounded timeout/heap-abort probe. Native MD044
+  must use actual URL spans and explicitly handle empty names before scanning;
+  no native coverage or permission to rewrite literal code is claimed.
 - MD054's new resource-field scanner initially advanced two bytes after any
   backslash, splitting UTF-8 before emoji, accented or CJK characters and panicking
   on valid Markdown. A literal regression reproduced the failure. Escape scanning
@@ -172,9 +201,9 @@ release numbers and ordering relative to other later-release work remain open.
   Source/runtime audit also found false-clean uppercase/entity-bearing reference
   styles and empty inline destinations. The [link-style audit](../../compatibility/link-style-audit.md)
   retains nine pinned source-only outcomes. Native MD054 now reports without
-  converting links; ten explicit corrected-policy cases use actual reference/
+  converting links; eleven explicit corrected-policy cases use actual reference/
   resource syntax instead of raw-key lookups or destination truthiness. The
-  remaining 1,440 ordinary source comparisons retain pinned diagnostic parity.
+  remaining 1,760 ordinary source comparisons retain pinned diagnostic parity.
 - Pinned MD039 combines JavaScript Unicode-aware trimming with ASCII-only RE2JS
   horizontal-whitespace matching. Unicode label spaces can then throw for line 0
   or move findings to an adjacent blank line. Separate receipts retain 42 exceptions

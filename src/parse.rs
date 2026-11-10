@@ -91,7 +91,7 @@ pub(crate) use container_prefix::ContainerPath;
 pub(crate) use diagnostic::diagnostic_parse;
 pub(crate) use heading::content as heading_content;
 pub(crate) use html::html_tokens;
-pub(crate) use inline::label_end;
+pub(crate) use inline::{label_end, label_end_math};
 pub(crate) use list_flow::diagnostic_lists;
 pub(crate) use references::{LinkKind, ReferenceAnalysis, ReferenceFields, reference_analysis};
 

@@ -218,11 +218,11 @@ emits findings without proposing conversions.
   tests/fmt/clippy/diff and affected MD013/MD026 comparisons.
   Expected: green suites and truthful policy/parity separation; coverage 47/53
   only after the three native implementations and comparisons pass.
-- [ ] Update evidence/roadmap/coverage and commit. Request one independent review
+- [x] Update evidence/roadmap/coverage and commit. Request one independent review
   over this batch's baseline through final HEAD, with every Review Focus and
   ledger ruling; fix only Critical/Important findings in one RED-to-GREEN pass
   followed by a green full suite. Do not dispatch a second review.
-- [ ] Retain all rulings/evidence in this plan, remove only its completed scratch
+- [x] Retain all rulings/evidence in this plan, remove only its completed scratch
   workspace and continue the roadmap without merging, pushing or routine questions.
 
 Status: Task 1 complete: four MD052 tests and 2,037 paired direct/parser-forced
@@ -231,14 +231,14 @@ fmt/clippy/diff clean. Prior spacing/style comparisons pass; coverage is 45/53.
 Task 2 complete: five MD053 tests and 1,825 paired native comparisons pass, together
 with the original 2,037 MD052 comparisons. Full suite passes 435 tests across 60
 targets; fmt/clippy/diff and all prior spacing/style/MD013/MD026 comparisons pass.
-Task 3's seven MD054 tests pass with 1,440 ordinary comparisons and ten corrected
-policy cases. All reference/spacing/style/MD013/MD026 native oracles pass;
-fmt/clippy/diff clean. Its full-suite run is pending before commit and the one
-independent batch review. A first full run passed 441 tests across 61 targets,
-then a new backslash/non-ASCII field regression reproduced and fixed a UTF-8
-panic. The fresh post-fix whole suite passes 442 tests across 61 targets;
-fmt/clippy/diff clean. Coverage is 47/53. Commit and the one independent review
-follow; no merge/push or routine approval prompt.
+Task 3 is committed through 04d169b. Its pre-review full suite passes 442 tests
+across 61 targets after a regression-first UTF-8 resource-field panic correction.
+The one independent review found four Important issues and no Critical issues or
+minors. All four were reproduced RED and fixed in one pass; no second review.
+Post-review verification passes 447 tests across 62 targets, fmt/clippy and native
+MD052/MD053/MD054 comparisons: 2,429/2,105/1,771 rows. MD054 separates 1,760 ordinary
+cases from eleven corrected policies. Prior whitespace/style/MD013/MD026 oracles
+also pass. Coverage remains 47/53; no merge/push.
 Baseline d9b4011 has 44/53 covered built-ins and 426 passing tests across 58 targets.
 
 Planning check: literal MD052/MD053/MD054 examples and ranges were confirmed with
@@ -247,3 +247,68 @@ definitions/uses consumed by Task 2; Task 3 adds tested style fields without
 reinterpreting Task 1's helper identities. Every Review Focus has a named owning
 test step. Remaining MD005/MD007/MD034/MD044/MD046/MD051, external formatters and
 release hardening remain explicit roadmap work, not covered by this plan.
+
+## Review corrections and retained evidence
+
+- `nested_resource_labels_contribute_data_without_destinations_or_false_resolution`
+  reproduces lost nested resource data and inactive-link grouping. Separate scan
+  exclusions and skipped/literal projections restore helper keys without including
+  resource destinations. Expanded source cases additionally reproduce lost GFM URL
+  data and literal marker bytes.
+- `math_brackets_do_not_replace_owned_label_boundaries_or_reference_uses` reproduces
+  math-blind owned-label boundaries for links/images and reference uses. A separate
+  math-aware scanner mode preserves unrelated callers' behavior.
+- `quoted_image_recovery_preserves_helper_keys_and_resolved_native_style`
+  reproduces lost quoted multiline ownership, independently for each rule and in
+  combination. Logical definition headers restore native ownership without changing
+  raw helper keys or physical diagnostic ranges.
+- `image_recovery_work_is_independent_of_unrelated_definition_payloads` reproduces
+  unnecessary plain-label recovery. The distinct-label/header-budget test also
+  reproduces unrelated-header parsing. Recovery skips plain labels, selects only
+  referenced headers and caches the first paragraph rather than definition trees.
+
+All tests use the real parser; work counters exist only in test builds. Regressions
+preserve source with fixes enabled/disabled and on repeated calls. Expanded native
+oracles compare all 6,305 reference receipts. Optimized 100-image/200-definition
+disabled/MD052/MD054 probes take 5.628/5.598/5.820s; 100/400 take
+11.423/11.602/11.461s with exact source/status/warnings. Pre-existing baseline image
+latency remains later hardening work. MD044's separate six-observation source audit
+and bounded empty-name resource observation are recorded in the roadmap, not
+counted as native implementation tests.
+
+## Rulings I made
+
+Chronological decisions, including everything the reviewer declined to judge:
+
+1. Separate the unresolved-label scanner into a private module: bracket projection
+   and AST recovery are distinct responsibilities. Cost if wrong: one private file.
+2. Derive MD054 styles from resolved native kinds, independently of helper-key
+   quirks. Cost if wrong: documented extra diagnostics and reliance on native
+   ownership; no link/image edits.
+3. Separate structural exclusions from data projection and explicit-link
+   inactivation. Cost if wrong: key/grouping/range classification; regression and
+   pinned comparisons guard it.
+4. Use math-aware boundaries only for native-owned reference/style labels. Cost
+   if wrong: owned-label selection/ranges; unrelated callers remain unchanged.
+5. Recover image ownership from compact logical headers with dummy destinations
+   and cached label trees, keeping raw helper keys/spans separate. Cost if wrong:
+   native recovery/diagnostics, not original content or edit authorization.
+6. Retain declared MD054 corrected-key/empty-destination policies. Cost if wrong:
+   intentional documented upstream parity differences.
+7. Keep MD052/MD053 independent of the upstream parser-less cache bug. Cost if
+   wrong: intentional extra diagnostics versus broken direct upstream invocation.
+8. Do not add definition deletion or destructive style conversions. Cost if wrong:
+   findings remain without discarding content.
+9. Leave prior reviewed inline/emphasis work outside this fix range. Cost if wrong:
+   unrelated legacy issues remain later work.
+10. Defer pre-existing disabled-rule image cost; remove only new reference-analysis
+    work. Cost if wrong: baseline image latency remains visible.
+11. Leave other built-ins, external formatters, cross-platform runtime and broad
+    hardening outside this batch. Cost if wrong: release coverage remains partial,
+    explicitly 47/53.
+12. Distinguish literal bare-URL data from skipped syntax; select referenced logical
+    headers and cache paragraphs, not definition trees. Expanded evidence exposes
+    marker loss and unrelated-header work. Cost if wrong: projection/recovery
+    identity; pinned comparisons and deterministic work budgets guard it.
+
+No deferred minors were reported.

@@ -37,6 +37,12 @@ for(const body of ["[a\\\nb]","[a  \nb]","[outer [inner]][missing]","[[a]][b]","
   for(const wrap of [s=>`${s}\n`,s=>`> ${s.replaceAll("\n","\n> ")}\n`,s=>`> - ${s.replaceAll("\n","\n>   ")}\n`,s=>`![${s}](img)\n`,s=>`[${s}](url)\n`,s=>`${s}\n\n[a]: /a\n[b]: /b\n[m\\*id]: /m\n[m&amp;id]: /m\n`])samples.push(wrap(body));
 }
 samples.push("\\![missing]\n","\\\\![missing]\n","[a]![b]\n","\\![[a]]\n");
+for(const body of ["[text][a![foo](url)b]","[text][a[foo](url)b]","[[x](u)](v)","[text][a![`foo`](url)b]","[text][a![$foo$](url)b]","[text][a![foo *bar*](url)b]","[text][a![a `x` https://ex.com/a_b](url)b]","[text][a![a `x` www.example.com](url)b]","[text][a![https://ex.com/a*b](url)b]","[text][a![foo][id]b]","[text][a[foo][id]b]"]){
+  for(const wrap of [s=>`${s}\n\n[ab]: /dest\n[id]: /id\n`,s=>`> ${s.replaceAll("\n","\n> ")}\n\n[ab]: /dest\n[id]: /id\n`,s=>`> - ${s.replaceAll("\n","\n>   ")}\n\n[ab]: /dest\n[id]: /id\n`,s=>`![${s}](outer)\n\n[ab]: /dest\n[id]: /id\n`])samples.push(wrap(body));
+}
+for(const body of ["[text][a\nb]","[a\nb][]","[a\nb]"]){
+  for(const wrap of [s=>`> ${s.replaceAll("\n","\n> ")}\n>\n> [a\n> b]: /url\n`,s=>`> ![${s.replaceAll("\n","\n> ")}](img)\n>\n> [a\n> b]: /url\n`,s=>`> ![![${s.replaceAll("\n","\n> ")}](inner)](outer)\n>\n> [a\n> b]: /url\n`,s=>`> - ![${s.replaceAll("\n","\n>   ")}](img)\n>\n> [a\n> b]: /url\n`])samples.push(wrap(body));
+}
 if(rule==="MD053"){
   samples=samples.map(input=>input.replaceAll("MD052","MD053"));
   samples.push("[unused]: /url\n","[id]: /url\n[id]: /url\n\n[text][id]\n","[id]: /one \"first\"\n[id]: /two \"second\"\n","[//]: comment\n","[skip]: /url\n","[ID]: /url\n","[id]:\n  /url\n  \"title\"\n","<!-- 😀 -->\n[id]: /url\n","\uFEFF[id]: /url\r\n","[id]: /url\r","[a\nb]: /url\n","[^id]: footnote\n","[^id]: first\n[^id]: second\n","[^id]\n\n[^id]: footnote\n","[id]: /url\n\n<!-- markdownlint-disable MD053 -->\n[text][id]\n","<!-- markdownlint-disable-next-line MD053 -->\n[id]: /one\n[id]: /two\n","[text][m\\*id]\n\n[m\\*id]: /url\n","[text][m&amp;id]\n\n[m&amp;id]: /url\n");
@@ -46,6 +52,7 @@ if(rule==="MD053"){
 }
 if(rule==="MD054"){
   samples=[];
+  for(const label of ["$[$","$]$","vector $[x$","vector $x]$"]){for(const body of [`[${label}](url)`,`![${label}](img)`,`[${label}][id]`,`![${label}][id]`]){samples.push(body+"\n\n[id]: /u\n");samples.push(`> ![${body}](outer)\n\n[id]: /u\n`);}}
   for(const body of ["[label](url)","![label](img)","[](url)","![](img)","[label](url \"title\")","[https://example.com](https://example.com)","[https://example.com](https://example.com \"title\")","![https://example.com](https://example.com)","<https://example.com>","<a@example.com>","https://example.com","[label][id]","[id][]","[id]","![label][id]","![id][]","![id]","[ first\nlast ](url)","[label](<url> 'title')","[label](u\\(r\\)l)"]){
     for(const wrap of [s=>`${s}\n\n[id]: /url\n`,s=>`> ${s.replaceAll("\n","\n> ")}\n\n[id]: /url\n`,s=>`- ${s.replaceAll("\n","\n  ")}\n\n[id]: /url\n`,s=>`![${s}](outer)\n\n[id]: /url\n`,s=>`| ${s.replaceAll("\n"," ")} |\n| --- |\n\n[id]: /url\n`])samples.push(wrap(body));
   }
@@ -66,6 +73,7 @@ if(rule==="MD054")for(const [token,definition,options]of [
   ["[id]","[id]: <>",{shortcut:false}],
   ["[ id ]","[id]: /url",{shortcut:false}],
 ]){const input=token+"\n"+(definition?"\n"+definition+"\n":"");rows.push({id:`policy-${rows.length}`,input,options,direct:findings(input,options,false),parserForced:findings(input,options,true),nativePolicy:[{line:1,range:[1,token.length],context:token,detail:null,severity:"error"}]});}
+if(rule==="MD054"){const input="> ![[text][a\n> b]](img)\n>\n> [a\n> b]: /url\n",options={full:false};rows.push({id:"policy-quoted-image-reference",input,options,direct:findings(input,options,false),parserForced:findings(input,options,true),nativePolicy:[{line:1,range:null,context:"[text][a",detail:null,severity:"error"}]});}
 const path=new URL(`${rule.toLowerCase()}-observations.json`,import.meta.url),text="[\n"+rows.map(row=>"  "+JSON.stringify(row)).join(",\n")+"\n]\n";
 if(process.argv.includes("--record"))writeFileSync(path,text);else assert.equal(text,readFileSync(path,"utf8"));
 if(!process.argv.includes("--source-only")){

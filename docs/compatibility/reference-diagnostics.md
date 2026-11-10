@@ -15,7 +15,10 @@ and data/line-ending projection. Escapes, entities, attention markers and code
 tokens are not ordinary data. Shortcut quote prefixes are excluded, while failed
 full-reference line-ending tokens can retain raw quote prefixes. Hard-break
 escapes omit the backslash but retain their line ending. Image-label recovery
-keeps original definitions and nested quote context.
+keeps logical definition identities and nested quote context while preserving raw
+helper keys separately. Structural exclusions do not erase nested label data.
+Bare GFM URL `*`/`_` bytes remain data; escapes/entities and resource destinations
+do not. Explicit inner links also retain the shim's inactive outer-label ranges.
 
 Contexts use the first physical comment-masked display line; diagnostic spans
 retain valid original-byte ranges. BOM/CRLF, UTF-16 lengths, metadata, HTML, math,
@@ -24,7 +27,7 @@ proposed; fixes enabled/disabled and second-call behavior remain identical.
 
 ## Evidence
 
-`tests/md052.rs` contains four tests and consumes 2,037 paired pinned observations.
+`tests/md052.rs` contains four tests and consumes 2,429 paired pinned observations.
 Each receipt records direct runtime and parser-forced outcomes separately. Pinned
 MD052 declares `parser: "none"` but otherwise reads an empty token cache; an inert
 micromark rule supplies the source-reference observations used for comparison.
@@ -58,7 +61,7 @@ prefixes. Contexts use masked display text and UTF-16 head ellipses; BOM columns
 exclude the leading marker. Unused/duplicate definition content is never deleted,
 including when destinations or titles differ.
 
-`tests/md053.rs` contains five tests and consumes 1,825 paired direct/parser-forced
+`tests/md053.rs` contains five tests and consumes 2,105 paired direct/parser-forced
 observations. It verifies disabled anchors/uses, quote/list and multiline records,
 Unicode/comment contexts, CLI aliases/warnings, MD052/MD013/MD026 composition and
 second-call stability. MD053 alone works despite the pinned parser-less cache bug.
@@ -91,8 +94,8 @@ remain inline syntax. These corrections use native ownership rather than the
 upstream helper's raw lookup/truthiness shortcuts. MD052/MD053 retain their separate
 helper-compatible key contract; no rule gains edit authority.
 
-`tests/md054.rs` contains seven tests. Its 1,450 receipt rows distinguish 1,440
-ordinary pinned comparisons from ten explicit corrected-policy cases, retaining
+`tests/md054.rs` contains seven tests. Its 1,771 receipt rows distinguish 1,760
+ordinary pinned comparisons from eleven explicit corrected-policy cases, retaining
 both source outcomes alongside the native expectations. It covers labels/titles,
 URL schemes/escapes/IDNA/IPv6, nested images, metadata/code/math/HTML/tables, BOM/
 CRLF, original edit composition after reflow, all-three-rule CLI check/write/error/
@@ -106,6 +109,36 @@ Optimized probes for 500/1,000 quoted style-only links plus a 256 KiB tail take
 2.289s/2.926s, preserve exact output, emit precisely 500/1,000 warnings and exit 0.
 The pre-review full native suite passes 442 tests across 61 targets after the
 UTF-8 correction; fmt/clippy and affected prior comparisons pass.
+
+## Independent review corrections
+
+The batch's one independent review found four Important issues and no Critical
+issues. Three public-API regressions in `tests/reference_review.rs` reproduced
+lost nested resource data/grouping, math-internal bracket ownership loss and
+quoted multiline image-reference identity loss. They now pass independently and
+in combination, with fixes enabled/disabled and unchanged output.
+
+Owned labels use a math-aware boundary mode without changing unrelated callers.
+Image recovery indexes compact logical definition headers using native identifier
+normalization, selects only headers mentioned by bracket candidates and caches
+only the first recovered paragraph per logical label. Raw helper keys and original
+source ranges remain separate. Plain alternate text needs no recovery parse.
+
+Two deterministic work tests count actual recovery parser calls and bytes, varying
+image count, definition count, title size and repeated/distinct labels. Repeated
+labels need at most one parse; eight distinct labels consume under 2 KiB even with
+512 unrelated definitions. Instrumentation exists only in test builds.
+
+Fresh optimized plain-image probes with 1 KiB definition titles preserve exact
+source, status 0 and expected warning counts. For 100 images/200 definitions,
+disabled/MD052/MD054 times are 5.628s/5.598s/5.820s; at 100/400 they are
+11.423s/11.602s/11.461s. Added reference-analysis cost no longer scales as images
+times definition payload. Pre-existing disabled-rule image latency remains a
+later hardening issue, not a performance guarantee.
+
+Post-review verification passes 447 tests across 62 targets, fmt/clippy and all
+6,305 reference observations, plus prior whitespace/style/MD013/MD026 comparisons.
+No second review was dispatched; coverage remains 47/53 built-ins.
 
 ```sh
 mise exec -- cargo test --test md052 --test md053 --test md054

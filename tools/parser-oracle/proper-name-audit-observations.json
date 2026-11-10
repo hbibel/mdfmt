@@ -1,0 +1,92 @@
+[
+  {
+    "input": "github\n",
+    "options": {
+      "names": [
+        "GitHub"
+      ]
+    },
+    "findings": [
+      {
+        "line": 1,
+        "range": [
+          1,
+          6
+        ],
+        "detail": "Expected: GitHub; Actual: github"
+      }
+    ]
+  },
+  {
+    "input": "`https://example.com github`\n",
+    "options": {
+      "names": [
+        "GitHub"
+      ]
+    },
+    "findings": []
+  },
+  {
+    "input": "```text\nhttps://example.com github\n```\n",
+    "options": {
+      "names": [
+        "GitHub"
+      ]
+    },
+    "findings": []
+  },
+  {
+    "input": "`github https://example.com github`\n",
+    "options": {
+      "names": [
+        "GitHub"
+      ]
+    },
+    "findings": [
+      {
+        "line": 1,
+        "range": [
+          2,
+          6
+        ],
+        "detail": "Expected: GitHub; Actual: github"
+      }
+    ]
+  },
+  {
+    "input": "<span>https://example.com github</span>\n",
+    "options": {
+      "names": [
+        "GitHub"
+      ]
+    },
+    "findings": [
+      {
+        "line": 1,
+        "range": [
+          27,
+          6
+        ],
+        "detail": "Expected: GitHub; Actual: github"
+      }
+    ]
+  },
+  {
+    "input": "<div>\nhttps://example.com github\n</div>\n",
+    "options": {
+      "names": [
+        "GitHub"
+      ]
+    },
+    "findings": [
+      {
+        "line": 2,
+        "range": [
+          21,
+          6
+        ],
+        "detail": "Expected: GitHub; Actual: github"
+      }
+    ]
+  }
+]

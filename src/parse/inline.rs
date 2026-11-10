@@ -44,6 +44,14 @@ fn html_token_end(text: &str) -> Option<usize> {
 }
 
 pub(crate) fn label_end(text: &str, code: bool) -> Option<usize> {
+    label_end_impl(text, code, false)
+}
+
+pub(crate) fn label_end_math(text: &str) -> Option<usize> {
+    label_end_impl(text, true, true)
+}
+
+fn label_end_impl(text: &str, code: bool, math: bool) -> Option<usize> {
     if !text.starts_with('[') {
         return None;
     }
@@ -55,17 +63,18 @@ pub(crate) fn label_end(text: &str, code: bool) -> Option<usize> {
             b'\\' => {
                 cursor += 1;
             }
-            b'`' if code => {
+            b'`' | b'$' if (code && bytes[cursor] == b'`') || (math && bytes[cursor] == b'$') => {
+                let marker = bytes[cursor];
                 let count = bytes[cursor..]
                     .iter()
-                    .take_while(|byte| **byte == b'`')
+                    .take_while(|byte| **byte == marker)
                     .count();
                 let mut end = cursor + count;
                 while end < bytes.len() {
-                    if bytes[end] == b'`' {
+                    if bytes[end] == marker {
                         let closing = bytes[end..]
                             .iter()
-                            .take_while(|byte| **byte == b'`')
+                            .take_while(|byte| **byte == marker)
                             .count();
                         if closing == count {
                             cursor = end + count - 1;

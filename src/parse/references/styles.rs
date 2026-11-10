@@ -42,7 +42,7 @@ pub(super) fn record(
         });
     }
     let image = usize::from(raw.starts_with('!'));
-    let end = crate::parse::label_end(&raw[image..], true)?;
+    let end = crate::parse::label_end_math(&raw[image..])?;
     let label = Some(span.start + image + 1..span.start + image + end);
     let reference = match node {
         Node::LinkReference(link) => Some(link.reference_kind),

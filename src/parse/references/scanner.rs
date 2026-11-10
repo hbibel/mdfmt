@@ -11,6 +11,25 @@ struct Frame {
     start: usize,
     body: usize,
     nested: bool,
+    inactive: bool,
+}
+
+pub(super) struct Exclusion {
+    pub span: Range<usize>,
+    pub link: bool,
+}
+
+#[derive(Default)]
+pub(super) struct Projection {
+    pub skipped: Vec<Range<usize>>,
+    pub literal: Vec<Range<usize>>,
+}
+
+impl Projection {
+    pub fn extend(&mut self, other: Self) {
+        self.skipped.extend(other.skipped);
+        self.literal.extend(other.literal);
+    }
 }
 
 fn entity(text: &str) -> bool {
@@ -27,10 +46,14 @@ fn entity(text: &str) -> bool {
         })
 }
 
-fn project(text: &str, span: Range<usize>, excluded: &[Range<usize>]) -> (String, bool) {
+fn project(text: &str, span: Range<usize>, projection: &Projection) -> (String, bool) {
+    let excluded = &projection.skipped;
     let mut output = String::new();
     let mut cursor = span.start;
     let mut index = excluded.partition_point(|range| range.end <= cursor);
+    let mut literal = projection
+        .literal
+        .partition_point(|range| range.end <= cursor);
     while cursor < span.end {
         while index < excluded.len() && excluded[index].end <= cursor {
             index += 1;
@@ -48,7 +71,14 @@ fn project(text: &str, span: Range<usize>, excluded: &[Range<usize>]) -> (String
             cursor += 2;
             continue;
         }
-        if matches!(bytes[cursor], b'*' | b'_') {
+        while literal < projection.literal.len() && projection.literal[literal].end <= cursor {
+            literal += 1;
+        }
+        let data = projection
+            .literal
+            .get(literal)
+            .is_some_and(|range| range.start <= cursor);
+        if !data && matches!(bytes[cursor], b'*' | b'_') {
             cursor += 1;
             continue;
         }
@@ -71,7 +101,8 @@ pub(super) fn scan(
     source: &Source,
     logical: &str,
     span: Range<usize>,
-    excluded: &[Range<usize>],
+    excluded: &[Exclusion],
+    projection: &Projection,
 ) -> Vec<ReferenceUse> {
     let text = source.text();
     let bytes = text.as_bytes();
@@ -80,14 +111,25 @@ pub(super) fn scan(
     let mut stack = vec![];
     let mut output: Vec<ReferenceUse> = vec![];
     while cursor < span.end {
-        while exclusion < excluded.len() && excluded[exclusion].end <= cursor {
+        while exclusion < excluded.len() && excluded[exclusion].span.end <= cursor {
             exclusion += 1;
         }
         if let Some(range) = excluded
             .get(exclusion)
-            .filter(|range| range.start <= cursor)
+            .filter(|range| range.span.start <= cursor)
         {
-            cursor = range.end.min(span.end);
+            if range.link {
+                for frame in stack.iter_mut().rev() {
+                    let frame: &mut Frame = frame;
+                    if frame.body == frame.start + 1 {
+                        if frame.inactive {
+                            break;
+                        }
+                        frame.inactive = true;
+                    }
+                }
+            }
+            cursor = range.span.end.min(span.end);
             continue;
         }
         if bytes[cursor] == b'\\' && bytes.get(cursor + 1).is_some_and(u8::is_ascii_punctuation) {
@@ -99,6 +141,7 @@ pub(super) fn scan(
                 start: cursor,
                 body: cursor + 2,
                 nested: false,
+                inactive: false,
             });
             cursor += 2;
             continue;
@@ -107,12 +150,14 @@ pub(super) fn scan(
                 start: cursor,
                 body: cursor + 1,
                 nested: false,
+                inactive: false,
             });
         } else if bytes[cursor] == b']'
             && let Some(Frame {
                 start,
                 body,
                 nested,
+                inactive,
             }) = stack.pop()
         {
             if let Some(parent) = stack.last_mut() {
@@ -131,9 +176,9 @@ pub(super) fn scan(
             let (label, has_data) = project(
                 if reference_context { text } else { logical },
                 body..cursor,
-                excluded,
+                projection,
             );
-            let end = cursor + 1;
+            let end = cursor + usize::from(!inactive);
             let mut candidate = ReferenceUse {
                 key: key(&label),
                 span: start..end,
@@ -144,7 +189,7 @@ pub(super) fn scan(
                     let previous = output.last_mut().unwrap();
                     previous.span.end = end;
                     previous.shortcut = false;
-                    cursor = end;
+                    cursor += 1;
                     continue;
                 }
                 candidate.span.start = output.pop().unwrap().span.start;
