@@ -86,6 +86,8 @@ see [inline-whitespace evidence](docs/compatibility/inline-whitespace.md).
 MD052/MD053/MD054 report undefined references, unused/duplicate definitions and
 disallowed link/image styles without fabricating destinations or discarding content;
 see [reference diagnostic evidence](docs/compatibility/reference-diagnostics.md).
+MD046 reports code-block style mismatches without converting or changing code;
+see [literal content evidence](docs/compatibility/literal-content-diagnostics.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is

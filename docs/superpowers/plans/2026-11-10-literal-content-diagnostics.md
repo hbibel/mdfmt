@@ -53,17 +53,17 @@
 
 **Interfaces:** Consume `Source`, `ParsedDocument`, `DocumentConfig` and recovered `heading_spaces::literal_exclusions` code ownership. Produce `md046::diagnose(&Source, &ParsedDocument, &DocumentConfig) -> Vec<Diagnostic>`. No shared model changes are needed for later tasks.
 
-- [ ] Record pinned cases for `consistent`, `fenced`, `indented`, disabled, aliases, warnings, all newline forms/BOM, empty/unclosed fences, nested containers, tabs, metadata, HTML and disabled first anchors.
+- [x] Record pinned cases for `consistent`, `fenced`, `indented`, disabled, aliases, warnings, all newline forms/BOM, empty/unclosed fences, nested containers, tabs, metadata, HTML and disabled first anchors.
   Run `node tools/parser-oracle/literal-content.mjs --record --source-only --rule MD046`.
   Expected: source-only evidence, no native coverage claim.
-- [ ] Write `mixed_code_styles_report_without_converting_code`: input `"```rs\nlet x = 1;\n```\n\n    code\n"` remains exact with no edits; MD046 reports one finding on physical line 5, empty span `22..22`, detail `Expected: fenced; Actual: indented`.
+- [x] Write `mixed_code_styles_report_without_converting_code`: input `"```rs\nlet x = 1;\n```\n\n    code\n"` remains exact with no edits; MD046 reports one finding on physical line 5, empty span `22..22`, detail `Expected: fenced; Actual: indented`.
   Write `explicit_styles_and_disabled_first_anchors_preserve_consistency`, receipt comparison, CLI alias/warning/check/write/no-fix and MD013/MD026 composition tests.
-- [ ] Run `mise exec -- cargo test --test md046`.
+- [x] Run `mise exec -- cargo test --test md046`.
   Expected: missing MD046 diagnostics, not a broken test harness.
-- [ ] Implement code style from owned source fence syntax and document order; retain disabled anchors and original physical lines. Emit `Code block style [Expected: ...; Actual: ...]` with an empty span on the opening line. No code conversion.
-- [ ] Run focused tests, `--rule MD046` native oracle, affected code/fence/container tests, full native suite, fmt/clippy/diff checks.
+- [x] Implement code style from owned source fence syntax and document order; retain disabled anchors and original physical lines. Emit `Code block style [Expected: ...; Actual: ...]` with an empty span on the opening line. No code conversion.
+- [x] Run focused tests, `--rule MD046` native oracle, affected code/fence/container tests, full native suite, fmt/clippy/diff checks.
   Expected: all pass; source bytes and repeated results remain exact.
-- [ ] Update truthful evidence/coverage to 48/53 and commit `feat: report code block style without rewriting literal code`.
+- [x] Update truthful evidence/coverage to 48/53 and commit `feat: report code block style without rewriting literal code`.
 
 ## Task 2: MD034 bare URLs
 
@@ -110,3 +110,24 @@
 ## Planning check
 
 The project already supplies native parsing, source offsets, config schemas and final-output diagnostic dispatch. Task 1 is independent; Task 2 produces the exact snapshot fields Task 3 consumes. Optional shared recovery extraction preserves the reference consumer in the same step. All five Review Focus items have owning test steps. No new dependency or edited content is authorized. Runtime-confirmed literals and spans must be checked before RED tests; any correction is a ledgered ruling, not an unrecorded plan change.
+
+## Status and findings
+
+Task 1's six tests and 1,464 native/source comparisons pass, with fmt/clippy and
+affected MD014/MD040/MD048/MD013/MD026 oracles. Full-suite verification passes
+453 tests across 63 targets; coverage is 48/53. Tasks 2/3 and the one independent
+review remain pending.
+
+MD046 development reproduced native indented-code splits across blank container
+lines. Its local same-owner grouping has a RED→GREEN literal regression and no
+source edits. The same split causes an Important OPEN MD014 false positive on
+`>     $ echo hi\n>\n>     output\n`; that shared whole-block classification defect
+must be fixed before roadmap completion, not hidden behind the new coverage count.
+
+Rulings so far:
+
+1. Group only same-owner indented code across blank prefix gaps. Cost if wrong:
+   diagnostic counts/consistency anchors; source bytes remain unchanged.
+2. Keep the related MD014 defect an explicit Important roadmap correction rather
+   than silently changing shared snapshots in Task 1. Cost if wrong: existing
+   MD014 false positives remain until that required regression-first correction.
