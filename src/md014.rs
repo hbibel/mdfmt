@@ -18,11 +18,9 @@ pub(crate) fn diagnose(
     {
         return vec![];
     }
-    let excluded = crate::heading_spaces::literal_exclusions(source, parsed, true);
     let mut result = vec![];
-    for block in excluded.code {
-        let raw = source.text()[block.span.clone()].trim_start_matches([' ', '\t']);
-        let fenced = raw.starts_with("```") || raw.starts_with("~~~");
+    for block in crate::parse::diagnostic_code_blocks(source, parsed) {
+        let fenced = block.fenced;
         let first = source.position(block.span.start).unwrap().line + usize::from(fenced);
         // A consumed tab can leave an empty codeFlowValue, including at an
         // unclosed fence's EOF where mdast drops the trailing empty value.

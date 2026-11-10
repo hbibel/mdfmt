@@ -74,6 +74,7 @@ mod tests {
     }
 }
 mod attention;
+mod code_blocks;
 mod comments;
 mod container_prefix;
 mod content;
@@ -87,6 +88,7 @@ mod table_flow;
 pub(crate) use attention::{
     AttentionPair, BareMarker, CodeSpan, InlineAnalysis, InlineFields, inline_analysis,
 };
+pub(crate) use code_blocks::diagnostic_code_blocks;
 pub(crate) use comments::masked_source as comment_masked_source;
 pub(crate) use container_prefix::ContainerPath;
 pub(crate) use content::{ContentFields, ContentKind, content_analysis};

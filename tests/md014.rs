@@ -146,3 +146,150 @@ fn indented_code_fences_still_owned_by_html_do_not_become_shell_blocks() {
         assert!(result.diagnostics.is_empty(), "{:?}", result.diagnostics);
     }
 }
+
+#[test]
+fn indented_commands_and_output_across_blank_container_lines_are_one_block() {
+    for (input, count) in [
+        (">     $ echo hi\n>\n>     output\n", 0),
+        ("-     $ echo hi\n\n      output\n", 0),
+        ("> -     $ echo hi\n>\n>       output\n", 0),
+        (">     $ echo hi\n\n>     output\n", 1),
+        ("-     $ echo hi\n\n-     output\n", 1),
+    ] {
+        for fix in [false, true] {
+            let result =
+                format_with_config(input, &FormatOptions { fix }, &config(json!(true))).unwrap();
+            assert_eq!(result.output, input);
+            assert!(result.edits.is_empty());
+            assert_eq!(
+                result.diagnostics.len(),
+                count,
+                "{input:?}: {:?}",
+                result.diagnostics
+            );
+        }
+    }
+}
+
+#[test]
+fn split_indented_command_contexts_keep_physical_offsets() {
+    for body in [
+        ">     $ echo hi\n>\n>     $ pwd\n",
+        "> -     $ echo hi\n>\n>       $ pwd\n",
+        "-     $ echo hi\n\n      $ pwd\n",
+        ">     $ echo hi\n>\n>\n>     $ pwd\n",
+    ] {
+        for input in [
+            body.to_owned(),
+            format!("\u{feff}{}", body.replace('\n', "\r\n")),
+            body.replace('\n', "\r"),
+        ] {
+            let result =
+                format_with_config(&input, &FormatOptions { fix: false }, &config(json!(true)))
+                    .unwrap();
+            assert_eq!(result.output, input);
+            assert_eq!(
+                result.diagnostics.len(),
+                2,
+                "{input:?}: {:?}",
+                result.diagnostics
+            );
+            let expected: Vec<_> = input
+                .match_indices("$ ")
+                .map(|(offset, _)| Some(offset..offset + 2))
+                .collect();
+            assert_eq!(
+                result
+                    .diagnostics
+                    .iter()
+                    .map(|d| d.span.clone())
+                    .collect::<Vec<_>>(),
+                expected
+            );
+            assert!(
+                result.diagnostics[0]
+                    .message
+                    .ends_with("[Context: \"$ echo hi\"]")
+            );
+            assert!(
+                result.diagnostics[1]
+                    .message
+                    .ends_with("[Context: \"$ pwd\"]")
+            );
+            let again = format_with_config(
+                &result.output,
+                &FormatOptions::default(),
+                &config(json!(true)),
+            )
+            .unwrap();
+            assert_eq!(again.output, input);
+            assert_eq!(again.diagnostics, result.diagnostics);
+            assert!(again.edits.is_empty());
+        }
+    }
+}
+
+#[test]
+fn adjacent_indented_tokens_without_a_blank_keep_their_separate_ownership() {
+    let input = "-    ```sh\n  \t$ echo hi\n     ```\n";
+    let settings = ResolvedConfig {
+        rules: RuleConfig::from_value(
+            json!({"default":false,"MD014":true,"MD046":{"style":"fenced"}}),
+        )
+        .unwrap(),
+        ..Default::default()
+    };
+    let result = format_with_config(input, &FormatOptions { fix: false }, &settings).unwrap();
+    assert_eq!(result.output, input);
+    assert_eq!(
+        result
+            .diagnostics
+            .iter()
+            .filter(|d| d.code == "MD014")
+            .count(),
+        1
+    );
+    assert_eq!(
+        result
+            .diagnostics
+            .iter()
+            .filter(|d| d.code == "MD046")
+            .count(),
+        2
+    );
+}
+
+#[test]
+fn indented_code_does_not_merge_across_empty_nested_containers() {
+    for input in [
+        ">     $ echo hi\n> >\n>     output\n",
+        ">     $ echo hi\n>\n> >\n>\n>     output\n",
+    ] {
+        let settings = ResolvedConfig {
+            rules: RuleConfig::from_value(
+                json!({"default":false,"MD014":true,"MD046":{"style":"fenced"}}),
+            )
+            .unwrap(),
+            ..Default::default()
+        };
+        let result = format_with_config(input, &FormatOptions { fix: false }, &settings).unwrap();
+        assert_eq!(result.output, input);
+        assert_eq!(
+            result
+                .diagnostics
+                .iter()
+                .filter(|d| d.code == "MD014")
+                .count(),
+            1,
+            "{input:?}"
+        );
+        assert_eq!(
+            result
+                .diagnostics
+                .iter()
+                .filter(|d| d.code == "MD046")
+                .count(),
+            2
+        );
+    }
+}

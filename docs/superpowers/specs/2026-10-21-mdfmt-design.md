@@ -157,11 +157,13 @@ release numbers and ordering relative to other later-release work remain open.
   now has zero synthetic width while retaining original source offsets; prior
   HTML/bare-URL comparisons and the regression pass.
 - Native indented-code records can split across blank lines inside one container.
-  MD046 now groups same-owner records for diagnostic classification without merging
-  separate list items/quotes. This exposed an Important open MD014 gap:
-  `>     $ echo hi\n>\n>     output\n` incorrectly reports a prompt finding despite
-  following output; pinned MD014 reports none. Shared logical-code classification
-  must be corrected before roadmap completion; current code bytes remain intact.
+  This exposed an Important MD014 gap: `>     $ echo hi\n>\n>     output\n`
+  incorrectly reported a prompt despite following output. Shared MD014/MD046
+  logical snapshots now join only consecutive same-owner indented siblings across
+  actual blank/prefix-only gaps, retaining original physical line distances.
+  Separate/empty containers and adjacent parser tokens remain independent. Four
+  regression tests and 462 MD014/1,518 MD046 source comparisons cover the fix;
+  the optimized full suite passes 471 tests across 65 targets, without source edits.
 - Independent reference review found nested resources erased reference-key data,
   falsely resolving missing labels and hiding unrelated unused definitions.
   Separate structural exclusions and data projection now preserve nested label

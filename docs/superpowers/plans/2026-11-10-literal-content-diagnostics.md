@@ -111,13 +111,13 @@
 
 **Interfaces:** Add `DiagnosticCodeBlock { span: Range<usize>, value: String, fenced: bool }` and `diagnostic_code_blocks(&Source, &ParsedDocument) -> Vec<DiagnosticCodeBlock>`. It owns source-ordered diagnostic snapshots, same-owner blank-gap coalescing and actual fence classification. MD014 consumes logical values/physical spans; MD046 consumes styles/opening lines. No edit consumer uses these snapshots.
 
-- [ ] Reproduce `indented_commands_and_output_across_blank_container_lines_are_one_block`: `>     $ echo hi\n>\n>     output\n` reports no MD014 finding and remains exact. Separate blockquotes/list items must remain independent.
-- [ ] Reproduce `split_indented_command_contexts_keep_physical_offsets`: two command lines across a blank container line still report two literal `$ ` spans on their actual lines, including BOM/CRLF and nested containers.
-- [ ] Run the new MD014 tests. Expected: the known false positive fails before the shared correction.
-- [ ] Move MD046's diagnostic coalescing into the shared snapshot helper. Merge only indented blocks with the same native container owner across blank/prefix-only gaps; reconstruct value line endings from physical line differences, preserving original code values and offsets. Use expanded ownership for tabs without authorizing any edit or rewriting literal content.
-- [ ] Use the helper in MD014/MD046, removing their divergent style/grouping assumptions. Run all MD014/MD046 cases, expand pinned source receipts for blank containers and verify no changed fence/code contexts.
-- [ ] Run full tests, all batch/native/parser consumers, fmt/clippy/diff checks; mark the Important roadmap defect fixed only with RED→GREEN and a green suite.
-- [ ] Commit `fix: classify indented code commands across container blanks`.
+- [x] Reproduce `indented_commands_and_output_across_blank_container_lines_are_one_block`: `>     $ echo hi\n>\n>     output\n` reports no MD014 finding and remains exact. Separate blockquotes/list items must remain independent.
+- [x] Reproduce `split_indented_command_contexts_keep_physical_offsets`: two command lines across a blank container line still report two literal `$ ` spans on their actual lines, including BOM/CRLF and nested containers.
+- [x] Run the new MD014 tests. Expected: the known false positive fails before the shared correction.
+- [x] Move MD046's diagnostic coalescing into the shared snapshot helper. Merge only indented blocks with the same native container owner across blank/prefix-only gaps; reconstruct value line endings from physical line differences, preserving original code values and offsets. Use expanded ownership for tabs without authorizing any edit or rewriting literal content.
+- [x] Use the helper in MD014/MD046, removing their divergent style/grouping assumptions. Run all MD014/MD046 cases, expand pinned source receipts for blank containers and verify no changed fence/code contexts.
+- [x] Run full tests, all batch/native/parser consumers, fmt/clippy/diff checks; mark the Important roadmap defect fixed only with RED→GREEN and a green suite.
+- [x] Commit `fix: classify indented code commands across container blanks`.
 - [ ] Request the one independent batch review over the plan baseline through final implementation HEAD, including every Review Focus and ledger ruling. Reproduce/fix only Important/Critical findings once, then run a green full suite; no second review.
 - [ ] Retain all rulings/evidence in this plan, remove only its completed scratch workspace, and continue MD005/MD007/MD051 and later roadmap work without merge/push or approval questions.
 
@@ -148,10 +148,19 @@ CPU-contention timing failure; no test limit changed. Coverage is 50/53. Task 4
 and the independent review remain pending.
 
 MD046 development reproduced native indented-code splits across blank container
-lines. Its local same-owner grouping has a RED→GREEN literal regression and no
-source edits. The same split causes an Important OPEN MD014 false positive on
-`>     $ echo hi\n>\n>     output\n`; that shared whole-block classification defect
-must be fixed before roadmap completion, not hidden behind the new coverage count.
+lines. Task 4 closes the resulting Important MD014 false positive on
+`>     $ echo hi\n>\n>     output\n` with shared diagnostic snapshots, not source
+edits. The finding is fixed rather than hidden behind the new coverage count.
+
+Task 4's four new regressions and existing code suites pass. The first reproduces
+the known MD014 false positive; the adjacent-token regression additionally pins
+the distinction between blank gaps and intentionally separate adjacent tokens.
+Expanded native oracles pass 462 MD014 and 1,518 MD046 cases. Empty nested
+containers are explicit ownership barriers. The complete optimized post-fix suite
+passes 471 tests across 65 targets; fmt/clippy clean. Earlier debug evidence is
+470 passing tests before the barrier addition and a final command timeout after
+387 passes without failures; it is not misrepresented as a completed debug run.
+No source edits or assertion/timing-limit changes. Commit/review follow.
 
 Rulings so far:
 
@@ -179,3 +188,10 @@ Rulings so far:
 8. Close the Important MD014 defect before this batch's review instead of leaving
    it for distant hardening. Cost if wrong: one extra shared-snapshot correction
    and parser verification; no edit authority changes.
+9. Require actual blank gaps and consecutive sibling ownership, not just matching
+   parents and prefix-only bytes. Cost if wrong: conservative logical-block
+   selection; direct source regressions guard adjacent/empty-container boundaries.
+10. Use the complete optimized Rust suite for final verification after the debug
+    command exceeded ten minutes. Cost if wrong: debug-only issues outside the
+    completed focused/debug runs could remain; all 471 tests, assertions and time
+    budgets run unchanged in the optimized suite, and both native code oracles pass.

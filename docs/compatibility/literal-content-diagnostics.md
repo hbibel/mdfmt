@@ -19,7 +19,7 @@ blockquotes remain separate.
 ## Evidence
 
 `tests/md046.rs` contains six native tests; `literal-content.mjs --rule MD046`
-retains 1,464 pinned observations covering explicit/consistent styles, all newline
+retains 1,518 pinned observations covering explicit/consistent styles, all newline
 forms, BOM, tabs, nested containers, metadata, HTML recovery, empty/unclosed fences,
 disabled anchors and severity. The native oracle checks exact source, findings,
 exit status and repeated-call behavior with fixes enabled/disabled.
@@ -27,9 +27,9 @@ exit status and repeated-call behavior with fixes enabled/disabled.
 The first five tests failed on absent diagnostics. The first implementation then
 passed four tests but exposed split indented-code records; the literal same-owner
 regression failed before grouping and passes afterward, together with all receipt
-rows. Full-suite verification passes 453 tests across 63 targets; fmt/clippy and
-the affected MD014/MD040/MD048/MD013/MD026 native oracles pass. Coverage is 48/53;
-the remaining batch tasks and its independent review are still pending.
+rows. At MD046's initial commit the full suite passed 453 tests across 63 targets,
+with fmt/clippy and affected code/MD013/MD026 oracles clean, reaching 48/53 rules.
+Subsequent batch and final verification evidence appears below.
 
 ```sh
 mise exec -- cargo test --test md046
@@ -55,9 +55,9 @@ even when the native text node's range omits its escape byte.
 permissions, warnings, CLI check/write/no-fix, literal source preservation and
 second-call stability. A quoted 1,000-URL plus 256 KiB tail and 100-image budget
 case completes within 30 seconds, emits exactly 1,000 warnings and retains exact
-source. Full-suite verification passes 457 tests across 64 targets; fmt/clippy and
-all affected HTML/reference/inline/MD013/MD026 oracles pass. Coverage is 49/53;
-MD044, the batch review and the related MD014 correction remain pending.
+source. At MD034's commit the full suite passed 457 tests across 64 targets, with
+fmt/clippy and affected HTML/reference/inline/MD013/MD026 oracles clean, reaching
+49/53 rules. Subsequent MD044 and logical-code corrections are recorded below.
 
 ```sh
 mise exec -- cargo test --test md034
@@ -107,18 +107,27 @@ All focused tests/native oracles pass with fmt/clippy clean. The isolated full
 suite passes 467 tests across 65 targets. An earlier concurrent run hit MD018's
 existing five-second math budget at 5.77s; the exact test and full suite pass
 without competing oracle jobs. The limit was not weakened. Coverage is 50/53;
-the MD014 logical-block correction and independent batch review remain pending.
+the independent batch review remains pending. The subsequent MD014 correction is
+verified below.
 
 ```sh
 mise exec -- cargo test --test md044
 node tools/parser-oracle/proper-names.mjs
 ```
 
-## Related open finding
+## Logical code correction
 
-The same native parser split still affects existing MD014 whole-block command
-classification. For `>     $ echo hi\n>\n>     output\n`, pinned MD014 reports
-nothing, but native MD014 reports a prompt finding at line 1 despite following
-output in the same logical code block. Source bytes remain unchanged. MD046's
-local grouping does not fix other snapshot consumers; the roadmap retains this
-Important gap for a shared logical-code ownership correction.
+The same native parser split exposed an Important MD014 whole-block error:
+`>     $ echo hi\n>\n>     output\n` reported a prompt despite following output.
+The literal reproduction failed before the correction and now passes. MD014 and
+MD046 share logical diagnostic code snapshots, joining only same-owner indented
+nodes across actual blank/prefix-only gaps. Separate containers, adjacent parser
+tokens and intervening empty containers remain independent; values retain actual
+physical line distances. Original code bytes remain unchanged. The MD014 corpus
+grows to 462 cases and MD046 to 1,518. The optimized full suite passes 471 tests
+across 65 targets, with fmt/clippy clean and unchanged assertions/time budgets.
+The prior debug run passed 470 tests before the additional barrier regression;
+the final debug attempt exceeded its command limit after 387 passing tests, with
+no failures. The complete optimized run is the final full-suite evidence, not a
+claim that the timed-out debug run finished. The Important MD014 finding is fixed;
+one independent batch review remains pending.

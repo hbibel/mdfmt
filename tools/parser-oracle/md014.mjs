@@ -24,9 +24,11 @@ const samples=[
   "- item\n<span>\n\n      $ two\n",
   "\uFEFF- item\n<span>\n  ```\n  $ two\n  ```\n",
 ];
+for(const input of [">     $ echo hi\n>\n>     output\n",">     $ echo hi\n>\n>     $ pwd\n","-     $ echo hi\n\n      output\n","> -     $ echo hi\n>\n>       output\n",">     $ echo hi\n\n>     output\n","-     $ echo hi\n\n-     output\n",">     $ echo hi\n>\n>\n>     $ pwd\n",">\t$ echo hi\n>\n>\toutput\n",">     $\techo hi\n>\n>     $ pwd\n"]){samples.push(input,input.replaceAll("\n","\r\n"),"\uFEFF"+input.replaceAll("\n","\r"));}
 for(const [first,next]of [["",""],["> ","> "],["- ","  "],["> - ",">   "]])
   for(let indent=0;indent<4;indent++)for(const gap of [""," ","   ","\t"," \t"])
     samples.push(first+" ".repeat(indent)+"```sh\n"+next+gap+"$ echo hi\n"+next+" ".repeat(indent)+"```\n");
+for(const input of [">     $ echo hi\n> >\n>     output\n",">     $ echo hi\n>\n> >\n>\n>     output\n"]){samples.push(input,input.replaceAll("\n","\r\n"),"\uFEFF"+input.replaceAll("\n","\r"));}
 const configurations=[true,false,{severity:"warning"}];
 const observations=samples.flatMap((input,sample)=>configurations.map((options,configuration)=>{
   const findings=lint({strings:{input},config:{default:false,MD014:options}}).input;
