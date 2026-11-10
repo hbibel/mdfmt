@@ -2,14 +2,28 @@ use super::{ParsedDocument, RegionKind, diagnostic_parse};
 use crate::{Source, config::js_space};
 use markdown::mdast::Node;
 use std::{collections::HashMap, ops::Range};
+mod segments;
 
 pub(crate) struct ContentFields {
     pub bare_urls: bool,
+    pub segments: bool,
 }
 
 #[derive(Default)]
 pub(crate) struct ContentAnalysis {
     pub bare_urls: Vec<Range<usize>>,
+    pub segments: Vec<ContentSegment>,
+}
+
+#[derive(Clone, Copy)]
+pub(crate) enum ContentKind {
+    Data,
+    Code,
+    Html,
+}
+pub(crate) struct ContentSegment {
+    pub span: Range<usize>,
+    pub kind: ContentKind,
 }
 
 fn tag(node: &Node) -> Option<(&str, bool)> {
@@ -106,7 +120,7 @@ pub(crate) fn content_analysis(
     fields: ContentFields,
 ) -> ContentAnalysis {
     let mut output = ContentAnalysis::default();
-    if !fields.bare_urls {
+    if !(fields.bare_urls || fields.segments) {
         return output;
     }
     let (view, offsets) = super::html::diagnostic_view(source, parsed);
@@ -118,10 +132,18 @@ pub(crate) fn content_analysis(
         .iter()
         .find(|region| region.kind == RegionKind::Root && region.parent.is_some())
         .map_or(0, |region| region.span.start);
-    visit(&view, &parsed.tree, base, &mut output);
+    if fields.bare_urls {
+        visit(&view, &parsed.tree, base, &mut output);
+    }
+    if fields.segments {
+        output.segments = segments::collect(&view, &parsed.tree, base);
+    }
     for span in &mut output.bare_urls {
         *span = offsets[span.start]..offsets[span.end];
     }
     output.bare_urls.sort_by_key(|span| span.start);
+    for segment in &mut output.segments {
+        segment.span = offsets[segment.span.start]..offsets[segment.span.end];
+    }
     output
 }

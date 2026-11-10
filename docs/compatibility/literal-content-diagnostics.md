@@ -64,8 +64,55 @@ mise exec -- cargo test --test md034
 node tools/parser-oracle/literal-content.mjs --rule MD034
 ```
 
-MD044 remains unimplemented. Its separate [audit](proper-name-audit.md) is
-source-only evidence, not native coverage.
+## Proper names
+
+MD044 reports configured proper-name capitalization without changing prose,
+identifiers, code, HTML, links or definitions. Empty name entries are ignored;
+nonempty entries still run. `code_blocks` and `html_elements` apply independently.
+Converted Markdown inside HTML flow retains its Data/Code classification rather
+than inheriting blanket HTML permissions. Continuation prefixes are not name data.
+
+Source segments retain original byte ranges for Data, Code and Html, omitting
+escapes/entities, attention markers, resources, reference labels, metadata and
+math. Visible labels and recovered image descriptions remain checkable. Image
+recovery shares the reference batch's selected compact-definition headers and
+paragraph cache; it does not parse unrelated definition payloads per name/image.
+
+The existing vendored `regress` engine matches escaped literal names using legacy
+JavaScript UTF-16 case/boundary semantics. Longest names have priority; ICU root
+collation resolves equal-length priorities as in the pinned runtime. A sigma
+variant regression reproduced the failure of scalar/lowercase heuristics before
+adding native `icu_collator` 2.1.1. Other environment-selected collation locales
+are not claimed as additional reference contracts.
+
+Accepted spellings and previously matched ranges prevent overlapping duplicate
+findings. Actual URL exclusions are computed once per relevant source segment,
+not extended to the token's end. Code indentation is removed only from the
+diagnostic segment, with physical values mapped back to original source bytes.
+Names after URLs remain reportable. No Node dependency exists at runtime.
+
+`tests/md044.rs` has ten native tests. Its 1,911 receipts distinguish 1,904 ordinary
+pinned cases from seven corrected-policy cases for URL bounds/empty names. Empty
+names are never sent to upstream; the separate [audit](proper-name-audit.md)
+retains its bounded resource-failure observation. Tests cover source ranges,
+Unicode priority, flags, aliases, CLI modes, MD013/MD026 composition, repeated
+calls and a bounded 1,100-finding dense-name/image workload with unrelated titles.
+
+Development also reproduced a shared normalization defect: a synthetic space for
+the BOM changed list continuation depth and exposed indented code as prose.
+Zero-width BOM mapping fixes both false MD034 findings and incorrect MD044 code
+flag handling. The literal regression and prior HTML/bare-URL comparisons pass.
+
+All focused tests/native oracles pass with fmt/clippy clean. The isolated full
+suite passes 467 tests across 65 targets. An earlier concurrent run hit MD018's
+existing five-second math budget at 5.77s; the exact test and full suite pass
+without competing oracle jobs. The limit was not weakened. Coverage is 50/53;
+the MD014 logical-block correction and independent batch review remain pending.
+
+```sh
+mise exec -- cargo test --test md044
+node tools/parser-oracle/proper-names.mjs
+```
 
 ## Related open finding
 

@@ -31,6 +31,10 @@ pub(super) fn diagnostic_view(source: &Source, parsed: &ParsedDocument) -> (Sour
     let mut chars = source.text().char_indices().peekable();
     while let Some((start, ch)) = chars.next() {
         let mut end = start + ch.len_utf8();
+        if start == 0 && ch == '\u{feff}' {
+            offsets[0] = end;
+            continue;
+        }
         if ch == '\r' {
             if chars.peek().is_some_and(|(_, ch)| *ch == '\n') {
                 chars.next();

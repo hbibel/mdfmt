@@ -120,10 +120,52 @@ fn recovery_context(label: &str, definitions: &BTreeMap<String, String>) -> Stri
         .collect()
 }
 
-struct Scopes<'a> {
-    source: &'a Source,
+pub(super) struct ImageRecovery {
     definitions: BTreeMap<String, String>,
     images: std::collections::HashMap<String, Option<Arc<Node>>>,
+}
+
+impl ImageRecovery {
+    pub(super) fn new(source: &Source, tree: &Node, base: usize) -> Self {
+        let mut definitions = BTreeMap::new();
+        recovery_definitions(source, tree, base, 0, &mut definitions);
+        Self {
+            definitions,
+            images: Default::default(),
+        }
+    }
+
+    pub(super) fn paragraph(&mut self, label: &str) -> Option<Arc<Node>> {
+        if let Some(tree) = self.images.get(label) {
+            return tree.clone();
+        }
+        let options = markdown::ParseOptions {
+            constructs: markdown::Constructs {
+                html_flow: false,
+                math_text: true,
+                ..markdown::Constructs::gfm()
+            },
+            ..markdown::ParseOptions::gfm()
+        };
+        let definitions = recovery_context(label, &self.definitions);
+        let candidate = format!("x {label}\n\n{definitions}");
+        #[cfg(test)]
+        tests::record_recovery(candidate.len());
+        let tree = super::mdast(&candidate, &options)
+            .ok()
+            .and_then(|tree| match tree {
+                Node::Root(root) => root.children.into_iter().next(),
+                _ => None,
+            })
+            .map(Arc::new);
+        self.images.insert(label.to_owned(), tree.clone());
+        tree
+    }
+}
+
+struct Scopes<'a> {
+    source: &'a Source,
+    recovery: ImageRecovery,
     logical: std::collections::HashMap<usize, String>,
     output: ReferenceAnalysis,
     fields: ReferenceFields,
@@ -248,31 +290,7 @@ impl Scopes<'_> {
                     if !possible {
                         return;
                     }
-                    let options = markdown::ParseOptions {
-                        constructs: markdown::Constructs {
-                            html_flow: false,
-                            math_text: true,
-                            ..markdown::Constructs::gfm()
-                        },
-                        ..markdown::ParseOptions::gfm()
-                    };
-                    let tree = if let Some(tree) = self.images.get(&label) {
-                        tree.clone()
-                    } else {
-                        let definitions = recovery_context(&label, &self.definitions);
-                        let candidate = format!("x {label}\n\n{definitions}");
-                        #[cfg(test)]
-                        tests::record_recovery(candidate.len());
-                        let tree = super::mdast(&candidate, &options)
-                            .ok()
-                            .and_then(|tree| match tree {
-                                Node::Root(root) => root.children.into_iter().next(),
-                                _ => None,
-                            })
-                            .map(Arc::new);
-                        self.images.insert(label, tree.clone());
-                        tree
-                    };
+                    let tree = self.recovery.paragraph(&label);
                     if let Some(tree) = tree {
                         projection.extend(self.scope(
                             &tree,
@@ -379,12 +397,9 @@ pub(crate) fn reference_analysis(
         .iter()
         .find(|region| region.kind == RegionKind::Root && region.parent.is_some())
         .map_or(0, |region| region.span.start);
-    let mut definitions = BTreeMap::new();
-    recovery_definitions(source, &parsed.tree, base, 0, &mut definitions);
     let mut scopes = Scopes {
         source,
-        definitions,
-        images: Default::default(),
+        recovery: ImageRecovery::new(source, &parsed.tree, base),
         logical: Default::default(),
         output: Default::default(),
         fields,

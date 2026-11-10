@@ -6,7 +6,7 @@
 
 **Architecture:** Add final-output diagnostic consumers with original-byte ranges and existing document permissions. MD046 uses recovered code ownership. A field-selected content snapshot supplies bare URLs and source-token-like prose/code/HTML segments for MD034/MD044, with bounded image recovery and distinct raw/source-normalized identities.
 
-**Tech Stack:** Existing Rust toolchain, `markdown`, `regex`, `serde_json`; pinned markdownlint development oracle only, no Node runtime or new dependency.
+**Tech Stack:** Existing Rust toolchain, `markdown`, vendored `regress`, `serde_json` and native `icu_collator`; pinned markdownlint development oracle only, no Node runtime. ICU collation was added after a regression disproved the original no-new-dependency assumption.
 
 **Spec:** `docs/superpowers/specs/2026-10-21-mdfmt-design.md`; rule contracts in `docs/compatibility/rules.json`, pinned `lib/md034.mjs`, `lib/md044.mjs`, `lib/md046.mjs` and `docs/compatibility/proper-name-audit.md`.
 
@@ -42,7 +42,7 @@
 
 - Create `src/md046.rs`, `tests/md046.rs`: code-block classification and diagnostics.
 - Create `src/parse/content.rs`, `src/md034.rs`, `tests/md034.rs`: field-selected content snapshot and bare-URL diagnostics.
-- Create `src/md044.rs`, `tests/md044.rs`: configured-name matching, exclusions and diagnostics; extend content fields only with consuming tests.
+- Create `src/md044.rs`, `tests/md044.rs`, `src/parse/content/segments.rs`: configured-name matching, exclusions and requested source segments; extend content fields only with consuming tests. A focused `proper-names.mjs` oracle keeps unsafe-empty-name source inputs excluded.
 - If image recovery is needed, extract the already-tested compact-header/paragraph cache into `src/parse/image_recovery.rs` and migrate the reference consumer in the same step. Do not duplicate full-definition recovery.
 - Create `tools/parser-oracle/literal-content.mjs` and per-rule receipt files; separate ordinary observations from corrected-policy rows.
 - Update `src/lib.rs`, `src/parse.rs`, CLI help, coverage assertions, README, rule inventory, roadmap and `docs/compatibility/literal-content-diagnostics.md` with each completed rule.
@@ -90,26 +90,40 @@
 
 **Interfaces:** Extend Task 2's `ContentFields` with `segments: bool` and `ContentAnalysis` with `segments: Vec<ContentSegment>`, defining `ContentSegment { span: Range<usize>, kind: ContentKind }` and `ContentKind::{Data, Code, Html}` together with consuming tests. Update MD034's caller to request `segments: false`; MD044 requests `segments: true`. Produce `md044::diagnose(&Source, &ParsedDocument, &DocumentConfig) -> Vec<Diagnostic>`. Preserve Task 2's bare-only work bound and reference recovery contracts.
 
-- [ ] Record ordinary name/boundary/priority/flags cases: empty arrays, mixed case, longest-first names, already accepted spellings, punctuation-bearing names, underscores, Unicode/BMP/astral/UTF-16, escapes/entities, labels versus destinations/definitions, HTML/code/math, directives, aliases and warnings. Never send empty names to the upstream oracle.
+- [x] Record ordinary name/boundary/priority/flags cases: empty arrays, mixed case, longest-first names, already accepted spellings, punctuation-bearing names, underscores, Unicode/BMP/astral/UTF-16, escapes/entities, labels versus destinations/definitions, HTML/code/math, directives, aliases and warnings. Never send empty names to the upstream oracle.
   Retain corrected native-policy rows for empty entries and actual-URL exclusions; compare ordinary source outcomes separately.
-- [ ] Write `proper_names_report_without_rewriting_prose_or_literal_code`: `"github\n"` with `names: ["GitHub"]` reports span `0..6`, detail `Expected: GitHub; Actual: github`, unchanged source/no edits.
+- [x] Write `proper_names_report_without_rewriting_prose_or_literal_code`: `"github\n"` with `names: ["GitHub"]` reports span `0..6`, detail `Expected: GitHub; Actual: github`, unchanged source/no edits.
   Write `urls_do_not_hide_following_names_in_enabled_code`: `"`https://example.com github`\n"` reports span `21..27`, clean with `code_blocks: false`; source audit remains false clean and is not used as native expected output.
   Write `empty_names_terminate_without_hiding_nonempty_names`: `names: ["", "GitHub"]` checks `github`, all-empty names report nothing under a bounded child-process regression.
   Add longest-first/overlap/correct-spelling, token boundary, Unicode/ASCII word-boundary, HTML flag, CLI and composition tests; dense-name/URL/image budgets must exercise real parsing.
-- [ ] Run `mise exec -- cargo test --test md044`.
+- [x] Run `mise exec -- cargo test --test md044`.
   Expected: missing MD044 diagnostics.
-- [ ] Implement nonempty name checks with pinned longest-first precedence and accepted-name spelling set. Use ASCII `\w`/boundary semantics and legacy JavaScript case equivalence, not broad Rust Unicode regex boundaries or expansions. Record actual matched source ranges and prevent overlapping duplicate findings.
+- [x] Implement nonempty name checks with pinned longest-first precedence and accepted-name spelling set. Use ASCII `\w`/boundary semantics and legacy JavaScript case equivalence, not broad Rust Unicode regex boundaries or expansions. Record actual matched source ranges and prevent overlapping duplicate findings.
   Scan only requested source-token-like segments: exclude definitions/resources/reference labels, escapes/entities and math; include visible labels. Respect `code_blocks` and `html_elements` independently. Compute actual URL exclusions once per relevant segment; never extend them to segment end or reparse complete document/definitions per name.
-- [ ] Emit `Proper names should have the correct capitalization [Expected: ...; Actual: ...]`; ignore empty names explicitly before matching. No capitalization edits, including inside code/HTML.
-- [ ] Run all three new suites/native oracles, existing six MD044 audit observations, reference/HTML/code/whitespace/style regressions; full suite, fmt/clippy/diff checks.
+- [x] Emit `Proper names should have the correct capitalization [Expected: ...; Actual: ...]`; ignore empty names explicitly before matching. No capitalization edits, including inside code/HTML.
+- [x] Run all three new suites/native oracles, existing six MD044 audit observations, reference/HTML/code/whitespace/style regressions; full suite, fmt/clippy/diff checks.
   Expected: ordinary parity plus explicit corrected policies, exact literal content and idempotence; coverage 50/53 only after verification.
-- [ ] Update evidence/roadmap/coverage and commit `feat: diagnose configured proper names with safe URL exclusions`.
+- [x] Update evidence/roadmap/coverage and commit `feat: diagnose configured proper names with safe URL exclusions`.
+
+## Task 4: MD014 logical indented-code classification
+
+**Files:** `src/parse/code_blocks.rs`, `src/md014.rs`, `src/md046.rs`, `tests/md014.rs`, shared code evidence/oracles and roadmap.
+
+**Interfaces:** Add `DiagnosticCodeBlock { span: Range<usize>, value: String, fenced: bool }` and `diagnostic_code_blocks(&Source, &ParsedDocument) -> Vec<DiagnosticCodeBlock>`. It owns source-ordered diagnostic snapshots, same-owner blank-gap coalescing and actual fence classification. MD014 consumes logical values/physical spans; MD046 consumes styles/opening lines. No edit consumer uses these snapshots.
+
+- [ ] Reproduce `indented_commands_and_output_across_blank_container_lines_are_one_block`: `>     $ echo hi\n>\n>     output\n` reports no MD014 finding and remains exact. Separate blockquotes/list items must remain independent.
+- [ ] Reproduce `split_indented_command_contexts_keep_physical_offsets`: two command lines across a blank container line still report two literal `$ ` spans on their actual lines, including BOM/CRLF and nested containers.
+- [ ] Run the new MD014 tests. Expected: the known false positive fails before the shared correction.
+- [ ] Move MD046's diagnostic coalescing into the shared snapshot helper. Merge only indented blocks with the same native container owner across blank/prefix-only gaps; reconstruct value line endings from physical line differences, preserving original code values and offsets. Use expanded ownership for tabs without authorizing any edit or rewriting literal content.
+- [ ] Use the helper in MD014/MD046, removing their divergent style/grouping assumptions. Run all MD014/MD046 cases, expand pinned source receipts for blank containers and verify no changed fence/code contexts.
+- [ ] Run full tests, all batch/native/parser consumers, fmt/clippy/diff checks; mark the Important roadmap defect fixed only with RED→GREEN and a green suite.
+- [ ] Commit `fix: classify indented code commands across container blanks`.
 - [ ] Request the one independent batch review over the plan baseline through final implementation HEAD, including every Review Focus and ledger ruling. Reproduce/fix only Important/Critical findings once, then run a green full suite; no second review.
 - [ ] Retain all rulings/evidence in this plan, remove only its completed scratch workspace, and continue MD005/MD007/MD051 and later roadmap work without merge/push or approval questions.
 
 ## Planning check
 
-The project already supplies native parsing, source offsets, config schemas and final-output diagnostic dispatch. Task 1 is independent; Task 2 produces the exact snapshot fields Task 3 consumes. Optional shared recovery extraction preserves the reference consumer in the same step. All five Review Focus items have owning test steps. No new dependency or edited content is authorized. Runtime-confirmed literals and spans must be checked before RED tests; any correction is a ledgered ruling, not an unrecorded plan change.
+The project already supplies native parsing, source offsets, config schemas and final-output diagnostic dispatch. Task 1 is independent; Task 2 produces the exact snapshot fields Task 3 consumes. Shared recovery extraction preserves the reference consumer in the same step. All five Review Focus items have owning test steps. Native ICU collation was added only after a failing priority regression; no edited content is authorized. Task 4 closes the discovered Important MD014 defect before batch review. Runtime-confirmed literals and spans must be checked before RED tests; any correction is a ledgered ruling, not an unrecorded plan change.
 
 ## Status and findings
 
@@ -123,6 +137,15 @@ and affected HTML/reference/inline/MD013/MD026 oracles also pass. The first comb
 reference-oracle command timed out after MD052/MD053; MD054 passed on a fresh
 standalone rerun. Full-suite verification passes 457 tests across 64 targets;
 coverage is 49/53. MD044 and the independent batch review remain pending.
+
+Task 3's ten tests and 1,911 MD044 receipts pass (1,904 ordinary/seven policies).
+Source ranges, flags, UTF-16/legacy regex behavior, native ICU priority, bounded
+empty names, code URL prefixes and container token boundaries are covered. The
+shared zero-width BOM correction fixes an additional ownership defect. All
+affected new/reference/HTML/code/MD013/MD026 native oracles pass; fmt/clippy clean.
+An isolated full suite passes 467 tests across 65 targets after an earlier
+CPU-contention timing failure; no test limit changed. Coverage is 50/53. Task 4
+and the independent review remain pending.
 
 MD046 development reproduced native indented-code splits across blank container
 lines. Its local same-owner grouping has a RED→GREEN literal regression and no
@@ -143,3 +166,16 @@ Rulings so far:
    pinned labels contain no exposed bare links. Reuse the existing normalized
    diagnostic view and match HTML sibling pairs once. Cost if wrong: ownership/
    range classification, gated by pinned and dense-source comparisons; no edits.
+5. Keep shared ImageRecovery beside its existing reference-identity helpers rather
+   than duplicate it or add a forwarding-only module. Cost if wrong: private
+   helper location; both reference/parser work budgets gate behavior.
+6. Give proper-name comparisons a focused oracle so unsafe empty options can never
+   reach upstream execution. Cost if wrong: one development script, no runtime
+   dependency.
+7. Add pinned native ICU collation after the sigma-priority regression disproved
+   scalar/lowercase heuristics. Cost if wrong: dependency/data size and differences
+   from alternate environment-selected locales; pinned root-locale behavior is
+   tested, without requiring Node at runtime.
+8. Close the Important MD014 defect before this batch's review instead of leaving
+   it for distant hardening. Cost if wrong: one extra shared-snapshot correction
+   and parser verification; no edit authority changes.

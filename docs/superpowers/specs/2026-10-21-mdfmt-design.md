@@ -126,10 +126,9 @@ The separator batch adds [conditional MD022/MD031/MD032 heading/fence/list blank
 The inline-style batch adds [conditional MD049/MD050 emphasis/strong styles](../../compatibility/emphasis-styles.md).
 The inline-whitespace batch adds [MD037/MD038/MD039 bare-marker, code-span and link-label diagnostics](../../compatibility/inline-whitespace.md).
 The reference batch adds [MD052/MD053/MD054 reference, definition and link-style diagnostics](../../compatibility/reference-diagnostics.md).
-The literal-content batch adds [MD034 bare-URL and MD046 code-block style diagnostics](../../compatibility/literal-content-diagnostics.md).
-There are now 49 covered built-ins out of 53; milestone 5 is still incomplete.
-Remaining built-ins are MD005, MD007,
-MD044 and MD051. Interactions and conflict detection remain
+The literal-content batch adds [MD034 bare-URL, MD044 proper-name and MD046 code-block style diagnostics](../../compatibility/literal-content-diagnostics.md).
+There are now 50 covered built-ins out of 53; milestone 5 is still incomplete.
+Remaining built-ins are MD005, MD007 and MD051. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
 The first useful release includes local declarative configuration,
@@ -152,6 +151,11 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- A shared diagnostic view inserted a space for the BOM, changing list continuation
+  depth and exposing indented code as prose. A literal regression reproduced false
+  MD034 URL findings and MD044 findings despite `code_blocks: false`. BOM mapping
+  now has zero synthetic width while retaining original source offsets; prior
+  HTML/bare-URL comparisons and the regression pass.
 - Native indented-code records can split across blank lines inside one container.
   MD046 now groups same-owner records for diagnostic classification without merging
   separate list items/quotes. This exposed an Important open MD014 gap:

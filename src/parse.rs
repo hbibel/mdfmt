@@ -89,7 +89,7 @@ pub(crate) use attention::{
 };
 pub(crate) use comments::masked_source as comment_masked_source;
 pub(crate) use container_prefix::ContainerPath;
-pub(crate) use content::{ContentFields, content_analysis};
+pub(crate) use content::{ContentFields, ContentKind, content_analysis};
 pub(crate) use diagnostic::diagnostic_parse;
 pub(crate) use heading::content as heading_content;
 pub(crate) use html::html_tokens;

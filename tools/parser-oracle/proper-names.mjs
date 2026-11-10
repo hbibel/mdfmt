@@ -1,0 +1,27 @@
+import assert from "node:assert/strict";
+import {readFileSync,writeFileSync,mkdtempSync,unlinkSync,rmdirSync} from "node:fs";
+import {fileURLToPath} from "node:url";
+import {spawnSync} from "node:child_process";
+import {lint} from "markdownlint/sync";
+
+const options=[{names:[]},{names:["GitHub"]},{names:["GitHub"],code_blocks:false},{names:["GitHub"],html_elements:false},{names:["GitHub"],code_blocks:false,html_elements:false},{names:["GitHub"],severity:"warning"},{names:["GitHub","Git"]},{names:["GITHUB","GitHub"]},{names:["Rust","C++","Node.js"]},{names:["Éclair","Σ","K","S","𐐀"]}];
+const samples=["","github\n","GitHub GITHUB gItHuB github\n","githubs mygithub github2 _github_ __github__ github_github\n","github\\*github github&amp;github\n","\\github &#103;ithub &github;\n","*github* **github** ~~github~~\n","[github](url \"github\")\n","![github](img)\n","![![github](inner)](outer)\n","[github][id]\n\n[id]: /github \"github\"\n","[label][github]\n\n[github]: /url\n","<https://github.com>\n","https://github.com github\n","` github `\n","`` github ` github ``\n","```github\ngithub\n```\n","    github\n",">     github\n","<span title=\"github\">github</span>\n","<a href=\"https://github.com\">github</a>\n","<!-- github -->\n","<div>\ngithub\n</div>\n","$github$\n","$$\ngithub\n$$\n","---\ntitle: github\n---\ngithub\n","a\ngithub\n","> github\n> github\n","| a | b |\n| - | - |\n| github | GITHUB |\n","rust c++ node.js\n","éclair σ ς K ſ k s 𐐨\n","😀 github\n","<!-- markdownlint-disable-next-line proper-names -->\ngithub\ngithub\n","<!-- markdownlint-disable MD044 -->\ngithub\n<!-- markdownlint-enable MD044 -->\ngithub\n"];
+options.push({names:["GitHub Actions","GitHub"]},{names:["Node.js","node.JS"]},{names:["Σ","ς"]},{names:[".NET","C#","_GitHub_"]});
+samples.push("github actions github **actions**\n","nOdE.Js node.js NODE.JS\n","σ Σ ς\n",".net c# _github_\n","![<span>github</span>](img)\n","![github][id]\n\n[id]: /url\n","> ![[github][a\n> b]](img)\n>\n> [a\n> b]: /url\n","`github\ngithub`\n","  ```text\n  github\n  ```\n","- item\n\n      github\n","github\\_github github&#32;github\n","<div>\n`github`\n</div>\n");
+for(const input of [...samples].filter(Boolean))samples.push(input.replaceAll("\n","\r\n"),"\uFEFF"+input.replaceAll("\n","\r"));
+const rows=samples.flatMap((input,index)=>options.map((options,configuration)=>({id:`${index}-${configuration}`,input,options,findings:lint({strings:{input},config:{default:false,MD044:options}}).input.map(f=>({line:f.lineNumber,range:f.errorRange,context:f.errorContext,detail:f.errorDetail,severity:f.severity}))})));
+for(const [input,line,column]of [["`https://example.com github`\n",1,22],["```text\nhttps://example.com github\n```\n",2,21],["    https://github.com github\n",1,24],[">     https://github.com github\n",1,26],["- x\n\n      https://github.com github\n",3,26]]){
+ const options={names:["GitHub"]};rows.push({id:`policy-url-${rows.length}`,input,options,source:lint({strings:{input},config:{default:false,MD044:options}}).input,findings:[{line,range:[column,6],context:null,detail:"Expected: GitHub; Actual: github",severity:"error"}],policy:"Use actual URL bounds, not the enclosing token's end."});
+}
+for(const names of [[""],["","GitHub"]])rows.push({id:`policy-empty-${rows.length}`,input:"github\n",options:{names},findings:names.length===1?[]:[{line:1,range:[1,6],context:null,detail:"Expected: GitHub; Actual: github",severity:"error"}],policy:"Ignore empty entries; never run this option through the upstream scanner."});
+const path=new URL("md044-observations.json",import.meta.url),text="[\n"+rows.map(row=>"  "+JSON.stringify(row)).join(",\n")+"\n]\n";
+if(process.argv.includes("--record"))writeFileSync(path,text);else assert.equal(text,readFileSync(path,"utf8"));
+if(!process.argv.includes("--source-only")){
+ const directory=mkdtempSync("/tmp/opencode/mdfmt-names-"),configuration=directory+"/.markdownlint-cli2.jsonc",binary=fileURLToPath(new URL("../../target/debug/mdfmt",import.meta.url));
+ try{for(const row of rows)for(const fix of [false,true]){
+  writeFileSync(configuration,JSON.stringify({fix,config:{default:false,MD044:row.options}}));const result=spawnSync(binary,["-"],{cwd:directory,input:row.input,encoding:"utf8",timeout:10000});assert.equal(result.stdout,row.input,`${row.id}: source`);
+  const actual=[...result.stderr.matchAll(/^-:(\d+):(\d+): (Error|Warning) MD044: Proper names should have the correct capitalization \[(.*)\]$/gm)].map(m=>({line:Number(m[1]),column:Number(m[2]),severity:m[3].toLowerCase(),detail:m[4]}));const expected=row.findings.map(f=>({line:f.line,column:f.range[0],severity:f.severity,detail:f.detail}));const order=(a,b)=>a.line-b.line||a.column-b.column||a.detail.localeCompare(b.detail);assert.deepEqual(actual.sort(order),expected.sort(order),`${row.id}: ${result.stderr}`);assert.equal(result.status,expected.some(f=>f.severity==="error")?1:0);
+  if(fix){const again=spawnSync(binary,["-"],{cwd:directory,input:result.stdout,encoding:"utf8",timeout:10000});assert.equal(again.stdout,result.stdout);assert.equal(again.stderr,result.stderr);assert.equal(again.status,result.status);}
+ }}finally{unlinkSync(configuration);rmdirSync(directory);}
+}
+console.log(`PASS: ${rows.length} MD044 ordinary/policy observations${process.argv.includes("--source-only")?" (native not checked; unsafe source input never executed)":" with native diagnostics, exact source and idempotence"}`);

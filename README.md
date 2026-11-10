@@ -90,6 +90,8 @@ MD046 reports code-block style mismatches without converting or changing code;
 see [literal content evidence](docs/compatibility/literal-content-diagnostics.md).
 MD034 reports bare URLs without wrapping them or changing link/table content;
 see the same [literal content evidence](docs/compatibility/literal-content-diagnostics.md).
+MD044 reports configured proper-name capitalization without rewriting literal
+content; see [proper-name evidence](docs/compatibility/literal-content-diagnostics.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
 Other rules are not implemented yet; a successful check does not mean the document is
