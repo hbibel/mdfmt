@@ -152,6 +152,23 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Independent list-indentation review reproduced further normalization cycles:
+  MD023 reverses heading-item indentation, while MD030 reverses both inserted and
+  deleted padding between same-line nested markers. All four bounded CLI
+  regressions fail before the correction; MD027-only insertion checks are not a
+  sufficient convergence policy. Candidate checks now cover enabled heading,
+  quote and padding consumers at inserted bytes and collapsed deletion boundaries,
+  preserving deterministic prior normalization and stable remaining findings.
+- The review also reproduced quadratic aggregate padding allocation: a 16 KB
+  document with 4,000 items and start indentation 16,000 aborts under 128 MiB,
+  including with fixes disabled. Per-item bounds alone do not protect a batch.
+  Diagnostic classification no longer allocates padding. Aggregate replacement
+  padding is checked before allocation against input bytes plus four, and disabled
+  fixes do not construct authorization proposals. Seven public regressions and
+  the complete optimized 503-test suite pass; the same 128 MiB probe now retains
+  all 4,000 findings in both fix modes. The debug resource test still exceeds its
+  30-second CPU budget after its control passes, without an allocation abort;
+  unoptimized throughput remains an explicit release-hardening obligation.
 - List-indentation interaction tests reproduced pre-existing MD013 prefix growth
   before a link/code span on a continuation line: the native text token ends at
   the newline, so reflow added a prefix without consuming the existing one outside

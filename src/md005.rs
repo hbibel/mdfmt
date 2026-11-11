@@ -4,7 +4,9 @@ use crate::{
     edit::Edit,
     parse::{
         ParsedDocument,
-        list_indentation::{indentation_edit, list_indentation, validated_indentation_edits},
+        list_indentation::{
+            ListItemIndentation, indentation_repair, list_indentation, validated_indentation_edits,
+        },
     },
 };
 use std::ops::Range;
@@ -15,7 +17,8 @@ struct Finding {
     actual: usize,
     end_matching: bool,
     severity: Severity,
-    edit: Option<Edit>,
+    item: ListItemIndentation,
+    repair_expected: Option<usize>,
 }
 fn findings(source: &Source, document: &DocumentConfig) -> Vec<Finding> {
     if !(1..=source.line_count()).any(|line| {
@@ -63,20 +66,15 @@ fn findings(source: &Source, document: &DocumentConfig) -> Vec<Finding> {
             {
                 let start = source.line_range(line).unwrap().start
                     + usize::from(line == 1 && source.text().starts_with('\u{feff}')) * 3;
-                let edit = if delegate {
-                    None
-                } else {
-                    repair.and_then(|expected| {
-                        indentation_edit(source, &item, expected, "MD005", document)
-                    })
-                };
+                let repair_expected = if delegate { None } else { repair };
                 output.push(Finding {
                     span: start..item.padding_end,
                     expected,
                     actual,
                     end_matching: list.ordered && end_matching,
                     severity: state.severity,
-                    edit,
+                    item,
+                    repair_expected,
                 });
             }
         }
@@ -99,7 +97,11 @@ pub(crate) fn propose(
         document,
         findings(source, document)
             .into_iter()
-            .filter_map(|finding| finding.edit)
+            .filter_map(|finding| {
+                finding.repair_expected.and_then(|expected| {
+                    indentation_repair(source, &finding.item, expected, "MD005", document)
+                })
+            })
             .collect(),
     )
 }

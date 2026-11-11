@@ -4,7 +4,9 @@ use crate::{
     edit::Edit,
     parse::{
         ParsedDocument,
-        list_indentation::{indentation_edit, list_indentation, validated_indentation_edits},
+        list_indentation::{
+            ListItemIndentation, indentation_repair, list_indentation, validated_indentation_edits,
+        },
     },
 };
 use std::ops::Range;
@@ -14,7 +16,8 @@ struct Finding {
     expected: u128,
     actual: usize,
     severity: Severity,
-    edit: Option<Edit>,
+    item: ListItemIndentation,
+    repair_expected: Option<usize>,
 }
 fn findings(source: &Source, document: &DocumentConfig) -> Vec<Finding> {
     if !(1..=source.line_count()).any(|line| {
@@ -62,18 +65,16 @@ fn findings(source: &Source, document: &DocumentConfig) -> Vec<Finding> {
             {
                 let start = source.line_range(line).unwrap().start
                     + usize::from(line == 1 && source.text().starts_with('\u{feff}')) * 3;
-                let edit = usize::try_from(expected)
+                let repair_expected = usize::try_from(expected)
                     .ok()
-                    .and_then(|expected| expected.checked_add(item.quote_adjustment))
-                    .and_then(|expected| {
-                        indentation_edit(source, &item, expected, "MD007", document)
-                    });
+                    .and_then(|expected| expected.checked_add(item.quote_adjustment));
                 output.push(Finding {
                     span: start..item.padding_end,
                     expected,
                     actual,
                     severity: state.severity,
-                    edit,
+                    item,
+                    repair_expected,
                 });
             }
         }
@@ -95,7 +96,11 @@ pub(crate) fn propose(
         document,
         findings(source, document)
             .into_iter()
-            .filter_map(|finding| finding.edit)
+            .filter_map(|finding| {
+                finding.repair_expected.and_then(|expected| {
+                    indentation_repair(source, &finding.item, expected, "MD007", document)
+                })
+            })
             .collect(),
     )
 }

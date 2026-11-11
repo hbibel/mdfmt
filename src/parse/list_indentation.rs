@@ -183,33 +183,39 @@ pub(crate) fn list_indentation(source: &Source) -> Vec<ListIndentation> {
     output
 }
 
-pub(crate) fn indentation_edit(
+pub(crate) struct IndentationRepair {
+    span: Range<usize>,
+    padding: usize,
+    origin: &'static str,
+}
+
+pub(crate) fn indentation_repair(
     source: &Source,
     item: &ListItemIndentation,
     expected: usize,
-    origin: &str,
+    origin: &'static str,
     document: &DocumentConfig,
-) -> Option<Edit> {
+) -> Option<IndentationRepair> {
     let delta = expected.abs_diff(item.indent);
     if delta == 0 || delta > source.text().len().saturating_add(4) {
         return None;
     }
-    let (span, replacement) = if expected < item.indent {
+    let (span, padding) = if expected < item.indent {
         let start = item.marker.start.checked_sub(delta)?;
         let raw = source.text().get(start..item.marker.start)?;
         if !raw.bytes().all(|byte| byte == b' ') {
             return None;
         }
-        (start..item.marker.start, String::new())
+        (start..item.marker.start, 0)
     } else {
-        (item.marker.start..item.marker.start, " ".repeat(delta))
+        (item.marker.start..item.marker.start, delta)
     };
     document
         .allows_source(origin, span.clone(), source)
-        .then(|| Edit {
+        .then_some(IndentationRepair {
             span,
-            replacement,
-            origin: origin.into(),
+            padding,
+            origin,
         })
 }
 
@@ -217,9 +223,9 @@ pub(crate) fn validated_indentation_edits(
     source: &Source,
     parsed: &ParsedDocument,
     document: &DocumentConfig,
-    edits: Vec<Edit>,
+    repairs: Vec<IndentationRepair>,
 ) -> Vec<Edit> {
-    let edits: Vec<_> = edits
+    let repairs: Vec<_> = repairs
         .into_iter()
         .filter(|edit| {
             !parsed.regions.iter().any(|region| {
@@ -229,9 +235,24 @@ pub(crate) fn validated_indentation_edits(
             })
         })
         .collect();
-    if edits.is_empty() {
-        return edits;
+    if repairs.is_empty() {
+        return vec![];
     }
+    // Bound the complete batch before allocating any replacement strings.
+    let padding = repairs
+        .iter()
+        .try_fold(0usize, |sum, repair| sum.checked_add(repair.padding));
+    if padding.is_none_or(|padding| padding > source.text().len().saturating_add(4)) {
+        return vec![];
+    }
+    let edits: Vec<_> = repairs
+        .into_iter()
+        .map(|repair| Edit {
+            span: repair.span,
+            replacement: " ".repeat(repair.padding),
+            origin: repair.origin.into(),
+        })
+        .collect();
     let Ok(output) = crate::edit::apply_authorized_edits(source, parsed, edits.clone(), &edits)
     else {
         return vec![];
@@ -243,26 +264,36 @@ pub(crate) fn validated_indentation_edits(
     if !equivalent(source, parsed, &candidate, &reparsed) {
         return vec![];
     }
-    if edits.iter().any(|edit| !edit.replacement.is_empty())
-        && (1..=source.line_count()).any(|line| {
+    for rule in ["MD023", "MD027", "MD030"] {
+        if !(1..=source.line_count()).any(|line| {
             document
-                .state("MD027", line)
+                .state(rule, line)
                 .is_some_and(|state| state.enabled)
-        })
-    {
-        // Line permissions are unchanged; original directive byte ranges cannot
-        // authorize edits in the candidate, so use read-only findings here.
-        let opposing = crate::md027::diagnose(&candidate, &reparsed, document);
+        }) {
+            continue;
+        }
+        // Only line permissions survive the candidate's shifted byte ranges.
+        // Deletions can also create padding findings at the collapsed boundary.
+        let opposing = match rule {
+            "MD023" => crate::md023::diagnose(&candidate, &reparsed, document),
+            "MD027" => crate::md027::diagnose(&candidate, &reparsed, document),
+            _ => crate::md030::diagnose(&candidate, &reparsed, document),
+        };
         let mut original_cursor = 0;
         let mut candidate_cursor = 0;
         for edit in &edits {
             candidate_cursor += edit.span.start - original_cursor;
             let inserted = candidate_cursor..candidate_cursor + edit.replacement.len();
-            if !inserted.is_empty()
-                && opposing
-                    .iter()
-                    .filter_map(|finding| finding.span.as_ref())
-                    .any(|span| span.start < inserted.end && inserted.start < span.end)
+            if opposing
+                .iter()
+                .filter_map(|finding| finding.span.as_ref())
+                .any(|span| {
+                    if inserted.is_empty() {
+                        span.start <= inserted.start && inserted.start <= span.end
+                    } else {
+                        span.start < inserted.end && inserted.start < span.end
+                    }
+                })
             {
                 return vec![];
             }

@@ -71,7 +71,41 @@ All 288 MD013/440 MD026 and 29 reflow comparisons pass. The scaling harness now
 isolates MD013 rather than treating later default MD041 findings as failures.
 Its debug 500-paragraph run exceeded the unchanged ten-second limit; optimized
 100/500/1,000-paragraph runs pass at 211/1,117/2,509 ms. No completed debug scaling
-run is claimed. The list-indentation batch's independent review remains pending.
+run is claimed. Independent review corrections follow.
+
+## Independent review corrections
+
+The single review found two Important findings, no Critical findings and no
+minors. All five primary reproductions failed before the fix pass: four five-second
+normalization timeouts and one allocation abort under a Linux 128 MiB address-space
+limit. Seven public regressions now cover the corrections and positive controls.
+
+- Candidate conflict checks include enabled MD023, MD027 and MD030 findings.
+  They check both inserted bytes and collapsed deletion boundaries; a deletion can
+  create padding that another rule immediately expands. Existing heading/quote/
+  padding normalization retains priority and unresolved indentation stays visible.
+  Disabled rules/line directives still allow safe repairs. No iteration cutoff or
+  suppressed finding masks a cycle.
+- Classification retains only source ranges and numeric repair expectations.
+  Padding strings are constructed only by the proposer after a checked aggregate
+  budget: total replacement padding may not exceed original input bytes plus four.
+  Thus expanded candidate size is at most twice input bytes plus four, before
+  unchanged parsing/protection checks. Oversized batches are withheld atomically.
+  Authorization proposals are not constructed when either fix control is false.
+
+The 16 KB/4,000-item/start-indent-16,000 reproduction now completes unchanged with
+all 4,000 findings under the same 128 MiB limit, with fixes both off and on. Safe
+dense start-indentation repairs still apply and reconstruct exact original edits.
+The four formerly hanging cases return stable output and findings on repeated
+write/check calls. The original independent probe harness also passes these cases.
+
+The complete optimized suite passes 503 tests across 70 targets, with fmt/clippy
+clean. Both new native oracles and affected MD023/MD027/MD030/MD029/MD013/MD026/reflow
+comparisons pass. The focused debug run passes six review tests but its bounded
+4,000-item memory test exceeds the unchanged 30-second CPU budget after its disabled
+control completes; no allocation abort occurs. That debug run is not claimed
+complete. Debug throughput remains release-hardening work; no thresholds changed.
+No second review was dispatched. Coverage remains 52/53, not roadmap completion.
 
 ```sh
 mise exec -- cargo test --release --all-targets --jobs 2

@@ -554,17 +554,20 @@ fn process(
         .document(text)
         .map_err(ProcessingError::Configuration)?;
     let parsed = parse::parse(&source).map_err(ProcessingError::Parse)?;
-    let mut authorized = md026::propose(&source, &parsed, &document);
-    authorized.extend(heading_spaces::propose(&source, &parsed, &document));
-    authorized.extend(md012::propose(&source, &parsed, &document));
-    authorized.extend(md009::propose(&source, &parsed, &document));
-    authorized.extend(md010::propose(&source, &parsed, &document));
-    authorized.extend(md023::propose(&source, &parsed, &document));
-    authorized.extend(md027::propose(&source, &parsed, &document));
-    authorized.extend(md029::propose(&source, &parsed, &document));
-    authorized.extend(md030::propose(&source, &parsed, &document));
-    authorized.extend(md005::propose(&source, &parsed, &document));
-    authorized.extend(md007::propose(&source, &parsed, &document));
+    let mut authorized = vec![];
+    if options.fix && config.fix {
+        authorized = md026::propose(&source, &parsed, &document);
+        authorized.extend(heading_spaces::propose(&source, &parsed, &document));
+        authorized.extend(md012::propose(&source, &parsed, &document));
+        authorized.extend(md009::propose(&source, &parsed, &document));
+        authorized.extend(md010::propose(&source, &parsed, &document));
+        authorized.extend(md023::propose(&source, &parsed, &document));
+        authorized.extend(md027::propose(&source, &parsed, &document));
+        authorized.extend(md029::propose(&source, &parsed, &document));
+        authorized.extend(md030::propose(&source, &parsed, &document));
+        authorized.extend(md005::propose(&source, &parsed, &document));
+        authorized.extend(md007::propose(&source, &parsed, &document));
+    }
     let mut edits = if options.fix
         && config.fix
         && !parse::has_uncertain_container_prefixes(&source, &parsed)

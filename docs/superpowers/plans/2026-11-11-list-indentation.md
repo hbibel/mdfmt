@@ -69,7 +69,7 @@
 - [x] Add requested ancestry fields and implement pinned expected indentation. Integrate marker-only proposals with preservation validation and MD005 delegation; do not add a competing whole-subtree reindent path.
 - [x] Run both new native oracles and existing MD004/MD027/MD029/MD030/list separator/reflow/parser suites, then the complete optimized suite, fmt/clippy/diff. Expected: output converges in one invocation, disabled/protected bytes remain unchanged, no silent overflow or unbounded padding.
 - [x] Update evidence/roadmap/coverage to 52/53 and commit `feat: apply ownership-safe unordered list indentation`.
-- [ ] Request one independent review of this batch with every Review Focus and ledger ruling. Reproduce/fix Important/Critical findings once, then run the complete suite; no second review.
+- [x] Request one independent review of this batch with every Review Focus and ledger ruling. Reproduce/fix Important/Critical findings once, then run the complete suite; no second review.
 - [ ] Retain all rulings/evidence, remove only this completed plan's scratch workspace and continue MD051 and later roadmap work without merge/push or routine questions.
 
 ## Planning check
@@ -104,6 +104,33 @@ hit ten seconds at 500 paragraphs; optimized 100/500/1,000 cases pass with the s
 limit (211/1,117/2,509 ms). The scaling fixture now selects only MD013 instead of
 accidentally testing later default MD041. Coverage52/53; review remains pending.
 
+The one independent review over `1adf735..71350f7` found two Important findings,
+no Critical findings and no minors. All five primary reproductions failed first:
+four bounded normalization cycles with MD023/MD030 and one intermediate-target
+allocation abort under Linux128MiB, including fixes disabled. The single fix pass
+adds seven public regressions in `tests/list_indentation_review.rs`.
+
+The candidate gate now includes MD023/MD027/MD030 at both inserted bytes and
+collapsed deletion boundaries. Prior normalizers retain deterministic priority;
+remaining indentation findings stay visible. Disabled-rule/line controls still
+permit safe repairs. Classification retains numeric expectations and ranges only;
+proposers check aggregate padding<=input bytes+4 before allocating replacements,
+so expanded output<=2*input bytes+4. Disabled fixes no longer build authorization
+proposals. Safe dense start indentation still produces exact original edits.
+
+Final complete optimized verification passes503/503 across70 targets; fmt/clippy
+clean. Both new native oracles and affected MD023/MD027/MD030/MD029/MD013/MD026/
+reflow comparisons pass. Original reviewer probes now terminate, and the16KB/
+4000-item intermediate target preserves all4000 findings under128MiB in both fix
+modes. No second review, iteration cutoff or weakened CPU/memory budget.
+
+The focused debug run passes six review tests, but
+`admitted_intermediate_targets_keep_linear_memory_in_both_fix_modes` exceeds its
+30-second CPU budget after the disabled control completes, without an allocation
+abort. This and the older debug scaling timeout remain hardening obligations;
+the optimized run executes the same assertions/limits and is the final full gate.
+Coverage remains52/53; MD051 and later roadmap tasks continue after closure.
+
 Rulings so far:
 
 1. Share bounded whitespace selection/permission/original-parser validation in
@@ -124,3 +151,38 @@ Rulings so far:
    mode without changing the ten-second budget. Cost if wrong: debug-only
    performance regressions remain hardening obligations, explicitly not claimed
    passing by the optimized timings.
+7. Check heading/quote/padding conflicts in both edit directions, including
+   collapsed boundaries. Cost if wrong: conservative withholding where an opposing
+   finding cannot itself be repaired; diagnostics/disabled controls remain intact.
+8. Separate classification from allocation and cap total padding at input bytes+4.
+   Cost if wrong: unusually large safe batches remain diagnostic; dense positives
+   and bounded-memory intermediate targets guard useful repairs and resources.
+9. Skip authorization proposals when either fix control is false. Cost if wrong:
+   an undiscovered private proposer side effect disappears; existing no-fix/CLI/
+   config regressions and full tests gate the pure-proposal contract.
+10. Keep optimized verification as the final gate rather than relax debug CPU
+    limits. Cost if wrong: debug-only throughput problems remain hardening work,
+    explicitly named rather than represented as a completed debug run.
+11. Retain approved repair differences, as the reviewer set aside. Cost if wrong:
+    different fixed bytes; native diagnostics/ownership/value evidence stays
+    separate from exact upstream edits.
+12. Keep subtree/continuation/code/table/definition/link rewrites outside this
+    subset, as the reviewer set aside. Cost if wrong: some fixable findings need
+    a later safe adapter instead of risking content now.
+13. Keep exact nativeu128 arithmetic, as the reviewer set aside. Cost if wrong:
+    intentional huge-option detail differences; unsafe upstream allocation probes
+    are not executed.
+14. Defer general conflict explanations/UI, as the reviewer set aside, not stable
+    termination. Cost if wrong: remaining rule findings lack a dedicated conflict
+    explanation until milestone5's remaining work.
+15. Do not infer a debug regression without a baseline, as the reviewer set aside.
+    Cost if wrong: an older/newer debug slowdown remains to isolate in hardening;
+    observed failure and optimized timings stay separately disclosed.
+16. Keep MD051/formatters/later compatibility/release completion separate, as the
+    reviewer set aside. Cost if wrong: unfinished deliverables remain explicit at
+    52/53 instead of being hidden by batch completion.
+17. Do not infer exhaustive parser/corpus/fuzz/platform guarantees from bounded
+    Linux review, as the reviewer set aside. Cost if wrong: untested platforms and
+    input classes remain release-hardening work.
+
+Both Important findings are fixed; no deferred minors were reported.
