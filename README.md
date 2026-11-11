@@ -53,6 +53,8 @@ MD029 normalizes later ordered-list markers while retaining rendered start value
 see [MD029 evidence](docs/compatibility/md029.md).
 MD030 normalizes list-marker spacing where continuation and code ownership remain
 unchanged; see [MD030 evidence](docs/compatibility/md030.md).
+MD005 conditionally aligns sibling indentation while preserving list ownership;
+see [list indentation evidence](docs/compatibility/list-indentation.md).
 MD018 reports missing ATX separators without turning literal text into headings;
 see [MD018 evidence](docs/compatibility/md018.md).
 MD020 reports closed-ATX separator gaps without reinterpreting literal hashes;

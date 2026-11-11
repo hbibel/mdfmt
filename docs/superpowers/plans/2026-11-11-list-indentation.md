@@ -51,13 +51,13 @@
 
 ## Task 1: MD005 sibling indentation
 
-- [ ] Record ordered/unordered siblings, right-aligned marker widths, empty items, nested quotes/lists, tabs, metadata, code/math/HTML recovery, aliases, warnings, disabled first anchors and BOM/CRLF. Expected: source-only receipts, no native implementation claim.
-- [ ] Write `sibling_indentation_reports_and_repairs_only_preserved_structure`: `"- a\n - b\n"` under MD005 alone reports line 2, range `[1,3]`, detail `Expected: 0; Actual: 1` with fixes disabled; safe native formatting yields `"- a\n- b\n"`, no remaining finding and stable second output. Record this native repair separately from upstream's no-edit unordered behavior.
-- [ ] Write `ordered_alignment_is_not_numbering`: `"1. a\n 2. b\n"` diagnoses range `[1,4]`, expected 0/actual 1 and repairs the extra space; `" 9. a\n10. b\n11. c\n"` remains unchanged and clean. Add MD029/MD030 composition and protected multi-block rejection cases.
-- [ ] Run `mise exec -- cargo test --test md005`. Expected: missing diagnostics/repairs before implementation, not broken fixtures.
-- [ ] Implement the exact snapshot and MD005 source-backed classification. Propose only bounded whitespace insertion/removal at a marker, with full permission and original-parser equivalence checks. Retain unsafe findings instead of shifting content.
-- [ ] Run native source/fix/no-fix/idempotence oracle, affected list/parser/reflow suites, full optimized Rust suite, fmt/clippy/diff. Expected: all tests/assertions pass, no weakened budgets or content changes.
-- [ ] Update truthful evidence/coverage to 51/53 and commit `feat: normalize safe sibling list indentation`.
+- [x] Record ordered/unordered siblings, right-aligned marker widths, empty items, nested quotes/lists, tabs, metadata, code/math/HTML recovery, aliases, warnings, disabled first anchors and BOM/CRLF. Expected: source-only receipts, no native implementation claim.
+- [x] Write `sibling_indentation_reports_and_repairs_only_preserved_structure`: `"- a\n - b\n"` under MD005 alone reports line 2, range `[1,3]`, detail `Expected: 0; Actual: 1` with fixes disabled; safe native formatting yields `"- a\n- b\n"`, no remaining finding and stable second output. Record this native repair separately from upstream's no-edit unordered behavior.
+- [x] Write `ordered_alignment_is_not_numbering`: `"1. a\n 2. b\n"` diagnoses range `[1,4]`, expected 0/actual 1 and repairs the extra space; `" 9. a\n10. b\n11. c\n"` remains unchanged and clean. Add MD029/MD030 composition and protected multi-block rejection cases.
+- [x] Run `mise exec -- cargo test --test md005`. Expected: missing diagnostics/repairs before implementation, not broken fixtures.
+- [x] Implement the exact snapshot and MD005 source-backed classification. Propose only bounded whitespace insertion/removal at a marker, with full permission and original-parser equivalence checks. Retain unsafe findings instead of shifting content.
+- [x] Run native source/fix/no-fix/idempotence oracle, affected list/parser/reflow suites, full optimized Rust suite, fmt/clippy/diff. Expected: all tests/assertions pass, no weakened budgets or content changes.
+- [x] Update truthful evidence/coverage to 51/53 and commit `feat: normalize safe sibling list indentation`.
 
 ## Task 2: MD007 unordered nesting indentation
 
@@ -79,4 +79,21 @@ Task 1 produces the precise prefix fields Task 2 extends; no unused ancestry
 extraction is introduced early. Both tasks include consuming tests for all review
 focus items. Conditional whitespace changes are independently authorized through
 original parsed ownership, not inferred from a diagnostic acceptance example.
-The literal-content batch's active independent review must finish first.
+The literal-content batch's independent review and fix pass closed at `485fc3f`.
+
+## Execution evidence
+
+Task 1's five primary tests failed before implementation; all seven tests now
+pass. The 687-row native comparison checks diagnostics, upstream ownership/code
+values and idempotence; 156 intentional upstream-fix differences are retained.
+The complete optimized suite passes 482 tests across 67 targets, with fmt/clippy
+clean. Prior MD004/MD027/MD029/MD030 native comparisons also pass. Coverage51/53;
+MD007 and the batch review remain pending.
+
+Rulings so far:
+
+1. Share bounded whitespace selection/permission/original-parser validation in
+   the list snapshot module. Cost if wrong: private helper placement, not a
+   weaker preservation gate; unsafe-content and upstream ownership checks guard it.
+2. Run MD005 after padding/numbering in the normalization loop. Cost if wrong:
+   cross-rule instability; composition and repeated-output tests gate the order.

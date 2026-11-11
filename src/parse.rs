@@ -83,6 +83,7 @@ mod heading;
 mod html;
 mod inline;
 mod list_flow;
+pub(crate) mod list_indentation;
 mod references;
 mod table_flow;
 pub(crate) use attention::{
