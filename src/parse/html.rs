@@ -101,6 +101,8 @@ fn candidates(tree: &Node, base: usize, inherited_table: bool) -> Vec<Candidate>
 }
 
 fn recover(text: &str, table: bool) -> Vec<Candidate> {
+    #[cfg(test)]
+    super::references::record_recovery(text.len());
     let options = markdown::ParseOptions {
         constructs: markdown::Constructs {
             html_flow: false,
@@ -129,21 +131,7 @@ pub(crate) fn html_tokens(source: &Source, parsed: &ParsedDocument) -> Vec<HtmlT
         .iter()
         .find(|r| r.kind == RegionKind::Root && r.parent.is_some())
         .map_or(0, |r| r.span.start);
-    let definitions = parsed
-        .regions
-        .iter()
-        .filter(|r| r.kind == RegionKind::Definition)
-        .map(|r| {
-            let mut quotes = 0;
-            let mut parent = r.parent;
-            while let Some(index) = parent {
-                quotes += usize::from(parsed.regions[index].kind == RegionKind::Blockquote);
-                parent = parsed.regions[index].parent;
-            }
-            crate::md045::mask_quote_prefixes(&view.text()[r.span.clone()], quotes)
-        })
-        .collect::<Vec<_>>()
-        .join("\n");
+    let mut recovery = super::references::ImageRecovery::new(&view, &parsed.tree, base);
     let mut queue = candidates(&parsed.tree, base, false);
     let mut result = vec![];
     let mut cursor = 0;
@@ -160,9 +148,11 @@ pub(crate) fn html_tokens(source: &Source, parsed: &ParsedDocument) -> Vec<HtmlT
             };
             let label =
                 crate::md045::mask_quote_prefixes(&raw[2..end + 1], item.quotes).replace('\n', " ");
-            let input = format!("x {label}\n\n{definitions}");
+            let Some(tree) = recovery.paragraph(&label) else {
+                continue;
+            };
             queue.extend(
-                recover(&input, item.in_table)
+                candidates(&tree, 0, item.in_table)
                     .into_iter()
                     .filter(|inner| inner.span.start >= 2 && inner.span.end <= label.len() + 2)
                     .map(|mut inner| {

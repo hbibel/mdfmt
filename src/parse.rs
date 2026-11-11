@@ -79,6 +79,7 @@ mod comments;
 mod container_prefix;
 mod content;
 mod diagnostic;
+pub(crate) mod fragments;
 mod heading;
 mod html;
 mod inline;

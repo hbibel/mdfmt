@@ -24,6 +24,50 @@ fn quoted(text: &str, mut cursor: usize, end: usize, close: u8) -> Option<usize>
     None
 }
 
+fn destination(text: &str, mut cursor: usize, end: usize) -> Option<(Range<usize>, usize)> {
+    if text.as_bytes().get(cursor) == Some(&b'<') {
+        let start = cursor + 1;
+        let end = quoted(text, start, end, b'>')?;
+        Some((start..end, end + 1))
+    } else {
+        let start = cursor;
+        let mut depth = 0;
+        while cursor < end {
+            let byte = text.as_bytes()[cursor];
+            if byte == b'\\'
+                && cursor + 1 < end
+                && text.as_bytes()[cursor + 1].is_ascii_punctuation()
+            {
+                cursor += 2;
+                continue;
+            }
+            if matches!(byte, b' ' | b'\t' | b'\r' | b'\n') {
+                break;
+            }
+            if byte == b'(' {
+                depth += 1;
+            }
+            if byte == b')' {
+                if depth == 0 {
+                    break;
+                }
+                depth -= 1;
+            }
+            cursor += text[cursor..].chars().next().unwrap().len_utf8();
+        }
+        Some((start..cursor, cursor))
+    }
+}
+
+pub(super) fn definition_destination(text: &str) -> Option<Range<usize>> {
+    let end = crate::parse::label_end(text, true)?;
+    if text.as_bytes().get(end + 1) != Some(&b':') {
+        return None;
+    }
+    let start = whitespace(text, end + 2, text.len());
+    destination(text, start, text.len()).map(|(span, _)| span)
+}
+
 pub(super) fn record(
     node: &Node,
     text: &str,
@@ -68,40 +112,9 @@ pub(super) fn record(
         return None;
     }
     cursor = whitespace(logical, cursor + 1, span.end - 1);
-    let destination;
-    if logical.as_bytes().get(cursor) == Some(&b'<') {
-        let start = cursor + 1;
-        let end = quoted(logical, start, span.end - 1, b'>')?;
-        destination = Some(start..end);
-        cursor = end + 1;
-    } else {
-        let start = cursor;
-        let mut depth = 0;
-        while cursor < span.end - 1 {
-            let byte = logical.as_bytes()[cursor];
-            if byte == b'\\'
-                && cursor + 1 < span.end - 1
-                && logical.as_bytes()[cursor + 1].is_ascii_punctuation()
-            {
-                cursor += 2;
-                continue;
-            }
-            if matches!(byte, b' ' | b'\t' | b'\r' | b'\n') {
-                break;
-            }
-            if byte == b'(' {
-                depth += 1;
-            }
-            if byte == b')' {
-                if depth == 0 {
-                    break;
-                }
-                depth -= 1;
-            }
-            cursor += logical[cursor..].chars().next().unwrap().len_utf8();
-        }
-        destination = Some(start..cursor);
-    }
+    let (destination, end) = destination(logical, cursor, span.end - 1)?;
+    let destination = Some(destination);
+    cursor = end;
     cursor = whitespace(logical, cursor, span.end - 1);
     let title =
         if cursor < span.end - 1 && matches!(logical.as_bytes()[cursor], b'\'' | b'"' | b'(') {

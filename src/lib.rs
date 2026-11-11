@@ -36,6 +36,7 @@ mod md045;
 mod md046;
 mod md047;
 mod md048;
+mod md051;
 mod md055;
 mod md056;
 mod md058;
@@ -81,8 +82,8 @@ impl FormatResult {
     }
 }
 
-/// Process Markdown without filesystem I/O. Rule coverage remains incomplete;
-/// empty diagnostics do not establish lint compliance.
+/// Process Markdown without filesystem I/O. Some rules are diagnostic-only;
+/// empty diagnostics do not establish complete parser or option parity.
 pub fn format(source: &str, options: &FormatOptions) -> Result<FormatResult, ProcessingError> {
     format_with_config(source, options, &config::ResolvedConfig::default())
 }
@@ -524,6 +525,7 @@ pub fn format_with_config(
         "MD048".into(),
         "MD049".into(),
         "MD050".into(),
+        "MD051".into(),
         "MD052".into(),
         "MD053".into(),
         "MD054".into(),
@@ -539,6 +541,9 @@ pub fn format_with_config(
     result
         .diagnostics
         .extend(md007::diagnose(&output, &parsed, &document));
+    result
+        .diagnostics
+        .extend(md051::diagnose(&output, &parsed, &document));
     Ok(result)
 }
 

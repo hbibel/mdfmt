@@ -13,6 +13,7 @@ use std::{
 pub(crate) struct ReferenceDefinition {
     pub key: String,
     pub span: Range<usize>,
+    pub destination: Option<Range<usize>>,
 }
 pub(crate) struct ReferenceUse {
     pub key: String,
@@ -37,6 +38,7 @@ pub(crate) struct LinkStyle {
 pub(crate) struct ReferenceFields {
     pub uses: bool,
     pub styles: bool,
+    pub destinations: bool,
 }
 #[derive(Default)]
 pub(crate) struct ReferenceAnalysis {
@@ -150,7 +152,7 @@ impl ImageRecovery {
         let definitions = recovery_context(label, &self.definitions);
         let candidate = format!("x {label}\n\n{definitions}");
         #[cfg(test)]
-        tests::record_recovery(candidate.len());
+        record_recovery(candidate.len());
         let tree = super::mdast(&candidate, &options)
             .ok()
             .and_then(|tree| match tree {
@@ -360,6 +362,15 @@ impl Scopes<'_> {
             if let Some(end) = label_end(raw, true) {
                 self.output.definitions.push(ReferenceDefinition {
                     key: key(&raw[1..end]),
+                    destination: if self.fields.destinations && matches!(node, Node::Definition(_))
+                    {
+                        let logical = crate::md045::mask_quote_prefixes(raw, quotes);
+                        styles::definition_destination(&logical).map(|destination| {
+                            span.start + destination.start..span.start + destination.end
+                        })
+                    } else {
+                        None
+                    },
                     span,
                 });
             }
@@ -418,6 +429,11 @@ pub(crate) fn reference_analysis(
 }
 
 #[cfg(test)]
+pub(super) fn record_recovery(bytes: usize) {
+    tests::record_recovery(bytes);
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use std::cell::Cell;
@@ -460,6 +476,7 @@ mod tests {
                             ReferenceFields {
                                 uses: true,
                                 styles: true,
+                                destinations: false,
                             },
                         );
                         let (calls, bytes) = take_work();
@@ -509,6 +526,7 @@ mod tests {
                 ReferenceFields {
                     uses: true,
                     styles: true,
+                    destinations: false,
                 },
             );
             let (calls, bytes) = take_work();
@@ -519,6 +537,32 @@ mod tests {
                 bytes < 2048,
                 "{bytes} recovery bytes include unrelated headers"
             );
+        }
+    }
+
+    #[test]
+    fn html_image_targets_reuse_selected_definition_headers_and_cached_paragraphs() {
+        for images in [4, 8] {
+            for definitions in [64, 512] {
+                let input = format!(
+                    "{}[id]: /url\n{}",
+                    "![<span id=\"A\">[x][id]</span>](img)\n\n".repeat(images),
+                    (0..definitions)
+                        .map(|index| format!("[d{index}]: /url \"{}\"\n", "a".repeat(1024)))
+                        .collect::<String>()
+                );
+                let source = Source::new(input);
+                let parsed = super::super::parse(&source).unwrap();
+                take_work();
+                let tokens = super::super::html_tokens(&source, &parsed);
+                let (calls, bytes) = take_work();
+                assert_eq!(tokens.len(), images * 2);
+                assert_eq!(calls, 1, "{images} images/{definitions} definitions");
+                assert!(
+                    bytes < 4096,
+                    "{bytes} recovery bytes include unrelated payloads"
+                );
+            }
         }
     }
 }

@@ -48,7 +48,11 @@ pub(crate) fn diagnose(
     let analysis = reference_analysis(
         source,
         recovered.as_ref().unwrap_or(parsed),
-        ReferenceFields { uses, styles },
+        ReferenceFields {
+            uses,
+            styles,
+            destinations: false,
+        },
     );
     let mut output = vec![];
     if uses {

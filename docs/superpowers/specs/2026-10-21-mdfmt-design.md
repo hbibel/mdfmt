@@ -128,8 +128,10 @@ The inline-whitespace batch adds [MD037/MD038/MD039 bare-marker, code-span and l
 The reference batch adds [MD052/MD053/MD054 reference, definition and link-style diagnostics](../../compatibility/reference-diagnostics.md).
 The literal-content batch adds [MD034 bare-URL, MD044 proper-name and MD046 code-block style diagnostics](../../compatibility/literal-content-diagnostics.md).
 The list-indentation batch adds [conditional MD005/MD007 sibling/nesting alignment](../../compatibility/list-indentation.md).
-There are now 52 covered built-ins out of 53; milestone 5 is still incomplete.
-The remaining built-in is MD051. Interactions and conflict detection remain
+MD051 adds [local-fragment target diagnostics](../../compatibility/link-fragments.md).
+All 53 built-ins now have native coverage, including diagnostic-only rules and
+conditional repairs; milestone 5 is still incomplete. MD051's safe case-correction
+subset and independent batch review remain pending. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
 The first useful release includes local declarative configuration,
@@ -152,6 +154,12 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- MD051's new HTML-anchor consumer exposed the remaining full-definition-payload
+  reparsing path in shared HTML image recovery. Four equal images caused four
+  parses including unrelated definition titles. A real-parser regression failed
+  before reusing the existing compact-header/paragraph cache; it now requires one
+  parse and fewer than 4,096 bytes across image/definition axes. Prior HTML/image/
+  reference comparisons and the complete optimized 512-test suite pass.
 - Independent list-indentation review reproduced further normalization cycles:
   MD023 reverses heading-item indentation, while MD030 reverses both inserted and
   deleted padding between same-line nested markers. All four bounded CLI

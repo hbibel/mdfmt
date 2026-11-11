@@ -50,13 +50,13 @@
 
 ## Task 1: Target identity and MD051 diagnostics
 
-- [ ] Record ordinary targets/destinations/options, including duplicate/custom anchors, HTML id/name precedence, top/line fragments, Unicode/UTF-16/percent, entities/escapes, code/math/images/references in headings, multiline links/definitions, docfx tabs, tables, recovered containers, directives and warnings. Keep nonempty ignored patterns as explicit configuration-rejection tests until the later regex task.
-- [ ] Write `fragment_diagnostics_distinguish_missing_and_wrong_case_targets`: `"# Hello\n\n[a](#hello) [b](#Hello) [c](#missing)\n"` reports line 3 ranges `[13,11]` with `Expected: #hello; Actual: #Hello` and `[25,13]` with no detail, unchanged source in no-fix mode. With `ignore_case:true`, only the missing target remains.
-- [ ] Write `heading_projection_and_duplicate_counters_match_pinned_targets`: `"# Hello\n# Hello\n# Hello-1\n\n[x](#hello-1) [y](#hello-2)\n"` flags only `[y]` at line 5/range `[15,13]`; `"# A &amp; B\n\n[x](#a--b)\n"` is clean. Add literal Unicode/emoji/code/math/image/reference/custom/HTML collision controls and disabled-target anchors.
-- [ ] Write `definition_and_nested_image_links_keep_source_ownership`: `"[x][id]\n\n[id]: #missing\n"` flags only the definition on line 3/range `[1,14]`; `"![alt](#missing) ![[x](#missing)](img)\n"` flags only the nested link at range `[20,13]`. Multiline `[a](\n #missing\n)\n` reports line 1 without context, anchored by a zero-width span at the physical line start. Add original byte/BOM/newline/table/docfx regressions and check/write/fix/no-fix preservation.
-- [ ] Run `mise exec -- cargo test --test md051`. Expected: missing MD051 findings, not invalid fixtures.
-- [ ] Implement source-backed projections and indexed target classification, using pinned percent/unescape/case semantics. Preserve source; diagnostics say `Link fragments should be valid` with pinned optional detail/context. Check existing reference/HTML/heading consumers if their snapshot fields change.
-- [ ] Run focused tests, native oracle, affected reference/heading/HTML/MD013/MD026 comparisons, full optimized suite, fmt/clippy/diff. Expected: all assertions/budgets pass, no per-link document reparsing.
+- [x] Record ordinary targets/destinations/options, including duplicate/custom anchors, HTML id/name precedence, top/line fragments, Unicode/UTF-16/percent, entities/escapes, code/math/images/references in headings, multiline links/definitions, docfx tabs, tables, recovered containers, directives and warnings. Keep nonempty ignored patterns as explicit configuration-rejection tests until the later regex task.
+- [x] Write `fragment_diagnostics_distinguish_missing_and_wrong_case_targets`: `"# Hello\n\n[a](#hello) [b](#Hello) [c](#missing)\n"` reports line 3 ranges `[13,11]` with `Expected: #hello; Actual: #Hello` and `[25,13]` with no detail, unchanged source in no-fix mode. With `ignore_case:true`, only the missing target remains.
+- [x] Write `heading_projection_and_duplicate_counters_match_pinned_targets`: `"# Hello\n# Hello\n# Hello-1\n\n[x](#hello-1) [y](#hello-2)\n"` flags only `[y]` at line 5/range `[15,13]`; `"# A &amp; B\n\n[x](#a--b)\n"` is clean. Add literal Unicode/emoji/code/math/image/reference/custom/HTML collision controls and disabled-target anchors.
+- [x] Write `definition_and_nested_image_links_keep_source_ownership`: `"[x][id]\n\n[id]: #missing\n"` flags only the definition on line 3/range `[1,14]`; `"![alt](#missing) ![[x](#missing)](img)\n"` flags only the nested link at range `[20,13]`. Multiline `[a](\n #missing\n)\n` reports line 1 without context, anchored by a zero-width span at the physical line start. Add original byte/BOM/newline/table/docfx regressions and check/write/fix/no-fix preservation.
+- [x] Run `mise exec -- cargo test --test md051`. Expected: missing MD051 findings, not invalid fixtures.
+- [x] Implement source-backed projections and indexed target classification, using pinned percent/unescape/case semantics. Preserve source; diagnostics say `Link fragments should be valid` with pinned optional detail/context. Check existing reference/HTML/heading consumers if their snapshot fields change.
+- [x] Run focused tests, native oracle, affected reference/heading/HTML/MD013/MD026 comparisons, full optimized suite, fmt/clippy/diff. Expected: all assertions/budgets pass, no per-link document reparsing.
 - [ ] Update evidence and coverage to 53/53 without setting broader roadmap milestones complete; commit `feat: report missing and mismatched link fragments`.
 
 ## Task 2: Unique ASCII fragment case corrections
@@ -82,3 +82,26 @@ List-indentation review closed at `9174d4a`, with one regression-first fix pass,
 503 passing optimized tests across70 targets, and its debug-throughput caveat
 retained. Its17 rulings/costs remain in the tracked plan; only its scratch was
 removed. This plan may now begin without changing branch/worktree or configuration.
+
+## Execution evidence
+
+Task 1's initial behavioral/corpus tests failed before implementation. Eight public
+tests and 664 native source comparisons now pass. Expanded footnote projection
+was independently RED-to-GREEN. A real-parser HTML-image test also reproduced
+per-image unrelated definition payload parsing; shared compact/header caching now
+requires one parse/<4,096 bytes while varying both axes. Prior reference/HTML/image/
+heading consumers pass their native oracles. The complete optimized suite passes
+512 tests across71 targets, with fmt/clippy clean. Coverage53/53 includes
+diagnostic-only/conditional rules; safe MD051 case repairs and review remain pending.
+
+Rulings so far:
+
+1. Request definition-destination ranges from the existing reference model and
+   share resource scanning. Cost if wrong: shared reference extraction surface;
+   original parser budgets and native consumers guard the migration.
+2. Reuse compact/cached recovery for HTML image targets. Cost if wrong: shared
+   HTML/image ownership; literal corpora and actual-parser budgets gate it, with
+   no edit authority.
+3. Keep `Coverage.complete` false at53 built-ins. Cost if wrong: a conservative
+   flag despite the explicit all53 rule list; diagnostic-only subsets, later
+   options and parser/preservation limits prevent a complete-fidelity claim.

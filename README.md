@@ -94,10 +94,13 @@ MD034 reports bare URLs without wrapping them or changing link/table content;
 see the same [literal content evidence](docs/compatibility/literal-content-diagnostics.md).
 MD044 reports configured proper-name capitalization without rewriting literal
 content; see [proper-name evidence](docs/compatibility/literal-content-diagnostics.md).
+MD051 reports missing or incorrectly capitalized local fragments without guessing
+targets; see [link-fragment evidence](docs/compatibility/link-fragments.md).
 Documents with uncertain tabbed container prefixes are preserved to avoid editing
 code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
-Other rules are not implemented yet; a successful check does not mean the document is
-markdownlint-clean. See [MD013 evidence and limits](docs/compatibility/md013.md).
+All 53 built-ins have native coverage, including diagnostic-only rules and
+conditional repairs. A successful check does not establish complete parser/option
+parity or roadmap completion. See [MD013 evidence and limits](docs/compatibility/md013.md).
 
 ## Usage
 
