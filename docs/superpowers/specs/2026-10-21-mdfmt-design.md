@@ -127,9 +127,9 @@ The inline-style batch adds [conditional MD049/MD050 emphasis/strong styles](../
 The inline-whitespace batch adds [MD037/MD038/MD039 bare-marker, code-span and link-label diagnostics](../../compatibility/inline-whitespace.md).
 The reference batch adds [MD052/MD053/MD054 reference, definition and link-style diagnostics](../../compatibility/reference-diagnostics.md).
 The literal-content batch adds [MD034 bare-URL, MD044 proper-name and MD046 code-block style diagnostics](../../compatibility/literal-content-diagnostics.md).
-The list-indentation batch adds [conditional MD005 sibling alignment](../../compatibility/list-indentation.md).
-There are now 51 covered built-ins out of 53; milestone 5 is still incomplete.
-Remaining built-ins are MD007 and MD051. Interactions and conflict detection remain
+The list-indentation batch adds [conditional MD005/MD007 sibling/nesting alignment](../../compatibility/list-indentation.md).
+There are now 52 covered built-ins out of 53; milestone 5 is still incomplete.
+The remaining built-in is MD051. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
 The first useful release includes local declarative configuration,
@@ -152,6 +152,20 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- List-indentation interaction tests reproduced pre-existing MD013 prefix growth
+  before a link/code span on a continuation line: the native text token ends at
+  the newline, so reflow added a prefix without consuming the existing one outside
+  that token. A direct MD013-only regression fails before the correction. Soft
+  breaks must consume the physical paragraph prefix even when it extends beyond
+  the text-token range; links/code stay indivisible and unchanged. Direct and
+  cross-rule regressions pass, along with the optimized 496-test full suite.
+- MD007 `start_indented: true` and MD027 can prescribe opposite edits to spaces
+  after a quote marker, causing the normalization loop not to terminate. A bounded
+  CLI regression reproduces the cycle. Disabled first MD027 anchors expose an
+  equivalent MD005 cycle. The shared candidate gate now rejects inserted bytes
+  overlapping enabled MD027 findings, retaining stable MD005/MD007 diagnostics.
+  Both termination regressions and the optimized 496-test suite pass. General
+  conflict explanations remain later roadmap work.
 - Independent literal-content review found that recovered code lacked the owner/
   sibling metadata needed to join logical blocks, retaining false MD014 prompt
   findings and duplicate MD046 findings. Snapshots now carry mapped predecessor

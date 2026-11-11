@@ -96,6 +96,7 @@ pub(crate) fn propose(
     validated_indentation_edits(
         source,
         parsed,
+        document,
         findings(source, document)
             .into_iter()
             .filter_map(|finding| finding.edit)

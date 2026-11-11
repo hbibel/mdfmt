@@ -61,14 +61,14 @@
 
 ## Task 2: MD007 unordered nesting indentation
 
-- [ ] Record every option (`indent`, `start_indented`, explicit/defaulted `start_indent`) and nesting boundaries, physical quote-prefix adjustments, ordered ancestors, footnotes, partial directives, tabs, empty/loose items, HTML recovery, UTF-16/BOM/newlines and warnings. Never run an upstream huge-allocation case unbounded.
-- [ ] Write `nested_unordered_indentation_preserves_ownership`: `"- a\n  - b\n"` with `indent: 4` reports line 2, range `[1,4]`, detail `Expected: 4; Actual: 2` in no-fix mode; safe native output is `"- a\n    - b\n"` with unchanged content/nesting and no remaining finding.
-- [ ] Write `root_start_indent_and_quote_adjustments_are_physical`: `"  - a\n"` under defaults repairs to `"- a\n"`; `"- a\n"` with `start_indented: true` repairs to `"  - a\n"`; `"> - a\n>   - b\n"` with `indent: 4` diagnoses line 2/range `[1,6]` and safely yields `"> - a\n>     - b\n"`.
-- [ ] Add rejection cases for code/table/definition ownership changes, ordered-ancestor/footnote tests, partially disabled MD005/MD007 anchors, large/deep workloads and huge-target termination. Check all diagnostic/CLI/severity/fix-mode contracts and second-call stability.
-- [ ] Run `mise exec -- cargo test --test md007`. Expected: missing MD007 findings/repairs before implementation.
-- [ ] Add requested ancestry fields and implement pinned expected indentation. Integrate marker-only proposals with preservation validation and MD005 delegation; do not add a competing whole-subtree reindent path.
-- [ ] Run both new native oracles and existing MD004/MD027/MD029/MD030/list separator/reflow/parser suites, then the complete optimized suite, fmt/clippy/diff. Expected: output converges in one invocation, disabled/protected bytes remain unchanged, no silent overflow or unbounded padding.
-- [ ] Update evidence/roadmap/coverage to 52/53 and commit `feat: apply ownership-safe unordered list indentation`.
+- [x] Record every option (`indent`, `start_indented`, explicit/defaulted `start_indent`) and nesting boundaries, physical quote-prefix adjustments, ordered ancestors, footnotes, partial directives, tabs, empty/loose items, HTML recovery, UTF-16/BOM/newlines and warnings. Never run an upstream huge-allocation case unbounded.
+- [x] Write `nested_unordered_indentation_preserves_ownership`: `"- a\n  - b\n"` with `indent: 4` reports line 2, range `[1,4]`, detail `Expected: 4; Actual: 2` in no-fix mode; safe native output is `"- a\n    - b\n"` with unchanged content/nesting and no remaining finding.
+- [x] Write `root_start_indent_and_quote_adjustments_are_physical`: `"  - a\n"` under defaults repairs to `"- a\n"`; `"- a\n"` with `start_indented: true` repairs to `"  - a\n"`; `"> - a\n>   - b\n"` with `indent: 4` diagnoses line 2/range `[1,6]` and safely yields `"> - a\n>     - b\n"`.
+- [x] Add rejection cases for code/table/definition ownership changes, ordered-ancestor/footnote tests, partially disabled MD005/MD007 anchors, large/deep workloads and huge-target termination. Check all diagnostic/CLI/severity/fix-mode contracts and second-call stability.
+- [x] Run `mise exec -- cargo test --test md007`. Expected: missing MD007 findings/repairs before implementation.
+- [x] Add requested ancestry fields and implement pinned expected indentation. Integrate marker-only proposals with preservation validation and MD005 delegation; do not add a competing whole-subtree reindent path.
+- [x] Run both new native oracles and existing MD004/MD027/MD029/MD030/list separator/reflow/parser suites, then the complete optimized suite, fmt/clippy/diff. Expected: output converges in one invocation, disabled/protected bytes remain unchanged, no silent overflow or unbounded padding.
+- [x] Update evidence/roadmap/coverage to 52/53 and commit `feat: apply ownership-safe unordered list indentation`.
 - [ ] Request one independent review of this batch with every Review Focus and ledger ruling. Reproduce/fix Important/Critical findings once, then run the complete suite; no second review.
 - [ ] Retain all rulings/evidence, remove only this completed plan's scratch workspace and continue MD051 and later roadmap work without merge/push or routine questions.
 
@@ -90,6 +90,20 @@ The complete optimized suite passes 482 tests across 67 targets, with fmt/clippy
 clean. Prior MD004/MD027/MD029/MD030 native comparisons also pass. Coverage51/53;
 MD007 and the batch review remain pending.
 
+Task 2's seven initial tests failed before implementation. Twelve MD007 and eight
+MD005 tests now pass, with 1,680/687 native comparison rows and 261/156 retained
+upstream-fix differences. Two bounded conflict regressions independently exposed
+MD007/MD027 and partially disabled MD005/MD027 cycles; the shared candidate gate
+rejects added whitespace overlapping enabled MD027 findings. Direct MD013-only
+and list-composition tests also reproduced prefix growth before protected inline
+siblings; the enclosing paragraph now bounds soft-break prefix consumption.
+
+The complete optimized suite passes 496 tests across 69 targets; fmt/clippy clean.
+Existing list, 288 MD013/440 MD026 and 29 reflow comparisons pass. Debug scaling
+hit ten seconds at 500 paragraphs; optimized 100/500/1,000 cases pass with the same
+limit (211/1,117/2,509 ms). The scaling fixture now selects only MD013 instead of
+accidentally testing later default MD041. Coverage52/53; review remains pending.
+
 Rulings so far:
 
 1. Share bounded whitespace selection/permission/original-parser validation in
@@ -97,3 +111,16 @@ Rulings so far:
    weaker preservation gate; unsafe-content and upstream ownership checks guard it.
 2. Run MD005 after padding/numbering in the normalization loop. Cost if wrong:
    cross-rule instability; composition and repeated-output tests gate the order.
+3. Keep MD027 priority when sibling/nesting insertions overlap its candidate
+   findings. Cost if wrong: conservative withholding; remaining indentation
+   findings stay visible instead of a nonterminating fix cycle.
+4. Use read-only candidate findings, not original directive-byte permissions, to
+   detect that conflict. Cost if wrong: withholding even when a quote repair would
+   itself be unsafe; no changed-line permissions or iteration cap hide the issue.
+5. Fix the discovered shared MD013 idempotence defect before this batch's review.
+   Cost if wrong: broader reflow-gap boundary surface; literal protected-token/
+   quote/list/newline cases, full suite and prior oracle guard the one-line change.
+6. Isolate MD013 in its scaling fixture and add an explicit optimized-profile
+   mode without changing the ten-second budget. Cost if wrong: debug-only
+   performance regressions remain hardening obligations, explicitly not claimed
+   passing by the optimized timings.

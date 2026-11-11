@@ -120,7 +120,7 @@ fn sibling_repairs_delegate_unordered_lists_to_enabled_nesting_rule() {
         rules: RuleConfig::from_value(json!({"default":false,"MD005":true,"MD007":true})).unwrap(),
         ..Default::default()
     };
-    let input = " - a\n- b\n";
+    let input = " - a <!-- markdownlint-disable-line MD007 -->\n- b\n";
     let result = format_with_config(input, &FormatOptions::default(), &settings).unwrap();
     assert_eq!(result.output, input);
     assert!(result.diagnostics.iter().any(|d| d.code == "MD005"));
@@ -218,4 +218,53 @@ fn dense_sibling_lists_produce_all_findings_within_a_bounded_workload() {
             .count(),
         1000
     );
+}
+
+#[test]
+fn disabled_quote_spacing_anchors_do_not_cause_sibling_repair_cycles() {
+    use std::{
+        fs,
+        process::{Command, Stdio},
+        time::{Duration, Instant},
+    };
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("doc.md");
+    let errors = dir.path().join("errors.log");
+    fs::write(
+        dir.path().join(".markdownlint-cli2.jsonc"),
+        json!({"config":{"default":false,"MD005":true,"MD027":true}}).to_string(),
+    )
+    .unwrap();
+    for input in [
+        ">  1. a <!-- markdownlint-disable-line MD027 -->\n> 2. b\n",
+        ">  - a <!-- markdownlint-disable-line MD027 -->\n> - b\n",
+    ] {
+        fs::write(&path, input).unwrap();
+        for _ in 0..2 {
+            let mut child = Command::new(env!("CARGO_BIN_EXE_mdfmt"))
+                .current_dir(dir.path())
+                .args(["--write", "doc.md"])
+                .stdout(Stdio::null())
+                .stderr(Stdio::from(fs::File::create(&errors).unwrap()))
+                .spawn()
+                .unwrap();
+            let start = Instant::now();
+            loop {
+                if let Some(status) = child.try_wait().unwrap() {
+                    assert_eq!(status.code(), Some(1));
+                    break;
+                }
+                if start.elapsed() > Duration::from_secs(5) {
+                    child.kill().unwrap();
+                    let _ = child.wait();
+                    panic!("MD005 and a disabled MD027 anchor did not terminate");
+                }
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            assert_eq!(fs::read_to_string(&path).unwrap(), input);
+            let errors = fs::read_to_string(&errors).unwrap();
+            assert_eq!(errors.matches("Error MD005").count(), 1);
+            assert!(!errors.contains("Error MD027"));
+        }
+    }
 }

@@ -7,6 +7,8 @@ pub(crate) struct ListIndentation {
     pub ordered: bool,
     pub span: Range<usize>,
     pub items: Vec<ListItemIndentation>,
+    pub ul_depth: Option<usize>,
+    pub footnote_base: usize,
 }
 pub(crate) struct ListItemIndentation {
     pub span: Range<usize>,
@@ -14,6 +16,49 @@ pub(crate) struct ListItemIndentation {
     pub padding_end: usize,
     pub indent: usize,
     pub marker_end_column: usize,
+    pub quote_adjustment: usize,
+}
+
+#[derive(Clone, Copy)]
+struct Scope {
+    ul_depth: Option<usize>,
+    footnote_base: usize,
+    quotes: usize,
+}
+
+fn quote_adjustment(source: &Source, start: usize, quotes: usize) -> usize {
+    if quotes == 0 {
+        return 0;
+    }
+    let line = source.position(start).unwrap().line;
+    let range = source.line_range(line).unwrap();
+    let prefix = &source.text()[range.start..start];
+    let mut cursor = 0;
+    let mut found = 0;
+    let mut end = 0;
+    while cursor < prefix.len() && found < quotes {
+        if prefix.as_bytes()[cursor] == b'['
+            && let Some(close) = super::label_end(&prefix[cursor..], false)
+        {
+            cursor += close + 1;
+            continue;
+        }
+        if prefix.as_bytes()[cursor] == b'>' {
+            found += 1;
+            end = cursor
+                + 1
+                + usize::from(matches!(
+                    prefix.as_bytes().get(cursor + 1),
+                    Some(b' ' | b'\t')
+                ));
+        }
+        cursor += prefix[cursor..].chars().next().unwrap().len_utf8();
+    }
+    if end == 0 {
+        0
+    } else {
+        crate::utf16_len(&prefix[..end]) - usize::from(line == 1 && prefix.starts_with('\u{feff}'))
+    }
 }
 
 pub(crate) fn list_indentation(source: &Source) -> Vec<ListIndentation> {
@@ -32,7 +77,15 @@ pub(crate) fn list_indentation(source: &Source) -> Vec<ListIndentation> {
         view: &Source,
         offsets: &[usize],
         output: &mut Vec<ListIndentation>,
+        mut scope: Scope,
     ) {
+        if matches!(node, Node::Blockquote(_)) {
+            scope.ul_depth = Some(0);
+            scope.quotes += 1;
+        }
+        if matches!(node, Node::FootnoteDefinition(_)) {
+            scope.footnote_base = 4;
+        }
         if let Node::List(list) = node
             && let Some(position) = node.position()
         {
@@ -86,6 +139,7 @@ pub(crate) fn list_indentation(source: &Source) -> Vec<ListIndentation> {
                     padding_end,
                     indent,
                     marker_end_column: indent + width,
+                    quote_adjustment: quote_adjustment(source, offsets[start], scope.quotes),
                 });
             }
             if !items.is_empty() {
@@ -94,17 +148,38 @@ pub(crate) fn list_indentation(source: &Source) -> Vec<ListIndentation> {
                     span: offsets[base + position.start.offset]
                         ..offsets[base + position.end.offset],
                     items,
+                    ul_depth: if list.ordered { None } else { scope.ul_depth },
+                    footnote_base: scope.footnote_base,
                 });
             }
         }
+        if let Node::List(list) = node {
+            scope.ul_depth = if list.ordered {
+                None
+            } else {
+                scope.ul_depth.map(|depth| depth + 1)
+            };
+        }
         if let Some(children) = node.children() {
             for child in children {
-                visit(child, base, source, view, offsets, output);
+                visit(child, base, source, view, offsets, output, scope);
             }
         }
     }
     let mut output = vec![];
-    visit(&parsed.tree, base, source, &view, &offsets, &mut output);
+    visit(
+        &parsed.tree,
+        base,
+        source,
+        &view,
+        &offsets,
+        &mut output,
+        Scope {
+            ul_depth: Some(0),
+            footnote_base: 0,
+            quotes: 0,
+        },
+    );
     output
 }
 
@@ -141,6 +216,7 @@ pub(crate) fn indentation_edit(
 pub(crate) fn validated_indentation_edits(
     source: &Source,
     parsed: &ParsedDocument,
+    document: &DocumentConfig,
     edits: Vec<Edit>,
 ) -> Vec<Edit> {
     let edits: Vec<_> = edits
@@ -156,13 +232,43 @@ pub(crate) fn validated_indentation_edits(
     if edits.is_empty() {
         return edits;
     }
-    let safe = crate::edit::apply_authorized_edits(source, parsed, edits.clone(), &edits)
-        .ok()
-        .and_then(|output| {
-            let candidate = Source::new(output);
-            let reparsed = parse(&candidate).ok()?;
-            Some(equivalent(source, parsed, &candidate, &reparsed))
+    let Ok(output) = crate::edit::apply_authorized_edits(source, parsed, edits.clone(), &edits)
+    else {
+        return vec![];
+    };
+    let candidate = Source::new(output);
+    let Ok(reparsed) = parse(&candidate) else {
+        return vec![];
+    };
+    if !equivalent(source, parsed, &candidate, &reparsed) {
+        return vec![];
+    }
+    if edits.iter().any(|edit| !edit.replacement.is_empty())
+        && (1..=source.line_count()).any(|line| {
+            document
+                .state("MD027", line)
+                .is_some_and(|state| state.enabled)
         })
-        .unwrap_or(false);
-    if safe { edits } else { vec![] }
+    {
+        // Line permissions are unchanged; original directive byte ranges cannot
+        // authorize edits in the candidate, so use read-only findings here.
+        let opposing = crate::md027::diagnose(&candidate, &reparsed, document);
+        let mut original_cursor = 0;
+        let mut candidate_cursor = 0;
+        for edit in &edits {
+            candidate_cursor += edit.span.start - original_cursor;
+            let inserted = candidate_cursor..candidate_cursor + edit.replacement.len();
+            if !inserted.is_empty()
+                && opposing
+                    .iter()
+                    .filter_map(|finding| finding.span.as_ref())
+                    .any(|span| span.start < inserted.end && inserted.start < span.end)
+            {
+                return vec![];
+            }
+            candidate_cursor = inserted.end;
+            original_cursor = edit.span.end;
+        }
+    }
+    edits
 }

@@ -88,7 +88,7 @@ impl Layout {
                     }
                     cursor += 1;
                     if newline {
-                        while cursor < region.span.end && matches!(bytes[cursor], b' ' | b'>') {
+                        while cursor < paragraph.span.end && matches!(bytes[cursor], b' ' | b'>') {
                             cursor += 1;
                         }
                     }

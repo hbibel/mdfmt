@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-const binary = fileURLToPath(new URL("../../target/debug/mdfmt", import.meta.url));
+const profile = process.argv.includes("--release") ? "release" : "debug";
+const binary = fileURLToPath(new URL(`../../target/${profile}/mdfmt`, import.meta.url));
 for (const paragraphs of [100, 500, 1000]) {
-  const prefix = '<!-- markdownlint-configure-file {"MD013":{"line_length":10}} --> <!-- markdownlint-disable-line MD013 -->\n';
+  const prefix = '<!-- markdownlint-configure-file {"default":false,"MD013":{"line_length":10}} --> <!-- markdownlint-disable-line MD013 -->\n';
   const input = prefix +
     "alpha beta gamma delta epsilon zeta eta theta\n\n".repeat(paragraphs);
   const start = performance.now();
