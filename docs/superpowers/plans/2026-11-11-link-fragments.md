@@ -57,16 +57,16 @@
 - [x] Run `mise exec -- cargo test --test md051`. Expected: missing MD051 findings, not invalid fixtures.
 - [x] Implement source-backed projections and indexed target classification, using pinned percent/unescape/case semantics. Preserve source; diagnostics say `Link fragments should be valid` with pinned optional detail/context. Check existing reference/HTML/heading consumers if their snapshot fields change.
 - [x] Run focused tests, native oracle, affected reference/heading/HTML/MD013/MD026 comparisons, full optimized suite, fmt/clippy/diff. Expected: all assertions/budgets pass, no per-link document reparsing.
-- [ ] Update evidence and coverage to 53/53 without setting broader roadmap milestones complete; commit `feat: report missing and mismatched link fragments`.
+- [x] Update evidence and coverage to 53/53 without setting broader roadmap milestones complete; commit `feat: report missing and mismatched link fragments`.
 
 ## Task 2: Unique ASCII fragment case corrections
 
-- [ ] Write `unique_ascii_fragment_case_repairs_change_only_owned_destinations`: the Task 1 Hello input fixes only `[b](#Hello)` to `[b](#hello)`, leaving missing `[c]` and all labels/titles exact. `"<a id=\"Foo\"></a>\n\n[x](#foo)\n"` safely fixes to `#Foo`. Second call makes no edits; no-fix/config.fix:false remain exact.
-- [ ] Write `ambiguous_or_protected_fragment_targets_are_never_guessed`: colliding HTML ids `Foo`/`FOO`, definitions, multiline/percent/entity/escaped/non-ASCII destinations and table links remain exact even when diagnosed. An external or relative nonlocal URL containing `#` must never become a local-target repair.
-- [ ] Write composition/CLI/alias/warning/inline-directive tests, including headings changed by MD026/MD003, wrapped linked prose and original-coordinate edit reconstruction. Test disabled target lines still supply targets, while disabled link lines receive neither fix nor finding.
-- [ ] Run `mise exec -- cargo test --test md051`. Expected: missing safe case corrections before edit implementation, with Task 1 diagnostics still passing.
-- [ ] Implement the narrow proposal/AST validation contract after final heading normalization. Admit only one exact case-folded target and raw safe ASCII resource syntax, require original permissions/ownership, and compare every non-URL AST field exactly. Do not relax generic protected-link validation or rewrite tables/definitions.
-- [ ] Add bounded dense/ambiguous-target and repeated recovered-image workloads with exact semantic assertions; run source/fix/no-fix/idempotence oracle, affected suites and complete optimized tests, fmt/clippy/diff. Expected: safe corrections converge in one call and protected source remains exact.
+- [x] Write `unique_ascii_fragment_case_repairs_change_only_owned_destinations`: the Task 1 Hello input fixes only `[b](#Hello)` to `[b](#hello)`, leaving missing `[c]` and all labels/titles exact. `"<a id=\"Foo\"></a>\n\n[x](#foo)\n"` safely fixes to `#Foo`. Second call makes no edits; no-fix/config.fix:false remain exact.
+- [x] Write `ambiguous_or_protected_fragment_targets_are_never_guessed`: colliding HTML ids `Foo`/`FOO`, definitions, multiline/percent/entity/escaped/non-ASCII destinations and table links remain exact even when diagnosed. An external or relative nonlocal URL containing `#` must never become a local-target repair.
+- [x] Write composition/CLI/alias/warning/inline-directive tests, including headings changed by MD026/MD003, wrapped linked prose and original-coordinate edit reconstruction. Test disabled target lines still supply targets, while disabled link lines receive neither fix nor finding.
+- [x] Run `mise exec -- cargo test --test md051`. Expected: missing safe case corrections before edit implementation, with Task 1 diagnostics still passing.
+- [x] Implement the narrow proposal/AST validation contract after final heading normalization. Admit only one exact case-folded target and raw safe ASCII resource syntax, require original permissions/ownership, and compare every non-URL AST field exactly. Do not relax generic protected-link validation or rewrite tables/definitions.
+- [x] Add bounded dense/ambiguous-target and repeated recovered-image workloads with exact semantic assertions; run source/fix/no-fix/idempotence oracle, affected suites and complete optimized tests, fmt/clippy/diff. Expected: safe corrections converge in one call and protected source remains exact.
 - [ ] Update preservation/policy evidence and commit `feat: correct unambiguous local fragment capitalization`.
 - [ ] Request one independent batch review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical findings once, then complete the full suite; no second review.
 - [ ] Retain all rulings/evidence, remove only the completed scratch directory and continue milestone 5 interactions/conflict reporting and later roadmap work without merge/push or routine questions.
@@ -105,3 +105,21 @@ Rulings so far:
 3. Keep `Coverage.complete` false at53 built-ins. Cost if wrong: a conservative
    flag despite the explicit all53 rule list; diagnostic-only subsets, later
    options and parser/preservation limits prevent a complete-fidelity claim.
+4. Use a strict private AST comparison for admitted ASCII fragment case changes,
+   not a generic link-preservation relaxation. Cost if wrong: conservative
+   rejection of recovered/extension-owned links; labels/tables remain protected
+   and remaining findings stay visible.
+
+Task 1 committed at `75c9c9c`. Task 2's literal unique/cross-rule tests reproduced
+missing repairs before implementation; the fixture retains MD003's existing
+three-character setext underline. Thirteen MD051 tests and664 native comparisons
+now pass, including source-only/no-fix behavior and case repair/rejection controls.
+Every changed code unit is independently checked against upstream-owned ASCII
+inline destination spans outside tables; final findings/idempotence pass. Thirty
+upstream-fix differences retain deliberately protected/ambiguous source.
+
+The complete optimized suite passes517/517 across71 targets, fmt/clippy clean;
+prior MD003/MD013/MD026/reflow/MD024/HTML/image comparisons pass after integration,
+and shared6,305 reference comparisons passed after the range/cache extraction.
+All assertions/budgets unchanged. Coverage53/53 is not roadmap completion; commit
+and the one independent batch review follow.

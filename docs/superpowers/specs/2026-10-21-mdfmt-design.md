@@ -128,10 +128,10 @@ The inline-whitespace batch adds [MD037/MD038/MD039 bare-marker, code-span and l
 The reference batch adds [MD052/MD053/MD054 reference, definition and link-style diagnostics](../../compatibility/reference-diagnostics.md).
 The literal-content batch adds [MD034 bare-URL, MD044 proper-name and MD046 code-block style diagnostics](../../compatibility/literal-content-diagnostics.md).
 The list-indentation batch adds [conditional MD005/MD007 sibling/nesting alignment](../../compatibility/list-indentation.md).
-MD051 adds [local-fragment target diagnostics](../../compatibility/link-fragments.md).
+MD051 adds [local-fragment diagnostics and safe ASCII case corrections](../../compatibility/link-fragments.md).
 All 53 built-ins now have native coverage, including diagnostic-only rules and
-conditional repairs; milestone 5 is still incomplete. MD051's safe case-correction
-subset and independent batch review remain pending. Interactions and conflict detection remain
+conditional repairs; milestone 5 is still incomplete. MD051's independent batch
+review remains pending. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
 The first useful release includes local declarative configuration,

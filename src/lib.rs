@@ -338,6 +338,28 @@ pub fn format_with_config(
         &heading_edits,
     )?;
     result.edits = edit::compose_edits(source, &result.edits, &heading_edits)?;
+    let before_fragments = Source::new(result.output.clone());
+    let before_fragments_parsed =
+        parse::parse(&before_fragments).map_err(ProcessingError::Parse)?;
+    let before_fragments_document = config
+        .document(before_fragments.text())
+        .map_err(ProcessingError::Configuration)?;
+    let fragment_edits = if options.fix && config.fix {
+        md051::propose(
+            &before_fragments,
+            &before_fragments_parsed,
+            &before_fragments_document,
+        )
+    } else {
+        vec![]
+    };
+    result.output = edit::apply_authorized_edits(
+        &before_fragments,
+        &before_fragments_parsed,
+        fragment_edits.clone(),
+        &fragment_edits,
+    )?;
+    result.edits = edit::compose_edits(source, &result.edits, &fragment_edits)?;
     let before_eof = Source::new(result.output.clone());
     let before_eof_parsed = parse::parse(&before_eof).map_err(ProcessingError::Parse)?;
     let before_eof_document = config
