@@ -70,7 +70,7 @@
 - [x] Run both new native oracles and existing MD004/MD027/MD029/MD030/list separator/reflow/parser suites, then the complete optimized suite, fmt/clippy/diff. Expected: output converges in one invocation, disabled/protected bytes remain unchanged, no silent overflow or unbounded padding.
 - [x] Update evidence/roadmap/coverage to 52/53 and commit `feat: apply ownership-safe unordered list indentation`.
 - [x] Request one independent review of this batch with every Review Focus and ledger ruling. Reproduce/fix Important/Critical findings once, then run the complete suite; no second review.
-- [ ] Retain all rulings/evidence, remove only this completed plan's scratch workspace and continue MD051 and later roadmap work without merge/push or routine questions.
+- [x] Retain all rulings/evidence, remove only this completed plan's scratch workspace and continue MD051 and later roadmap work without merge/push or routine questions.
 
 ## Planning check
 
@@ -186,3 +186,5 @@ Rulings so far:
     input classes remain release-hardening work.
 
 Both Important findings are fixed; no deferred minors were reported.
+Fixes committed at `9174d4a`; all17 rulings/costs retained before removing only
+this plan's completed scratch directory. Branch/worktree remain unmerged/unpushed.
