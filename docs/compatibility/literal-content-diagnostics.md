@@ -19,7 +19,7 @@ blockquotes remain separate.
 ## Evidence
 
 `tests/md046.rs` contains six native tests; `literal-content.mjs --rule MD046`
-retains 1,518 pinned observations covering explicit/consistent styles, all newline
+retains 1,662 pinned observations covering explicit/consistent styles, all newline
 forms, BOM, tabs, nested containers, metadata, HTML recovery, empty/unclosed fences,
 disabled anchors and severity. The native oracle checks exact source, findings,
 exit status and repeated-call behavior with fixes enabled/disabled.
@@ -51,7 +51,7 @@ ownership and original-byte mappings through BOM, CR/CRLF, metadata, tabs and
 generic HTML recovery. Escaped angle brackets are not ordinary neighboring data,
 even when the native text node's range omits its escape byte.
 
-`tests/md034.rs` has four tests consuming 1,740 pinned observations, with aliases,
+`tests/md034.rs` has four tests consuming 1,812 pinned observations, with aliases,
 permissions, warnings, CLI check/write/no-fix, literal source preservation and
 second-call stability. A quoted 1,000-URL plus 256 KiB tail and 100-image budget
 case completes within 30 seconds, emits exactly 1,000 warnings and retains exact
@@ -91,7 +91,7 @@ not extended to the token's end. Code indentation is removed only from the
 diagnostic segment, with physical values mapped back to original source bytes.
 Names after URLs remain reportable. No Node dependency exists at runtime.
 
-`tests/md044.rs` has ten native tests. Its 1,911 receipts distinguish 1,904 ordinary
+`tests/md044.rs` has ten native tests. Its 2,373 receipts distinguish 2,366 ordinary
 pinned cases from seven corrected-policy cases for URL bounds/empty names. Empty
 names are never sent to upstream; the separate [audit](proper-name-audit.md)
 retains its bounded resource-failure observation. Tests cover source ranges,
@@ -124,10 +124,38 @@ MD046 share logical diagnostic code snapshots, joining only same-owner indented
 nodes across actual blank/prefix-only gaps. Separate containers, adjacent parser
 tokens and intervening empty containers remain independent; values retain actual
 physical line distances. Original code bytes remain unchanged. The MD014 corpus
-grows to 462 cases and MD046 to 1,518. The optimized full suite passes 471 tests
+grew to 462 cases and MD046 to 1,518 before independent review. That optimized
+full suite passed 471 tests
 across 65 targets, with fmt/clippy clean and unchanged assertions/time budgets.
 The prior debug run passed 470 tests before the additional barrier regression;
 the final debug attempt exceeded its command limit after 387 passing tests, with
 no failures. The complete optimized run is the final full-suite evidence, not a
 claim that the timed-out debug run finished. The Important MD014 finding is fixed;
-one independent batch review remains pending.
+the independent batch review corrections are recorded below.
+
+## Independent review corrections
+
+The one independent review found three Important defects, no Critical defects and
+no minors. All three reproduced RED in `tests/literal_content_review.rs`, then
+passed in one fix pass; no second review was dispatched.
+
+- Recovered code snapshots now carry the preceding code sibling from their own
+  producing parse. Recovery remaps both spans together and drops references into
+  synthetic prefixes. Original-tree lookup cannot supply this identity; missing
+  identities are never treated as equal. Same-owner command/output blocks group
+  correctly while separate/empty containers remain barriers.
+- A shared complete-comment predicate replaces the prefix-only shortcut. Trailing
+  Markdown after `-->` keeps its Data/Code kind and flags rather than becoming
+  blanket Html. Complete comments, malformed/incomplete comments, nested contexts
+  and physical newline variants remain separately covered.
+- Recovery recognizes blank content after consuming the active container prefix,
+  not only physically empty lines. Quoted blanks preserve recovery context and
+  subsequent code/style anchors; an extra empty nested container is not mistaken
+  for a blank in the current scope.
+
+Four public regressions cover independent/combined rules, LF/BOM+CRLF/CR,
+fix/no-fix, repeated calls and CLI check/write byte preservation. Native comparison
+counts are now 516 MD014, 1,812 MD034, 2,373 MD044 and 1,662 MD046. Prior reference,
+HTML/image and MD013/MD026 native comparisons also pass. The complete optimized
+suite passes 475 tests across 66 targets, with fmt/clippy clean. Coverage remains
+50/53; remaining built-ins and later milestones are not claimed complete.

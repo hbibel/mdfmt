@@ -8,6 +8,14 @@ pub(crate) struct HtmlToken {
     pub in_table: bool,
 }
 
+pub(super) fn complete_comment(raw: &str) -> bool {
+    raw.strip_prefix("<!--")
+        .and_then(|text| text.strip_suffix("-->"))
+        .is_some_and(|comment| {
+            !comment.starts_with('>') && !comment.starts_with("->") && !comment.ends_with('-')
+        })
+}
+
 #[derive(Clone)]
 struct Candidate {
     span: Range<usize>,
@@ -166,11 +174,7 @@ pub(crate) fn html_tokens(source: &Source, parsed: &ParsedDocument) -> Vec<HtmlT
                     }),
             );
         } else if item.flow {
-            if let Some(comment) = raw.strip_prefix("<!--").and_then(|s| s.strip_suffix("-->"))
-                && !comment.starts_with('>')
-                && !comment.starts_with("->")
-                && !comment.ends_with('-')
-            {
+            if complete_comment(raw) {
                 continue;
             }
             let first = view.position(item.span.start).unwrap().line;

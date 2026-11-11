@@ -118,8 +118,8 @@
 - [x] Use the helper in MD014/MD046, removing their divergent style/grouping assumptions. Run all MD014/MD046 cases, expand pinned source receipts for blank containers and verify no changed fence/code contexts.
 - [x] Run full tests, all batch/native/parser consumers, fmt/clippy/diff checks; mark the Important roadmap defect fixed only with RED→GREEN and a green suite.
 - [x] Commit `fix: classify indented code commands across container blanks`.
-- [ ] Request the one independent batch review over the plan baseline through final implementation HEAD, including every Review Focus and ledger ruling. Reproduce/fix only Important/Critical findings once, then run a green full suite; no second review.
-- [ ] Retain all rulings/evidence in this plan, remove only its completed scratch workspace, and continue MD005/MD007/MD051 and later roadmap work without merge/push or approval questions.
+- [x] Request the one independent batch review over the plan baseline through final implementation HEAD, including every Review Focus and ledger ruling. Reproduce/fix only Important/Critical findings once, then run a green full suite; no second review.
+- [x] Retain all rulings/evidence in this plan, remove only its completed scratch workspace, and continue MD005/MD007/MD051 and later roadmap work without merge/push or approval questions.
 
 ## Planning check
 
@@ -162,6 +162,27 @@ passes 471 tests across 65 targets; fmt/clippy clean. Earlier debug evidence is
 387 passes without failures; it is not misrepresented as a completed debug run.
 No source edits or assertion/timing-limit changes. Commit/review follow.
 
+The one independent review over 1caaf9c..94b1f0a found three Important findings,
+no Critical findings and no minors. Its independent 73-test run passed. The
+regression-first fix pass adds four public tests in
+`tests/literal_content_review.rs`; all three primary reproductions failed before
+fixing recovered predecessor identity, complete-comment classification and
+container-relative recovery blanks. No second review was dispatched.
+
+Code snapshots carry mapped `previous_code` provenance from their producing
+parse, including recovered scopes, rather than equating missing original owners.
+The existing complete-comment predicate is shared with HTML selection. Container
+blank checks consume only the active path, preserving empty nested-container
+barriers. LF/BOM+CRLF/CR, independent/combined flags, consistency anchors, repeated
+calls and CLI check/write/no-fix byte preservation are covered.
+
+Final verification: complete optimized full suite 475/475 across 66 targets,
+fmt/clippy clean; 516 MD014, 1,812 MD034, 2,373 MD044 (2,366 ordinary/seven policies),
+1,662 MD046, prior 6,305 reference and affected HTML/image/MD013/MD026 native
+comparisons pass. All assertions and timing budgets remain unchanged. Coverage
+is 50/53, not roadmap completion. Remaining rules, conflicts, external formatters,
+later declarative compatibility and hardening continue separately.
+
 Rulings so far:
 
 1. Group only same-owner indented code across blank prefix gaps. Cost if wrong:
@@ -195,3 +216,33 @@ Rulings so far:
     command exceeded ten minutes. Cost if wrong: debug-only issues outside the
     completed focused/debug runs could remain; all 471 tests, assertions and time
     budgets run unchanged in the optimized suite, and both native code oracles pass.
+11. Carry mapped predecessor evidence from the snapshot's producing parse rather
+    than reconstructing owners from the caller's original regions. Cost if wrong:
+    metadata must survive each recovery shift; recovered/barrier regressions and
+    full consumer suites guard it, with no edit authority.
+12. Detect recovery blanks relative to the active container path, not physical
+    trimming or arbitrary quote-marker removal. Cost if wrong: scope restart and
+    diagnostic ownership; negative barriers and flag/newline controls guard it.
+13. Leave remaining built-ins, conflict reporting, formatters, declarative
+    compatibility and broad hardening outside this batch, as the reviewer set
+    aside. Cost if wrong: unfinished roadmap work remains explicit at 50/53.
+14. Retain actual-URL bounds and skipped empty-name entries, as the reviewer set
+    aside. Cost if wrong: documented upstream differences; unsafe source empty
+    options remain unexecuted.
+15. Retain the pinned root-collation contract, as the reviewer set aside. Cost if
+    wrong: different name priority under other environment-selected locales.
+16. Keep this batch's rules diagnostic-only, as the reviewer set aside. Cost if
+    wrong: safely repairable subsets remain later work rather than unauthorized
+    source changes now.
+17. Prefer owned-code exclusion for `- <script>\n-     github\n</script>\n`, where
+    upstream MD044 and MD046 disagree, as the reviewer set aside. Cost if wrong:
+    fewer MD044 findings for that documented edge; code flags remain defensible
+    and no broader parity claim is made.
+18. Leave unrelated completed emphasis/reference defects outside this review,
+    as the reviewer set aside; shared recovery and work budgets are covered.
+    Cost if wrong: unrelated legacy issues remain later work.
+19. Do not claim cross-platform/fuzz/security guarantees or final debug-full
+    completion, as the reviewer set aside. Cost if wrong: those unverified
+    platform/debug-only cases remain hardening obligations.
+
+No deferred minors were reported. All three Important findings were fixed.

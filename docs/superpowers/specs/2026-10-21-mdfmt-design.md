@@ -151,6 +151,19 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Independent literal-content review found that recovered code lacked the owner/
+  sibling metadata needed to join logical blocks, retaining false MD014 prompt
+  findings and duplicate MD046 findings. Snapshots now carry mapped predecessor
+  evidence from their producing parse; missing identities are not equated.
+- The same review found comment prefixes classified following prose/code as HTML,
+  causing both false failures and missed MD044 findings. Shared complete-comment
+  validation now preserves separate Data/Code/Html flags after a closed comment.
+- Recovery also missed quoted blank content, hiding later code and consistency
+  anchors while exposing code to MD044 despite `code_blocks: false`. Consuming
+  active container prefixes before testing blankness fixes recovery without
+  erasing empty nested-container barriers. All three review findings have literal
+  RED-to-GREEN regressions; the post-review optimized suite passes 475 tests across
+  66 targets, with 516 MD014/1,812 MD034/2,373 MD044/1,662 MD046 native comparisons.
 - A shared diagnostic view inserted a space for the BOM, changing list continuation
   depth and exposing indented code as prose. A literal regression reproduced false
   MD034 URL findings and MD044 findings despite `code_blocks: false`. BOM mapping
@@ -162,8 +175,8 @@ release numbers and ordering relative to other later-release work remain open.
   logical snapshots now join only consecutive same-owner indented siblings across
   actual blank/prefix-only gaps, retaining original physical line distances.
   Separate/empty containers and adjacent parser tokens remain independent. Four
-  regression tests and 462 MD014/1,518 MD046 source comparisons cover the fix;
-  the optimized full suite passes 471 tests across 65 targets, without source edits.
+  regression tests and the later review corrections cover the fix; the optimized
+  full suite passes 475 tests across 66 targets, without source edits.
 - Independent reference review found nested resources erased reference-key data,
   falsely resolving missing labels and hiding unrelated unused definitions.
   Separate structural exclusions and data projection now preserve nested label

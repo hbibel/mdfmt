@@ -21,6 +21,8 @@ pub(crate) struct CodeBlock {
     pub span: Range<usize>,
     pub value: String,
     pub in_list: bool,
+    // Identity comes from this snapshot's parse, including recovered scopes.
+    pub previous_code: Option<Range<usize>>,
 }
 
 pub(crate) struct TableBlock {
@@ -74,6 +76,7 @@ pub(crate) fn literal_exclusions(
             output: &mut Vec<CodeBlock>,
             tables: &mut Vec<TableBlock>,
             in_list: bool,
+            previous_code: Option<Range<usize>>,
         ) {
             let in_list = in_list || matches!(node, markdown::mdast::Node::List(_));
             if let markdown::mdast::Node::Code(code) = node
@@ -83,6 +86,7 @@ pub(crate) fn literal_exclusions(
                     span: base + position.start.offset..base + position.end.offset,
                     value: code.value.clone(),
                     in_list,
+                    previous_code,
                 });
             }
             if let markdown::mdast::Node::Table(table) = node
@@ -115,8 +119,16 @@ pub(crate) fn literal_exclusions(
                 });
             }
             if let Some(children) = node.children() {
+                let mut previous_code = None;
                 for child in children {
-                    snapshots(child, base, output, tables, in_list);
+                    snapshots(child, base, output, tables, in_list, previous_code);
+                    previous_code = if matches!(child, markdown::mdast::Node::Code(_)) {
+                        child.position().map(|position| {
+                            base + position.start.offset..base + position.end.offset
+                        })
+                    } else {
+                        None
+                    };
                 }
             }
         }
@@ -125,7 +137,7 @@ pub(crate) fn literal_exclusions(
             .iter()
             .find(|region| region.kind == RegionKind::Root && region.parent.is_some())
             .map_or(0, |region| region.span.start);
-        snapshots(&parsed.tree, base, &mut code, &mut tables, false);
+        snapshots(&parsed.tree, base, &mut code, &mut tables, false, None);
         fn delimiters(source: &Source, parsed: &ParsedDocument, tables: &mut [TableBlock]) {
             for table in tables {
                 let Some(header) = table.rows.first() else {
@@ -167,7 +179,7 @@ pub(crate) fn literal_exclusions(
                 let isolated = Source::new(format!("\n{}", &source.text()[region.span.clone()]));
                 if let Ok(parsed) = crate::parse::parse_flow_diagnostics(&isolated) {
                     let mut found = vec![];
-                    snapshots(&parsed.tree, 0, &mut vec![], &mut found, false);
+                    snapshots(&parsed.tree, 0, &mut vec![], &mut found, false, None);
                     delimiters(&isolated, &parsed, &mut found);
                     for mut table in found {
                         let shift = |span: Range<usize>| {
@@ -250,9 +262,15 @@ pub(crate) fn literal_exclusions(
                         .map(|(index, _)| index)
                         .collect();
                     let path = crate::parse::ContainerPath::new(source, parsed, active);
+                    let is_blank = |raw: &str| {
+                        raw.trim_matches([' ', '\t']).is_empty()
+                            || path.content_start(raw).is_some_and(|start| {
+                                raw[start..].trim_matches([' ', '\t']).is_empty()
+                            })
+                    };
                     let boundary = (first + 1..=source.line_count()).find_map(|line| {
                         let raw = &source.text()[source.line_range(line).unwrap()];
-                        if raw.trim_matches([' ', '\t']).is_empty() {
+                        if is_blank(raw) {
                             return Some((line, None));
                         }
                         path.first_missing(raw).map(|index| (line, Some(index)))
@@ -271,9 +289,7 @@ pub(crate) fn literal_exclusions(
                     };
                     ignored[first - 1..boundary - 1].fill(true);
                     let next = source.line_range(boundary).unwrap().start;
-                    let blank = source.text()[source.line_range(boundary).unwrap()]
-                        .trim_matches([' ', '\t'])
-                        .is_empty();
+                    let blank = is_blank(&source.text()[source.line_range(boundary).unwrap()]);
                     // Keep the old container across blank separators, but restart
                     // unindented root flow without bounding a recovered fence at HTML's end.
                     let prefix = if blank {
@@ -312,6 +328,13 @@ pub(crate) fn literal_exclusions(
                                 .into_iter()
                                 .filter(|block| block.span.start >= prefix.len())
                                 .map(|mut block| {
+                                    block.previous_code = block
+                                        .previous_code
+                                        .filter(|span| span.start >= prefix.len())
+                                        .map(|span| {
+                                            next + span.start - prefix.len()
+                                                ..next + span.end - prefix.len()
+                                        });
                                     block.span = next + block.span.start - prefix.len()
                                         ..next + block.span.end - prefix.len();
                                     block

@@ -1,4 +1,4 @@
-use super::{ParsedDocument, RegionKind, expanded_tabs, parse_flow_diagnostics};
+use super::{ParsedDocument, expanded_tabs, parse_flow_diagnostics};
 use crate::{Source, heading_spaces::literal_exclusions};
 use std::{collections::HashMap, ops::Range};
 
@@ -31,14 +31,6 @@ pub(crate) fn diagnostic_code_blocks(
     };
     let view = expanded.as_ref().map_or(source, |(view, _)| view);
     let parsed = recovered.as_ref().unwrap_or(parsed);
-    let mut siblings = HashMap::new();
-    let mut owners = HashMap::new();
-    for (index, region) in parsed.regions.iter().enumerate() {
-        let previous = siblings.insert(region.parent, index);
-        if region.kind == RegionKind::Code {
-            owners.insert(region.span.clone(), (region.parent, index, previous));
-        }
-    }
     let mut blocks = literal_exclusions(view, parsed, true).code;
     blocks.sort_by_key(|block| block.span.start);
     let mut previous = None;
@@ -54,21 +46,17 @@ pub(crate) fn diagnostic_code_blocks(
                 .take_while(|byte| Some(*byte) == marker)
                 .count()
                 >= 3;
-        let owner = owners.get(&block.span).copied();
         let continuation = !fenced
-            && previous.is_some_and(|(end, previous_owner)| {
-                owner.zip(previous_owner).is_some_and(
-                    |((parent, _, sibling), (previous_parent, index, _))| {
-                        parent == previous_parent && sibling == Some(index)
-                    },
-                ) && end <= block.span.start
-                    && view.position(end).unwrap().line + 1
+            && previous.as_ref().is_some_and(|previous: &Range<usize>| {
+                block.previous_code.as_ref() == Some(previous)
+                    && previous.end <= block.span.start
+                    && view.position(previous.end).unwrap().line + 1
                         < view.position(block.span.start).unwrap().line
-                    && view.text()[end..block.span.start]
+                    && view.text()[previous.end..block.span.start]
                         .bytes()
                         .all(|byte| matches!(byte, b' ' | b'\t' | b'\r' | b'\n' | b'>'))
             });
-        previous = (!fenced).then_some((block.span.end, owner));
+        previous = (!fenced).then_some(block.span.clone());
         let span = expanded
             .as_ref()
             .map_or(block.span.clone(), |(_, offsets)| {

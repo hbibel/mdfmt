@@ -21,6 +21,7 @@ if(rule==="MD046")for(const first of ["```\na\n```\n","~~~rs\na\n~~~\n","    a\n
   }
 }
 if(rule==="MD046")samples.push("-    ```sh\n  \t$ echo hi\n     ```\n",">     $ echo hi\n> >\n>     output\n",">     $ echo hi\n>\n> >\n>\n>     output\n");
+samples.push("- item\n<span>\n>     $ cmd\n>\n>     output\n","- item\n<span>\n>     $ cmd\n> >\n>     output\n","> item\n<span>\n>\n>     github\n","> > item\n<span>\n> >\n> >     github\n","> item\n<span>\n>\t\n>     github\n","> item\n<span>\n>\n>     github\n\n```text\ncode\n```\n","> item\n<span>\n>\n>     https://example.com\n","> item\n<span>\n>\n> https://example.com\n");
 for(const input of [...samples].filter(Boolean))samples.push(input.replaceAll("\n","\r\n"),"\uFEFF"+input.replaceAll("\n","\r"));
 const rows=samples.flatMap((input,index)=>options.map((options,configuration)=>({id:`${index}-${configuration}`,input,options,findings:lint({strings:{input},config:{default:false,[rule]:options}}).input.map(f=>({line:f.lineNumber,range:f.errorRange,context:f.errorContext,detail:f.errorDetail,severity:f.severity}))})));
 const path=new URL(`${rule.toLowerCase()}-observations.json`,import.meta.url),text="[\n"+rows.map(row=>"  "+JSON.stringify(row)).join(",\n")+"\n]\n";

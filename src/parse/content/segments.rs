@@ -197,7 +197,7 @@ impl Collector<'_> {
                 }
             }
             Node::Html(_) => {
-                if !flow || raw.starts_with("<!--") {
+                if !flow || crate::parse::html::complete_comment(raw) {
                     self.lines(span, ContentKind::Html, &clip, quotes);
                 } else {
                     let options = markdown::ParseOptions {
