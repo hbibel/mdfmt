@@ -10,6 +10,7 @@ use crate::{
 };
 use std::collections::BTreeMap;
 
+#[derive(Clone)]
 pub(crate) struct Insertion {
     pub at: usize,
     pub prefix: String,
@@ -84,6 +85,70 @@ fn budget(source: &Source, document: &DocumentConfig, insertion: &Insertion) -> 
         .min(maximum.saturating_sub(before + after))
 }
 
+fn budget_outcome(
+    source: &Source,
+    document: &DocumentConfig,
+    insertion: &Insertion,
+) -> (usize, Option<crate::conflicts::RuleConflict>) {
+    let count = budget(source, document, insertion);
+    let conflict = (count < insertion.missing).then(|| crate::conflicts::RuleConflict {
+        span: insertion.at..insertion.at,
+        rules: vec!["MD012".into(), insertion.rule.into()],
+        retained: Some("MD012".into()),
+    });
+    (count, conflict)
+}
+
+fn validated_budget_conflicts(
+    source: &Source,
+    parsed: &ParsedDocument,
+    rejected: Vec<(Insertion, crate::conflicts::RuleConflict)>,
+) -> Vec<crate::conflicts::RuleConflict> {
+    let newline = crate::md047::preferred_newline(source.text());
+    let total = rejected
+        .iter()
+        .try_fold((0usize, 0usize), |(bytes, lines), (insertion, _)| {
+            Some((
+                bytes.checked_add(
+                    (insertion.prefix.len() + newline.len()).checked_mul(insertion.missing)?,
+                )?,
+                lines.checked_add(insertion.missing)?,
+            ))
+        });
+    if total.is_none_or(|(bytes, lines)| bytes > 1024 * 1024 || lines > 4096) {
+        return vec![];
+    }
+    let candidates: Vec<_> = rejected
+        .into_iter()
+        .map(|(insertion, conflict)| {
+            (
+                Edit {
+                    span: insertion.at..insertion.at,
+                    replacement: format!("{}{newline}", insertion.prefix).repeat(insertion.missing),
+                    origin: insertion.rule.into(),
+                },
+                conflict,
+            )
+        })
+        .collect();
+    let mut groups: BTreeMap<usize, Vec<Edit>> = BTreeMap::new();
+    for (edit, _) in &candidates {
+        let group = groups.entry(edit.span.start).or_default();
+        if !group.contains(edit) {
+            group.push(edit.clone());
+        }
+    }
+    let choices: Vec<_> = groups.into_values().collect();
+    let mut accepted = vec![];
+    if !select_batches(source, parsed, &choices, &mut 32, &mut accepted) {
+        return vec![];
+    }
+    candidates
+        .into_iter()
+        .filter_map(|(edit, conflict)| accepted.contains(&edit).then_some(conflict))
+        .collect()
+}
+
 fn safe(source: &Source, parsed: &ParsedDocument, edits: &[Edit]) -> bool {
     apply_authorized_edits(source, parsed, edits.to_vec(), edits)
         .ok()
@@ -134,9 +199,18 @@ pub(crate) fn propose(
     parsed: &ParsedDocument,
     document: &DocumentConfig,
 ) -> Vec<Edit> {
+    evaluate(source, parsed, document).edits
+}
+
+pub(crate) fn evaluate(
+    source: &Source,
+    parsed: &ParsedDocument,
+    document: &DocumentConfig,
+) -> crate::conflicts::RuleProposals {
     if crate::parse::has_unmodeled_syntax(source, parsed) {
-        return vec![];
+        return Default::default();
     }
+    let mut rejected = vec![];
     let mut selected: BTreeMap<usize, Vec<Insertion>> = BTreeMap::new();
     for mut candidate in md022::insertions(source, parsed, document)
         .into_iter()
@@ -166,7 +240,11 @@ pub(crate) fn propose(
         {
             continue;
         }
-        candidate.missing = budget(source, document, &candidate);
+        let (count, conflict) = budget_outcome(source, document, &candidate);
+        if let Some(conflict) = conflict {
+            rejected.push((candidate.clone(), conflict));
+        }
+        candidate.missing = count;
         if candidate.missing == 0 {
             continue;
         }
@@ -187,7 +265,7 @@ pub(crate) fn propose(
         });
     // Newlines also allocate parser and per-line configuration state downstream.
     if total.is_none_or(|(bytes, lines)| bytes > 1024 * 1024 || lines > 4096) {
-        return vec![];
+        return Default::default();
     }
     let choices: Vec<_> = selected
         .into_values()
@@ -222,11 +300,15 @@ pub(crate) fn propose(
     let mut edits = vec![];
     // Most documents need one batch validation. Limit fallback work on mixed
     // safe/unsafe boundaries instead of reparsing once for every separator.
+    let conflicts = validated_budget_conflicts(source, parsed, rejected);
     if select_batches(source, parsed, &choices, &mut 32, &mut edits) && safe(source, parsed, &edits)
     {
-        edits
+        crate::conflicts::RuleProposals { edits, conflicts }
     } else {
-        vec![]
+        crate::conflicts::RuleProposals {
+            edits: vec![],
+            conflicts,
+        }
     }
 }
 

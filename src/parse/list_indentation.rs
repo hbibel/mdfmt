@@ -219,12 +219,13 @@ pub(crate) fn indentation_repair(
         })
 }
 
-pub(crate) fn validated_indentation_edits(
+pub(crate) fn validated_indentation_proposals(
     source: &Source,
     parsed: &ParsedDocument,
     document: &DocumentConfig,
     repairs: Vec<IndentationRepair>,
-) -> Vec<Edit> {
+) -> crate::conflicts::RuleProposals {
+    use crate::conflicts::{RuleConflict, RuleProposals};
     let repairs: Vec<_> = repairs
         .into_iter()
         .filter(|edit| {
@@ -236,14 +237,14 @@ pub(crate) fn validated_indentation_edits(
         })
         .collect();
     if repairs.is_empty() {
-        return vec![];
+        return Default::default();
     }
     // Bound the complete batch before allocating any replacement strings.
     let padding = repairs
         .iter()
         .try_fold(0usize, |sum, repair| sum.checked_add(repair.padding));
     if padding.is_none_or(|padding| padding > source.text().len().saturating_add(4)) {
-        return vec![];
+        return Default::default();
     }
     let edits: Vec<_> = repairs
         .into_iter()
@@ -255,15 +256,16 @@ pub(crate) fn validated_indentation_edits(
         .collect();
     let Ok(output) = crate::edit::apply_authorized_edits(source, parsed, edits.clone(), &edits)
     else {
-        return vec![];
+        return Default::default();
     };
     let candidate = Source::new(output);
     let Ok(reparsed) = parse(&candidate) else {
-        return vec![];
+        return Default::default();
     };
     if !equivalent(source, parsed, &candidate, &reparsed) {
-        return vec![];
+        return Default::default();
     }
+    let mut conflicts = vec![];
     for rule in ["MD023", "MD027", "MD030"] {
         if !(1..=source.line_count()).any(|line| {
             document
@@ -295,11 +297,18 @@ pub(crate) fn validated_indentation_edits(
                     }
                 })
             {
-                return vec![];
+                conflicts.push(RuleConflict {
+                    span: edit.span.clone(),
+                    rules: vec![edit.origin.clone(), rule.into()],
+                    retained: Some(rule.into()),
+                });
             }
             candidate_cursor = inserted.end;
             original_cursor = edit.span.end;
         }
     }
-    edits
+    RuleProposals {
+        edits: if conflicts.is_empty() { edits } else { vec![] },
+        conflicts,
+    }
 }

@@ -103,6 +103,8 @@ conditional repairs. A successful check does not establish complete parser/optio
 parity or roadmap completion. See [MD013 evidence and limits](docs/compatibility/md013.md).
 Formatting now settles complete passes with bounded exact-state histories and
 transactional cycle rollback; see [convergence evidence](docs/compatibility/formatting-conflicts.md).
+Document-specific conflicts explain retained list-spacing and blank-line priorities
+alongside unresolved rule findings, including when fixes are disabled.
 
 ## Usage
 

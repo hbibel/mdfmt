@@ -245,8 +245,10 @@ fn quote_spacing_conflicts_terminate_and_leave_a_stable_remaining_finding() {
             }
             assert_eq!(fs::read_to_string(&path).unwrap(), "> - a\n");
             let errors = fs::read_to_string(&errors).unwrap();
-            assert_eq!(errors.matches("MD007").count(), 1);
-            assert!(!errors.contains("MD027"));
+            assert_eq!(errors.matches("Error MD007:").count(), 1);
+            assert!(!errors.contains("Error MD027:"));
+            assert_eq!(errors.matches("Error rule-conflict:").count(), 1);
+            assert!(errors.contains("MD007, MD027; retained MD027 priority"));
         }
     }
 }

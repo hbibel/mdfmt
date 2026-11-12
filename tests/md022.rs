@@ -129,12 +129,29 @@ fn md012_conflicts_leave_stable_unresolved_heading_requirements() {
     let first =
         format_with_config("before\n# H\nafter\n", &FormatOptions::default(), &settings).unwrap();
     assert_eq!(first.output, "before\n\n# H\n\nafter\n");
-    assert_eq!(first.diagnostics.len(), 2);
+    assert_eq!(first.diagnostics.len(), 4);
+    assert_eq!(
+        first
+            .diagnostics
+            .iter()
+            .filter(|f| f.code == "MD022")
+            .count(),
+        2
+    );
+    assert_eq!(
+        first
+            .diagnostics
+            .iter()
+            .filter(|f| f.code == "rule-conflict" && f.message.contains("retained MD012"))
+            .count(),
+        2
+    );
     assert!(
         first
             .diagnostics
             .iter()
-            .all(|f| f.code == "MD022" && f.message.contains("Expected: 2; Actual: 1"))
+            .filter(|f| f.code == "MD022")
+            .all(|f| f.message.contains("Expected: 2; Actual: 1"))
     );
     let again = format_with_config(&first.output, &FormatOptions::default(), &settings).unwrap();
     assert_eq!(again.output, first.output);

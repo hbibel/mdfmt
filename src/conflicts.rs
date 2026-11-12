@@ -7,6 +7,12 @@ pub(crate) struct RuleConflict {
     pub retained: Option<String>,
 }
 
+#[derive(Default)]
+pub(crate) struct RuleProposals {
+    pub edits: Vec<crate::edit::Edit>,
+    pub conflicts: Vec<RuleConflict>,
+}
+
 pub(crate) fn diagnose_conflicts(
     source: &Source,
     document: &DocumentConfig,

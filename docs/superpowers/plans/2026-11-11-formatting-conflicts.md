@@ -57,16 +57,16 @@
 - [x] Run `mise exec -- cargo test --release --test formatting_conflicts --lib`. Expected: missing guard/conflict behavior before implementation; fixtures must not depend on unsupported settings.
 - [x] Implement the exact phase-state tracker and complete-pass settlement. On proven cycle, call the no-fix diagnostic path on original source and add the shared conflict diagnostic; do not return transient candidate output/edits. Resource exhaustion returns explicit WorkLimit and performs no write. Ordinary successful paths retain all rule-prescribed edits and original coordinates.
 - [x] Run focused/CLI suites, the complete optimized suite, fmt/clippy/diff and relevant native reflow/heading/list/style/reference comparisons. Expected: unchanged assertions/CPU limits, warning-only exits remain non-error, all normal successful cases still settle safely.
-- [ ] Update evidence and commit `fix: make formatting convergence bounded and transactional`.
+- [x] Update evidence and commit `fix: make formatting convergence bounded and transactional`.
 
 ## Task 2: Document-specific conflict explanations
 
-- [ ] Write `opposed_indentation_reports_the_retained_rule_priority`: `"> - a\n"` with MD007 start_indented and MD027 reports stable MD007 plus `rule-conflict` naming MD007/MD027 and retained MD027. Add MD023 heading, partially disabled MD005 anchor and bidirectional MD030 nesting cases; disabled opposing rules/lines and list_items:false retain safe repairs without an explanation.
-- [ ] Write `blank_separator_budget_explains_only_actual_conflicts`: `"one\n# Heading\ntext\n"` with MD012 maximum1 and MD022 lines_above/lines_below2 formats to one blank on each side, retains ordinary MD022 findings and explains the MD012 cap. Controls with no heading, MD022 disabled or compatible maximum2 have no conflict. Include warnings, comments/quotes, newline variants and partially disabled blank lines.
-- [ ] Write negative cases for diagnostic-only missing targets/content, unsafe code/table ownership and huge resource targets: those are not automatically competing-rule conflicts. Add CLI repeated check/write/fix-control/status and exact count tests, plus dense bounded evaluation with disabled-conflict bypass.
-- [ ] Run `mise exec -- cargo test --release --test formatting_conflicts`. Expected: missing document-specific explanations, not altered formatting priorities.
-- [ ] Implement structured list/separator proposal outcomes and shared final diagnostics. Map candidate overlaps back to original source anchors before reporting; line states may be reused across whitespace-only candidates, original directive byte ranges may not. Sort/deduplicate by physical span and rule set; preserve normal rule findings.
-- [ ] Run all prior batch regressions/native comparisons and complete optimized suite, fmt/clippy/diff. Expected: no new content changes, all successful output idempotent, no conflict added solely because options coexist.
+- [x] Write `opposed_indentation_reports_the_retained_rule_priority`: `"> - a\n"` with MD007 start_indented and MD027 reports stable MD007 plus `rule-conflict` naming MD007/MD027 and retained MD027. Add MD023 heading, partially disabled MD005 anchor and bidirectional MD030 nesting cases; disabled opposing rules/lines and list_items:false retain safe repairs without an explanation.
+- [x] Write `blank_separator_budget_explains_only_actual_conflicts`: `"one\n# Heading\ntext\n"` with MD012 maximum1 and MD022 lines_above/lines_below2 formats to one blank on each side, retains ordinary MD022 findings and explains the MD012 cap. Controls with no heading, MD022 disabled or compatible maximum2 have no conflict. Include warnings, comments/quotes, newline variants and partially disabled blank lines.
+- [x] Write negative cases for diagnostic-only missing targets/content, unsafe code/table ownership and huge resource targets: those are not automatically competing-rule conflicts. Add CLI repeated check/write/fix-control/status and exact count tests, plus dense bounded evaluation with disabled-conflict bypass.
+- [x] Run `mise exec -- cargo test --release --test formatting_conflicts`. Expected: missing document-specific explanations, not altered formatting priorities.
+- [x] Implement structured list/separator proposal outcomes and shared final diagnostics. Map candidate overlaps back to original source anchors before reporting; line states may be reused across whitespace-only candidates, original directive byte ranges may not. Sort/deduplicate by physical span and rule set; preserve normal rule findings.
+- [x] Run all prior batch regressions/native comparisons and complete optimized suite, fmt/clippy/diff. Expected: no new content changes, all successful output idempotent, no conflict added solely because options coexist.
 - [ ] Update evidence/roadmap for milestone 5's tested built-ins/interactions/conflicts without claiming later milestones complete; commit `feat: explain conflicting formatting requirements`.
 - [ ] Request one independent review with every Review Focus and chronological ruling; fix Important/Critical findings once regression-first, then full verification. Retain all rulings/evidence before deleting only the completed scratch directory.
 - [ ] Continue explicit code formatter adapters, later declarative compatibility and release hardening autonomously, without merge/push or routine questions.
@@ -83,3 +83,30 @@ MD051's independent review closed at `daa0b8c`, after one regression-first fix
 pass and complete optimized522/522 across72 targets. All12 rulings/costs remain
 tracked; only its completed scratch was removed. This plan may now begin in the
 same branch/worktree, without configuration/session changes.
+
+## Execution evidence and rulings
+
+Task 1 committed as `e8c17eb`; exact-state, rollback and resource-limit tests
+failed on missing APIs before implementation. Targeted severity misclassification
+was separately RED-to-GREEN. Complete optimized Task 1 verification passed
+533 tests across73 targets. Task 2's actual-list/separator/CLI tests failed on
+absent explanations before implementation; eight public tests now pass, including
+dense400-count workloads and negative permission/preservation/resource controls.
+Complete optimized verification passes539/539 across73 targets, fmt/clippy clean;
+all affected native list/separator/heading/reflow/style/fragment/reference gates
+pass. Three prior exact-total/string assertions were extended to assert the new
+explanations while retaining exact original findings/content/status checks.
+
+1. Scope trackers to each logical loop invocation, including complete settlement,
+   not reuse inner history across outer rounds. Cost if wrong: fixed-depth multiple
+   budgets instead of one shared cache; false rollback controls guard normal paths.
+2. Capture successful edit origins before composition cancels source changes.
+   Cost if wrong: summaries name a conservative actual contributing set rather
+   than a minimal conflict; original bytes and ordinary findings remain authoritative.
+3. Exercise pathological cycle/growth through the real transaction with injected
+   pass outputs rather than weaken real-rule safety gates. Cost if wrong: no
+   real-rule CLI WorkLimit reproduction is claimed; library failure and CLI
+   sequencing prevent candidate writes, and old failure-preservation tests remain.
+4. Require bounded uncapped separator validation before explaining a cap. Cost
+   if wrong: oversized/exhausted proof batches can omit explanations, retaining
+   ordinary findings instead of inventing conflicts or reparsing per token.

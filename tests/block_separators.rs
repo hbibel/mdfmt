@@ -96,13 +96,28 @@ fn plain_blank_conflicts_leave_only_stable_unresolved_requirements() {
         "before\n\n- item\n\n# After\n\nafter\n",
         &settings,
     );
-    assert_eq!(first.diagnostics.len(), 2);
+    assert_eq!(first.diagnostics.len(), 3);
+    assert_eq!(
+        first
+            .diagnostics
+            .iter()
+            .filter(|d| d.code == "MD022")
+            .count(),
+        2
+    );
     assert!(
         first
             .diagnostics
             .iter()
-            .all(|d| d.code == "MD022" && d.message.contains("Expected: 2; Actual: 1"))
+            .filter(|d| d.code == "MD022")
+            .all(|d| d.message.contains("Expected: 2; Actual: 1"))
     );
+    let conflict = first
+        .diagnostics
+        .iter()
+        .find(|d| d.code == "rule-conflict")
+        .unwrap();
+    assert!(conflict.message.contains("MD022") && conflict.message.contains("retained MD012"));
     let error = RuleConfig::from_value(json!({"default":false,"MD012":{"maximum":0}})).unwrap_err();
     assert_eq!(error.property, "MD012.maximum");
 }

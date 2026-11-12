@@ -677,6 +677,12 @@ fn formatting_pass(
     result
         .diagnostics
         .extend(md051::diagnose(&output, &parsed, &document));
+    let mut rejected = md005::evaluate(&output, &parsed, &document).conflicts;
+    rejected.extend(md007::evaluate(&output, &parsed, &document).conflicts);
+    rejected.extend(blank_lines::evaluate(&output, &parsed, &document).conflicts);
+    result
+        .diagnostics
+        .extend(conflicts::diagnose_conflicts(&output, &document, &rejected));
     Ok(result)
 }
 

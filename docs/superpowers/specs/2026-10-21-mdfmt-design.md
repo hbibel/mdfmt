@@ -130,9 +130,12 @@ The literal-content batch adds [MD034 bare-URL, MD044 proper-name and MD046 code
 The list-indentation batch adds [conditional MD005/MD007 sibling/nesting alignment](../../compatibility/list-indentation.md).
 MD051 adds [local-fragment diagnostics and safe ASCII case corrections](../../compatibility/link-fragments.md).
 All 53 built-ins now have native coverage, including diagnostic-only rules and
-conditional repairs; milestone 5 is still incomplete. MD051's independent review
-and regression-first corrections are complete. Interactions and conflict detection remain
-milestone 5 deliverables, followed by formatter integration and release hardening.
+conditional repairs. MD051's independent review and regression-first corrections
+are complete. [Convergence and document-specific conflict reporting](../../compatibility/formatting-conflicts.md)
+now add tested interactions, exact bounded histories and retained-priority
+explanations; their independent batch review remains pending. Formatter integration,
+later declarative compatibility and release hardening remain unfinished. The rule
+count does not establish complete fixability or parser/option fidelity.
 
 The first useful release includes local declarative configuration,
 filesystem-based `extends`, and configuration-aware prose reflow. It is not the
@@ -154,6 +157,11 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- A convergence summary cannot take severity only from its fallback anchor:
+  an inline override there can hide an Error contributor enabled elsewhere.
+  The new transaction tests reproduce that misclassification before correction;
+  cycle summaries now use original-document contributing states, while known-pair
+  explanations retain local line states. The optimized 539-test suite passes.
 - Independent MD051 review found valid line fragments such as `#L1` were silently
   retargeted when a heading/HTML anchor collided by case. Diagnostic validity
   exemptions now also gate repairs through shared classification; navigation

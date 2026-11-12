@@ -5,7 +5,8 @@ use crate::{
     parse::{
         ParsedDocument,
         list_indentation::{
-            ListItemIndentation, indentation_repair, list_indentation, validated_indentation_edits,
+            ListItemIndentation, indentation_repair, list_indentation,
+            validated_indentation_proposals,
         },
     },
 };
@@ -87,10 +88,18 @@ pub(crate) fn propose(
     parsed: &ParsedDocument,
     document: &DocumentConfig,
 ) -> Vec<Edit> {
+    evaluate(source, parsed, document).edits
+}
+
+pub(crate) fn evaluate(
+    source: &Source,
+    parsed: &ParsedDocument,
+    document: &DocumentConfig,
+) -> crate::conflicts::RuleProposals {
     if crate::parse::has_unmodeled_syntax(source, parsed) {
-        return vec![];
+        return Default::default();
     }
-    validated_indentation_edits(
+    validated_indentation_proposals(
         source,
         parsed,
         document,
