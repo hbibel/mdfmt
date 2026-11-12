@@ -69,7 +69,7 @@
 - [x] Add bounded dense/ambiguous-target and repeated recovered-image workloads with exact semantic assertions; run source/fix/no-fix/idempotence oracle, affected suites and complete optimized tests, fmt/clippy/diff. Expected: safe corrections converge in one call and protected source remains exact.
 - [x] Update preservation/policy evidence and commit `feat: correct unambiguous local fragment capitalization`.
 - [x] Request one independent batch review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical findings once, then complete the full suite; no second review.
-- [ ] Retain all rulings/evidence, remove only the completed scratch directory and continue milestone 5 interactions/conflict reporting and later roadmap work without merge/push or routine questions.
+- [x] Retain all rulings/evidence, remove only the completed scratch directory and continue milestone 5 interactions/conflict reporting and later roadmap work without merge/push or routine questions.
 
 ## Planning check
 
@@ -166,3 +166,5 @@ Critical findings/deferred minors, no second review, no relaxed thresholds.
 Commit the corrections before removing only this completed scratch directory;
 retain all12 chronological rulings/costs here. Coverage53/53 remains distinct
 from incomplete roadmap milestones.
+Corrections committed at `daa0b8c`; all12 rulings retained before removing only
+this completed scratch directory. Branch/worktree remain unmerged/unpushed.
