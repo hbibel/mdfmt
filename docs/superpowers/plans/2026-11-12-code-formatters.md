@@ -40,11 +40,11 @@ Interfaces:
 - `FormatterFailure` supplies diagnostic code and concise message for unavailable/failed/timeout/output-limit/unstable/unsafe/skipped outcomes.
 - `format_stable(adapter: Adapter, input: &str, width: usize, deadline: Instant) -> Result<String, FormatterFailure>` runs twice within remaining document budget, validates UTF-8/nonempty/NUL and compares normalized LF output.
 
-- [ ] Write `runner_preserves_partial_failure_and_bounds_both_pipes`, `runner_deadline_covers_blocked_stdin_and_descendant_held_output`, and `stable_format_rejects_invalid_empty_and_alternating_results` using real controlled subprocesses. Assert exact bytes/status/failure codes and completion within lowered private deadlines; no mock process claims.
-- [ ] Write `adapter_commands_are_isolated_and_width_specific` with exact program/argv/cwd/config assertions for all aliases. Unknown/extra-info languages select no adapter. Gofmt has no invented width option. Controlled PATH fixtures must not mutate the parent process's environment in parallel tests.
-- [ ] Run `mise exec -- cargo test --release --lib code_formatters`. Expected: missing adapter/runner APIs before implementation.
-- [ ] Implement process-group spawn, concurrent bounded stream readers/writer, common monotonic deadline, cleanup on every exit, fixed commands and two-run stability validation. Do not call unbounded wait_with_output or join live pipes before group cleanup.
-- [ ] Run focused tests, available real rustfmt/gofmt smoke tests, complete optimized suite, fmt/clippy/diff. Expected: exact outputs, no hangs/leaked groups, prior pure Markdown behavior unchanged; Black/Prettier smoke coverage marked unavailable if absent rather than faked.
+- [x] Write `runner_preserves_partial_failure_and_bounds_both_pipes`, `runner_deadline_covers_blocked_stdin_and_descendant_held_output`, and `stable_format_rejects_invalid_empty_and_alternating_results` using real controlled subprocesses. Assert exact bytes/status/failure codes and completion within lowered private deadlines; no mock process claims.
+- [x] Write `adapter_commands_are_isolated_and_width_specific` with exact program/argv/cwd/config assertions for all aliases. Unknown/extra-info languages select no adapter. Gofmt has no invented width option. Controlled PATH fixtures must not mutate the parent process's environment in parallel tests.
+- [x] Run `mise exec -- cargo test --release --lib code_formatters`. Expected: missing adapter/runner APIs before implementation.
+- [x] Implement process-group spawn, concurrent bounded stream readers/writer, common monotonic deadline, cleanup on every exit, fixed commands and two-run stability validation. Do not call unbounded wait_with_output or join live pipes before group cleanup.
+- [x] Run focused tests, available real rustfmt/gofmt smoke tests, complete optimized suite, fmt/clippy/diff. Expected: exact outputs, no hangs/leaked groups, prior pure Markdown behavior unchanged; Black/Prettier smoke coverage marked unavailable if absent rather than faked.
 - [ ] Commit `feat: add bounded optional code formatter adapters`; task-done with the focused module and complete suite evidence.
 
 ## Task 2: Source-owned fenced bodies and opt-in API/CLI
@@ -106,3 +106,19 @@ does not use. Runtime platform guarantees remain hardening work.
    deadlines must cover ordinary descendants and full pipes on supported systems.
    Cost if wrong: deliberately escaped descendants/resource abuse remain outside
    the trust boundary; untested platform behavior is a hardening obligation.
+
+## Execution evidence and rulings
+
+Task1's tests fail on missing runner/adapter/stability APIs before implementation.
+Five focused tests now pass with real controlled subprocesses, bounded concurrent
+pipes, blocked stdin and descendant-held output cleanup, invalid/partial/empty/
+NUL/unstable output rejection, exact isolated argv and real rustfmt/gofmt smoke
+coverage. Black/Prettier are absent locally and have argv coverage, not actual
+formatter runtime evidence. Complete optimized verification passes544/544 across
+73 targets, fmt/clippy clean. Production code-body/API/CLI integration remains
+Task2; this is infrastructure, not implemented fenced-body formatting.
+
+6. Compile the private module under cfg(test) until Task2 supplies its production
+   consumer. Rationale: avoid dead-code suppression, public internal APIs or a
+   placeholder runtime path. Cost if wrong: infrastructure is not included in a
+   standalone Task1 release; tests still execute its real process implementation.

@@ -1,4 +1,6 @@
 mod blank_lines;
+#[cfg(test)]
+mod code_formatters;
 pub mod config;
 mod conflicts;
 mod diagnostic;
