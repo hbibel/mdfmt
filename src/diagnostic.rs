@@ -21,6 +21,7 @@ pub enum ProcessingError {
     EditConflict,
     ProtectedRegion(Range<usize>),
     Parse(String),
+    WorkLimit(String),
     Configuration(crate::config::ConfigError),
 }
 
@@ -33,6 +34,7 @@ impl fmt::Display for ProcessingError {
                 write!(f, "edit crosses protected or ineligible source {span:?}")
             }
             Self::Parse(message) => write!(f, "Markdown parsing failed: {message}"),
+            Self::WorkLimit(message) => write!(f, "formatting work limit exceeded: {message}"),
             Self::Configuration(error) => error.fmt(f),
         }
     }

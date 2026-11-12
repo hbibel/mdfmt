@@ -101,6 +101,8 @@ code misclassified by the native parser; see [parser limits](docs/compatibility/
 All 53 built-ins have native coverage, including diagnostic-only rules and
 conditional repairs. A successful check does not establish complete parser/option
 parity or roadmap completion. See [MD013 evidence and limits](docs/compatibility/md013.md).
+Formatting now settles complete passes with bounded exact-state histories and
+transactional cycle rollback; see [convergence evidence](docs/compatibility/formatting-conflicts.md).
 
 ## Usage
 

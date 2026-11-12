@@ -1,5 +1,6 @@
 mod blank_lines;
 pub mod config;
+mod conflicts;
 mod diagnostic;
 mod edit;
 mod emphasis_styles;
@@ -46,6 +47,7 @@ mod parse;
 mod reference_rules;
 mod reflow;
 mod source;
+mod stabilize;
 
 pub use diagnostic::{Diagnostic, ProcessingError, Severity};
 pub use edit::AppliedEdit;
@@ -94,63 +96,160 @@ pub fn format_with_config(
     options: &FormatOptions,
     config: &config::ResolvedConfig,
 ) -> Result<FormatResult, ProcessingError> {
+    transaction(source, options, config, formatting_pass)
+}
+
+fn transaction(
+    source: &str,
+    options: &FormatOptions,
+    config: &config::ResolvedConfig,
+    mut pass: impl FnMut(
+        &str,
+        &FormatOptions,
+        &config::ResolvedConfig,
+        &mut std::collections::BTreeSet<String>,
+    ) -> Result<FormatResult, stabilize::AttemptFailure>,
+) -> Result<FormatResult, ProcessingError> {
+    use stabilize::{AttemptFailure, Phase, StateTracker};
+    let mut tracker = StateTracker::new(source.len());
+    let mut current = source.to_owned();
+    let mut edits = vec![];
+    let mut origins = std::collections::BTreeSet::new();
+    let failure = loop {
+        if let Err(failure) = tracker.observe(
+            Phase::Complete,
+            &current,
+            &origins.iter().cloned().collect::<Vec<_>>(),
+        ) {
+            break failure;
+        }
+        let mut result = match pass(&current, options, config, &mut origins) {
+            Ok(result) => result,
+            Err(failure) => break failure,
+        };
+        edits = stabilize::compose(source, &edits, &result.edits, &mut origins)?;
+        if result.output == current {
+            result.edits = edits;
+            return Ok(result);
+        }
+        current = result.output;
+    };
+    match failure {
+        AttemptFailure::Processing(error) => Err(error),
+        AttemptFailure::Cycle { rules } => {
+            let mut result = pass(
+                source,
+                &FormatOptions { fix: false },
+                config,
+                &mut std::collections::BTreeSet::new(),
+            )
+            .map_err(|failure| match failure {
+                AttemptFailure::Processing(error) => error,
+                AttemptFailure::Cycle { .. } => {
+                    ProcessingError::WorkLimit("no-fix diagnostic pass cycled".into())
+                }
+            })?;
+            let original = Source::new(source.into());
+            let document = config
+                .document(source)
+                .map_err(ProcessingError::Configuration)?;
+            let at = if source.starts_with('\u{feff}') { 3 } else { 0 };
+            result.diagnostics.extend(conflicts::diagnose_conflicts(
+                &original,
+                &document,
+                &[conflicts::RuleConflict {
+                    span: at..at,
+                    rules,
+                    retained: None,
+                }],
+            ));
+            Ok(result)
+        }
+    }
+}
+
+fn formatting_pass(
+    source: &str,
+    options: &FormatOptions,
+    config: &config::ResolvedConfig,
+    origins: &mut std::collections::BTreeSet<String>,
+) -> Result<FormatResult, stabilize::AttemptFailure> {
+    use stabilize::{Phase, StateTracker};
+    let mut normalize = StateTracker::new(source.len());
     let mut current = source.to_owned();
     let mut deletion_edits = vec![];
     // Tab expansion and heading removal can expose suffix whitespace.
     loop {
+        normalize.observe(
+            Phase::Normalize,
+            &current,
+            &origins.iter().cloned().collect::<Vec<_>>(),
+        )?;
         let mut changed = false;
         let pass = process(&current, options, config, md010::propose, |_| vec![])?;
         if !pass.edits.is_empty() {
-            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
             current = pass.output;
             changed = true;
         }
         let pass = process(&current, options, config, md030::propose, |_| vec![])?;
         if !pass.edits.is_empty() {
-            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
             current = pass.output;
             changed = true;
         }
         let pass = process(&current, options, config, md029::propose, |_| vec![])?;
         if !pass.edits.is_empty() {
-            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
             current = pass.output;
             changed = true;
         }
         let pass = process(&current, options, config, md005::propose, |_| vec![])?;
         if !pass.edits.is_empty() {
-            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
             current = pass.output;
             changed = true;
         }
         let pass = process(&current, options, config, md007::propose, |_| vec![])?;
         if !pass.edits.is_empty() {
-            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
             current = pass.output;
             changed = true;
         }
         let pass = process(&current, options, config, md027::propose, |_| vec![])?;
         if !pass.edits.is_empty() {
-            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
             current = pass.output;
             changed = true;
         }
         let pass = process(&current, options, config, md023::propose, |_| vec![])?;
         if !pass.edits.is_empty() {
-            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
             current = pass.output;
             changed = true;
         }
+        let mut trailing = StateTracker::new(source.len());
         loop {
+            trailing.observe(
+                Phase::Trailing,
+                &current,
+                &origins.iter().cloned().collect::<Vec<_>>(),
+            )?;
             let pass = process(&current, options, config, md009::propose, |_| vec![])?;
             if pass.edits.is_empty() {
                 break;
             }
-            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
             current = pass.output;
             changed = true;
         }
+        let mut headings = StateTracker::new(source.len());
         loop {
+            headings.observe(
+                Phase::Headings,
+                &current,
+                &origins.iter().cloned().collect::<Vec<_>>(),
+            )?;
             let pass = process(
                 &current,
                 options,
@@ -165,7 +264,7 @@ pub fn format_with_config(
             if pass.edits.is_empty() {
                 break;
             }
-            deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+            deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
             current = pass.output;
             changed = true;
         }
@@ -173,12 +272,18 @@ pub fn format_with_config(
             break;
         }
     }
+    let mut blanks = StateTracker::new(source.len());
     loop {
+        blanks.observe(
+            Phase::Blanks,
+            &current,
+            &origins.iter().cloned().collect::<Vec<_>>(),
+        )?;
         let pass = process(&current, options, config, md012::propose, |_| vec![])?;
         if pass.edits.is_empty() {
             break;
         }
-        deletion_edits = edit::compose_edits(source, &deletion_edits, &pass.edits)?;
+        deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
         current = pass.output;
     }
     let before_inline = Source::new(current);
@@ -201,14 +306,20 @@ pub fn format_with_config(
         inline_edits.clone(),
         &inline_edits,
     )?;
-    deletion_edits = edit::compose_edits(source, &deletion_edits, &inline_edits)?;
+    deletion_edits = stabilize::compose(source, &deletion_edits, &inline_edits, origins)?;
     // Heading suffix deletions can expose closing markers or turn setext text
     // into prose. Reparse that stable result before selecting prose gaps.
     let mut result = process(&current, options, config, reflow::propose, |_| vec![])?;
-    result.edits = edit::compose_edits(source, &deletion_edits, &result.edits)?;
+    result.edits = stabilize::compose(source, &deletion_edits, &result.edits, origins)?;
     // Either contextual marker repair can make the other rule's rejected batch
     // safe without changing the parsed block tree.
+    let mut markers = StateTracker::new(source.len());
     loop {
+        markers.observe(
+            Phase::Markers,
+            &result.output,
+            &origins.iter().cloned().collect::<Vec<_>>(),
+        )?;
         let before_markers = Source::new(result.output.clone());
         let before_markers_parsed =
             parse::parse(&before_markers).map_err(ProcessingError::Parse)?;
@@ -230,7 +341,7 @@ pub fn format_with_config(
             marker_edits.clone(),
             &marker_edits,
         )?;
-        result.edits = edit::compose_edits(source, &result.edits, &marker_edits)?;
+        result.edits = stabilize::compose(source, &result.edits, &marker_edits, origins)?;
         let before_style = Source::new(result.output.clone());
         let before_style_parsed = parse::parse(&before_style).map_err(ProcessingError::Parse)?;
         let before_style_document = config
@@ -247,7 +358,7 @@ pub fn format_with_config(
             style_edits.clone(),
             &style_edits,
         )?;
-        result.edits = edit::compose_edits(source, &result.edits, &style_edits)?;
+        result.edits = stabilize::compose(source, &result.edits, &style_edits, origins)?;
         if marker_edits.is_empty() && style_edits.is_empty() {
             break;
         }
@@ -272,7 +383,7 @@ pub fn format_with_config(
         fence_edits.clone(),
         &fence_edits,
     )?;
-    result.edits = edit::compose_edits(source, &result.edits, &fence_edits)?;
+    result.edits = stabilize::compose(source, &result.edits, &fence_edits, origins)?;
     let before_separators = Source::new(result.output.clone());
     let before_separators_parsed =
         parse::parse(&before_separators).map_err(ProcessingError::Parse)?;
@@ -294,7 +405,7 @@ pub fn format_with_config(
         separator_edits.clone(),
         &separator_edits,
     )?;
-    result.edits = edit::compose_edits(source, &result.edits, &separator_edits)?;
+    result.edits = stabilize::compose(source, &result.edits, &separator_edits, origins)?;
     let before_tables = Source::new(result.output.clone());
     let before_tables_parsed = parse::parse(&before_tables).map_err(ProcessingError::Parse)?;
     let before_tables_document = config
@@ -315,7 +426,7 @@ pub fn format_with_config(
         table_edits.clone(),
         &table_edits,
     )?;
-    result.edits = edit::compose_edits(source, &result.edits, &table_edits)?;
+    result.edits = stabilize::compose(source, &result.edits, &table_edits, origins)?;
     // Table separators can make an ATX-to-setext conversion safe in the same call.
     let before_headings = Source::new(result.output.clone());
     let before_headings_parsed = parse::parse(&before_headings).map_err(ProcessingError::Parse)?;
@@ -337,7 +448,7 @@ pub fn format_with_config(
         heading_edits.clone(),
         &heading_edits,
     )?;
-    result.edits = edit::compose_edits(source, &result.edits, &heading_edits)?;
+    result.edits = stabilize::compose(source, &result.edits, &heading_edits, origins)?;
     let before_fragments = Source::new(result.output.clone());
     let before_fragments_parsed =
         parse::parse(&before_fragments).map_err(ProcessingError::Parse)?;
@@ -359,7 +470,7 @@ pub fn format_with_config(
         fragment_edits.clone(),
         &fragment_edits,
     )?;
-    result.edits = edit::compose_edits(source, &result.edits, &fragment_edits)?;
+    result.edits = stabilize::compose(source, &result.edits, &fragment_edits, origins)?;
     let before_eof = Source::new(result.output.clone());
     let before_eof_parsed = parse::parse(&before_eof).map_err(ProcessingError::Parse)?;
     let before_eof_document = config
@@ -381,7 +492,7 @@ pub fn format_with_config(
         eof_edits.clone(),
         &eof_edits,
     )?;
-    result.edits = edit::compose_edits(source, &result.edits, &eof_edits)?;
+    result.edits = stabilize::compose(source, &result.edits, &eof_edits, origins)?;
     let output = Source::new(result.output.clone());
     let parsed = parse::parse(&output).map_err(ProcessingError::Parse)?;
     let document = config
@@ -628,6 +739,96 @@ fn process(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn cycle_transaction_discards_all_edits_and_diagnoses_original_source() {
+        let config=config::ResolvedConfig{rules:config::RuleConfig::from_value(serde_json::json!({"default":false,"MD007":{"severity":"warning"},"MD023":{"severity":"warning"},"MD051":{"severity":"warning"}})).unwrap(),..Default::default()};
+        let input = "- # H\n\n[x](#missing)\n";
+        let result = transaction(
+            input,
+            &FormatOptions::default(),
+            &config,
+            |text, options, config, origins| {
+                if !options.fix {
+                    return formatting_pass(text, options, config, origins);
+                }
+                let (output, edits) = if let Some(output) = text.strip_prefix("  ") {
+                    (
+                        output.to_owned(),
+                        vec![edit::Edit {
+                            span: 0..2,
+                            replacement: String::new(),
+                            origin: "MD023".into(),
+                        }],
+                    )
+                } else {
+                    (
+                        format!("  {text}"),
+                        vec![edit::Edit {
+                            span: 0..0,
+                            replacement: "  ".into(),
+                            origin: "MD007".into(),
+                        }],
+                    )
+                };
+                origins.extend(edits.iter().map(|edit| edit.origin.clone()));
+                Ok(FormatResult {
+                    output,
+                    edits,
+                    diagnostics: vec![],
+                    coverage: Coverage {
+                        implemented_rules: vec![],
+                        complete: false,
+                    },
+                })
+            },
+        )
+        .unwrap();
+        assert_eq!(result.output, input);
+        assert!(result.edits.is_empty());
+        assert!(
+            result
+                .diagnostics
+                .iter()
+                .any(|diagnostic| diagnostic.code == "MD051")
+        );
+        let conflict = result
+            .diagnostics
+            .iter()
+            .find(|diagnostic| diagnostic.code == "rule-conflict")
+            .unwrap();
+        assert_eq!(conflict.severity, Severity::Warning);
+        assert!(conflict.message.contains("MD007, MD023"));
+        assert!(conflict.message.contains("original source preserved"));
+    }
+
+    #[test]
+    fn growing_transaction_returns_work_limit_instead_of_partial_output() {
+        let error = transaction(
+            "x",
+            &FormatOptions::default(),
+            &config::ResolvedConfig::default(),
+            |text, _, _, _| {
+                let output = text.repeat(2);
+                Ok(FormatResult {
+                    output,
+                    edits: vec![edit::Edit {
+                        span: text.len()..text.len(),
+                        replacement: text.into(),
+                        origin: "MD013".into(),
+                    }],
+                    diagnostics: vec![],
+                    coverage: Coverage {
+                        implemented_rules: vec![],
+                        complete: false,
+                    },
+                })
+            },
+        )
+        .unwrap_err();
+        assert!(matches!(error, ProcessingError::WorkLimit(_)));
+        assert!(error.to_string().contains("work limit"));
+    }
 
     fn replace_world(
         source: &Source,
