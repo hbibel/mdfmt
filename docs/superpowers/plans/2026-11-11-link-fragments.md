@@ -67,8 +67,8 @@
 - [x] Run `mise exec -- cargo test --test md051`. Expected: missing safe case corrections before edit implementation, with Task 1 diagnostics still passing.
 - [x] Implement the narrow proposal/AST validation contract after final heading normalization. Admit only one exact case-folded target and raw safe ASCII resource syntax, require original permissions/ownership, and compare every non-URL AST field exactly. Do not relax generic protected-link validation or rewrite tables/definitions.
 - [x] Add bounded dense/ambiguous-target and repeated recovered-image workloads with exact semantic assertions; run source/fix/no-fix/idempotence oracle, affected suites and complete optimized tests, fmt/clippy/diff. Expected: safe corrections converge in one call and protected source remains exact.
-- [ ] Update preservation/policy evidence and commit `feat: correct unambiguous local fragment capitalization`.
-- [ ] Request one independent batch review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical findings once, then complete the full suite; no second review.
+- [x] Update preservation/policy evidence and commit `feat: correct unambiguous local fragment capitalization`.
+- [x] Request one independent batch review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical findings once, then complete the full suite; no second review.
 - [ ] Retain all rulings/evidence, remove only the completed scratch directory and continue milestone 5 interactions/conflict reporting and later roadmap work without merge/push or routine questions.
 
 ## Planning check
@@ -109,6 +109,30 @@ Rulings so far:
    not a generic link-preservation relaxation. Cost if wrong: conservative
    rejection of recovered/extension-owned links; labels/tables remain protected
    and remaining findings stay visible.
+5. Reuse lexical ATX caption bounds rather than lossy native children alone.
+   Cost if wrong: source-gap classification surface; hash/resource/container
+   controls and native heading gates retain the distinction without new edits.
+6. Expose consumed existing prefixes for literal lazy continuations while keeping
+   complete-prefix semantics unchanged. Cost if wrong: shared prefix-walk internal
+   result shape; partial/literal controls and old consumers gate the distinction.
+7. Keep the narrow inline ASCII repair subset, as the reviewer set aside. Cost
+   if wrong: broader otherwise-fixable cases need a later safe adapter, while
+   definitions/tables/images/recovered-only/encoded/non-ASCII/ambiguous cases stay
+   visible rather than guessed.
+8. Keep custom ignored patterns and later regex/package compatibility explicitly
+   deferred, as the reviewer set aside. Cost if wrong: users wait for required
+   later work instead of receiving silent incompatible pattern semantics.
+9. Keep general conflicts and formatter integration separate, as the reviewer set
+   aside. Cost if wrong: unfinished milestones remain explicit at53 built-ins.
+10. Do not infer debug-full/platform/fuzz/corpus guarantees from optimized Linux
+    review, as the reviewer set aside. Cost if wrong: baseline-unknown debug and
+    untested platform/input classes remain hardening work.
+11. Leave unrelated completed defects outside this review without demonstrated
+    regression, as the reviewer set aside. Cost if wrong: unrelated legacy issues
+    remain discovery work; directly changed consumers have native gates.
+12. Exclude bookkeeping/style polish below Important/Critical severity, as the
+    reviewer set aside. Cost if wrong: pending wording can briefly lag commit/
+    cleanup, but closure must reflect real actions before scratch removal.
 
 Task 1 committed at `75c9c9c`. Task 2's literal unique/cross-rule tests reproduced
 missing repairs before implementation; the fixture retains MD003's existing
@@ -123,3 +147,22 @@ prior MD003/MD013/MD026/reflow/MD024/HTML/image comparisons pass after integrati
 and shared6,305 reference comparisons passed after the range/cache extraction.
 All assertions/budgets unchanged. Coverage53/53 is not roadmap completion; commit
 and the one independent batch review follow.
+
+Task 2 committed at `b4e00ae`. The single independent review over
+`d0b618a..b4e00ae` found four Important findings, no Critical findings or minors.
+Five primary tests in `tests/fragment_review.rs` failed before the corrections;
+all now pass, including line-fragment navigation, automatic-link exclusion,
+lexical ATX caption gaps/counters, code/math data whitespace and repeated CLI
+byte preservation. Partial/lazy-prefix controls were separately RED-to-GREEN.
+Diagnosis and repair share validity exemptions; source captions retain data lost
+by child ranges, and cached actual container endpoints do not trim literal spaces.
+
+Final complete optimized verification passes522/522 across72 targets, fmt/clippy
+clean;1,144 ordinary MD051 comparisons check original wrong-case eligibility,
+upstream destination bounds, final findings and idempotence. Thirty preserved
+upstream-fix differences remain explicit. All affected heading/reference/HTML/
+code/reflow oracles pass. All four Important findings fixed in one pass, no
+Critical findings/deferred minors, no second review, no relaxed thresholds.
+Commit the corrections before removing only this completed scratch directory;
+retain all12 chronological rulings/costs here. Coverage53/53 remains distinct
+from incomplete roadmap milestones.

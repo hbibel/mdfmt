@@ -130,8 +130,8 @@ The literal-content batch adds [MD034 bare-URL, MD044 proper-name and MD046 code
 The list-indentation batch adds [conditional MD005/MD007 sibling/nesting alignment](../../compatibility/list-indentation.md).
 MD051 adds [local-fragment diagnostics and safe ASCII case corrections](../../compatibility/link-fragments.md).
 All 53 built-ins now have native coverage, including diagnostic-only rules and
-conditional repairs; milestone 5 is still incomplete. MD051's independent batch
-review remains pending. Interactions and conflict detection remain
+conditional repairs; milestone 5 is still incomplete. MD051's independent review
+and regression-first corrections are complete. Interactions and conflict detection remain
 milestone 5 deliverables, followed by formatter integration and release hardening.
 
 The first useful release includes local declarative configuration,
@@ -154,6 +154,22 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Independent MD051 review found valid line fragments such as `#L1` were silently
+  retargeted when a heading/HTML anchor collided by case. Diagnostic validity
+  exemptions now also gate repairs through shared classification; navigation
+  preservation and repeated CLI checks have failing-before/passing-after tests.
+- The review found automatic-link payloads contributed invented heading targets,
+  while lossy native ATX child ranges dropped literal hashes and significant
+  caption spaces. Explicit Markdown label data is now distinguished from automatic
+  links, and lexical source-caption bounds retain omitted data. This prevents false
+  findings, unsafe case repairs and incorrect duplicate counters.
+- Multiline inline code/math projection also discarded significant data spaces
+  after newlines. Literal projection now consumes only actual container prefixes,
+  including partial prefixes on lazy continuations, and caches heading/line prefix
+  endpoints. One-/two-space, padding-only, list/quote/lazy and physical-newline
+  regressions pass. All four review findings have RED-to-GREEN coverage; complete
+  optimized post-review verification passes 522 tests across 72 targets, with
+  1,144 MD051 comparisons and affected heading/reference/HTML/code/reflow gates.
 - MD051's new HTML-anchor consumer exposed the remaining full-definition-payload
   reparsing path in shared HTML image recovery. Four equal images caused four
   parses including unrelated definition titles. A real-parser regression failed

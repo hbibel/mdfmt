@@ -112,7 +112,7 @@ impl ContainerPath {
         Self::new(source, parsed, indices)
     }
 
-    fn walk(&self, text: &str, line: Option<usize>) -> Result<usize, usize> {
+    fn walk(&self, text: &str, line: Option<usize>) -> Result<usize, (usize, usize)> {
         let mut cursor = 0;
         for frame in &self.frames {
             let next = if frame.kind == RegionKind::Blockquote {
@@ -123,7 +123,7 @@ impl ContainerPath {
                 (spaces(text, cursor) >= frame.width).then_some(cursor + frame.width)
             };
             let Some(next) = next else {
-                return Err(frame.index);
+                return Err((frame.index, cursor));
             };
             cursor = next;
         }
@@ -131,7 +131,9 @@ impl ContainerPath {
     }
 
     pub(crate) fn first_missing(&self, text: &str) -> Option<usize> {
-        self.walk(&expanded(text).0, None).err()
+        self.walk(&expanded(text).0, None)
+            .err()
+            .map(|(index, _)| index)
     }
 
     pub(crate) fn content_start(&self, text: &str) -> Option<usize> {
@@ -144,5 +146,14 @@ impl ContainerPath {
         let (expanded, offsets) = expanded(text);
         let cursor = self.walk(&expanded, Some(line)).ok()?;
         Some(offsets[cursor] + usize::from(cursor > 0 && offsets[cursor] == offsets[cursor - 1]))
+    }
+
+    pub(crate) fn existing_prefix_at(&self, text: &str, line: usize) -> usize {
+        // Lazy continuations can supply outer prefixes without all inner ones.
+        let (expanded, offsets) = expanded(text);
+        let cursor = match self.walk(&expanded, Some(line)) {
+            Ok(cursor) | Err((_, cursor)) => cursor,
+        };
+        offsets[cursor] + usize::from(cursor > 0 && offsets[cursor] == offsets[cursor - 1])
     }
 }

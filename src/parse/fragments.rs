@@ -66,8 +66,39 @@ pub(crate) fn encode_component(text: &str) -> String {
 
 struct Projection {
     entities: HashMap<String, bool>,
+    paths: HashMap<usize, super::ContainerPath>,
+    prefixes: HashMap<(usize, usize), usize>,
 }
 impl Projection {
+    fn literal(&mut self, source: &Source, span: Range<usize>, owner: usize) -> String {
+        let mut value = String::new();
+        let mut cursor = span.start;
+        while cursor < span.end {
+            let ch = source.text()[cursor..].chars().next().unwrap();
+            cursor += ch.len_utf8();
+            if ch == '\n' {
+                value.push('\n');
+                let line = source.position(cursor).unwrap().line;
+                let prefix = *self.prefixes.entry((owner, line)).or_insert_with(|| {
+                    let range = source.line_range(line).unwrap();
+                    range.start
+                        + self.paths.get(&owner).map_or(0, |path| {
+                            path.existing_prefix_at(&source.text()[range.clone()], line)
+                        })
+                });
+                cursor = cursor.max(prefix).min(span.end);
+            } else {
+                value.push(ch);
+            }
+        }
+        if value.starts_with([' ', '\n'])
+            && value.ends_with([' ', '\n'])
+            && value.chars().any(|ch| !matches!(ch, ' ' | '\n'))
+        {
+            value = value[1..value.len() - 1].into();
+        }
+        value.replace('\n', "")
+    }
     fn string(&mut self, raw: &str, quotes: usize, entities: bool) -> String {
         let mut output = String::new();
         let mut cursor = 0;
@@ -136,6 +167,7 @@ impl Projection {
         source: &Source,
         base: usize,
         quotes: usize,
+        owner: usize,
         output: &mut String,
     ) {
         let Some(position) = node.position() else {
@@ -143,28 +175,66 @@ impl Projection {
         };
         let raw = &source.text()[base + position.start.offset..base + position.end.offset];
         match node {
+            Node::Heading(heading)
+                if !raw.contains(['\r', '\n'])
+                    && raw.trim_start_matches([' ', '\t']).starts_with('#') =>
+            {
+                let caption = super::heading_content(
+                    source,
+                    base + position.start.offset..base + position.end.offset,
+                    false,
+                );
+                let mut cursor = caption.start;
+                for child in &heading.children {
+                    let Some(position) = child.position() else {
+                        continue;
+                    };
+                    let start = (base + position.start.offset)
+                        .max(caption.start)
+                        .max(cursor);
+                    let end = (base + position.end.offset).min(caption.end);
+                    if start >= end {
+                        continue;
+                    }
+                    output.push_str(&self.string(&source.text()[cursor..start], quotes, true));
+                    if matches!(child, Node::Text(_) | Node::FootnoteReference(_)) {
+                        output.push_str(&self.string(&source.text()[start..end], quotes, true));
+                    } else {
+                        self.heading(child, source, base, quotes, owner, output);
+                    }
+                    cursor = end;
+                }
+                output.push_str(&self.string(&source.text()[cursor..caption.end], quotes, true));
+            }
             Node::Image(_) | Node::ImageReference(_) | Node::Html(_) => {}
+            Node::Link(_) if !raw.starts_with('[') => {}
             Node::Text(_) | Node::FootnoteReference(_) => {
                 output.push_str(&self.string(raw, quotes, true))
             }
             Node::InlineCode(_) => {
                 let ticks = raw.bytes().take_while(|byte| *byte == b'`').count();
                 if ticks * 2 <= raw.len() {
-                    let mut value = &raw[ticks..raw.len() - ticks];
-                    if value.starts_with([' ', '\r', '\n'])
-                        && value.ends_with([' ', '\r', '\n'])
-                        && value.chars().any(|ch| !matches!(ch, ' ' | '\r' | '\n'))
-                    {
-                        value = &value[1..value.len() - 1];
-                    }
-                    output.push_str(&self.string(value, quotes, false));
+                    output.push_str(&self.literal(
+                        source,
+                        base + position.start.offset + ticks..base + position.end.offset - ticks,
+                        owner,
+                    ));
                 }
             }
-            Node::InlineMath(math) => output.push_str(&self.string(&math.value, 0, false)),
+            Node::InlineMath(_) => {
+                let fence = raw.bytes().take_while(|byte| *byte == b'$').count();
+                if fence * 2 <= raw.len() {
+                    output.push_str(&self.literal(
+                        source,
+                        base + position.start.offset + fence..base + position.end.offset - fence,
+                        owner,
+                    ));
+                }
+            }
             _ => {
                 if let Some(children) = node.children() {
                     for child in children {
-                        self.heading(child, source, base, quotes, output);
+                        self.heading(child, source, base, quotes, owner, output);
                     }
                 }
             }
@@ -205,6 +275,19 @@ pub(crate) fn fragment_snapshot(source: &Source, parsed: &ParsedDocument) -> Fra
         .collect();
     let mut projection = Projection {
         entities: HashMap::new(),
+        paths: recovered
+            .regions
+            .iter()
+            .enumerate()
+            .filter(|(_, region)| region.kind == RegionKind::Heading)
+            .map(|(index, region)| {
+                (
+                    region.span.start,
+                    super::ContainerPath::for_region(&view, &recovered, index),
+                )
+            })
+            .collect(),
+        prefixes: HashMap::new(),
     };
     let mut targets = Targets {
         ordered: vec!["#top".into()],
@@ -229,7 +312,7 @@ pub(crate) fn fragment_snapshot(source: &Source, parsed: &ParsedDocument) -> Fra
                 docfx.1.push(span.clone());
             }
             let mut text = String::new();
-            projection.heading(node, source, base, quotes, &mut text);
+            projection.heading(node, source, base, quotes, span.start, &mut text);
             let lower = text.to_lowercase();
             let slug = SLUG_DENY.replace_all(&lower, "").replace(' ', "-");
             let fragment = format!("#{}", encode_component(&slug));

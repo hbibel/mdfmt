@@ -26,6 +26,13 @@ fn ascii_fragment(text: &str) -> bool {
     })
 }
 
+fn valid_fragment(value: &str, targets: &HashSet<&str>) -> bool {
+    value.strip_prefix('#').is_some_and(|tail| {
+        let encoded = format!("#{}", encode_component(tail));
+        targets.contains(encoded.as_str()) || LINE_FRAGMENT.is_match(&encoded)
+    })
+}
+
 fn same_except_fragment_case(before: &Node, after: &Node) -> bool {
     fn normalize(node: &mut Node) {
         node.position_set(None);
@@ -112,7 +119,7 @@ pub(crate) fn propose(
             || !owned.contains(&link.span)
             || !ascii_fragment(&link.value)
             || source.text()[link.destination.clone()] != link.value
-            || targets.contains(link.value.as_str())
+            || valid_fragment(&link.value, &targets)
         {
             continue;
         }
@@ -191,11 +198,10 @@ pub(crate) fn diagnose(
         if link.destination.is_empty() || link.inline && link.docfx_tab {
             continue;
         }
-        let Some(tail) = link.value.strip_prefix('#').filter(|tail| !tail.is_empty()) else {
+        if !link.value.starts_with('#') || link.value.len() == 1 {
             continue;
-        };
-        let encoded = format!("#{}", encode_component(tail));
-        if targets.contains(encoded.as_str()) || LINE_FRAGMENT.is_match(&encoded) {
+        }
+        if valid_fragment(&link.value, &targets) {
             continue;
         }
         let line = source.position(link.span.start).unwrap().line;
