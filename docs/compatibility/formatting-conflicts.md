@@ -65,7 +65,13 @@ selector; the corrected individual and combined commands pass.
 Separator gates also pass 345 MD032 comparisons and 492 MD031 observations:
 476 native comparisons and 16 explicitly retained native-parser error outcomes.
 
-The independent batch review remains pending. Existing formatting priorities are
+The independent batch review is complete: no Important/Critical findings or
+reported minors. The reviewer independently passed95 focused tests, checked
+whitespace and ran additional CLI/scaling probes; it did not repeat the complete
+native oracle/full suite. A fresh implementer full run still passes539/539 across
+73 targets, fmt/clippy clean. No fix pass or second review was needed.
+
+Existing formatting priorities are
 unchanged. All 53 built-ins remain listed with `Coverage.complete: false`;
 convergence does not establish complete fixability, parser fidelity or later
 roadmap milestones.

@@ -67,8 +67,8 @@
 - [x] Run `mise exec -- cargo test --release --test formatting_conflicts`. Expected: missing document-specific explanations, not altered formatting priorities.
 - [x] Implement structured list/separator proposal outcomes and shared final diagnostics. Map candidate overlaps back to original source anchors before reporting; line states may be reused across whitespace-only candidates, original directive byte ranges may not. Sort/deduplicate by physical span and rule set; preserve normal rule findings.
 - [x] Run all prior batch regressions/native comparisons and complete optimized suite, fmt/clippy/diff. Expected: no new content changes, all successful output idempotent, no conflict added solely because options coexist.
-- [ ] Update evidence/roadmap for milestone 5's tested built-ins/interactions/conflicts without claiming later milestones complete; commit `feat: explain conflicting formatting requirements`.
-- [ ] Request one independent review with every Review Focus and chronological ruling; fix Important/Critical findings once regression-first, then full verification. Retain all rulings/evidence before deleting only the completed scratch directory.
+- [x] Update evidence/roadmap for milestone 5's tested built-ins/interactions/conflicts without claiming later milestones complete; commit `feat: explain conflicting formatting requirements`.
+- [x] Request one independent review with every Review Focus and chronological ruling; fix Important/Critical findings once regression-first, then full verification. Retain all rulings/evidence before deleting only the completed scratch directory.
 - [ ] Continue explicit code formatter adapters, later declarative compatibility and release hardening autonomously, without merge/push or routine questions.
 
 ## Planning check
@@ -110,3 +110,34 @@ explanations while retaining exact original findings/content/status checks.
 4. Require bounded uncapped separator validation before explaining a cap. Cost
    if wrong: oversized/exhausted proof batches can omit explanations, retaining
    ordinary findings instead of inventing conflicts or reparsing per token.
+5. Keep whole-pass parser CPU/allocation guarantees outside exact-history bounds,
+   as the reviewer set aside. Cost if wrong: expensive individual passes remain
+   a hardening obligation rather than a false bounded-computation claim.
+6. Retain qualified injected-cycle/growth evidence, as the reviewer set aside;
+   no natural real-rule CLI WorkLimit trigger was established. Cost if wrong:
+   that unverified end-to-end trigger remains future input discovery work.
+7. Keep conservative contributing origins and existing repair priorities rather
+   than minimal conflict sets or more permissive edits, as the reviewer set
+   aside. Cost if wrong: explanations can name a nonminimal actual contributor
+   set, and some otherwise-fixable cases remain unresolved rather than unsafe.
+8. Permit explanation omission after oversized/exhausted proof batches, as the
+   reviewer set aside. Cost if wrong: ordinary findings remain without a detailed
+   explanation; no edit authority or diagnostic suppression follows exhaustion.
+9. Leave general throughput/debug/fuzz/corpus/platform guarantees to hardening,
+   as the reviewer set aside. Cost if wrong: known debug timeouts and untested
+   input/platform classes remain explicit release obligations.
+10. Do not reopen earlier unrelated MD051/list judgments without a demonstrated
+    direct regression, as the reviewer set aside. Cost if wrong: unrelated legacy
+    defects remain discovery work; changed consumers have regression gates.
+11. Keep formatter integration, later regex/package compatibility and complete
+    fixability/options parity unfinished, as the reviewer set aside. Cost if
+    wrong: users still face documented limitations after53 covered built-ins.
+
+Task2 committed as `bcf6892`. One independent review of28d3864..bcf6892 found
+no Important/Critical defects and reported no minors. It independently passed95
+focused tests, whitespace checks and additional warning/permission/scaling probes;
+it did not repeat the supplied complete native gates/full suite. The final fresh
+implementer optimized run passes539/539 across73 targets, fmt/clippy/diff clean.
+No fix pass or second review was warranted. Retain all11 chronological rulings
+above before removing only the completed scratch; preserve branch/worktree,
+without merge/push. The next separate plan covers optional code formatters.

@@ -133,7 +133,8 @@ All 53 built-ins now have native coverage, including diagnostic-only rules and
 conditional repairs. MD051's independent review and regression-first corrections
 are complete. [Convergence and document-specific conflict reporting](../../compatibility/formatting-conflicts.md)
 now add tested interactions, exact bounded histories and retained-priority
-explanations; their independent batch review remains pending. Formatter integration,
+explanations. Their independent batch review found no Important/Critical defects;
+95 reviewer tests and539 complete optimized implementer tests pass. Formatter integration,
 later declarative compatibility and release hardening remain unfinished. The rule
 count does not establish complete fixability or parser/option fidelity.
 
