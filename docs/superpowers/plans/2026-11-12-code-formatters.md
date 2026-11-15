@@ -6,7 +6,7 @@
 
 **Architecture:** A fixed adapter registry and bounded process runner produce stable logical code. A private source-owned body stage validates candidate Markdown and a separate process-I/O API/CLI path composes it with ordinary formatting.
 
-**Tech Stack:** Existing Rust toolchain and tempfile; pinned synchronous command-group 5.0.1 for process groups, standard threads/channels for bounded pipe I/O. Installed formatters remain optional.
+**Tech Stack:** Existing Rust toolchain and tempfile; pinned synchronous command-group 5.0.1 with rustix-owned nonblocking Unix pipe I/O after the review correction. Installed formatters remain optional; non-Unix transport fails closed pending hardening.
 
 **Spec:** `docs/superpowers/specs/2026-11-12-code-formatters-design.md`, binding roadmap and formatter acceptance scenarios in `docs/compatibility/acceptance.json`.
 
@@ -17,7 +17,7 @@
 - Respect both fix controls and MD013 code-block/inline permissions before spawning. Preserve failed bodies exactly and retain final ordinary diagnostics.
 - Only original native closed fences with unambiguous prefixes qualify; never promote recovered ownership into edit authority or relax generic protected-byte checks.
 - Private output validation may ignore only selected Code values; all other AST fields and bytes outside selected spans remain exact. Require formatter and public-call idempotence.
-- Use 1MiB input/stdout,64KiB stderr,5s/invocation,30s/document,64bodies/document and width1..=4096; kill/reap process groups and drain/join bounded I/O workers on all outcomes.
+- Use 1MiB input/stdout,64KiB stderr,5s execution/invocation,30s execution/document,64bodies/document and width1..=4096; attempt group termination and nonblocking reaping with100ms recovery. Failed cleanup must return explicitly without blocking wait/pipe joins or further launches.
 - Inline regression-first batches, one independent review/Important-Critical fix pass; no merge/push or routine approval questions. Close the prior convergence review before implementation.
 
 ## Review Focus
@@ -67,8 +67,8 @@ Interfaces:
 - [x] Implement source-backed closed-fence extraction/reconstruction, exact permissions and width subtraction; run bounded stable adapters and privately validate only selected Code values before composing any replacements. Preserve unsuccessful independent bodies and warnings.
 - [x] Wire the explicit API and CLI option: ordinary Markdown settlement, code stage once, final Markdown settlement/diagnostics, original-edit composition and final Code-ordinal warning anchors. Add no formatter settings to markdownlint config discovery.
 - [x] Run focused and full optimized tests plus prior heading/list/fragment/reference/reflow/code native gates, fmt/clippy/diff. Expected: same preservation limits, exact final warnings/findings, real local tool evidence distinguished from controlled fixtures and unavailable tools.
-- [ ] Update evidence/README/help/roadmap honestly and commit `feat: format owned fenced code through opt-in adapters`.
-- [ ] Request one independent batch review with every Review Focus/ruling. Reproduce Important/Critical findings, fix once, run complete verification; retain every ruling/cost before removing only completed scratch.
+- [x] Update evidence/README/help/roadmap honestly and commit `feat: format owned fenced code through opt-in adapters`.
+- [x] Request one independent batch review with every Review Focus/ruling. Reproduce Important/Critical findings, fix once, run complete verification; retain every ruling/cost before removing only completed scratch.
 - [ ] Continue later regex/package declarative compatibility and release hardening without merge/push or routine questions.
 
 ## Planning check
@@ -131,6 +131,46 @@ Task2; this is infrastructure, not implemented fenced-body formatting.
    relax generic protected-code equivalence. Cost if wrong: some otherwise-safe
    output is rejected with original bytes/warning; language semantics remain the
    trusted formatter's responsibility rather than a Markdown semantic proof.
+9. Enforce explicit --no-plugin-search instead of weakening the isolation contract.
+   Actual2.8.8/3.6.2 side-effect plugin probes pass after the former failed.
+   Cost if wrong: other tool versions can reject the flag and conservatively
+   preserve code; no untested broad version guarantee follows.
+10. Replace blocking pipe workers with owned nonblocking Unix I/O and100ms bounded
+    recovery; cap active/pending groups at64 and refuse execution while deferred
+    cleanup remains pending. Cost if wrong: denied live groups can persist until
+    OS/owner termination and later formatting stays disabled, but no uncancelable
+    waiter threads or silent deadline overruns are introduced.
+11. Fail closed before executing on non-Unix until bounded cancellation is
+    implemented/platform-tested. Cost if wrong: opt-in code formatting there is
+    temporarily skipped with a warning; ordinary Markdown is unchanged and the
+    missing transport remains explicit release-hardening work.
+12. Retain opt-in/fixed-adapter/MD013 permissions, as the reviewer set aside.
+    Cost if wrong: automatic or style-only formatting remains unavailable rather
+    than inventing a second configuration or implicit process-execution policy.
+13. Trust installed-tool language semantics/inherited executable environments,
+    not Markdown semantic proof, as the reviewer set aside. Cost if wrong: a
+    stable buggy/malicious trusted tool can change code meaning; this does not
+    excuse plugin autodiscovery, which received its concrete correction.
+14. Keep deliberately escaped descendants outside containment guarantees, as
+    the reviewer set aside. Cost if wrong: those processes can persist outside
+    the group; ordinary same-group termination denial is covered separately.
+15. Retain conservative unsupported/extra-info/unclosed/recovered/tab/lazy
+    rejection, as the reviewer set aside. Cost if wrong: otherwise-fixable code
+    remains unchanged rather than expanding unproven edit authority.
+16. Retain pinned HTML-style directive semantics in code, as the reviewer set
+    aside. Cost if wrong: some code remains unformatted, not silently permission-
+    bypassed; ordinary Python comments remain literal data.
+17. Keep Task1 test-only wiring as completed transitional infrastructure, as
+    the reviewer set aside. Cost if wrong: Task1 alone was not a user-facing
+    formatter release; Task2 provides the actual production consumer.
+18. Leave broad tool-version/platform/fuzz/corpus/parser-resource/debug guarantees
+    to hardening, as the reviewer set aside. Cost if wrong: untested input/tool/
+    platform classes and known debug limits remain release obligations, with
+    non-Unix transport explicitly not implemented yet.
+19. Leave earlier unrelated rule batches and later regex/package/stale-checkbox
+    topics outside this review, as the reviewer set aside. Cost if wrong:
+    unrelated defects remain discovery work and unfinished milestones stay
+    explicit rather than becoming a false roadmap-completion claim.
 
 Task1 committed at9dda705. Task2's initial missing-API RED is followed by nine
 passing integration tests and complete optimized553/553 across74 targets,
@@ -147,3 +187,24 @@ Affected prior native reflow/MD013/MD026/headings/fences/code/list/fragment and6
 reference comparisons pass. One aggregate shell command timed out at900s after
 MD053; the1771MD054 gate passed separately. No application limits or assertions
 were relaxed. Independent review follows the Task2 commit/task-done.
+
+Task2 committed at04dd045. One independent review overacfdc76..04dd045 found two
+Important defects, no Critical findings or reported minors. It independently ran
+65 existing optimized tests, not a fresh full rebuild. Both findings were then
+reproduced RED: actualPrettier2.8.8 auto-loaded a side-effect plugin; actual Linux
+seccomp-denied SIGKILL left blocking cleanup past the outer safety deadline.
+
+The single fix pass disables plugin search (actual2.8.8 and3.6.2 now pass exact
+JSON/four stability invocations/zero plugin execution) and replaces blocking I/O/
+cleanup with owned nonblocking transport, explicit cleanup failures and bounded
+deferred reaping. The ordinary same-group denied-child regression now returns
+promptly, preserves library input and prevents later launches. Non-Unix executes
+nothing until bounded transport exists; no Linux test/CPU limit was skipped or
+relaxed. Final complete optimized verification passes554/554 across74targets,
+fmt/support-fixturefmt/clippy/diff clean; fresh220MD048/516MD014/1662MD046/
+288MD013/440MD026/29reflow gates pass. No second review was dispatched.
+
+Retain all19 chronological decisions/costs before removing only this completed
+scratch after correction commit. The development-only npm audit reports5 advisory
+entries (3high/2low) through the pinned oracle graph, not native runtime exposure;
+the roadmap retains that separate hardening risk without changing reference pins.

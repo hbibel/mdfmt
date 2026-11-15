@@ -512,6 +512,7 @@ dependencies = [
  "markdown",
  "regex",
  "regress",
+ "rustix",
  "serde_json",
  "serde_yaml",
  "tempfile",

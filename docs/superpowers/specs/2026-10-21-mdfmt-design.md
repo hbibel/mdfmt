@@ -136,7 +136,9 @@ now add tested interactions, exact bounded histories and retained-priority
 explanations. Their independent batch review found no Important/Critical defects;
 95 reviewer tests and539 complete optimized implementer tests pass. Optional
 [fenced-code formatter adapters](../../compatibility/code-formatters.md) now have
-tested runner/API/CLI integration; their independent batch review remains pending.
+tested runner/API/CLI integration and a completed independent review/fix pass.
+Execution is Unix-only until bounded non-Unix transport receives implementation
+and platform evidence during hardening; unsupported transports preserve code.
 Later declarative compatibility and release hardening remain unfinished. The rule
 count does not establish complete fixability or parser/option fidelity.
 
@@ -160,6 +162,20 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- The independent formatter-adapter review reproduced automatic neighboring-plugin
+  execution with actual Prettier2.8.8 despite an isolated cwd/no-config flags.
+  It also reproduced cleanup exceeding a100ms deadline when seccomp denied group
+  termination: ignored kill errors led to blocking waits/pipe joins. Both are
+  Important findings; no Critical findings were reported. Both now have
+  regression-first corrections: explicit plugin-search disable and owned
+  nonblocking I/O/bounded failed-cleanup handling. Actual Prettier2/3 and real
+  SIGKILL-denied group tests pass, with554 complete optimized tests across74targets.
+- The development-only pinned Node oracle dependency audit reports5 advisories
+  (3 high via RE2JS/markdownlint/cli2 and2 low via math tooling). The native Rust
+  application does not depend on or execute those modules. Preserve reference
+  pins for compatibility evidence; release hardening must contain adversarial
+  oracle inputs/time and assess the advisories rather than silently upgrading
+  the compatibility baseline or claiming an application vulnerability.
 - A convergence summary cannot take severity only from its fallback anchor:
   an inline override there can hide an Error contributor enabled elsewhere.
   The new transaction tests reproduce that misclassification before correction;

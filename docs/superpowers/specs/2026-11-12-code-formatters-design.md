@@ -29,7 +29,8 @@ completion. The choices below are builder decisions, not new user approvals.
   package download or installation. Programs on PATH are trusted executable code;
   this is process containment for reliability, not a security sandbox.
 - Run in a private temporary directory. Rustfmt uses a generated explicit config;
-  Black uses `--isolated`; Prettier uses `--no-config --no-editorconfig --parser json`.
+  Black uses `--isolated`; Prettier uses
+  `--no-config --no-editorconfig --no-plugin-search --parser json`.
   Project formatter configuration/plugins are not discovered. Gofmt has no config.
 
 ## Ownership and formatting contract
@@ -71,10 +72,15 @@ Retain formatter warnings at their final owning fence anchors, not stale offsets
 ## Process limits and failures
 
 Use the synchronous process-group API from pinned `command-group = 5.0.1`
-without Tokio. Read stdout and stderr concurrently with bounded buffers; write
-stdin concurrently so pipe pressure cannot evade the deadline. Kill and reap the
-group on every failure/deadline, and clean up remaining group members on leader
-exit before joining pipe workers. Never use unbounded `wait_with_output`.
+without Tokio and owned nonblocking Unix pipes through rustix. Interleave bounded
+stdin/stdout/stderr work under one deadline. Attempt group termination on
+failure/deadline and leader exit, then use nonblocking reaping with100ms recovery.
+Never block on wait/pipe joins when termination fails. Retain bounded group handles
+for later nonblocking reaping, refusing new execution while cleanup remains pending;
+OS-denied termination may require owner intervention. Process-wide active/pending
+ownership is capped at64. Non-Unix transports fail closed before execution until
+bounded cancellation is implemented and verified. This supersedes the initial
+worker-thread design after its reproduced cleanup-failure defect.
 
 Limits are 1 MiB input/body, 1 MiB stdout, 64 KiB stderr, 5 seconds per invocation,
 30 seconds across a document and 64 eligible bodies per document. Both stability
@@ -87,7 +93,8 @@ Unavailable executables, nonzero status, invalid/partial/empty output, timeouts,
 limits, instability and unsafe candidate Markdown produce a warning with
 `rule_id: None`, anchored to the owning fence. Use `formatter-unavailable`,
 `formatter-failed`, `formatter-timeout`, `formatter-output-limit`,
-`formatter-unstable`, `formatter-unsafe` and `formatter-skipped` as applicable.
+`formatter-unstable`, `formatter-unsafe`, `formatter-cleanup-failed` and
+`formatter-skipped` as applicable.
 Warnings do not independently cause exit 1; final error findings/check changes
 retain existing exit behavior. One failed body does not discard a successful
 independent body or unrelated Markdown edits.

@@ -32,7 +32,7 @@ struct Args {
     no_globs: bool,
     #[arg(
         long,
-        help = "Opt in to installed rustfmt, gofmt, Black and JSON Prettier code formatters"
+        help = "Opt in to installed rustfmt, gofmt, Black and JSON Prettier code formatters (Unix)"
     )]
     format_code: bool,
 }

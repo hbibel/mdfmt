@@ -19,6 +19,7 @@ pub struct CodeFormatOptions {
 
 #[derive(Debug)]
 pub(crate) enum FormatterFailure {
+    #[cfg(unix)]
     Unavailable(String),
     Failed(String),
     Timeout,
@@ -26,10 +27,13 @@ pub(crate) enum FormatterFailure {
     Unstable,
     Skipped(String),
     Unsafe,
+    #[cfg_attr(not(unix), allow(dead_code))]
+    Cleanup(String),
 }
 impl FormatterFailure {
     pub(crate) fn code(&self) -> &'static str {
         match self {
+            #[cfg(unix)]
             Self::Unavailable(_) => "formatter-unavailable",
             Self::Failed(_) => "formatter-failed",
             Self::Timeout => "formatter-timeout",
@@ -37,11 +41,14 @@ impl FormatterFailure {
             Self::Unstable => "formatter-unstable",
             Self::Skipped(_) => "formatter-skipped",
             Self::Unsafe => "formatter-unsafe",
+            Self::Cleanup(_) => "formatter-cleanup-failed",
         }
     }
     pub(crate) fn message(&self) -> String {
         match self {
-            Self::Unavailable(message) | Self::Failed(message) | Self::Skipped(message) => {
+            #[cfg(unix)]
+            Self::Unavailable(message) => message.clone(),
+            Self::Failed(message) | Self::Skipped(message) | Self::Cleanup(message) => {
                 message.clone()
             }
             Self::Timeout => "formatter deadline exceeded".into(),
@@ -72,11 +79,16 @@ pub fn format_with_code_formatters(
     let mut edits = vec![];
     let mut selected = std::collections::HashSet::new();
     let mut failures = vec![];
+    let mut containment_failed = false;
     for (index, body) in fences::bodies(&before, &parsed, &document)
         .into_iter()
         .enumerate()
     {
-        let formatted = if let Some(failure) = body.skip {
+        let formatted = if containment_failed {
+            Err(FormatterFailure::Skipped(
+                "formatter execution disabled after cleanup failure".into(),
+            ))
+        } else if let Some(failure) = body.skip {
             Err(failure)
         } else if index >= 64 {
             Err(FormatterFailure::Skipped(
@@ -114,6 +126,7 @@ pub fn format_with_code_formatters(
             }
         };
         if let Some(failure) = failure {
+            containment_failed |= matches!(failure, FormatterFailure::Cleanup(_));
             failures.push((body.ordinal, body.language, failure));
         }
     }

@@ -108,6 +108,8 @@ alongside unresolved rule findings, including when fixes are disabled.
 Optional `--format-code` delegates owned fenced bodies to installed rustfmt,
 gofmt, Black or JSON Prettier with bounded execution and byte-preserving failure
 fallback; see [adapter evidence and limits](docs/compatibility/code-formatters.md).
+External execution is currently Unix-only; other platforms preserve code with a
+warning while bounded transport remains release-hardening work.
 
 ## Usage
 

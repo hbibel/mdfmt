@@ -5,6 +5,9 @@ use std::{
 };
 
 fn main() {
+    if let Ok(path) = std::env::var("MDFMT_TEST_HELPER_PID") {
+        std::fs::write(path, std::process::id().to_string()).unwrap();
+    }
     if let Ok(mode) = std::env::var("MDFMT_FIXTURE_MODE") {
         let mut input = String::new();
         io::stdin().read_to_string(&mut input).unwrap();
@@ -70,6 +73,7 @@ fn main() {
         "sleep" => {
             std::thread::sleep(Duration::from_secs(10));
         }
+        "shortsleep" => std::thread::sleep(Duration::from_secs(2)),
         "descendant" => {
             Command::new(std::env::current_exe().unwrap())
                 .arg("sleep")

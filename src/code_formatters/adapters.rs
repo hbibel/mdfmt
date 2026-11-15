@@ -56,6 +56,7 @@ impl Adapter {
                 command.args([
                     "--no-config",
                     "--no-editorconfig",
+                    "--no-plugin-search",
                     "--parser",
                     "json",
                     "--print-width",

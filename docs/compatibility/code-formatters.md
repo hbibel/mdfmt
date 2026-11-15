@@ -5,6 +5,8 @@
 The ordinary CLI and existing pure library APIs never execute these programs.
 The separate `format_with_code_formatters` API documents process I/O;
 `CodeFormatOptions::default()` leaves execution disabled.
+External execution currently requires Unix. Other platforms preserve code and
+report `formatter-skipped` until a bounded transport is implemented and verified.
 
 ## Permission and ownership
 
@@ -32,16 +34,23 @@ findings. Formatting runs below the limit too, but does not force unsafe wrappin
 
 Commands use fixed argv and a private temporary working directory, never a shell,
 download or package installation. Rustfmt receives an explicit generated config,
-Black uses isolated mode and Prettier disables config/editorconfig discovery.
+Black uses isolated mode and Prettier disables config/editorconfig and automatic
+plugin search. A private cwd alone does not isolate Prettier2's installation-relative
+plugin discovery; the explicit `--no-plugin-search` flag is required.
 Installed programs and the inherited executable environment are trusted; this is
 not a security sandbox or proof of language-semantic equivalence.
 
 Input/stdout are bounded to1MiB, stderr to64KiB, execution to5s per invocation and
 30s across the document, and selection to64 eligible bodies. Widths outside
-1..=4096 are skipped. Concurrent stdin/stdout/stderr handling covers full pipes;
-process-group cleanup precedes pipe-worker joins, including when the leader exits
-while descendants hold pipes. Deliberately escaped descendants and whole-pass
-parser CPU/memory bounds are not claimed.
+1..=4096 are skipped. Owned nonblocking stdin/stdout/stderr handling covers full
+pipes without reader/writer threads. Cleanup uses group termination and nonblocking
+reaping with at most100ms recovery; it never performs blocking wait/pipe joins.
+Denied termination returns `formatter-cleanup-failed`, preserving the body and
+preventing later launches. Up to64 active/pending groups may be owned process-wide;
+pending handles are reaped opportunistically on later calls, and no new execution
+is allowed while any remains pending. The OS/owner may have to terminate a denied
+live group. Deliberately escaped descendants, whole-pass parser resources and OS
+scheduling latency are not hard-bound guarantees.
 
 Only successful complete UTF-8, non-NUL, nonempty output that settles on a second
 formatter invocation can be admitted. Unavailable/failed/timed-out/oversized/
@@ -54,7 +63,7 @@ failure. Final ordinary findings, including MD013, remain authoritative.
 
 Five runner/adapter tests failed on missing APIs before implementation; six
 initial integration tests then failed on the missing opt-in API. There are now
-five runner tests and nine integration tests, with 553 complete optimized tests
+six runner tests and nine integration tests, with 554 complete optimized tests
 passing across 74 targets, fmt/clippy/diff clean. Cases include concurrent full
 pipes, partial failures, missing programs, blocked stdin, descendant-held output,
 invalid/empty/NUL/unstable/oversized output, production5s timeout, unsafe fences,
@@ -66,20 +75,37 @@ The64-body case permits exactly128 stability subprocess invocations and preserve
 the65th body with a warning.
 
 Actual isolated rustfmt/gofmt smoke tests pass locally; the public API also runs
-actual rustfmt. Black and Prettier are absent locally. Their fixed argv and the
-CLI process contract are tested with controlled native fixture executables, not
-claimed real Black/Prettier compatibility evidence.
+actual rustfmt. Black is absent locally and has fixed-argv/controlled native-process
+coverage, not real compatibility evidence. Actual pinned Prettier2.8.8/3.6.2 now
+run through the CLI with a neighboring side-effect plugin: exact JSON output,
+four stability invocations and zero plugin executions pass for each version.
+These packages are development-only fixtures, not native runtime dependencies or
+a broad guarantee across untested formatter versions.
+
+The single independent review found two Important defects and no Critical
+findings/minors: Prettier2 loaded neighboring plugins, and ignored termination
+errors led to blocking cleanup past deadlines. Both have RED-to-GREEN regressions.
+The cleanup test uses real Linuxx86_64 seccomp denying SIGKILL for an ordinary
+same-group child, an unfiltered outer safety deadline, exact preservation and a
+no-further-launch check. No mocked kill or escaped descendant substitutes for it.
+The complete post-fix optimized suite and code/reflow native gates pass; no second
+review was dispatched.
 
 Prior native gates pass29 reflow,288MD013,440MD026,1206MD003,220MD048,1662MD046,
 516MD014,687MD005,1680MD007,1144MD051 and6305 reference comparisons. One aggregate
 oracle command reached its900s shell limit after MD053; the final1771MD054 cases
 passed when run separately. No application assertion or work budget was relaxed.
 
-The independent adapter-batch review remains pending. Coverage stays53 built-ins
+The independent adapter-batch review and its single fix pass are complete.
+Coverage stays53 built-ins
 with `complete:false`; later regex/package compatibility, broad corpus/fuzz/
-benchmark/platform evidence and release hardening remain unfinished.
+benchmark/platform evidence and release hardening remain unfinished, including
+non-Unix process transport. The pinned development Node oracle has5 audit
+advisories (3 high/2 low), tracked separately in the roadmap; no native Rust
+application exposure or silent baseline upgrade is inferred.
 
 ```sh
 mise exec -- cargo test --release --all-targets --jobs 2
 mise exec -- cargo run -- --format-code --check document.md
+npm run test:code-formatters --prefix tools/parser-oracle
 ```

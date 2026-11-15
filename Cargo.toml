@@ -26,3 +26,6 @@ icu_collator = "=2.1.1"
 unicode-segmentation = "=1.13.3"
 url = "2.5"
 regress = { path = "vendor/regress", default-features = false, features = ["std", "prohibit-unsafe", "utf16"] }
+
+[target.'cfg(unix)'.dependencies]
+rustix = { version = "1", features = ["fs", "process"] }

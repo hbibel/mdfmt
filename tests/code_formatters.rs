@@ -1,3 +1,5 @@
+#![cfg(unix)]
+
 use mdfmt::{
     CodeFormatOptions, FormatOptions,
     config::{ResolvedConfig, RuleConfig},
