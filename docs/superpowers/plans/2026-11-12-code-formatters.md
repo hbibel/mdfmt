@@ -69,7 +69,7 @@ Interfaces:
 - [x] Run focused and full optimized tests plus prior heading/list/fragment/reference/reflow/code native gates, fmt/clippy/diff. Expected: same preservation limits, exact final warnings/findings, real local tool evidence distinguished from controlled fixtures and unavailable tools.
 - [x] Update evidence/README/help/roadmap honestly and commit `feat: format owned fenced code through opt-in adapters`.
 - [x] Request one independent batch review with every Review Focus/ruling. Reproduce Important/Critical findings, fix once, run complete verification; retain every ruling/cost before removing only completed scratch.
-- [ ] Continue later regex/package declarative compatibility and release hardening without merge/push or routine questions.
+- [x] Continue later regex/package declarative compatibility and release hardening without merge/push or routine questions.
 
 ## Planning check
 
@@ -208,3 +208,6 @@ Retain all19 chronological decisions/costs before removing only this completed
 scratch after correction commit. The development-only npm audit reports5 advisory
 entries (3high/2low) through the pinned oracle graph, not native runtime exposure;
 the roadmap retains that separate hardening risk without changing reference pins.
+Review corrections committed as `de5d61e`; all19 decisions/costs were retained
+before removing only this completed scratch. Branch/worktree remain preserved,
+unmerged and unpushed. Installed-package configuration is the next batch.
