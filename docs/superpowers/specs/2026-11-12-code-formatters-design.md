@@ -18,8 +18,9 @@ completion. The choices below are builder decisions, not new user approvals.
 - Add a separate `format_with_code_formatters` API that documents process I/O.
   Keep existing `FormatOptions { fix }` and `ResolvedConfig` literals compatible.
 - Both fix controls, enabled MD013, `code_blocks: true` and permission across the
-  whole original fenced body are required before invoking a formatter. Inline
-  directives inside literal code do not become configuration.
+  whole original fenced body are required before invoking a formatter. Ordinary
+  language comments do not become configuration; recognized HTML-style markdownlint
+  directives retain existing pinned semantics, including within code strings.
 - Support explicit language aliases: `rust`/`rs` via rustfmt, `go`/`golang` via
   gofmt, `python`/`py` via Black, and `json` via Prettier's JSON parser. Unknown
   languages, unlabeled/indented/unclosed fences and extra info attributes remain

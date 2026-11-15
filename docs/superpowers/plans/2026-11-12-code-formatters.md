@@ -45,7 +45,7 @@ Interfaces:
 - [x] Run `mise exec -- cargo test --release --lib code_formatters`. Expected: missing adapter/runner APIs before implementation.
 - [x] Implement process-group spawn, concurrent bounded stream readers/writer, common monotonic deadline, cleanup on every exit, fixed commands and two-run stability validation. Do not call unbounded wait_with_output or join live pipes before group cleanup.
 - [x] Run focused tests, available real rustfmt/gofmt smoke tests, complete optimized suite, fmt/clippy/diff. Expected: exact outputs, no hangs/leaked groups, prior pure Markdown behavior unchanged; Black/Prettier smoke coverage marked unavailable if absent rather than faked.
-- [ ] Commit `feat: add bounded optional code formatter adapters`; task-done with the focused module and complete suite evidence.
+- [x] Commit `feat: add bounded optional code formatter adapters`; task-done with the focused module and complete suite evidence.
 
 ## Task 2: Source-owned fenced bodies and opt-in API/CLI
 
@@ -59,14 +59,14 @@ Interfaces:
 - Private `FenceBody` captures original Code ordinal/body span/language/restored prefix/available width; `bodies(&Source,&ParsedDocument,&DocumentConfig) -> Vec<FenceBody>` rejects uncertain ownership, unsupported info and incomplete fences before process invocation.
 - Private stage returns body edits plus failures anchored by owning Code ordinal. Reidentify those ordinals after final Markdown settlement before rendering warnings; do not carry stale physical offsets through changing prose.
 
-- [ ] Write `successful_formatter_restores_quote_and_list_prefixes`, including literal quoted JSON acceptance output, root/list/nested fences, blank lines and independent code widths. Assert exact source outside bodies and exact original-coordinate edit reconstruction.
-- [ ] Write `disabled_or_unowned_fences_never_spawn` using controlled real fixture invocation counts: both fix controls, MD013 disabled/code_blocksfalse, partial inline permissions, tables/HTML recovered-only fences, unclosed/unlabeled/indented/unknown/extra-info cases and uncertain tabs.
-- [ ] Write `failures_preserve_original_bodies_and_final_findings` for unavailable/nonzero partial/timeout/outputlimit/invalidUTF8/unstable/fencebreaking output; include one successful adjacent body, MD013 original/final findings, BOM/CRLF/CR and literal markdownlint comments in code.
-- [ ] Write CLI check/write/stdout/alias/severity tests with --format-code on/off, repeated calls, changed/unchanged statuses, warning anchors after wrapping prose and both fix controls. Require a second formatting call to export no edits.
-- [ ] Run `mise exec -- cargo test --release --test code_formatters`. Expected: missing opt-in entry point/behavior, not incorrect fixtures or unsupported existing settings.
-- [ ] Implement source-backed closed-fence extraction/reconstruction, exact permissions and width subtraction; run bounded stable adapters and privately validate only selected Code values before composing any replacements. Preserve unsuccessful independent bodies and warnings.
-- [ ] Wire the explicit API and CLI option: ordinary Markdown settlement, code stage once, final Markdown settlement/diagnostics, original-edit composition and final Code-ordinal warning anchors. Add no formatter settings to markdownlint config discovery.
-- [ ] Run focused and full optimized tests plus prior heading/list/fragment/reference/reflow/code native gates, fmt/clippy/diff. Expected: same preservation limits, exact final warnings/findings, real local tool evidence distinguished from controlled fixtures and unavailable tools.
+- [x] Write `successful_formatter_restores_quote_and_list_prefixes`, including literal quoted JSON acceptance output, root/list/nested fences, blank lines and independent code widths. Assert exact source outside bodies and exact original-coordinate edit reconstruction.
+- [x] Write `disabled_or_unowned_fences_never_spawn` using controlled real fixture invocation counts: both fix controls, MD013 disabled/code_blocksfalse, partial inline permissions, tables/HTML recovered-only fences, unclosed/unlabeled/indented/unknown/extra-info cases and uncertain tabs.
+- [x] Write `failures_preserve_original_bodies_and_final_findings` for unavailable/nonzero partial/timeout/outputlimit/invalidUTF8/unstable/fencebreaking output; include one successful adjacent body, MD013 original/final findings, BOM/CRLF/CR and literal markdownlint comments in code.
+- [x] Write CLI check/write/stdout/alias/severity tests with --format-code on/off, repeated calls, changed/unchanged statuses, warning anchors after wrapping prose and both fix controls. Require a second formatting call to export no edits.
+- [x] Run `mise exec -- cargo test --release --test code_formatters`. Expected: missing opt-in entry point/behavior, not incorrect fixtures or unsupported existing settings.
+- [x] Implement source-backed closed-fence extraction/reconstruction, exact permissions and width subtraction; run bounded stable adapters and privately validate only selected Code values before composing any replacements. Preserve unsuccessful independent bodies and warnings.
+- [x] Wire the explicit API and CLI option: ordinary Markdown settlement, code stage once, final Markdown settlement/diagnostics, original-edit composition and final Code-ordinal warning anchors. Add no formatter settings to markdownlint config discovery.
+- [x] Run focused and full optimized tests plus prior heading/list/fragment/reference/reflow/code native gates, fmt/clippy/diff. Expected: same preservation limits, exact final warnings/findings, real local tool evidence distinguished from controlled fixtures and unavailable tools.
 - [ ] Update evidence/README/help/roadmap honestly and commit `feat: format owned fenced code through opt-in adapters`.
 - [ ] Request one independent batch review with every Review Focus/ruling. Reproduce Important/Critical findings, fix once, run complete verification; retain every ruling/cost before removing only completed scratch.
 - [ ] Continue later regex/package declarative compatibility and release hardening without merge/push or routine questions.
@@ -122,3 +122,28 @@ Task2; this is infrastructure, not implemented fenced-body formatting.
    consumer. Rationale: avoid dead-code suppression, public internal APIs or a
    placeholder runtime path. Cost if wrong: infrastructure is not included in a
    standalone Task1 release; tests still execute its real process implementation.
+7. Retain pinned HTML-style directives even within literal code instead of the
+   initial design's blanket exclusion. Actual pinned probes suppress MD013 inside
+   and after a fenced HTML directive; Python '# markdownlint' remains ordinary
+   data. Cost if wrong: affected code is conservatively not externally formatted,
+   rather than silently changing existing configuration permissions.
+8. Validate position-free ASTs ignoring only selected original Code values, not
+   relax generic protected-code equivalence. Cost if wrong: some otherwise-safe
+   output is rejected with original bytes/warning; language semantics remain the
+   trusted formatter's responsibility rather than a Markdown semantic proof.
+
+Task1 committed at9dda705. Task2's initial missing-API RED is followed by nine
+passing integration tests and complete optimized553/553 across74 targets,
+fmt/clippy/diff clean. Source ownership, root/list/quote/nested prefix restoration,
+actual width argv/payloads, both fix controls/directives, independent failures,
+final warning anchors, physical newline/BOM preservation, original edits and
+public-call idempotence pass. The64-body case makes exactly128 subprocess calls
+and preserves body65 with a warning. Production5s timeout and all failure classes
+preserve failed bodies and ordinary findings. Five real-process runner tests and
+actual local rustfmt/gofmt smoke tests also pass; Black/Prettier remain absent,
+with controlled process/argv coverage rather than actual runtime claims.
+
+Affected prior native reflow/MD013/MD026/headings/fences/code/list/fragment and6305
+reference comparisons pass. One aggregate shell command timed out at900s after
+MD053; the1771MD054 gate passed separately. No application limits or assertions
+were relaxed. Independent review follows the Task2 commit/task-done.

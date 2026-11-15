@@ -105,6 +105,9 @@ Formatting now settles complete passes with bounded exact-state histories and
 transactional cycle rollback; see [convergence evidence](docs/compatibility/formatting-conflicts.md).
 Document-specific conflicts explain retained list-spacing and blank-line priorities
 alongside unresolved rule findings, including when fixes are disabled.
+Optional `--format-code` delegates owned fenced bodies to installed rustfmt,
+gofmt, Black or JSON Prettier with bounded execution and byte-preserving failure
+fallback; see [adapter evidence and limits](docs/compatibility/code-formatters.md).
 
 ## Usage
 
@@ -114,6 +117,7 @@ With the toolchain from `mise.toml`:
 mise exec -- cargo run -- document.md
 mise exec -- cargo run -- --check document.md
 mise exec -- cargo run -- --write document.md other.md
+mise exec -- cargo run -- --format-code --check document.md
 mise exec -- cargo run -- --check "**/*.md" "#vendor/**"
 mise exec -- cargo run -- --check --config rules.toml --config-pointer /markdown document.md
 cat document.md | mise exec -- cargo run -- -
@@ -141,6 +145,10 @@ Diagnostics go to stderr. Exit codes are 0 for successful processing, 1 for
 needed changes in check mode or remaining error findings, and 2 for usage or
 processing failures. Warnings alone do not cause exit 1. `fix: false` prevents
 edits but does not suppress configured diagnostics.
+Code formatting is off by default and requires enabled MD013/code-block checking
+and full fence permission. No formatter is downloaded, and ordinary library APIs
+do not execute processes. The explicit process-I/O library entry point is
+`format_with_code_formatters` with `CodeFormatOptions { enabled: true }`.
 
 Reflow joins soft breaks and wraps at ordinary spaces, counting source widths in
 UTF-16 units, including container prefixes. It preserves existing horizontal

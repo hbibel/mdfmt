@@ -134,8 +134,10 @@ conditional repairs. MD051's independent review and regression-first corrections
 are complete. [Convergence and document-specific conflict reporting](../../compatibility/formatting-conflicts.md)
 now add tested interactions, exact bounded histories and retained-priority
 explanations. Their independent batch review found no Important/Critical defects;
-95 reviewer tests and539 complete optimized implementer tests pass. Formatter integration,
-later declarative compatibility and release hardening remain unfinished. The rule
+95 reviewer tests and539 complete optimized implementer tests pass. Optional
+[fenced-code formatter adapters](../../compatibility/code-formatters.md) now have
+tested runner/API/CLI integration; their independent batch review remains pending.
+Later declarative compatibility and release hardening remain unfinished. The rule
 count does not establish complete fixability or parser/option fidelity.
 
 The first useful release includes local declarative configuration,

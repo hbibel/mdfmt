@@ -1,5 +1,4 @@
 mod blank_lines;
-#[cfg(test)]
 mod code_formatters;
 pub mod config;
 mod conflicts;
@@ -51,6 +50,7 @@ mod reflow;
 mod source;
 mod stabilize;
 
+pub use code_formatters::{CodeFormatOptions, format_with_code_formatters};
 pub use diagnostic::{Diagnostic, ProcessingError, Severity};
 pub use edit::AppliedEdit;
 pub use source::{Position, PositionError, Source, utf16_len};

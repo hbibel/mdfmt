@@ -12,7 +12,7 @@ use std::{
 #[command(
     version,
     about = "Native Markdown formatter with configuration-aware MD013 reflow, conditional heading/emphasis/strong styles and MD005/MD007 list indentation, MD034 bare-URL, MD037/MD038/MD039 inline-whitespace, MD044 proper-name, MD046 code-block, MD051 local-fragment and MD052/MD053/MD054 reference/link-style diagnostics, heading/fence/list separators and safe rule fixes",
-    after_help = "MD013 prose reflow, safe MD004 list markers, conditional MD009 trailing-whitespace and MD010 hard-tab repairs, MD011 reversed-link diagnostics, safe MD012 blank-line repairs, MD014 protected-code prompt diagnostics, MD018 missing-ATX-separator diagnostics, MD019/MD021 heading separators, MD020 closed-ATX-separator diagnostics, conditional MD023 heading indentation, MD024 duplicate-heading diagnostics, MD026 heading-punctuation fixes, conditional MD027 quote spacing, MD028 blockquote gap diagnostics, conditional MD029 ordered numbering and MD030 list-marker spacing, MD033 HTML diagnostics, safe MD035 thematic-break styles, MD040 fenced-language, MD042 empty-link and MD045 missing-alt-text diagnostics, safe MD047 final newlines, conditional MD048 fence styles, MD055 table-pipe-style and MD056 table-column diagnostics, conditional MD058 table separators, MD060 table-column-style diagnostics, MD001/MD025/MD041/MD043 heading-structure diagnostics, MD036 emphasis-as-heading and MD059 descriptive-link diagnostics and remaining-violation reporting are supported, including lists and blockquotes. Unsafe syntax is preserved except for approved MD026 suffix edits. Other rule fixes and findings are not implemented; successful processing does not imply full markdownlint compliance."
+    after_help = "All 53 built-ins have native coverage, including diagnostic-only rules and conditional repairs; successful processing does not establish full parser/option parity. Configured MD026 edits and optional --format-code body replacements have explicit preservation contracts. Code formatter failures preserve their original bodies; installed tools are trusted programs, not sandboxed. Without --format-code, no language formatter is executed."
 )]
 struct Args {
     #[arg(long, conflicts_with = "check", help = "Update files in place")]
@@ -30,6 +30,11 @@ struct Args {
     config_pointer: Option<String>,
     #[arg(long, help = "Do not append configuration globs")]
     no_globs: bool,
+    #[arg(
+        long,
+        help = "Opt in to installed rustfmt, gofmt, Black and JSON Prettier code formatters"
+    )]
+    format_code: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -69,11 +74,19 @@ fn process_document(
     original: &str,
     mode: Mode,
     config: &ResolvedConfig,
+    format_code: bool,
     stdout: &mut impl Write,
     stderr: &mut impl Write,
 ) -> io::Result<(String, u8)> {
-    let result = mdfmt::format_with_config(original, &FormatOptions::default(), config)
-        .map_err(io::Error::other)?;
+    let result = mdfmt::format_with_code_formatters(
+        original,
+        &FormatOptions::default(),
+        config,
+        &mdfmt::CodeFormatOptions {
+            enabled: format_code,
+        },
+    )
+    .map_err(io::Error::other)?;
     let source = Source::new(result.output.clone());
     for diagnostic in &result.diagnostics {
         let position = diagnostic
@@ -208,8 +221,16 @@ pub(crate) fn run() -> u8 {
                 let config = resolver
                     .resolve(&resolver.invocation().join("stdin"))
                     .map_err(io::Error::other)?;
-                return process_document(&path, &text, mode, &config, &mut stdout, &mut stderr)
-                    .map(|(_, code)| code);
+                return process_document(
+                    &path,
+                    &text,
+                    mode,
+                    &config,
+                    args.format_code,
+                    &mut stdout,
+                    &mut stderr,
+                )
+                .map(|(_, code)| code);
             }
             let snapshot = read_input(&path)?;
             if mode == Mode::Write {
@@ -224,6 +245,7 @@ pub(crate) fn run() -> u8 {
                 &snapshot.text,
                 mode,
                 &resolver.resolve(&path).map_err(io::Error::other)?,
+                args.format_code,
                 &mut stdout,
                 &mut stderr,
             )?;
