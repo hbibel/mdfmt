@@ -17,6 +17,7 @@ static START: LazyLock<Regex> = LazyLock::new(|| {
 
 #[derive(Debug)]
 pub struct DocumentConfig {
+    patterns: super::pattern::PatternCache,
     rules: BTreeMap<String, RuleState>,
     lines: Vec<BTreeSet<String>>,
     directives: Vec<Range<usize>>,
@@ -156,6 +157,7 @@ impl ResolvedConfig {
             }
         }
         Ok(DocumentConfig {
+            patterns: Default::default(),
             rules,
             lines,
             directives: all_directives.into_iter().map(|d| d.span).collect(),
@@ -165,6 +167,17 @@ impl ResolvedConfig {
 }
 
 impl DocumentConfig {
+    pub(crate) fn enabled_anywhere(&self, rule: &str) -> bool {
+        self.lines.iter().any(|rules| rules.contains(rule))
+    }
+    pub(crate) fn pattern(
+        &self,
+        source: &str,
+        flags: super::pattern::PatternFlags,
+        property: &str,
+    ) -> Result<super::pattern::JsPattern, crate::ProcessingError> {
+        self.patterns.get(source, flags, property)
+    }
     pub(crate) fn has_any_line_override(&self, line: usize) -> bool {
         self.line_overrides
             .get(line - 1)

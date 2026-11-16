@@ -462,7 +462,7 @@ fn formatting_pass(
             &before_fragments,
             &before_fragments_parsed,
             &before_fragments_document,
-        )
+        )?
     } else {
         vec![]
     };
@@ -530,7 +530,7 @@ fn formatting_pass(
         .extend(md003::diagnose(&output, &parsed, &document));
     result
         .diagnostics
-        .extend(heading_structure::diagnose(&output, &parsed, &document));
+        .extend(heading_structure::diagnose(&output, &parsed, &document)?);
     result
         .diagnostics
         .extend(md036::diagnose(&output, &parsed, &document));
@@ -678,7 +678,7 @@ fn formatting_pass(
         .extend(md007::diagnose(&output, &parsed, &document));
     result
         .diagnostics
-        .extend(md051::diagnose(&output, &parsed, &document));
+        .extend(md051::diagnose(&output, &parsed, &document)?);
     let mut rejected = md005::evaluate(&output, &parsed, &document).conflicts;
     rejected.extend(md007::evaluate(&output, &parsed, &document).conflicts);
     rejected.extend(blank_lines::evaluate(&output, &parsed, &document).conflicts);

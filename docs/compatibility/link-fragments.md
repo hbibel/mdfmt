@@ -27,8 +27,10 @@ duplicated. Metadata, code and nonlocal URLs do not create local fragment findin
 
 Encoded exact identity and raw case-insensitive identity remain separate, matching
 the pinned source rather than blindly decoding URLs. `ignore_case` suppresses only
-the pinned case-only finding, not missing targets. Nonempty `ignored_pattern`
-retains the explicit unsupported-setting error until later JavaScript-regex work.
+the pinned case-only finding, not missing targets. Custom `ignored_pattern` now
+uses bounded native unflagged ECMAScript matching on the fragment without `#`;
+matching destinations receive neither findings nor conditional case repairs.
+See [pattern evidence and limits](config-patterns.md).
 
 Diagnostics cover single-line links/definitions and retain exact source context.
 Multiline owners have no context and use a zero-width span at their physical line

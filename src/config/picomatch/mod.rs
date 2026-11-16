@@ -56,7 +56,7 @@ impl Pattern {
     }
 }
 
-fn regex_units(source: &str) -> Vec<u32> {
+pub(crate) fn regex_units(source: &str) -> Vec<u32> {
     let input: Vec<_> = source.encode_utf16().collect();
     let mut output = Vec::with_capacity(input.len());
     let mut index = 0;

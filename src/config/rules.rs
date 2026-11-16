@@ -103,31 +103,36 @@ impl RuleConfig {
                         "value violates the pinned rule option schema",
                     ));
                 }
-                if matches!(key.as_str(), "front_matter_title" | "ignored_pattern")
-                    && !definitions.iter().any(|def| {
-                        parameter == &def["default"]
-                            || parameter == &def["sourceDefault"]
-                            || parameter.as_str() == Some("")
-                    })
-                {
-                    return Err(ConfigError::new(
-                        "unsupported-rule-pattern",
-                        property,
-                        "custom JavaScript regular expressions are deferred",
-                    ));
+                if matches!(key.as_str(), "front_matter_title" | "ignored_pattern") {
+                    super::pattern::JsPattern::compile(
+                        parameter.as_str().unwrap(),
+                        super::pattern::PatternFlags {
+                            unicode: false,
+                            ignore_case: key == "front_matter_title",
+                        },
+                        &property,
+                    )?;
                 }
                 if key == "headings"
-                    && parameter.as_array().is_some_and(|items| {
-                        items
-                            .iter()
-                            .any(|item| item.as_str().is_some_and(|s| s.starts_with('%')))
-                    })
+                    && let Some(items) = parameter.as_array()
                 {
-                    return Err(ConfigError::new(
-                        "unsupported-rule-pattern",
-                        property,
-                        "custom JavaScript regular expressions are deferred",
-                    ));
+                    for (index, item) in items.iter().enumerate() {
+                        let Some(item) = item.as_str().filter(|item| item.starts_with('%')) else {
+                            continue;
+                        };
+                        let text = item
+                            .trim_start_matches(['%', '#'])
+                            .trim_start_matches(super::js_space);
+                        super::pattern::JsPattern::compile(
+                            text,
+                            super::pattern::PatternFlags {
+                                unicode: true,
+                                ignore_case: options.get("match_case").and_then(Value::as_bool)
+                                    != Some(true),
+                            },
+                            &format!("{property}[{index}]"),
+                        )?;
+                    }
                 }
                 if key == "punctuation"
                     && targets.contains(&"MD036")

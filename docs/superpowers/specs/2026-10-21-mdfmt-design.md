@@ -142,7 +142,9 @@ and platform evidence during hardening; unsupported transports preserve code.
 Native [installed-package configuration lookup](../../compatibility/config-packages.md)
 now has a completed independent review and single regression-first correction
 pass: 102 resolver/CLI comparisons and 561 complete optimized tests pass.
-Custom regex compatibility and release hardening remain unfinished. The rule
+Native [rule configuration patterns](../../compatibility/config-patterns.md) now
+pass focused and pinned tests; custom front-matter recognition and the combined
+regex batch review remain pending. Release hardening remains unfinished. The rule
 count does not establish complete fixability or parser/option fidelity.
 
 The first useful release includes local declarative configuration,
@@ -460,9 +462,9 @@ Findings from the 2026-11-06 diagnostic batch:
   reproducing either crash. Pinned receipts distinguish upstream errors from
   native safety expectations.
 - MD043 regex-prefixed heading requirements were accepted without an explicit
-  compatibility boundary. They now fail explicitly until compatible JavaScript
-  rule-pattern execution is implemented. Include them in the later regex work,
-  not just front-matter title and fragment patterns.
+  compatibility boundary and were then explicitly deferred. The native pattern
+  batch now implements bounded JavaScript matching for these requirements as well
+  as title and fragment patterns, with pinned flag/UTF-16/source-preservation tests.
 - Default MD041 coverage changes CLI outcomes for untitled prose: enabled
   remaining errors yield exit 1 even when no safe edit exists or `fix: false`.
   This is configured lint behavior, not an operational failure or an instruction

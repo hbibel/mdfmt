@@ -1,6 +1,6 @@
 use crate::{
-    Diagnostic, Source,
-    config::DocumentConfig,
+    Diagnostic, ProcessingError, Source,
+    config::{DocumentConfig, RuleState, pattern::PatternFlags},
     parse::{
         ParsedDocument,
         fragments::{encode_component, fragment_snapshot},
@@ -33,6 +33,24 @@ fn valid_fragment(value: &str, targets: &HashSet<&str>) -> bool {
     })
 }
 
+fn ignored(
+    value: &str,
+    state: &RuleState,
+    document: &DocumentConfig,
+) -> Result<bool, ProcessingError> {
+    let pattern = state
+        .options
+        .get("ignored_pattern")
+        .and_then(|value| value.as_str())
+        .unwrap_or("");
+    if pattern.is_empty() {
+        return Ok(false);
+    }
+    document
+        .pattern(pattern, PatternFlags::default(), "MD051.ignored_pattern")?
+        .is_match(value.strip_prefix('#').unwrap_or(value))
+}
+
 fn same_except_fragment_case(before: &Node, after: &Node) -> bool {
     fn normalize(node: &mut Node) {
         node.position_set(None);
@@ -58,7 +76,7 @@ pub(crate) fn propose(
     source: &Source,
     parsed: &ParsedDocument,
     document: &DocumentConfig,
-) -> Vec<Edit> {
+) -> Result<Vec<Edit>, ProcessingError> {
     if crate::parse::has_uncertain_container_prefixes(source, parsed)
         || !(1..=source.line_count()).any(|line| {
             document
@@ -66,7 +84,7 @@ pub(crate) fn propose(
                 .is_some_and(|state| state.enabled)
         })
     {
-        return vec![];
+        return Ok(vec![]);
     }
     let snapshot = fragment_snapshot(source, parsed);
     let targets: HashSet<_> = snapshot.targets.iter().map(String::as_str).collect();
@@ -130,6 +148,9 @@ pub(crate) fn propose(
         let Some(state) = document.state("MD051", line).filter(|state| state.enabled) else {
             continue;
         };
+        if ignored(&link.value, &state, document)? {
+            continue;
+        }
         if state
             .options
             .get("ignore_case")
@@ -159,7 +180,7 @@ pub(crate) fn propose(
     edits.sort_by_key(|edit| (edit.span.start, edit.span.end));
     edits.dedup();
     if edits.is_empty() {
-        return edits;
+        return Ok(edits);
     }
     let safe = crate::edit::apply_authorized_edits(source, parsed, edits.clone(), &edits)
         .ok()
@@ -169,7 +190,7 @@ pub(crate) fn propose(
             Some(same_except_fragment_case(&parsed.tree, &reparsed.tree))
         })
         .unwrap_or(false);
-    if safe { edits } else { vec![] }
+    Ok(if safe { edits } else { vec![] })
 }
 static LINE_FRAGMENT: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"^#(?:L[0-9]+(?:C[0-9]+)?-L[0-9]+(?:C[0-9]+)?|L[0-9]+)$").unwrap()
@@ -179,13 +200,13 @@ pub(crate) fn diagnose(
     source: &Source,
     parsed: &ParsedDocument,
     document: &DocumentConfig,
-) -> Vec<Diagnostic> {
+) -> Result<Vec<Diagnostic>, ProcessingError> {
     if !(1..=source.line_count()).any(|line| {
         document
             .state("MD051", line)
             .is_some_and(|state| state.enabled)
     }) {
-        return vec![];
+        return Ok(vec![]);
     }
     let snapshot = fragment_snapshot(source, parsed);
     let targets: HashSet<_> = snapshot.targets.iter().map(String::as_str).collect();
@@ -208,6 +229,9 @@ pub(crate) fn diagnose(
         let Some(state) = document.state("MD051", line).filter(|state| state.enabled) else {
             continue;
         };
+        if ignored(&link.value, &state, document)? {
+            continue;
+        }
         let expected = lower.get(&link.value.to_lowercase());
         if expected.is_some_and(|expected| expected.as_str() == link.value)
             || expected.is_some()
@@ -243,5 +267,5 @@ pub(crate) fn diagnose(
             span: Some(span),
         });
     }
-    output
+    Ok(output)
 }

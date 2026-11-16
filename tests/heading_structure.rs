@@ -153,6 +153,11 @@ fn cli_checks_and_writes_preserve_author_owned_title_decisions() {
 }
 
 #[test]
-fn required_heading_patterns_do_not_silently_accept_unimplemented_regexes() {
-    assert!(RuleConfig::from_value(json!({"MD043":{"headings":["% Hello.*"]}})).is_err());
+fn required_heading_patterns_match_text_without_rewriting_headings() {
+    let config = config(json!({"default":false,"MD043":{"headings":["% Hello.*"]}}));
+    for (input, count) in [("# Hello world\n", 0), ("# Goodbye\n", 1)] {
+        let result = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+        assert_eq!(result.output, input);
+        assert_eq!(result.diagnostics.len(), count);
+    }
 }

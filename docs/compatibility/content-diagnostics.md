@@ -13,8 +13,8 @@ replace emphasized text with headings, or invent descriptive link labels.
 - MD041 checks the first content block, configured levels and preamble handling,
   including HTML heading tags. Comments alone do not constitute a preamble.
 - MD043 checks literal heading requirements, case handling, wildcard markers
-  and bounded loops. Regex-prefixed requirements receive an explicit unsupported
-  setting error, pending the roadmap's JavaScript regex compatibility work.
+  and bounded loops. Bounded native regex requirements are now supported in the
+  [configuration-pattern batch](config-patterns.md).
 - MD036 reports root paragraphs consisting of a single plain emphasis or strong
   span, respecting configured trailing punctuation and nested/inline exclusions.
   Punctuation uses a JavaScript character class, including ranges, negation and

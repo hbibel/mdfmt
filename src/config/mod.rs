@@ -3,6 +3,7 @@ mod directives;
 mod glob;
 mod load;
 mod packages;
+pub(crate) mod pattern;
 mod picomatch;
 mod resolve;
 mod rules;

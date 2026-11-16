@@ -1,5 +1,5 @@
 use crate::{
-    Diagnostic, Source,
+    Diagnostic, ProcessingError, Source,
     config::{DocumentConfig, RuleState, js_space},
     md024::{Heading, headings_in},
     parse::{ParsedDocument, RegionKind},
@@ -49,43 +49,44 @@ fn emit(
     }
 }
 
-fn title(source: &Source, parsed: &ParsedDocument, state: &RuleState) -> bool {
+fn title(
+    source: &Source,
+    parsed: &ParsedDocument,
+    state: &RuleState,
+    document: &DocumentConfig,
+    rule: &str,
+) -> Result<bool, ProcessingError> {
     let pattern = state
         .options
         .get("front_matter_title")
         .and_then(|v| v.as_str());
-    if pattern == Some("") {
-        return false;
+    if pattern == Some("") || !document.enabled_anywhere(rule) {
+        return Ok(false);
     }
-    let quoted = pattern != Some(r"^\s*title\s*[:=]");
-    parsed
+    let pattern = document.pattern(
+        pattern.unwrap_or(r#"^\s*"?title"?\s*[:=]"#),
+        crate::config::pattern::PatternFlags {
+            unicode: false,
+            ignore_case: true,
+        },
+        &format!("{rule}.front_matter_title"),
+    )?;
+    for region in parsed
         .regions
         .iter()
         .filter(|r| r.kind == RegionKind::FrontMatter)
-        .any(|region| {
-            source.text()[region.span.clone()]
-                .split(['\r', '\n'])
-                .any(|line| {
-                    let text = line.trim_start_matches(js_space);
-                    let text = if quoted {
-                        text.strip_prefix('"').unwrap_or(text)
-                    } else {
-                        text
-                    };
-                    let Some(prefix) = text.get(..5) else {
-                        return false;
-                    };
-                    if !prefix.eq_ignore_ascii_case("title") {
-                        return false;
-                    }
-                    let text = if quoted {
-                        text[5..].strip_prefix('"').unwrap_or(&text[5..])
-                    } else {
-                        &text[5..]
-                    };
-                    text.trim_start_matches(js_space).starts_with([':', '='])
-                })
-        })
+    {
+        for line in source.text()[region.span.clone()]
+            .replace("\r\n", "\n")
+            .replace('\r', "\n")
+            .split_terminator('\n')
+        {
+            if pattern.is_match(line)? {
+                return Ok(true);
+            }
+        }
+    }
+    Ok(false)
 }
 
 fn html_comment(raw: &str) -> bool {
@@ -113,9 +114,12 @@ fn required(
     headings: &[Heading],
     state: &RuleState,
     output: &mut Vec<Diagnostic>,
-) {
+) -> Result<(), ProcessingError> {
+    if !document.enabled_anywhere("MD043") {
+        return Ok(());
+    }
     let Some(requirements) = state.options.get("headings").and_then(|v| v.as_array()) else {
-        return;
+        return Ok(());
     };
     let requirements: Vec<_> = requirements.iter().filter_map(|v| v.as_str()).collect();
     let match_case = state
@@ -123,11 +127,32 @@ fn required(
         .get("match_case")
         .and_then(|v| v.as_bool())
         .unwrap_or(false);
-    let matches = |actual: &str, expected: &str| {
+    let matches = |actual: &str, expected: &str| -> Result<bool, ProcessingError> {
+        if expected.starts_with('%') {
+            let count = expected
+                .bytes()
+                .take_while(|byte| matches!(byte, b'%' | b'#'))
+                .count();
+            let level = actual.bytes().take_while(|byte| *byte == b'#').count();
+            if count != level {
+                return Ok(false);
+            }
+            let pattern = expected[count..].trim_start_matches(js_space);
+            return document
+                .pattern(
+                    pattern,
+                    crate::config::pattern::PatternFlags {
+                        unicode: true,
+                        ignore_case: !match_case,
+                    },
+                    "MD043.headings",
+                )?
+                .is_match(actual[level..].trim_start_matches(js_space));
+        }
         if match_case {
-            actual == expected
+            Ok(actual == expected)
         } else {
-            actual.to_lowercase() == expected.to_lowercase()
+            Ok(actual.to_lowercase() == expected.to_lowercase())
         }
     };
     let is_loop = |s: &str| !s.is_empty() && s.bytes().all(|b| b == b'^');
@@ -149,7 +174,7 @@ fn required(
         if is_loop(expected) {
             let current = index;
             let next = get_expected(&mut index, true);
-            if matches(&actual, next) {
+            if matches(&actual, next)? {
                 expected = next;
             } else {
                 loops += 1;
@@ -174,19 +199,19 @@ fn required(
                 line,
                 " [Too many loops] [Context: \"Limit: 1000\"]".into(),
             );
-            return;
+            return Ok(());
         }
         match expected {
             "*" => {
                 let next = get_expected(&mut index, true);
-                if !matches(&actual, next) {
+                if !matches(&actual, next)? {
                     fallback = true;
                     index -= 1;
                 }
             }
             "+" => fallback = true,
             "?" => {}
-            _ if matches(&actual, expected) => fallback = false,
+            _ if matches(&actual, expected)? => fallback = false,
             _ if fallback => index -= 1,
             _ => {
                 emit(
@@ -197,7 +222,7 @@ fn required(
                     line,
                     format!(" [Expected: {expected}; Actual: {actual}]"),
                 );
-                return;
+                return Ok(());
             }
         }
     }
@@ -215,13 +240,14 @@ fn required(
             format!(" [Expected: {expected}; Actual: [End of file]]"),
         );
     }
+    Ok(())
 }
 
 pub(crate) fn diagnose(
     source: &Source,
     parsed: &ParsedDocument,
     document: &DocumentConfig,
-) -> Vec<Diagnostic> {
+) -> Result<Vec<Diagnostic>, ProcessingError> {
     let recovered = crate::parse::diagnostic_parse(source);
     let parsed = recovered.as_ref().unwrap_or(parsed);
     let headings = headings_in(source, parsed, None);
@@ -233,7 +259,7 @@ pub(crate) fn diagnose(
         .map_or(0, |r| r.span.start);
     let mut output = vec![];
     if let Some(state) = document.state("MD001", 1) {
-        let mut previous = if title(source, parsed, &state) {
+        let mut previous = if title(source, parsed, &state, document, "MD001")? {
             1
         } else {
             usize::MAX
@@ -262,7 +288,7 @@ pub(crate) fn diagnose(
             .iter()
             .filter(|h| h.level == level && !h.docfx_tab)
             .collect();
-        let has_title = title(source, parsed, &state);
+        let has_title = title(source, parsed, &state, document, "MD025")?;
         let first_is_title = matching.first().is_some_and(|h| {
             nodes.first().is_some_and(|n| {
                 matches!(n, Node::Heading(_))
@@ -289,7 +315,7 @@ pub(crate) fn diagnose(
         }
     }
     if let Some(state) = document.state("MD041", 1)
-        && !title(source, parsed, &state)
+        && !title(source, parsed, &state, document, "MD041")?
     {
         let level = state
             .options
@@ -363,7 +389,7 @@ pub(crate) fn diagnose(
         }
     }
     if let Some(state) = document.state("MD043", 1) {
-        required(source, document, &headings, &state, &mut output);
+        required(source, document, &headings, &state, &mut output)?;
     }
-    output
+    Ok(output)
 }

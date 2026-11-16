@@ -87,11 +87,13 @@ fn definition_and_nested_image_links_keep_source_ownership() {
 }
 
 #[test]
-fn custom_ignored_patterns_are_explicitly_deferred_until_regex_compatibility() {
-    let error =
-        RuleConfig::from_value(json!({"default":false,"MD051":{"ignored_pattern":"^generated-"}}))
-            .unwrap_err();
-    assert_eq!(error.code, "unsupported-rule-pattern");
+fn custom_ignored_patterns_leave_matching_destinations_untouched() {
+    let config = config(json!({"ignored_pattern":"^generated-"}));
+    let input = "[ignored](#generated-anchor) [unresolved](#other)\n";
+    let result = format_with_config(input, &FormatOptions::default(), &config).unwrap();
+    assert_eq!(result.output, input);
+    assert_eq!(result.diagnostics.len(), 1);
+    assert!(result.diagnostics[0].message.contains("unresolved"));
 }
 
 #[test]

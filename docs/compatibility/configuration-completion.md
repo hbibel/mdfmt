@@ -98,7 +98,8 @@ reference versions were not changed.
 ## Deliberate boundaries
 
 - JavaScript configuration and executable extensions remain unsupported. Custom
-  configuration regexes remain later-release work. Installed-package `extends`
+  front-matter recognition remains later-release work; native rule regexes now
+  have [separate evidence](config-patterns.md). Installed-package `extends`
   is implemented in a subsequent batch with explicit local-lookup/selected-format
   boundaries. No npm download is performed by mdfmt.
 - Invalid/unknown configuration is rejected rather than reproducing every parser

@@ -40,12 +40,12 @@ Interfaces:
 - `DocumentConfig::pattern(&self, source: &str, flags: PatternFlags, property: &str) -> Result<JsPattern, ProcessingError>` returns a cheap immutable shared handle from a bounded context-local cache (256 entries/1 MiB source), not a process-global cache.
 - Heading diagnostics and MD051 proposals/diagnostics become fallible where they consume patterns. Propagate errors through callers; preserve ordinary edit origins and independent rule permissions.
 
-- [ ] Write `configured_patterns_control_real_rule_actions`: custom MD001/MD025/MD041 title keys suppress applicable errors; `%` headings enforce case/level/loops; MD051 ignored invalid and wrong-case fragments remain exact while unrelated findings persist; aliases and inline configure/disable variants agree.
-- [ ] Write `rule_patterns_match_pinned_flags_and_utf16`: actual lookaround/backrefs for JS consumers, Kelvin/long-s/astral/lone-surrogate escape distinctions and empty patterns. Pin literal findings and source receipts rather than engine-generated expectations.
-- [ ] Write `pattern_errors_are_transactional_and_recoverable`: invalid syntax/length/nesting, actual deterministic fuel exhaustion, disabled rules not executing hostile patterns, CLI exit2/no output/write and a later independent safe success. Preserve invalid MD036 class errors.
-- [ ] Record source-only pinned cases; run `mise exec -- cargo test --release --test config_patterns` and the native oracle consumer. Expected: existing unsupported-rule-pattern failures, not fixture/schema errors.
-- [ ] Implement bounded JsPattern/cache and replace custom-pattern rejection only for actual supported consumers. Use per-rule flags and exact upstream matching inputs; include ignored MD051 destinations in both diagnose and propose paths.
-- [ ] Run focused pattern/title/fragment/config tests, `node tools/parser-oracle/config-patterns.mjs`, existing content/MD051 native gates, complete optimized suite, fmt/clippy/diff. Expected: literal and pinned findings/actions/idempotence pass; limits return named errors without input changes.
+- [x] Write `configured_patterns_control_real_rule_actions`: custom MD001/MD025/MD041 title keys affect applicable findings; `%` headings enforce case/level/loops; MD051 ignored invalid and wrong-case fragments remain exact while unrelated findings persist; aliases and inline configure/disable variants agree.
+- [x] Write `rule_patterns_match_pinned_flags_and_utf16`: actual lookaround/backrefs for JS consumers, Kelvin/long-s/astral/lone-surrogate escape distinctions and empty patterns. Pin literal findings and source receipts rather than engine-generated expectations.
+- [x] Write `pattern_errors_are_transactional_and_recoverable`: invalid syntax/length/nesting, actual deterministic fuel exhaustion, disabled rules not executing hostile patterns, CLI exit2/no output/write and a later independent safe success. Preserve invalid MD036 class errors.
+- [x] Record source-only pinned cases; run `mise exec -- cargo test --release --test config_patterns` and the native oracle consumer. Expected: existing unsupported-rule-pattern failures, not fixture/schema errors.
+- [x] Implement bounded JsPattern/cache and replace custom-pattern rejection only for actual supported consumers. Use per-rule flags and exact upstream matching inputs; include ignored MD051 destinations in both diagnose and propose paths.
+- [x] Run focused pattern/title/fragment/config tests, `node tools/parser-oracle/config-patterns.mjs`, existing content/MD051 native gates, complete optimized suite, fmt/clippy/diff. Expected: literal and pinned findings/actions/idempotence pass; limits return named errors without input changes.
 - [ ] Commit `feat: support bounded native rule configuration patterns`; task-done with the focused public tests plus heading/fragment/config regressions.
 
 ## Task 2: Configured front-matter recognition throughout formatting
@@ -81,3 +81,19 @@ views, not only the public entry parse. The optional compiled field's prerelease
 source-compatibility cost and partial-prefix coordinate difference are explicit
 builder decisions, not inferred user approval. The package prerequisite is met;
 reuse the existing sibling worktree without a session/configuration move.
+
+Task1 verification: initial three unsupported-rule-pattern RED tests preceded the
+implementation; four public tests and 42 actual source/native CLI comparisons now
+pass. The mixed `%#` prefix case additionally failed before its level-grammar
+correction. Genuine fuel/cache exhaustion, disabled no-execution, original-source
+check/write failure preservation, aliases/inline controls and repeat stability pass.
+One initial complete run stopped at an obsolete deferred-feature assertion; that
+assertion now tests actual match/nonmatch/source preservation. Final complete
+optimized verification passes 565 tests across 76 targets, with fmt/clippy/diff
+clean and prior 554 content/1144 fragment/110 config/53 schema comparisons passing.
+
+Task1 rulings: replace obsolete supported-string rejection tests with actual
+consumer assertions (cost: supported callers no longer get deferred errors), and
+share only the existing non-Unicode source-unit decoder with picomatch (cost:
+helper coupling, not a change to glob compilation/execution). MD036 class-injection
+errors and custom frontMatter deferral remain unchanged. No new dependencies.

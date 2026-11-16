@@ -1,0 +1,593 @@
+[
+  {
+    "id": "MD001-title-^name:",
+    "input": "---\nname: Demo\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^name:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD001",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "MD001-title-^NAME:",
+    "input": "---\nname: Demo\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^NAME:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD001",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "MD001-title-^absent:",
+    "input": "---\nname: Demo\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^absent:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "MD001-title-",
+    "input": "---\nname: Demo\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": ""
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "MD001-title-^([a-z]+)-\\1:",
+    "input": "---\nname-name: Demo\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^([a-z]+)-\\1:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD001",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "MD001-title-(?<=prefix)name:",
+    "input": "---\nprefixname: Demo\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "(?<=prefix)name:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD001",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "MD025-title-^name:",
+    "input": "---\nname: Demo\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^name:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD025",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "MD025-title-^NAME:",
+    "input": "---\nname: Demo\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^NAME:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD025",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "MD025-title-^absent:",
+    "input": "---\nname: Demo\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^absent:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "MD025-title-",
+    "input": "---\nname: Demo\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": ""
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "MD025-title-^([a-z]+)-\\1:",
+    "input": "---\nname-name: Demo\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^([a-z]+)-\\1:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD025",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "MD025-title-(?<=prefix)name:",
+    "input": "---\nprefixname: Demo\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "(?<=prefix)name:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD025",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "MD041-title-^name:",
+    "input": "---\nname: Demo\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^name:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "MD041-title-^NAME:",
+    "input": "---\nname: Demo\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^NAME:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "MD041-title-^absent:",
+    "input": "---\nname: Demo\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^absent:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD041",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "MD041-title-",
+    "input": "---\nname: Demo\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": ""
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD041",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "MD041-title-^([a-z]+)-\\1:",
+    "input": "---\nname-name: Demo\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^([a-z]+)-\\1:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "MD041-title-(?<=prefix)name:",
+    "input": "---\nprefixname: Demo\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "(?<=prefix)name:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-prefix tail-(?<=prefix )tail-false",
+    "input": "# prefix tail\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% (?<=prefix )tail"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-repeat repeat-^(\\w+) \\1$-false",
+    "input": "# repeat repeat\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^(\\w+) \\1$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-K-^k$-false",
+    "input": "# K\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^k$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-K-^k$-true",
+    "input": "# K\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^k$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-ſ-^s$-false",
+    "input": "# ſ\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^s$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-😀-^.$-true",
+    "input": "# 😀\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^.$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-😀-^\\uD83D$-true",
+    "input": "# 😀\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^\\uD83D$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-Title-title-false",
+    "input": "# Title\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% title"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-level-mismatch",
+    "input": "## Title\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% Title"
+        ]
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-mixed-regex-prefix",
+    "input": "## Title\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "%# ^Title$"
+        ]
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-mixed-literal-prefix",
+    "input": "## Title\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "#% Title"
+        ]
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-wildcard-loop",
+    "input": "# Intro\n\n## Item 1\n\n## Item 2\n\n# End\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^Intro$",
+          "^",
+          "%% ^Item [0-9]$",
+          "^",
+          "% ^End$"
+        ]
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "fragment-missing-^missing$",
+    "input": "[link](#missing)\n",
+    "config": {
+      "default": false,
+      "MD051": {
+        "ignored_pattern": "^missing$"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "fragment-missing-^#missing$",
+    "input": "[link](#missing)\n",
+    "config": {
+      "default": false,
+      "MD051": {
+        "ignored_pattern": "^#missing$"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD051",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "fragment-skip-(?<=s)kip",
+    "input": "[link](#skip)\n",
+    "config": {
+      "default": false,
+      "MD051": {
+        "ignored_pattern": "(?<=s)kip"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "fragment-abcabc-^(abc)\\1$",
+    "input": "[link](#abcabc)\n",
+    "config": {
+      "default": false,
+      "MD051": {
+        "ignored_pattern": "^(abc)\\1$"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "fragment-😀-^.$",
+    "input": "[link](#😀)\n",
+    "config": {
+      "default": false,
+      "MD051": {
+        "ignored_pattern": "^.$"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD051",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "fragment-😀-^..$",
+    "input": "[link](#😀)\n",
+    "config": {
+      "default": false,
+      "MD051": {
+        "ignored_pattern": "^..$"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "fragment-😀-^\\uD83D",
+    "input": "[link](#😀)\n",
+    "config": {
+      "default": false,
+      "MD051": {
+        "ignored_pattern": "^\\uD83D"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "fragment-K-^k$",
+    "input": "[link](#K)\n",
+    "config": {
+      "default": false,
+      "MD051": {
+        "ignored_pattern": "^k$"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD051",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "fragment-missing-",
+    "input": "[link](#missing)\n",
+    "config": {
+      "default": false,
+      "MD051": {
+        "ignored_pattern": ""
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD051",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "title-nonunicode-fold",
+    "input": "---\nK: value\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^k:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD041",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "inline-pattern-config",
+    "input": "<!-- markdownlint-configure-file {\"MD043\":{\"headings\":[\"% ^Intro$\"]}} -->\n# Intro\n",
+    "config": {
+      "default": false,
+      "MD043": false
+    },
+    "findings": []
+  },
+  {
+    "id": "inline-fragment-disable",
+    "input": "<!-- markdownlint-disable MD051 -->\n[link](#missing)\n",
+    "config": {
+      "default": false,
+      "MD051": {
+        "ignored_pattern": "^skip$"
+      }
+    },
+    "findings": []
+  }
+]

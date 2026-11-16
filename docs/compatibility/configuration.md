@@ -115,10 +115,11 @@ all directive handling. Full parser-sensitive edge cases need runtime tests.
 
 Rule-specific regular expressions need separate attention: `front_matter_title`
 in MD001/MD025/MD041 and MD051 `ignored_pattern` use native JS RegExp upstream.
-Built-in defaults are supported target behavior. Custom expressions
-are planned for a later release with compatible semantics; until then, emit
-`unsupported-rule-pattern`, naming the rule and parameter, rather than interpreting
-them with a subtly different Rust regex engine.
+Custom expressions, including MD043 regex headings, now use bounded native
+ECMAScript matching with each consumer's pinned flags; see
+[rule pattern evidence](config-patterns.md). Invalid expressions name their
+rule/property, and work exhaustion prevents processing rather than becoming a
+nonmatch. Custom cli2 frontMatter remains a separate pending RE2-style consumer.
 
 For MD001/MD025/MD041, an omitted `front_matter_title` uses source fallback
 `^\s*"?title"?\s*[:=]` with case-insensitive matching, accepting quoted title
@@ -163,8 +164,8 @@ Editor metadata only; it does not select or execute a schema at runtime.
 
 ### config — supported
 
-Rule object, including declarative `extends`. Custom regex parameters have the
-explicit deferred boundary described above.
+Rule object, including declarative `extends` and the bounded native rule-pattern
+parameters described above.
 
 ### customRules — unsupported
 

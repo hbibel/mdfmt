@@ -35,12 +35,12 @@ fn invalid_and_deferred_settings_are_explicit_errors() {
         );
     }
     for value in [
-        json!({"MD041":{"front_matter_title":"custom"}}),
-        json!({"link-fragments":{"ignored_pattern":"foo"}}),
+        json!({"MD041":{"front_matter_title":"["}}),
+        json!({"link-fragments":{"ignored_pattern":"["}}),
     ] {
         assert_eq!(
             RuleConfig::from_value(value).unwrap_err().code,
-            "unsupported-rule-pattern"
+            "invalid-config"
         );
     }
     assert!(RuleConfig::from_value(json!({"MD051":{"ignored_pattern":""}})).is_ok());
