@@ -54,6 +54,34 @@ add("direct-directory-shadow",{},"pkg.json",{"pkg.json/inner.json":rules(24),"no
 add("missing-package",{},"absent-package/config.json");add("invalid-package-json",{},"pkg",{"node_modules/pkg/package.json":"{ broken"});
 for(const extension of ["js","cjs","mjs","node",""]){const target=`config${extension?'.'+extension:''}`;add(`unsupported-${extension||'extensionless'}`,{main:target},"pkg",{[`node_modules/pkg/${target}`]:rules(24)},"unsupported-config-format");}
 
+const reviewInput="\uFEFF# Heading!\r\n";
+function review(id,metadata,reference="pkg",extra={},expected){
+ add(id,metadata,reference,extra);const fixture=cases.at(-1);fixture.nativeInput=reviewInput;if(expected!==undefined)fixture.nativeOutput=expected;
+}
+review("review-exact-export-no-extension",{exports:"./config"});
+review("review-exact-export-no-index",{exports:"./configs"},"pkg",{"node_modules/pkg/configs/index.json":rules(24)});
+review("review-exact-export-no-main",{exports:"./configs"},"pkg",{"node_modules/pkg/configs/package.json":{main:"../config.json"}});
+review("review-removed-folder-export",{exports:{"./configs/":"./rules/"}},"pkg/configs/strict.json",{"node_modules/pkg/rules/strict.json":rules(24)});
+for(const segment of [".","..","%2e","%2e%2e","node_modules","node%5fmodules","%6eode_modules"]){
+ review(`review-invalid-segment-${segment}`,{exports:`./a/${segment}/config.json`},"pkg",{[`node_modules/pkg/a/${segment}/config.json`]:rules(24)});
+}
+for(const encoded of ["%2f","%2F","%5c","%5C"]){
+ review(`review-encoded-separator-${encoded}`,{exports:`./a${encoded}config.json`},"pkg",{[`node_modules/pkg/a${encoded}config.json`]:rules(24)});
+ review(`review-encoded-separator-hard-array-${encoded}`,{exports:[`./a${encoded}config.json`,"./config.json"]},"pkg",{[`node_modules/pkg/a${encoded}config.json`]:rules(24)});
+}
+review("review-invalid-dot-array-fallback",{exports:["./a/./config.json","./config.json"]},"pkg",{".markdownlint.json":{extends:"pkg"},"node_modules/pkg/a/config.json":{default:false,MD026:true},"node_modules/pkg/config.json":{default:false,MD026:false}},reviewInput);
+review("review-empty-string-array-fallback",{exports:["","./config.json"]},"pkg",{},"\uFEFF# Heading\r\n");
+for(const [id,root]of [["null","null"],["array","[]"],["boolean","false"],["number","42"],["string",'"main"']])review(`review-metadata-root-${id}`,{},"pkg",{"node_modules/pkg/package.json":root});
+for(const target of ["./config%2Ejson","./config.json?flavor=strict","./config.json#strict"]){review(`review-url-${target}`,{exports:target},"pkg",{},"\uFEFF# Heading\r\n");}
+review("review-url-decoded-file-wins",{exports:"./config%20strict.json"},"pkg",{".markdownlint.json":{extends:"pkg"},"node_modules/pkg/config strict.json":{default:false,MD026:false},"node_modules/pkg/config%20strict.json":{default:false,MD026:true}},reviewInput);
+review("review-url-pattern-decoding",{exports:{"./*":"./rules/*.json"}},"pkg/strict%20mode",{"node_modules/pkg/rules/strict mode.json":rules(24)},"\uFEFF# Heading\r\n");
+review("review-pattern-invalid-subpath-hard-array",{exports:{"./*": ["./rules/*","./config.json"]}},"pkg/a/../config.json",{"node_modules/pkg/rules/config.json":rules(24)});
+review("review-legacy-file-before-directory",{},"pkg",{".markdownlint.json":{extends:"pkg"},"node_modules/pkg.json":{default:false,MD026:false}},reviewInput);
+review("review-legacy-main-keeps-inference",{main:"config"},"pkg",{},"\uFEFF# Heading\r\n");
+review("review-literal-subpath-keeps-percent",{},"pkg/config%20strict.json",{"node_modules/pkg/config%20strict.json":rules(24)},"\uFEFF# Heading\r\n");
+review("review-literal-subpath-keeps-hash",{},"pkg/config#strict.json",{"node_modules/pkg/config#strict.json":rules(24)},"\uFEFF# Heading\r\n");
+review("review-literal-subpath-keeps-query",{},"pkg/config?strict.json",{"node_modules/pkg/config?strict.json":rules(24)},"\uFEFF# Heading\r\n");
+
 const rows=[];
 for(const fixture of cases){const root=mkdtempSync("/tmp/opencode/mdfmt-config-package-");try{
  for(const [name,contents]of Object.entries(fixture.files)){const file=path.join(root,name);mkdirSync(path.dirname(file),{recursive:true});writeFileSync(file,contents);}
@@ -61,10 +89,10 @@ for(const fixture of cases){const root=mkdtempSync("/tmp/opencode/mdfmt-config-p
  try{source={config:readConfig(config,parsers)};}catch(error){source={error:error.code||error.name};}
  rows.push({...fixture,invocation,source});
  if(!process.argv.includes("--source-only")){
-  const binary=process.env.MDFMT_BINARY||fileURLToPath(new URL("../../target/debug/mdfmt",import.meta.url));const input="# Heading!\n\none two three four five six seven eight nine ten\n";writeFileSync(path.join(root,invocation,"doc.md"),input);
+  const binary=process.env.MDFMT_BINARY||fileURLToPath(new URL("../../target/debug/mdfmt",import.meta.url));const input=fixture.nativeInput||"# Heading!\n\none two three four five six seven eight nine ten\n";const doc=path.join(root,invocation,"doc.md");writeFileSync(doc,input);
   const invoke=()=>spawnSync(binary,["doc.md"],{cwd:path.join(root,invocation),encoding:"utf8",timeout:10000});const first=invoke();
-  if(fixture.nativeError||source.error){assert.equal(first.status,2,`${fixture.id}: ${first.stderr}`);assert.equal(first.stdout,"");assert.ok(first.stderr.includes(fixture.nativeError||"invalid-config"),`${fixture.id}: ${first.stderr}`);}
-  else{assert.equal(first.status,0,`${fixture.id}: ${first.stderr}`);assert.ok(first.stdout.startsWith("# Heading\n\n"));assert.equal(first.stdout.slice(11).trim().split(/\s+/).join(" "),"one two three four five six seven eight nine ten");assert.deepEqual(lint({strings:{doc:first.stdout},config:source.config}).doc,[]);writeFileSync(path.join(root,invocation,"doc.md"),first.stdout);const second=invoke();assert.equal(second.stdout,first.stdout);assert.equal(second.stderr,first.stderr);assert.equal(second.status,first.status);}
+  if(fixture.nativeError||source.error){assert.equal(first.status,2,`${fixture.id}: ${first.stderr}`);assert.equal(first.stdout,"");assert.ok(first.stderr.includes(fixture.nativeError||"invalid-config"),`${fixture.id}: ${first.stderr}`);for(const mode of ["--check","--write"]){const failed=spawnSync(binary,[mode,"doc.md"],{cwd:path.join(root,invocation),encoding:"utf8",timeout:10000});assert.equal(failed.status,2,fixture.id);assert.equal(readFileSync(doc,"utf8"),input,fixture.id);}}
+  else{assert.equal(first.status,0,`${fixture.id}: ${first.stderr}`);if(fixture.nativeOutput!==undefined){assert.equal(first.stdout,fixture.nativeOutput,fixture.id);const check=spawnSync(binary,["--check","doc.md"],{cwd:path.join(root,invocation),encoding:"utf8",timeout:10000});assert.equal(check.status,input===first.stdout?0:1,fixture.id);assert.equal(readFileSync(doc,"utf8"),input);const write=spawnSync(binary,["--write","doc.md"],{cwd:path.join(root,invocation),encoding:"utf8",timeout:10000});assert.equal(write.status,0,fixture.id);assert.equal(readFileSync(doc,"utf8"),fixture.nativeOutput,fixture.id);}else{assert.ok(first.stdout.startsWith("# Heading\n\n"));assert.equal(first.stdout.slice(11).trim().split(/\s+/).join(" "),"one two three four five six seven eight nine ten");}assert.deepEqual(lint({strings:{doc:first.stdout},config:source.config}).doc,[]);writeFileSync(doc,first.stdout);const second=invoke();assert.equal(second.stdout,first.stdout);assert.equal(second.stderr,first.stderr);assert.equal(second.status,first.status);}
  }
 }finally{rmSync(root,{recursive:true,force:true});}}
 const receipt=new URL("../../tests/fixtures/config-packages/cases.json",import.meta.url),serialized=JSON.stringify(rows,null,2)+"\n";

@@ -236,6 +236,52 @@ fn metadata_resolution_matches_all_pinned_source_observations() {
 }
 
 #[test]
+fn reviewed_metadata_selection_preserves_check_write_contracts() {
+    let rows: Value =
+        serde_json::from_str(include_str!("fixtures/config-packages/cases.json")).unwrap();
+    let mut failures = vec![];
+    for row in rows
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|row| row.get("nativeInput").is_some())
+    {
+        let dir = tempfile::tempdir().unwrap();
+        for (name, contents) in row["files"].as_object().unwrap() {
+            put(dir.path(), name, contents.as_str().unwrap());
+        }
+        let input = row["nativeInput"].as_str().unwrap();
+        for mode in ["--check", "--write"] {
+            put(dir.path(), "doc.md", input);
+            let result = Command::new(env!("CARGO_BIN_EXE_mdfmt"))
+                .current_dir(dir.path())
+                .args([mode, "doc.md"])
+                .output()
+                .unwrap();
+            let (status, expected) = if row["source"].get("error").is_some() {
+                (2, input)
+            } else {
+                let expected = row["nativeOutput"].as_str().unwrap();
+                (
+                    i32::from(mode == "--check" && input != expected),
+                    if mode == "--check" { input } else { expected },
+                )
+            };
+            let actual = fs::read_to_string(dir.path().join("doc.md")).unwrap();
+            if result.status.code() != Some(status) || actual != expected {
+                failures.push(format!(
+                    "{} {mode}: status {:?} != {status}, source {actual:?} != {expected:?}; {}",
+                    row["id"],
+                    result.status.code(),
+                    String::from_utf8_lossy(&result.stderr)
+                ));
+            }
+        }
+    }
+    assert!(failures.is_empty(), "{}", failures.join("\n"));
+}
+
+#[test]
 fn package_failures_preserve_inputs_and_never_execute_entrypoints() {
     for kind in ["missing", "javascript", "cycle", "directory"] {
         let dir = tempfile::tempdir().unwrap();

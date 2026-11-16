@@ -166,6 +166,14 @@ impl PackageJson {
             }
         })?;
 
+        if !matches!(cell.borrow_dependent(), BorrowedValue::Object(_)) {
+            return Err(JSONError {
+                path,
+                message: "package metadata must be a JSON object".into(),
+                line: 1,
+                column: 1,
+            });
+        }
         Ok(Self { path, realpath, store: cell })
     }
 }

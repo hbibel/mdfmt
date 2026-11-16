@@ -52,6 +52,7 @@ mod error;
 mod file_system;
 #[cfg(not(target_arch = "wasm32"))]
 mod file_url;
+mod node_exports;
 mod node_path;
 mod options;
 mod package_json;
@@ -422,6 +423,10 @@ impl ResolverImpl {
     ) -> Result<CachedPath, ResolveError> {
         ctx.test_for_infinite_recursion()?;
 
+        if self.options.commonjs {
+            return self.require_without_parse(cached_path, specifier, tsconfig, ctx);
+        }
+
         // enhanced-resolve: parse
         let (parsed, try_fragment_as_path) =
             self.load_parse(cached_path, specifier, tsconfig, ctx)?;
@@ -452,7 +457,11 @@ impl ResolverImpl {
         }
 
         #[cfg(not(target_arch = "wasm32"))]
-        let specifier = file_url::resolve_file_protocol(specifier)?;
+        let specifier = if self.options.commonjs {
+            Cow::Borrowed(specifier)
+        } else {
+            file_url::resolve_file_protocol(specifier)?
+        };
         #[cfg(not(target_arch = "wasm32"))]
         let specifier = specifier.as_ref();
 
@@ -1014,15 +1023,11 @@ impl ResolverImpl {
                     return Ok(self.is_dir(&cached_path, ctx).then(|| cached_path.clone()));
                 }
 
-                // Only load the file if it is targeting a `X/sub/dir`.
-                if specifier != package_name
-                    && !specifier.ends_with('/')
+                if !specifier.ends_with('/')
                     && let Some(path) = self.load_as_file(&cached_path, tsconfig, ctx)?
                 {
                     return Ok(Some(path));
                 }
-                // Otherwise just load the directory.
-                // No modern package manager creates `node_modules/X.js`.
                 if self.is_dir(&cached_path, ctx) {
                     if let Some(path) =
                         self.load_browser_field_or_alias(&cached_path, tsconfig, ctx)?
@@ -1032,9 +1037,6 @@ impl ResolverImpl {
                     if let Some(path) = self.load_as_directory(&cached_path, tsconfig, ctx)? {
                         return Ok(Some(path));
                     }
-                // Still need to try to load the file in case there are path aliases.
-                } else if let Some(path) = self.load_as_file(&cached_path, tsconfig, ctx)? {
-                    return Ok(Some(path));
                 }
             }
         }
@@ -1230,15 +1232,14 @@ impl ResolverImpl {
         &self,
         specifier: &str,
         cached_path: &CachedPath,
-        tsconfig: Option<&TsConfig>,
+        _tsconfig: Option<&TsConfig>,
         ctx: &mut Ctx,
     ) -> ResolveResult {
         // 1. let RESOLVED_PATH = fileURLToPath(MATCH)
         // 2. If the file at RESOLVED_PATH exists, load RESOLVED_PATH as its extension format. STOP
         //
-        // Non-compliant ESM can result in a directory, so directory is tried as well.
-        if let Some(path) = self.load_as_file_or_directory(cached_path, "", tsconfig, ctx)? {
-            return Ok(Some(path));
+        if self.is_file(cached_path, ctx) {
+            return Ok(Some(cached_path.clone()));
         }
 
         // 3. THROW "not found"
@@ -1668,14 +1669,6 @@ impl ResolverImpl {
                             &match_key[pattern_base.len()..match_key.len() - pattern_trailer.len()];
                         best_key = expansion_key;
                     }
-                } else if expansion_key.ends_with('/')
-                    && match_key.starts_with(expansion_key)
-                    && Self::pattern_key_compare(best_key, expansion_key).is_gt()
-                {
-                    // TODO: [DEP0148] DeprecationWarning: Use of deprecated folder mapping "./dist/" in the "exports" field module resolution of the package at xxx/package.json.
-                    best_target = Some(target);
-                    best_match = &match_key[expansion_key.len()..];
-                    best_key = expansion_key;
                 }
             }
         }
@@ -1737,6 +1730,11 @@ impl ResolverImpl {
 
         // 1. If target is a String, then
         if let Some(target) = target.as_string() {
+            if !is_imports {
+                let path =
+                    node_exports::resolve(package_url.path(), target_key, target, pattern_match)?;
+                return Ok(Some(self.cache.value(&path)));
+            }
             // Target string con contain queries or fragments:
             // `"exports": { ".": { "default": "./foo.js?query#fragment" }`
             let parsed = Specifier::parse(target).map_err(ResolveError::Specifier)?;

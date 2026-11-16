@@ -37,12 +37,12 @@ The package adapter does not own parsing, cycle detection or merges.
 
 ## Evidence and implementation
 
-Six native public tests pass, including literal output/idempotence, standalone/
+Seven native public tests pass, including literal output/idempotence, standalone/
 cli2/override key order, package-relative/nested-package chains, exact shadows,
 symlinks, cycles/depth limits, missing references, marker-bearing executable
 rejection and isolated-environment/fresh-resolver controls.
 
-The development-only oracle records 65 actual markdownlint0.42.0/cli2 0.24.0
+The development-only oracle records 102 actual markdownlint0.42.0/cli2 0.24.0
 observations and consumes them in Rust and through the CLI. It checks effective
 configs/key order, formatting, pinned lint results, failures and repeat stability.
 Selected unsupported formats are explicit intentional differences. Initial native
@@ -57,12 +57,30 @@ branches remain unvisited, numeric hard errors do not fall through arrays, and
 all-undefined arrays retain enclosing conditional fallback.
 No on-disk package metadata is rewritten.
 
-Complete optimized verification passes 560 tests across 75 targets. Focused debug
-configuration tests pass 53 tests across seven targets; 110 existing config/
+The independent review found six Important selection defects, with no Critical
+findings. All were reproduced before the single fix pass. Exports now require an
+exact file rather than legacy extension/directory fallback; removed folder maps
+cannot expose blocked subpaths. Raw and encoded invalid segments are checked before
+normalization, with array-fallback error classes preserved. Exports URL filenames
+are decoded and query/fragment components are not appended to native paths. Literal
+CommonJS references keep literal percent/query/hash bytes. Both metadata backends
+require object roots, and legacy file lookup precedes directory fallback. Public
+check/write tests pin exact BOM/CRLF bytes and exit codes across every review row,
+including conflicting configurations that previously caused unwanted edits.
+
+Complete post-review optimized verification passes 561 tests across 75 targets.
+Focused debug configuration tests pass 54 tests across seven targets; 110 existing config/
 selection observations, 53 rule schemas and 755 actual cli2-selection cases pass.
 Root fmt/clippy/diff and the patched vendor files' upstream-style rustfmt check
-are clean. Independent batch review is pending. Custom regex
+are clean after the fixes. The independent review and its single regression-first
+fix pass are complete; no second review was dispatched. Custom regex
 compatibility and release hardening remain separate unfinished roadmap items.
+
+Known conservative mismatches remain for uncommon unknown `#` condition names,
+malformed metadata in otherwise unused nested scopes and overflowing numbers in
+unused metadata fields. These fail closed rather than selecting different rules.
+The review did not elevate them under the Important/Critical-only scope; their
+explicit boundary is not an all-input compatibility endorsement.
 
 ```sh
 mise exec -- cargo test --release --test config_packages

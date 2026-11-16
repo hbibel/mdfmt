@@ -140,7 +140,8 @@ tested runner/API/CLI integration and a completed independent review/fix pass.
 Execution is Unix-only until bounded non-Unix transport receives implementation
 and platform evidence during hardening; unsupported transports preserve code.
 Native [installed-package configuration lookup](../../compatibility/config-packages.md)
-now passes focused resolver/CLI comparisons; independent batch review is pending.
+now has a completed independent review and single regression-first correction
+pass: 102 resolver/CLI comparisons and 561 complete optimized tests pass.
 Custom regex compatibility and release hardening remain unfinished. The rule
 count does not establish complete fixability or parser/option fidelity.
 
@@ -164,13 +165,21 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- The installed-package review reproduced six Important resolver defects with
+  unwanted-write effects: exports extension/directory fallback, removed folder
+  mappings, raw/encoded invalid-target validation and array-error classes,
+  URL decoding/query handling selecting wrong rules, non-object metadata accepted
+  as legacy defaults, and reversed legacy file/directory precedence. No Critical
+  findings were reported. All six received regression-first fixes in one pass;
+  102 source/native CLI cases, 561 complete optimized tests and 54 focused debug
+  config tests pass. Prior 65-case success did not cover these selection boundaries.
 - Installed-package work found that generic caller-scoped resolver defaults do
   not match markdownlint's captured library require: they invent config-local
   imports/self-reference and mishandle top-level null exports, numeric conditional
   keys and terminal conditional null. Native source-backed regressions now cover
   these differences; narrow vendored corrections avoid metadata rewriting or
   falling through blocked exports to a convenient existing config. Complete Node
-  resolution parity is not claimed; batch review is pending.
+  resolution parity is not claimed; batch review and its fix pass are complete.
 - The independent formatter-adapter review reproduced automatic neighboring-plugin
   execution with actual Prettier2.8.8 despite an isolated cwd/no-config flags.
   It also reproduced cleanup exceeding a100ms deadline when seccomp denied group

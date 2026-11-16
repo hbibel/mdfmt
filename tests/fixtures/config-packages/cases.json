@@ -1201,5 +1201,634 @@
         "MD026": true
       }
     }
+  },
+  {
+    "id": "review-exact-export-no-extension",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./config\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-exact-export-no-index",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./configs\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/configs/index.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-exact-export-no-main",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./configs\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/configs/package.json": "{\"main\":\"../config.json\"}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-removed-folder-export",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/configs/strict.json\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"./configs/\":\"./rules/\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/rules/strict.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-invalid-segment-.",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a/./config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a/./config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-invalid-segment-..",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a/../config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a/../config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-invalid-segment-%2e",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a/%2e/config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a/%2e/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-invalid-segment-%2e%2e",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a/%2e%2e/config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a/%2e%2e/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-invalid-segment-node_modules",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a/node_modules/config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a/node_modules/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-invalid-segment-node%5fmodules",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a/node%5fmodules/config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a/node%5fmodules/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-invalid-segment-%6eode_modules",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a/%6eode_modules/config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a/%6eode_modules/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-encoded-separator-%2f",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a%2fconfig.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a%2fconfig.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-encoded-separator-hard-array-%2f",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[\"./a%2fconfig.json\",\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a%2fconfig.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-encoded-separator-%2F",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a%2Fconfig.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a%2Fconfig.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-encoded-separator-hard-array-%2F",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[\"./a%2Fconfig.json\",\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a%2Fconfig.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-encoded-separator-%5c",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a%5cconfig.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a%5cconfig.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-encoded-separator-hard-array-%5c",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[\"./a%5cconfig.json\",\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a%5cconfig.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-encoded-separator-%5C",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./a%5Cconfig.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a%5Cconfig.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-encoded-separator-hard-array-%5C",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[\"./a%5Cconfig.json\",\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a%5Cconfig.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-invalid-dot-array-fallback",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\"}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[\"./a/./config.json\",\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD026\":false}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/a/config.json": "{\"default\":false,\"MD026\":true}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD026": false
+      }
+    }
+  },
+  {
+    "id": "review-empty-string-array-fallback",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[\"\",\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "review-metadata-root-null",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "null",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-metadata-root-array",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "[]",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-metadata-root-boolean",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "false",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-metadata-root-number",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "42",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-metadata-root-string",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "\"main\"",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-url-./config%2Ejson",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./config%2Ejson\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "review-url-./config.json?flavor=strict",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./config.json?flavor=strict\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "review-url-./config.json#strict",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./config.json#strict\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "review-url-decoded-file-wins",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\"}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./config%20strict.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config strict.json": "{\"default\":false,\"MD026\":false}",
+      "node_modules/pkg/config%20strict.json": "{\"default\":false,\"MD026\":true}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD026": false
+      }
+    }
+  },
+  {
+    "id": "review-url-pattern-decoding",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/strict%20mode\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"./*\":\"./rules/*.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/rules/strict mode.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "review-pattern-invalid-subpath-hard-array",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/a/../config.json\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"./*\":[\"./rules/*\",\"./config.json\"]}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/rules/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "review-legacy-file-before-directory",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\"}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg.json": "{\"default\":false,\"MD026\":false}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading!\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD026": false
+      }
+    }
+  },
+  {
+    "id": "review-legacy-main-keeps-inference",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "review-literal-subpath-keeps-percent",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/config%20strict.json\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config%20strict.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "review-literal-subpath-keeps-hash",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/config#strict.json\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config#strict.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "review-literal-subpath-keeps-query",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/config?strict.json\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config?strict.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeInput": "﻿# Heading!\r\n",
+    "nativeOutput": "﻿# Heading\r\n",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
   }
 ]

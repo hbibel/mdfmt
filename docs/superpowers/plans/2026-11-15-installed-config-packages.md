@@ -45,8 +45,8 @@ Interfaces:
 - [x] Run `mise exec -- cargo test --release --test config_packages`. Expected: package-dependent tests fail with current unsupported-config-resolution, not malformed fixtures. Generate source-only oracle receipts, then observe native consumer RED before implementation.
 - [x] Add the pinned dependency/private adapter and replace only the loader's fallback target selection. Explicit options and existing parser/cycle/merge consumption must satisfy literal and source-backed tests; add only source-justified adapter corrections if resolver-library defaults differ.
 - [x] Run focused config/CLI tests, `node tools/parser-oracle/config-packages.mjs`, existing configuration/selection oracles, complete optimized suite, fmt/clippy/diff. Expected: ordinary config/formatting unchanged, source-backed package cases green, no downloads/execution by the application. Unsupported parser/JS formats stay explicit intentional differences.
-- [ ] Update README/contracts/evidence/roadmap without claiming custom-regex/hardening completion; commit `feat: resolve installed declarative configuration packages`, task-done with focused tests and full-suite evidence.
-- [ ] Request one fresh independent review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical findings once regression-first, full verification; retain all rulings/costs before only completed scratch cleanup.
+- [x] Update README/contracts/evidence/roadmap without claiming custom-regex/hardening completion; commit `feat: resolve installed declarative configuration packages`, task-done with focused tests and full-suite evidence.
+- [x] Request one fresh independent review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical findings once regression-first, full verification; retain all rulings/costs before only completed scratch cleanup.
 - [ ] Continue custom JavaScript regex compatibility and release hardening autonomously, retaining branch/worktree without merge/push.
 
 ## Planning check
@@ -64,7 +64,7 @@ existing sibling worktree without a configuration/session move.
 
 ## Implementation rulings
 
-The design retains all seven decisions/costs: four initial builder decisions,
+The design retains the initial seven decisions/costs: four builder decisions,
 adapter-owned home expansion, documented vendoring instead of metadata rewriting,
 and captured-library scope instead of config-local imports/self-reference.
 The generic resolver's missing numeric-key/null distinctions received consuming
@@ -79,3 +79,25 @@ passes 53 tests across seven targets; prior 110 config/selection observations,
 and upstream-style formatting of the six patched vendor source files are clean.
 No existing locked dependency version was upgraded. Independent review follows
 the implementation commit/task-done.
+
+Task1 committed at `e531b3f`; task-done reran all seven config targets successfully.
+One independent review found six Important selection/write defects and no Critical
+findings. It independently reran 53 existing config tests and 65 source cases, not
+a fresh full suite. All six were reproduced before the single correction pass;
+the corpus now contains 102 source observations and seven public tests, including
+exact BOM/CRLF `--check`/`--write` contracts and conflicting-rule selection controls.
+
+Corrections retain exact-file exports, reject removed folder maps, validate raw
+and encoded targets before normalization with correct hard/fallback errors,
+perform exports-only WHATWG URL conversion, keep require identifiers literal,
+require metadata object roots in both backends and restore legacy file-before-
+directory selection. Existing extension/main/index inference outside exports stays
+enabled. Seven public tests and all 102 CLI comparisons pass. Final complete
+optimized verification passes 561 tests across 75 targets; focused debug config
+verification passes 54 tests across seven targets. Root and patched-vendor fmt,
+clippy and diff checks are clean. No second review was dispatched.
+
+The design retains all 18 chronological decisions/costs, including each reviewer
+declined judgment. Uncommon conservative errors for unknown hash conditions,
+unrelated malformed nested metadata and unused overflowing numbers remain explicit
+limits, not silent wrong-rule selection or a universal parity claim.

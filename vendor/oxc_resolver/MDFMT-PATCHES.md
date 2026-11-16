@@ -20,9 +20,22 @@ Local changes:
   fallback. Retain prior invalid/null results across subsequent undefined entries;
   leave all-undefined arrays undefined. Reject primitive targets instead of
   treating them as undefined.
+- Resolve exports to exact files, never extension/main/index fallbacks; remove
+  obsolete folder mappings while retaining exact keys and single-star patterns.
+- Validate raw target/substitution segments before normalization. Invalid targets
+  may fall through arrays; invalid subpaths and encoded separators are hard errors.
+- Use WHATWG file-URL resolution for exports only, decoding filenames and dropping
+  URL query/fragment from the native path. The new `commonjs` option leaves require
+  identifiers literal and disables bundler query/file-URL parsing. The application
+  already depends on the same `url` library; its lock adds no new version here.
+- Require an object metadata root in both backends, and restore legacy
+  LOAD_AS_FILE before LOAD_AS_DIRECTORY even for bare package roots.
 
 These corrections follow Node24's `internal/modules/esm/resolve` target algorithm
 and are exercised through actual pinned markdownlint0.42.0/cli2 0.24.0 observations
 in `tests/config_packages.rs` and `tools/parser-oracle/config-packages.mjs`.
 The application still has intentional local-lookup and selected-format limits;
 this is not a claim of complete Node module resolution.
+The independent package review reproduced the six latter selection defects before
+the single regression-first correction pass. The public effective-config and
+BOM/CRLF check/write consumers now cover 102 source observations.

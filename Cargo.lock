@@ -690,6 +690,7 @@ dependencies = [
  "simdutf8",
  "thiserror",
  "tracing",
+ "url",
  "windows",
 ]
 

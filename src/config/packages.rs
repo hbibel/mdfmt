@@ -28,6 +28,7 @@ pub(crate) fn resolve(config_path: &Path, reference: &str) -> Result<PathBuf, Co
         exports_fields: vec![vec!["exports".into()]],
         imports_fields: vec![],
         package_self: false,
+        commonjs: true,
         symlinks: true,
         node_path: false,
         builtin_modules: true,
@@ -46,7 +47,7 @@ pub(crate) fn resolve(config_path: &Path, reference: &str) -> Result<PathBuf, Co
     });
     resolver
         .resolve(parent, request)
-        .map(|resolution| resolution.full_path())
+        .map(|resolution| resolution.into_path_buf())
         .map_err(|error| {
             ConfigError::invalid(
                 "extends",

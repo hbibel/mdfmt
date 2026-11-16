@@ -81,6 +81,9 @@ pub struct ResolveOptions {
     /// Disable when the referring directory is only an additional lookup root.
     pub package_self: bool,
 
+    /// Treat require inputs as literal CommonJS identifiers, not bundler URLs.
+    pub commonjs: bool,
+
     /// An object which maps extension to extension aliases.
     ///
     /// Default `{}`
@@ -560,6 +563,7 @@ impl Default for ResolveOptions {
             exports_fields: vec![vec!["exports".into()]],
             imports_fields: vec![vec!["imports".into()]],
             package_self: true,
+            commonjs: false,
             extensions: vec![".js".into(), ".json".into(), ".node".into()],
             fallback: vec![],
             fully_specified: false,

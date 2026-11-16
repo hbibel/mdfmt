@@ -114,6 +114,9 @@ version = "2"
 [dependencies.tracing]
 version = "0.1"
 
+[dependencies.url]
+version = "2.5"
+
 [dev-dependencies.criterion2]
 version = "3.0.3"
 default-features = false
