@@ -23,6 +23,8 @@ pub struct Source {
     line_starts: Vec<usize>,
     front_matter_end: Option<usize>,
     front_matter_pattern: Option<crate::config::FrontMatterPattern>,
+    pub(crate) diagnostic:
+        std::sync::OnceLock<Option<std::sync::Arc<crate::parse::ParsedDocument>>>,
 }
 
 impl Source {
@@ -51,6 +53,7 @@ impl Source {
             line_starts,
             front_matter_end: None,
             front_matter_pattern: None,
+            diagnostic: std::sync::OnceLock::new(),
         }
     }
 
@@ -59,9 +62,11 @@ impl Source {
     }
 
     pub(crate) fn set_front_matter_end(&mut self, end: usize) {
+        self.diagnostic.take();
         self.front_matter_end = Some(end);
     }
     pub(crate) fn set_front_matter_pattern(&mut self, pattern: crate::config::FrontMatterPattern) {
+        self.diagnostic.take();
         self.front_matter_pattern = Some(pattern);
     }
     pub(crate) fn metadata_stable(&self, text: &str) -> bool {

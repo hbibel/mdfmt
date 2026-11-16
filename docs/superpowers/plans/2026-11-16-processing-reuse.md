@@ -45,22 +45,23 @@ Interfaces:
 
 - `pipeline::Context<'config>` owns `&'config ResolvedConfig` and at most one `Snapshot`.
 - `Snapshot` owns `Source`, `ParsedDocument` and `DocumentConfig`; these are immutable while borrowed by a phase.
+- Snapshot also memoizes its immutable normalization-authorization batch. Module work is skipped only when all of that module's rules are disabled everywhere in the resolved document; parsing/config validation and fallible enabled consumers remain mandatory.
 - `Context::snapshot(&mut self, text: &str) -> Result<&Snapshot, ProcessingError>` compares complete source bytes. Matching bytes reuse the current snapshot; changed bytes construct configured Source, native parse and directives before replacement. Failed construction must not expose partial state.
 - `parse::diagnostic_parse(&Source) -> Option<Arc<ParsedDocument>>` computes the existing recovered/mapped tree once and shares it read-only. Cache None as well as success. A caller that mutates/consumes a tree must clone explicitly.
 - Source's diagnostic OnceLock starts empty in new/derive/mapped Sources. Internal metadata setters invalidate any existing recovered result; no cache can survive a context mutation.
 - Existing pure public APIs and FormatOptions/ResolvedConfig fields stay unchanged. No process-I/O, dependency or regex-grammar changes belong to this task.
 
-- [ ] Reproduce the unchanged list debug gate with `mise exec -- cargo test --test list_indentation_review admitted_intermediate_targets_keep_linear_memory_in_both_fix_modes`; capture its actual failure or pass. Expected from the prior baseline: deadline failure, not a compile error. Keep the log even if a later isolated run differs.
-- [ ] Run `node tools/parser-oracle/reflow-scaling.mjs` against the current debug binary; preserve all timing/output assertions. Expected from the prior baseline: 500-paragraph deadline failure.
-- [ ] Measure real native parse, diagnostic recovery and directive construction counts/times on those exact inputs using temporary local instrumentation. Record observations and remove throwaway instrumentation before implementation. If repeated work is not material, ledger a narrower measured optimization instead of implementing a speculative cache.
-- [ ] Write `context_reuse_keeps_equal_length_changes_independent`: alternate same-length inputs whose list/heading/HTML/inline directives differ, use distinct configurations, check literal outputs/findings and second-call no edits. Include disabled/enabled MD026 and custom/no-match metadata to expose stale rule/edit authority.
-- [ ] Write `diagnostic_reuse_keeps_metadata_views_independent`: alternate configured/default/nonmatching metadata with BOM/CRLF/astral/tab/HTML/list recovery, assert opaque prefix bytes, visible findings and real physical positions. Run interleaved threads to retain Source's thread-safety contract without sharing mutable permissions.
-- [ ] Write `repeated_diagnostics_keep_original_positions`: one input activates multiple consumers of recovered headings/references/emphasis/HTML/list trees; repeated calls and reordered independent configs must return the same literal diagnostic codes/spans and preserve source bytes.
-- [ ] Run new semantic controls before implementation. Expected: semantic controls pass against the baseline; the existing resource tests are the RED regressions proving the optimization is needed. Do not invent a missing API failure as performance evidence.
-- [ ] Implement Context/Snapshot and per-Source immutable diagnostic reuse, updating borrow/clone sites narrowly. Keep owned snapshots out of the convergence histories and separate from mapped/synthetic views.
-- [ ] Run focused semantic/metadata/pattern/directive/list/heading/reflow tests. Expected: existing outputs/findings/errors and original-source edit reconstruction remain unchanged.
-- [ ] Run the unchanged list debug gate and both `node tools/parser-oracle/reflow-scaling.mjs` / `node tools/parser-oracle/reflow-scaling.mjs --release`. Expected: all original input sizes pass within their original time/memory budgets, with exact expected output. If not, profile the remaining cost and continue this task; do not relax tests.
-- [ ] Run `mise exec -- cargo test --all-targets --jobs 2` and `mise exec -- cargo test --release --all-targets --jobs 2`, fmt/clippy/diff, 280-case metadata/82-case rule-pattern oracles and affected configuration/content/fragment/reflow/literal gates. Expected: complete debug and release receipts with no omitted failing targets.
+- [x] Reproduce the unchanged list debug gate with `mise exec -- cargo test --test list_indentation_review admitted_intermediate_targets_keep_linear_memory_in_both_fix_modes`; capture its actual failure or pass. Expected from the prior baseline: deadline failure, not a compile error. Keep the log even if a later isolated run differs.
+- [x] Run `node tools/parser-oracle/reflow-scaling.mjs` against the current debug binary; preserve all timing/output assertions. Expected from the prior baseline: 500-paragraph deadline failure.
+- [x] Measure real native parse, diagnostic recovery and directive construction counts/times on those exact inputs using temporary local instrumentation. Record observations and remove throwaway instrumentation before implementation. If repeated work is not material, ledger a narrower measured optimization instead of implementing a speculative cache.
+- [x] Write `context_reuse_keeps_equal_length_changes_independent`: alternate same-length inputs whose list/heading/HTML/inline directives differ, use distinct configurations, check literal outputs/findings and second-call no edits. Include disabled/enabled MD026 and custom/no-match metadata to expose stale rule/edit authority.
+- [x] Write `diagnostic_reuse_keeps_metadata_views_independent`: alternate configured/default/nonmatching metadata with BOM/CRLF/astral/tab/HTML/list recovery, assert opaque prefix bytes, visible findings and real physical positions. Run interleaved threads to retain Source's thread-safety contract without sharing mutable permissions.
+- [x] Write `repeated_diagnostics_keep_original_positions`: one input activates multiple consumers of recovered headings/references/emphasis/HTML/list trees; repeated calls and reordered independent configs must return the same literal diagnostic codes/spans and preserve source bytes.
+- [x] Run new semantic controls before implementation. Expected: semantic controls pass against the baseline; the existing resource tests are the RED regressions proving the optimization is needed. Do not invent a missing API failure as performance evidence.
+- [x] Implement Context/Snapshot and per-Source immutable diagnostic reuse, updating borrow/clone sites narrowly. Keep owned snapshots out of the convergence histories and separate from mapped/synthetic views.
+- [x] Run focused semantic/metadata/pattern/directive/list/heading/reflow tests. Expected: existing outputs/findings/errors and original-source edit reconstruction remain unchanged.
+- [x] Run the unchanged list debug gate and both `node tools/parser-oracle/reflow-scaling.mjs` / `node tools/parser-oracle/reflow-scaling.mjs --release`. Expected: all original input sizes pass within their original time/memory budgets, with exact expected output. If not, profile the remaining cost and continue this task; do not relax tests.
+- [x] Run `mise exec -- cargo test --all-targets --jobs 2` and `mise exec -- cargo test --release --all-targets --jobs 2`, fmt/clippy/diff, 280-case metadata/82-case rule-pattern oracles and affected configuration/content/fragment/reflow/literal gates. Expected: complete debug and release receipts with no omitted failing targets.
 - [ ] Commit `perf: reuse immutable processing contexts`; record Task 1 completion with focused resource/consumer evidence.
 - [ ] Request one independent review of this batch with all Review Focus entries and ledger rulings. Fix Important/Critical findings once regression-first, rerun complete verification and retain decisions/costs before closing scratch. Continue Windows transport/corpus/artifact work without merge/push.
 
@@ -81,3 +82,22 @@ justify a narrower optimization by a recorded ruling, not a silent plan rewrite.
 The user already selected autonomous inline execution without routine approval
 questions. This plan keeps that method and bounds the next deliverable; it does
 not authorize publishing, moving configuration or claiming unrun platform evidence.
+
+## Pre-review evidence
+
+Baseline resource failures were reproduced unchanged before implementation. Initial
+reuse passed 65 focused tests but still exceeded the prose budget; the second
+profile identified disabled-module work and justified effective-rule gates.
+All temporary instrumentation is removed. The same 500-paragraph invocation now
+uses six parses/three directive contexts/two diagnostic recoveries instead of
+169/42/10. Snapshot authorization reuse and the module/rule gate mapping are
+explicit builder rulings: costs are one edit vector per current snapshot and a
+mapping that must stay complete as new consumers are added.
+
+The unchanged list resource test passes in 7.2 seconds, debug scaling at
+100/500/1,000 paragraphs in 332/1,930/4,428 ms and optimized scaling in 37/206/495 ms.
+Complete debug and optimized verification each pass 577 tests across 78 targets.
+The 280 metadata/82 rule-pattern/56 property/110 config/554 content/1,144 fragment/
+29 reflow/1,662 literal-style native comparisons pass. Fmt/clippy/diff are clean.
+Commit/task-done then one independent review of this processing batch only;
+the closed regex correction pass at 24b8500 does not receive a second review.

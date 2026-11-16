@@ -123,6 +123,8 @@ pub(crate) fn diagnostic_lists(source: &Source) -> Option<(Source, ParsedDocumen
             offsets = mapped;
         }
     }
-    let parsed = diagnostic_parse(&logical).unwrap_or(parsed);
+    let parsed = diagnostic_parse(&logical)
+        .map(|tree| (*tree).clone())
+        .unwrap_or(parsed);
     Some((logical, parsed, offsets))
 }

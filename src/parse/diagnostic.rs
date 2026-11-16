@@ -3,7 +3,14 @@ use crate::Source;
 use markdown::mdast::Node;
 use std::collections::BTreeSet;
 
-pub(crate) fn diagnostic_parse(source: &Source) -> Option<ParsedDocument> {
+pub(crate) fn diagnostic_parse(source: &Source) -> Option<std::sync::Arc<ParsedDocument>> {
+    source
+        .diagnostic
+        .get_or_init(|| recover(source).map(std::sync::Arc::new))
+        .clone()
+}
+
+fn recover(source: &Source) -> Option<ParsedDocument> {
     let (expanded, expanded_offsets) = expanded_tabs(source);
     let parsed = parse_flow_diagnostics(&expanded).ok()?;
     let mut boundaries = BTreeSet::new();

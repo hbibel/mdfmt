@@ -157,14 +157,14 @@ impl RegionKind {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Region {
     pub span: Range<usize>,
     pub kind: RegionKind,
     pub parent: Option<usize>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct ParsedDocument {
     pub regions: Vec<Region>,
     pub tree: Node,

@@ -170,6 +170,17 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Processing hardening reproduced the unchanged debug resource failures: 4,000
+  list items exceeded the 30-second subprocess budget, and 500 prose paragraphs
+  exceeded ten seconds. Instrumentation measured 169 parses and 42 directive
+  contexts for a 37.7-second prose invocation. Exact current-context/authorization
+  reuse, immutable per-Source diagnostic recovery and disabled-module gates now
+  pass the original list test in 7.2 seconds and prose scaling at 100/500/1,000
+  paragraphs in 0.33/1.93/4.43 seconds. No limits or inputs were reduced. Full
+  debug and optimized verification each pass 577 tests across 78 targets. The
+  same 500-paragraph input now requires six parses and three directive contexts.
+  Independent review of this batch is pending; see
+  [processing reuse evidence](../../compatibility/processing-reuse.md).
 - The regex review reproduced four Important defects, with no Critical finding:
   body edits could change custom metadata recognition and expose its bytes/code
   to later rules/processes; backend Unicode properties missed source-recognized

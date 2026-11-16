@@ -51,7 +51,7 @@ fn findings(source: &Source, parsed: &ParsedDocument, document: &DocumentConfig)
         return vec![];
     }
     let recovered = crate::parse::diagnostic_parse(source);
-    let parsed = recovered.as_ref().unwrap_or(parsed);
+    let parsed = recovered.as_deref().unwrap_or(parsed);
     let base = parsed
         .regions
         .iter()

@@ -170,7 +170,7 @@ fn propose_once(source: &Source, parsed: &ParsedDocument, document: &DocumentCon
         return vec![];
     }
     let diagnostic = diagnostic_parse(source);
-    let selected = pairs(source, diagnostic.as_ref().unwrap_or(parsed));
+    let selected = pairs(source, diagnostic.as_deref().unwrap_or(parsed));
     let anchors = anchors(source, &selected);
     let native = native_pairs(source, parsed);
     let mut groups = vec![];

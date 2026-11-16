@@ -47,7 +47,7 @@ pub(crate) fn diagnose(
     let recovered = diagnostic_parse(source);
     let analysis = reference_analysis(
         source,
-        recovered.as_ref().unwrap_or(parsed),
+        recovered.as_deref().unwrap_or(parsed),
         ReferenceFields {
             uses,
             styles,

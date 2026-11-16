@@ -249,7 +249,7 @@ pub(crate) fn diagnose(
     document: &DocumentConfig,
 ) -> Result<Vec<Diagnostic>, ProcessingError> {
     let recovered = crate::parse::diagnostic_parse(source);
-    let parsed = recovered.as_ref().unwrap_or(parsed);
+    let parsed = recovered.as_deref().unwrap_or(parsed);
     let headings = headings_in(source, parsed, None);
     let nodes = content_nodes(parsed);
     let base = parsed

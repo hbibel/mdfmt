@@ -29,7 +29,7 @@ pub(crate) fn diagnose(
     document: &DocumentConfig,
 ) -> Vec<Diagnostic> {
     let recovered = crate::parse::diagnostic_parse(source);
-    let parsed = recovered.as_ref().unwrap_or(parsed);
+    let parsed = recovered.as_deref().unwrap_or(parsed);
     let definitions = parsed
         .regions
         .iter()

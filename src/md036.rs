@@ -44,7 +44,7 @@ pub(crate) fn diagnose(
     let punctuation =
         punctuation_regex(punctuation).expect("validated punctuation character class");
     let recovered = crate::parse::diagnostic_parse(source);
-    let parsed = recovered.as_ref().unwrap_or(parsed);
+    let parsed = recovered.as_deref().unwrap_or(parsed);
     let base = parsed
         .regions
         .iter()

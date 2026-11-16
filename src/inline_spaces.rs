@@ -31,7 +31,7 @@ pub(crate) fn diagnose(
         return vec![];
     }
     let recovered = diagnostic_parse(source);
-    let analysis = inline_analysis(source, recovered.as_ref().unwrap_or(parsed), fields);
+    let analysis = inline_analysis(source, recovered.as_deref().unwrap_or(parsed), fields);
     let mut output = if fields.bare {
         let display = comment_masked_source(source, parsed);
         md037::diagnose(source, &display, document, &analysis)
