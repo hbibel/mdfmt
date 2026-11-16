@@ -179,7 +179,9 @@ release numbers and ordering relative to other later-release work remain open.
   paragraphs in 0.33/1.93/4.43 seconds. No limits or inputs were reduced. Full
   debug and optimized verification each pass 577 tests across 78 targets. The
   same 500-paragraph input now requires six parses and three directive contexts.
-  Independent review of this batch is pending; see
+  Independent review found no Important/Critical defects and independently passed
+  69 focused tests, the unchanged resource gates and 15 inline-enable/ownership
+  probes; see
   [processing reuse evidence](../../compatibility/processing-reuse.md).
 - The regex review reproduced four Important defects, with no Critical finding:
   body edits could change custom metadata recognition and expose its bytes/code

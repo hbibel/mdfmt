@@ -62,8 +62,8 @@ Interfaces:
 - [x] Run focused semantic/metadata/pattern/directive/list/heading/reflow tests. Expected: existing outputs/findings/errors and original-source edit reconstruction remain unchanged.
 - [x] Run the unchanged list debug gate and both `node tools/parser-oracle/reflow-scaling.mjs` / `node tools/parser-oracle/reflow-scaling.mjs --release`. Expected: all original input sizes pass within their original time/memory budgets, with exact expected output. If not, profile the remaining cost and continue this task; do not relax tests.
 - [x] Run `mise exec -- cargo test --all-targets --jobs 2` and `mise exec -- cargo test --release --all-targets --jobs 2`, fmt/clippy/diff, 280-case metadata/82-case rule-pattern oracles and affected configuration/content/fragment/reflow/literal gates. Expected: complete debug and release receipts with no omitted failing targets.
-- [ ] Commit `perf: reuse immutable processing contexts`; record Task 1 completion with focused resource/consumer evidence.
-- [ ] Request one independent review of this batch with all Review Focus entries and ledger rulings. Fix Important/Critical findings once regression-first, rerun complete verification and retain decisions/costs before closing scratch. Continue Windows transport/corpus/artifact work without merge/push.
+- [x] Commit `perf: reuse immutable processing contexts`; record Task 1 completion with focused resource/consumer evidence.
+- [x] Request one independent review of this batch with all Review Focus entries and ledger rulings. Fix Important/Critical findings once regression-first, rerun complete verification and retain decisions/costs before closing scratch. Continue Windows transport/corpus/artifact work without merge/push.
 
 ## Planning check and builder decisions
 
@@ -101,3 +101,41 @@ The 280 metadata/82 rule-pattern/56 property/110 config/554 content/1,144 fragme
 29 reflow/1,662 literal-style native comparisons pass. Fmt/clippy/diff are clean.
 Commit/task-done then one independent review of this processing batch only;
 the closed regex correction pass at 24b8500 does not receive a second review.
+
+## Independent review closure
+
+Committed at `283af75`. The single independent review found no Important or
+Critical issues, so no correction pass or re-review is needed. It independently
+passed 69 focused optimized tests, the original debug list gate in 6.84 seconds,
+debug prose scaling in 306/1,800/4,184 ms and 15 ownership/inline-enable probes
+(30 byte-preserving CLI checks). It inspected every changed production/test file,
+exact invalidation, fixed config, authorization permission gates, immutable tree
+consumers, metadata setters/mapped views and recovery initialization. No same-cell
+reentrancy, retained cache cycle or unbounded parse history was found.
+
+Retained reviewer-declined rulings and costs:
+
+1. Closed regex fixes remain closed; only unchanged guard/fallibility interactions
+   were inspected. Cost if wrong: any future independent regex defect needs its
+   own evidence, not a disguised second review here.
+2. Optional formatter execution remains Unix-only until the separate transport
+   deliverable. Cost if wrong: other platforms still preserve code with warnings.
+3. Windows runtime, remote CI, corpus/fuzzing and packaged artifacts remain open.
+   Cost if wrong: these Linux results cannot establish roadmap completion.
+4. Existing development Node advisories and reference pins remain unchanged.
+   Cost if wrong: development-tool risk persists; this is not a native runtime
+   dependency or permission to upgrade compatibility references.
+5. Unrelated pre-existing parser/rule defects were not broadly audited.
+   Cost if wrong: finite interaction coverage does not establish universal parity.
+6. Throughput/memory/platform claims remain limited to measured gates and inspected
+   ownership. Cost if wrong: other inputs may need additional measured hardening.
+7. Minor checklist/style polish stays out of scope; none was reported as a
+   consumer-impacting defect. Cost if wrong: cosmetic work remains, not hidden
+   Important findings.
+
+The two implementation rulings above retain their costs: one authorization vector
+per current snapshot, and centralized ownership lists that must remain complete.
+The full 577-test debug/release receipts and temporary profile counts are
+implementer evidence. The reviewer did not claim to rebuild both complete suites
+or concurrently initialize one private Source cache through the public thread test.
+No deferred Minor findings. Keep branch/worktree; no merge, push or publication.

@@ -55,7 +55,12 @@ Both complete debug and optimized suites pass 577 tests across 78 targets.
 Optimized prose scaling passes 100/500/1,000 paragraphs in 37/206/495 ms.
 The 280 metadata, 82 rule-pattern, 56 generated-property, 110 config, 554 content,
 1,144 fragment, 29 reflow and 1,662 literal-style native comparisons pass.
-Independent review is pending; release hardening is not complete.
+Independent review found no Important or Critical defects. It independently passed
+69 focused optimized tests, the unchanged debug list gate, all debug prose scaling
+sizes and 15 ownership/inline-enable probes. It inspected cache invalidation,
+read-only recovery, reentrancy, lifetime and rule mappings; the complete suites
+remain implementer receipts, not a second independent full-suite rebuild.
+Release hardening is not complete.
 
 ```sh
 mise exec -- cargo test --all-targets --jobs 2
