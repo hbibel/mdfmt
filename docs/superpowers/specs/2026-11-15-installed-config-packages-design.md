@@ -19,8 +19,10 @@ absolute paths retain existing handling.
 For fallback resolution, use native `oxc_resolver = 11.24.3` behind a private
 adapter instead of implementing another package/exports grammar. Configure only
 ancestor `node_modules`, main/index and CommonJS extension order `.js`, `.json`,
-`.node`; exports/imports and package self-reference retain applicable metadata
-semantics. Enable default Node24 conditions `node`, `require`, `module-sync`,
+`.node`. Preserve applicable exports metadata, but do not infer referrer-local
+imports/self-reference: markdownlint captures its own library require and merely
+adds config directories to lookup paths. Enable default Node24 conditions
+`node`, `require`, `module-sync`,
 `node-addons`, `default`, respecting metadata key order rather than imposing an
 adapter priority. Disable NODE_PATH, Yarn PnP, aliases, browser fields, tsconfig,
 custom roots and nonstandard directory exports.
@@ -54,13 +56,16 @@ cli2 extends config/override objects in place. Direct temporary-package probes
 using actual pinned readConfig establish main JSON entrypoints, insertion-ordered
 default/require conditions, Node24 module-sync/node-addons conditions, subpath
 patterns and invalid-main→index fallback. A valid first exports-array target that
-names a missing file does not fall through to a later existing target; null
-exports block legacy main. Exact local extensionless files shadow packages in
+names a missing file does not fall through to a later existing target; a null
+exported subpath blocks access, while a top-level null exports field permits
+legacy main/index lookup. Exact local extensionless files shadow packages in
 the upstream probe, but native parsing of extensionless configs remains an
 explicit unsupported-format boundary, not an execution fallback.
 
-These are upstream observations, not a native implementation. The chosen resolver
-must pass a consuming native differential corpus before compatibility is claimed.
+The native consumer now passes 65 source-backed cases, including selected and
+unselected numeric-key targets, arrays and terminal conditional null. The resolver
+is vendored with documented corrections, not a filesystem view that rewrites
+metadata or a replacement package grammar. Independent review is pending.
 
 ## Verification and scope
 
@@ -90,3 +95,12 @@ resolution, custom-regex completion or release hardening follows this batch.
 4. Keep metadata conditions aligned to pinned Node24 defaults, without reading
    arbitrary NODE_OPTIONS/custom conditions. Cost if wrong: custom-condition
    environments need a later explicit compatibility policy.
+5. Keep home expansion in the private adapter so exact native paths never need
+   lossy UTF-8 conversion. Cost if wrong: only the private interface differs from
+   the initially planned already-expanded argument.
+6. Vendor the pinned resolver with explicit Node corrections instead of rewriting
+   metadata through a filesystem shim. Cost if wrong: additional third-party
+   source and patch maintenance, not hidden changes to package identity.
+7. Disable config-local imports and self-reference. Cost if wrong: generic
+   caller-scoped require users cannot assume those semantics; this targets
+   pinned markdownlint's captured library scope.

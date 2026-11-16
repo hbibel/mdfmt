@@ -1,0 +1,1205 @@
+[
+  {
+    "id": "main-json",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "index-json",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 27,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "main-dot-json",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"./config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "invalid-main-index",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"missing.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 27,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "main-directory-index",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"configs\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/configs/index.json": "{\"default\":false,\"MD013\":{\"line_length\":30,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 30,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "main-yaml",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.yaml\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config.yaml": "default: false\nMD013:\n  line_length: 24\n  strict: true\n"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "main-yml",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.yml\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config.yml": "default: false\nMD013:\n  line_length: 24\n  strict: true\n"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "main-toml",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.toml\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config.toml": "default = false\n[MD013]\nline_length = 24\nstrict = true\n"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "main-jsonc",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.jsonc\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config.jsonc": "{\"default\":false,/*pinned*/\"MD013\":{\"line_length\":24,\"strict\":true},}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "subpath-json",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/config.json\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "subpath-extension",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/config\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "scoped",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"@team/config\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/@team/config/package.json": "{\"main\":\"rules.json\"}",
+      "node_modules/@team/config/rules.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "nearer-ancestor",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "work/.markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "work/node_modules/pkg/package.json": "{\"main\":\"rules.json\"}",
+      "work/node_modules/pkg/rules.json": "{\"default\":false,\"MD013\":{\"line_length\":31,\"strict\":true}}"
+    },
+    "invocation": "work",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 31,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "parent-ancestor",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "work/deep/.markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}"
+    },
+    "invocation": "work/deep",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "exports-string",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"index.json\",\"exports\":\"./config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "default-first",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"default\":\"./config.json\",\"require\":\"./index.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "require-first",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"require\":\"./index.json\",\"default\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 27,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "module-sync",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"module-sync\":\"./config.json\",\"require\":\"./index.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "node-addons",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"node-addons\":\"./config.json\",\"require\":\"./index.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "node-first",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"node\":\"./config.json\",\"require\":\"./index.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "ignore-import",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"import\":\"./index.json\",\"require\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "ignore-browser",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"browser\":\"./index.json\",\"default\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "exports-dot",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\".\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "exports-subpath",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/strict\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"./strict\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "exports-pattern",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/configs/strict\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"./configs/*\":\"./rules/*.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/rules/strict.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "exports-specific-pattern",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/configs/strict\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"./*\":\"./general/*.json\",\"./configs/*\":\"./rules/*.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/rules/strict.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/general/configs/strict.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "exports-null-root",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.json\",\"exports\":{\".\":null}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "exports-null-field-legacy",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.json\",\"exports\":null}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "exports-private-subpath",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/index.json\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "exports-array",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[\"./config.json\",\"./index.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "exports-array-missing-first",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[\"./missing.json\",\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "exports-array-invalid-first",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[\"../invalid.json\",\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "exports-array-null-first",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[null,\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "exports-array-empty",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "exports-outside",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"../config.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "exports-invalid-mixed",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\".\":\"./config.json\",\"require\":\"./index.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "exports-numeric-condition",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"0\":\"./config.json\",\"default\":\"./index.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "exports-missing-file",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":\"./absent.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "numeric-nested",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"require\":{\"0\":\"./config.json\",\"default\":\"./index.json\"}}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "numeric-array-hard-error",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[{\"0\":\"./config.json\",\"default\":\"./index.json\"},\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "numeric-unselected-condition",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"browser\":{\"0\":\"./config.json\"},\"default\":\"./index.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 27,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "numeric-unselected-subpath",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\".\":\"./config.json\",\"./unused\":{\"0\":\"./index.json\"}}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "numeric-non-index-leading-zero",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"01\":\"./index.json\",\"default\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "numeric-non-index-max",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"4294967295\":\"./index.json\",\"default\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "numeric-largest-index",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"4294967294\":\"./index.json\",\"default\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "conditional-null-stops",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"require\":null,\"default\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "array-empty-fallback",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[[],\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "array-primitive-fallback",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":[false,\"./config.json\"]}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "array-all-undefined-condition",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"require\":[{\"browser\":\"./index.json\"}],\"default\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "array-error-before-undefined",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"require\":[\"../bad\",{\"browser\":\"./index.json\"}],\"default\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "array-error-before-null",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"exports\":{\"require\":[\"../bad\",null],\"default\":\"./config.json\"}}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "package-relative-chain",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.json\"}",
+      "node_modules/pkg/config.json": "{\"extends\":\"./base.yaml\",\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/base.yaml": "default: false\nMD026: false\n"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD026": true,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        }
+      }
+    }
+  },
+  {
+    "id": "package-package-chain",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.json\"}",
+      "node_modules/pkg/config.json": "{\"extends\":\"shared\",\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/shared/package.json": "{\"main\":\"rules.json\"}",
+      "node_modules/shared/rules.json": "{\"default\":false}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "imports",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"#shared\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "package.json": "{\"name\":\"project\",\"imports\":{\"#shared\":\"./shared.json\"}}",
+      "shared.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "self-reference",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"project/strict\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "package.json": "{\"name\":\"project\",\"exports\":{\"./strict\":\"./shared.json\"}}",
+      "shared.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "exact-local-shadow",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg/config.json\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"index.json\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "relative-extension-fallback",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"./shared\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "shared.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "direct-directory-shadow",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg.json\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "pkg.json/inner.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg.json/package.json": "{\"main\":\"rules.json\"}",
+      "node_modules/pkg.json/rules.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "EISDIR"
+    }
+  },
+  {
+    "id": "missing-package",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"absent-package/config.json\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "invalid-package-json",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{ broken",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}"
+    },
+    "invocation": "",
+    "source": {
+      "error": "ENOENT"
+    }
+  },
+  {
+    "id": "unsupported-js",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.js\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config.js": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeError": "unsupported-config-format",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "unsupported-cjs",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.cjs\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config.cjs": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeError": "unsupported-config-format",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "unsupported-mjs",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.mjs\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config.mjs": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeError": "unsupported-config-format",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "unsupported-node",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config.node\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config.node": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeError": "unsupported-config-format",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  },
+  {
+    "id": "unsupported-extensionless",
+    "files": {
+      ".markdownlint.json": "{\"extends\":\"pkg\",\"MD026\":true}",
+      "node_modules/pkg/package.json": "{\"name\":\"pkg\",\"main\":\"config\"}",
+      "node_modules/pkg/config.json": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}",
+      "node_modules/pkg/index.json": "{\"default\":false,\"MD013\":{\"line_length\":27,\"strict\":true}}",
+      "node_modules/pkg/config": "{\"default\":false,\"MD013\":{\"line_length\":24,\"strict\":true}}"
+    },
+    "nativeError": "unsupported-config-format",
+    "invocation": "",
+    "source": {
+      "config": {
+        "default": false,
+        "MD013": {
+          "line_length": 24,
+          "strict": true
+        },
+        "MD026": true
+      }
+    }
+  }
+]

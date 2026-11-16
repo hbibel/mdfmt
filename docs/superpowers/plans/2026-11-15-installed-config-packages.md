@@ -33,18 +33,18 @@ Files: create `src/config/packages.rs`, `tests/config_packages.rs`, `tests/fixtu
 
 Interfaces:
 
-- `packages::resolve(config_path: &Path, reference: &str) -> Result<PathBuf, ConfigError>` consumes an expanded reference, returns the exact existing path first, otherwise the locally resolved native CommonJS target. Errors carry `extends` plus referring config/reference provenance. No public API expansion is required.
+- `packages::resolve(config_path: &Path, reference: &str) -> Result<PathBuf, ConfigError>` consumes the original reference and owns home expansion, returning the exact existing path first, otherwise the locally resolved native CommonJS target. This preserves native filesystem identity before fallback needs a UTF-8 identifier. Errors carry `extends` plus referring config/reference provenance. No public API expansion is required.
 - Configure Resolver options explicitly: extensions `[.js,.json,.node]`, main_fields `[main]`, main_files `[index]`, modules `[node_modules]`, conditions `[node,require,module-sync,node-addons,default]`, symlinks true, NODE_PATH false, PnP false, no aliases/tsconfig/browser/custom roots. Keep metadata's own branch order.
 - The existing load_rules parser/active-canonical set owns format rejection, recursion and ordered merge. Do not add a parallel config parser or special package merge path.
 - Source-only oracle rows record actual pinned upstream effective configuration or selected failure class for isolated installed-package fixtures; native consumers assert effective MD013/other rule states, ordered behavior, CLI output/status/source preservation and repeated identity. Never execute a target merely to resolve it.
 
-- [ ] Write `installed_main_index_scoped_and_subpath_configs_drive_native_formatting` with literal configs: inherited defaultfalse/MD013width24 plus local MD026true formats prose/headings correctly and settles; nested package overrides select nearest ancestor, YAML/JSONC/TOML explicit targets parse natively.
-- [ ] Write `package_targets_preserve_referring_scope_and_key_order` for package→relative→package chains, standalone inherited-first versus cli2/override in-place positions, direct local file/directory shadows and conditional Unix symlinks. Assert effective alias/tag behavior and exact formatting, not a mirrored resolver expectation.
-- [ ] Write metadata controls for exports string/default-before-require/require-before-default/module-sync/node-addons/pattern/null/array first-valid-missing behavior, imports/self-reference, malformed metadata/targets and invalid-main index fallback. Pin literal selected widths or explicit failures against actual Node24/pinned sources.
-- [ ] Write missing/cyclic/alias/depth-limit and executable-marker CLI tests: exit2, path/property/reference named, original file exact in --check/--write, no JS marker or install side effects. Test NODE_PATH/PnP/browser/TS settings in isolated child environments and fresh resolver objects, never mutate process-global environment during parallel tests.
-- [ ] Run `mise exec -- cargo test --release --test config_packages`. Expected: package-dependent tests fail with current unsupported-config-resolution, not malformed fixtures. Generate source-only oracle receipts, then observe native consumer RED before implementation.
-- [ ] Add the pinned dependency/private adapter and replace only the loader's fallback target selection. Explicit options and existing parser/cycle/merge consumption must satisfy literal and source-backed tests; add only source-justified adapter corrections if resolver-library defaults differ.
-- [ ] Run focused config/CLI tests, `node tools/parser-oracle/config-packages.mjs`, existing configuration/selection oracles, complete optimized suite, fmt/clippy/diff. Expected: ordinary config/formatting unchanged, source-backed package cases green, no downloads/execution by the application. Unsupported parser/JS formats stay explicit intentional differences.
+- [x] Write `installed_main_index_scoped_and_subpath_configs_drive_native_formatting` with literal configs: inherited defaultfalse/MD013width24 plus local MD026true formats prose/headings correctly and settles; nested package overrides select nearest ancestor, YAML/JSONC/TOML explicit targets parse natively.
+- [x] Write `package_targets_preserve_referring_scope_and_key_order` for package→relative→package chains, standalone inherited-first versus cli2/override in-place positions, direct local file/directory shadows and conditional Unix symlinks. Assert effective alias/tag behavior and exact formatting, not a mirrored resolver expectation.
+- [x] Write metadata controls for exports string/default-before-require/require-before-default/module-sync/node-addons/pattern/null/array first-valid-missing behavior, imports/self-reference, malformed metadata/targets and invalid-main index fallback. Pin literal selected widths or explicit failures against actual Node24/pinned sources.
+- [x] Write missing/cyclic/alias/depth-limit and executable-marker CLI tests: exit2, path/property/reference named, original file exact in --check/--write, no JS marker or install side effects. Test NODE_PATH/PnP/browser/TS settings in isolated child environments and fresh resolver objects, never mutate process-global environment during parallel tests.
+- [x] Run `mise exec -- cargo test --release --test config_packages`. Expected: package-dependent tests fail with current unsupported-config-resolution, not malformed fixtures. Generate source-only oracle receipts, then observe native consumer RED before implementation.
+- [x] Add the pinned dependency/private adapter and replace only the loader's fallback target selection. Explicit options and existing parser/cycle/merge consumption must satisfy literal and source-backed tests; add only source-justified adapter corrections if resolver-library defaults differ.
+- [x] Run focused config/CLI tests, `node tools/parser-oracle/config-packages.mjs`, existing configuration/selection oracles, complete optimized suite, fmt/clippy/diff. Expected: ordinary config/formatting unchanged, source-backed package cases green, no downloads/execution by the application. Unsupported parser/JS formats stay explicit intentional differences.
 - [ ] Update README/contracts/evidence/roadmap without claiming custom-regex/hardening completion; commit `feat: resolve installed declarative configuration packages`, task-done with focused tests and full-suite evidence.
 - [ ] Request one fresh independent review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical findings once regression-first, full verification; retain all rulings/costs before only completed scratch cleanup.
 - [ ] Continue custom JavaScript regex compatibility and release hardening autonomously, retaining branch/worktree without merge/push.
@@ -61,3 +61,21 @@ The prior adapter review closed at `de5d61e` with both Important findings fixed
 regression-first, complete optimized554/554 across74targets and all19 decisions
 retained before completed scratch removal. This plan may begin in the same
 existing sibling worktree without a configuration/session move.
+
+## Implementation rulings
+
+The design retains all seven decisions/costs: four initial builder decisions,
+adapter-owned home expansion, documented vendoring instead of metadata rewriting,
+and captured-library scope instead of config-local imports/self-reference.
+The generic resolver's missing numeric-key/null distinctions received consuming
+RED tests before narrow corrections. Both endian metadata backends are patched;
+Linux is the runtime evidence, not a big-endian/platform validation claim.
+
+Pre-review verification: six package tests and 65 actual pinned source/native CLI
+cases pass, including array null/undefined/error distinctions. Complete optimized
+verification passes 560 tests across 75 targets. Focused debug config verification
+passes 53 tests across seven targets; prior 110 config/selection observations,
+53 schemas and 755 actual cli2-selection comparisons pass. Root fmt/clippy/diff
+and upstream-style formatting of the six patched vendor source files are clean.
+No existing locked dependency version was upgraded. Independent review follows
+the implementation commit/task-done.

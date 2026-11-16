@@ -139,7 +139,9 @@ explanations. Their independent batch review found no Important/Critical defects
 tested runner/API/CLI integration and a completed independent review/fix pass.
 Execution is Unix-only until bounded non-Unix transport receives implementation
 and platform evidence during hardening; unsupported transports preserve code.
-Later declarative compatibility and release hardening remain unfinished. The rule
+Native [installed-package configuration lookup](../../compatibility/config-packages.md)
+now passes focused resolver/CLI comparisons; independent batch review is pending.
+Custom regex compatibility and release hardening remain unfinished. The rule
 count does not establish complete fixability or parser/option fidelity.
 
 The first useful release includes local declarative configuration,
@@ -162,6 +164,13 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Installed-package work found that generic caller-scoped resolver defaults do
+  not match markdownlint's captured library require: they invent config-local
+  imports/self-reference and mishandle top-level null exports, numeric conditional
+  keys and terminal conditional null. Native source-backed regressions now cover
+  these differences; narrow vendored corrections avoid metadata rewriting or
+  falling through blocked exports to a convenient existing config. Complete Node
+  resolution parity is not claimed; batch review is pending.
 - The independent formatter-adapter review reproduced automatic neighboring-plugin
   execution with actual Prettier2.8.8 despite an isolated cwd/no-config flags.
   It also reproduced cleanup exceeding a100ms deadline when seccomp denied group

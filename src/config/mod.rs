@@ -2,6 +2,7 @@ mod brace;
 mod directives;
 mod glob;
 mod load;
+mod packages;
 mod picomatch;
 mod resolve;
 mod rules;

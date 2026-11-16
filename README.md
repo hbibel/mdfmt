@@ -140,8 +140,10 @@ for safety limits and intentional policy differences.
 Automatic discovery supports the declarative `.markdownlint-cli2.*` and
 `.markdownlint.*` names in the configuration contract. TOML requires `--config`.
 An explicit config supplies a base and does not disable discovery. JavaScript
-configuration, custom regexes, and package-based `extends` are rejected explicitly;
-filesystem-based `extends` is supported. `fix: false` prevents edits in every mode.
+configuration and custom regexes are rejected explicitly. Filesystem and locally
+installed declarative package `extends` are supported without running Node or
+installing anything; see [package lookup limits](docs/compatibility/config-packages.md).
+`fix: false` prevents edits in every mode.
 
 Diagnostics go to stderr. Exit codes are 0 for successful processing, 1 for
 needed changes in check mode or remaining error findings, and 2 for usage or

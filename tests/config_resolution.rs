@@ -139,7 +139,7 @@ fn errors_name_path_and_unsupported_property() {
         (
             ".markdownlint.json",
             r#"{"extends":"package-name"}"#,
-            "unsupported-config-resolution",
+            "invalid-config",
         ),
         (
             ".markdownlint.json",

@@ -28,10 +28,11 @@ See `rules.json` for all 53 built-in rules and their options.
   positions stay first and previously absent inherited keys append. This
   distinction can change tag/alias application order; both forms have runtime
   regression coverage in the configuration evidence.
-  Bare module/package resolution is deferred: emit
-  `unsupported-config-resolution` in the first release. A later release must
-  resolve already-installed declarative packages using compatible local lookup
-  and package metadata. This does not fetch from npm or use `.npmrc`.
+   Already-installed packages now resolve through local ancestor `node_modules`
+   and applicable package metadata after exact-path lookup; see
+   [package evidence and boundaries](config-packages.md). Missing or blocked
+   references produce `invalid-config` on `extends`. No npm fetch, installation,
+   Node runtime, `.npmrc`, global folder or `NODE_PATH` lookup is performed.
 - Unsupported: `.cjs` / `.mjs`, whether selected automatically or explicitly.
   Emit `unsupported-config-format` with the selected file path. A lower-priority
   JS file shadowed by a declarative file does not need execution or rejection.
@@ -201,7 +202,8 @@ assumed equivalent to native Markdown parsing.
 
 ### modulePaths — unsupported
 
-Non-empty value: `unsupported-executable-feature`; no Node module resolution.
+Non-empty value: `unsupported-executable-feature`. Installed declarative config
+lookup uses the containing file's ancestor directories, not custom module roots.
 
 ### noBanner — supported
 

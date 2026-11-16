@@ -145,22 +145,10 @@ fn extend(
             .as_str()
             .filter(|r| !r.is_empty())
             .ok_or_else(|| {
-                ConfigError::invalid("extends", "expected a non-empty filesystem path").at(path)
+                ConfigError::invalid("extends", "expected a non-empty configuration reference")
+                    .at(path)
             })?;
-        let expanded = expand_home(reference)?;
-        let target = path.parent().unwrap().join(&expanded);
-        if !target.exists()
-            && !expanded.is_absolute()
-            && !reference.starts_with('.')
-            && !reference.starts_with('~')
-        {
-            return Err(ConfigError::new(
-                "unsupported-config-resolution",
-                "extends",
-                format!("installed-package lookup is deferred: {reference}"),
-            )
-            .at(path));
-        }
+        let target = super::packages::resolve(path, reference)?;
         result = load_rules(&target, active)?;
     }
     result.merge(&RuleConfig::from_value(Value::Object(object)).map_err(|e| e.at(path))?);

@@ -1,9 +1,10 @@
 # Native configuration compatibility evidence
 
-This is the current milestone 3 evidence for the first-release declarative
+This records milestone 3 evidence for the first-release declarative
 configuration contract. The earlier [batch record](configuration-evidence.md)
 is historical; its unsupported-extglob lists no longer describe the implementation.
-No production Markdown rule fixes, lint findings or MD013 reflow ship here.
+Subsequent rule/reflow work is documented in the README; later installed-package
+support has [separate evidence](config-packages.md).
 
 Milestone 3 is implemented for that contract. Final local verification passes
 69 application tests and 537 vendored-engine tests, plus every upstream comparison
@@ -97,8 +98,9 @@ reference versions were not changed.
 ## Deliberate boundaries
 
 - JavaScript configuration and executable extensions remain unsupported. Custom
-  configuration regexes and installed-package `extends` are approved later-release
-  work, not milestone 3 blockers. No npm download is performed by mdfmt.
+  configuration regexes remain later-release work. Installed-package `extends`
+  is implemented in a subsequent batch with explicit local-lookup/selected-format
+  boundaries. No npm download is performed by mdfmt.
 - Invalid/unknown configuration is rejected rather than reproducing every parser
   coercion. Missing JSON Pointers are errors. Configuration is cached per invocation,
   not watched for changes.
