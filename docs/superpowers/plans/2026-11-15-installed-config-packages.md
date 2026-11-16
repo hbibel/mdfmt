@@ -47,7 +47,7 @@ Interfaces:
 - [x] Run focused config/CLI tests, `node tools/parser-oracle/config-packages.mjs`, existing configuration/selection oracles, complete optimized suite, fmt/clippy/diff. Expected: ordinary config/formatting unchanged, source-backed package cases green, no downloads/execution by the application. Unsupported parser/JS formats stay explicit intentional differences.
 - [x] Update README/contracts/evidence/roadmap without claiming custom-regex/hardening completion; commit `feat: resolve installed declarative configuration packages`, task-done with focused tests and full-suite evidence.
 - [x] Request one fresh independent review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical findings once regression-first, full verification; retain all rulings/costs before only completed scratch cleanup.
-- [ ] Continue custom JavaScript regex compatibility and release hardening autonomously, retaining branch/worktree without merge/push.
+- [x] Continue custom JavaScript regex compatibility and release hardening autonomously, retaining branch/worktree without merge/push.
 
 ## Planning check
 
@@ -101,3 +101,7 @@ The design retains all 18 chronological decisions/costs, including each reviewer
 declined judgment. Uncommon conservative errors for unknown hash conditions,
 unrelated malformed nested metadata and unused overflowing numbers remain explicit
 limits, not silent wrong-rule selection or a universal parity claim.
+Corrections committed at `89c0c36`; all 18 decisions/costs were retained before
+removing only completed package scratch. Branch `roadmap-completion` and its
+sibling worktree remain preserved, unmerged and unpushed. The next batch is
+`2026-11-16-custom-regex.md`.
