@@ -194,7 +194,7 @@ pub(crate) fn expanded_tabs(source: &Source) -> (Source, Vec<usize>) {
             }
         }
     }
-    (Source::new(expanded), offsets)
+    (source.mapped(expanded, &offsets), offsets)
 }
 
 pub(crate) fn diagnostic_list_parse(
@@ -212,7 +212,7 @@ pub(crate) fn diagnostic_list_parse(
         for marker in invalid {
             masked.replace_range(marker..marker + 1, "x");
         }
-        expanded = Source::new(masked);
+        expanded = expanded.derive(masked);
         parsed = parse(&expanded).ok()?;
     }
 }
@@ -542,10 +542,17 @@ fn parse_with_math(source: &Source, math_flow: bool) -> Result<ParsedDocument, S
             }
         }
     }
-    let front_end = FRONT_MATTER
-        .find(&normalized)
-        .filter(|m| m.start() == 0)
-        .map_or(bom, |m| offsets[m.end()]);
+    let front_end = if let Some(end) = source.front_matter_end() {
+        if end < bom || !text.is_char_boundary(end) {
+            return Err("invalid configured front-matter boundary".into());
+        }
+        end
+    } else {
+        FRONT_MATTER
+            .find(&normalized)
+            .filter(|m| m.start() == 0)
+            .map_or(bom, |m| offsets[m.end()])
+    };
     let mut options = markdown::ParseOptions::gfm();
     options.constructs.math_flow = math_flow;
     options.constructs.math_text = math_flow;

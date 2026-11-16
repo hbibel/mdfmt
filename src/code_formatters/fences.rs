@@ -223,7 +223,7 @@ pub(super) fn validated_output(
         cursor = edit.span.end;
     }
     output.push_str(source.text().get(cursor..)?);
-    let candidate = Source::new(output.clone());
+    let candidate = source.derive(output.clone());
     let reparsed = parse::parse(&candidate).ok()?;
     fn normalize(node: &mut Node, selected: &HashSet<usize>, ordinal: &mut usize) {
         node.position_set(None);

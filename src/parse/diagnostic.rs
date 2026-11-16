@@ -38,7 +38,7 @@ pub(crate) fn diagnostic_parse(source: &Source) -> Option<ParsedDocument> {
         text.push(ch);
         offsets.extend((index + 1..=index + ch.len_utf8()).map(|i| expanded_offsets[i]));
     }
-    let diagnostic = Source::new(text);
+    let diagnostic = source.mapped(text, &offsets);
     let mut parsed = if boundaries.is_empty() {
         parsed
     } else {

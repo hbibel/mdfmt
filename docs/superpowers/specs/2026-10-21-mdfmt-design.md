@@ -143,8 +143,10 @@ Native [installed-package configuration lookup](../../compatibility/config-packa
 now has a completed independent review and single regression-first correction
 pass: 102 resolver/CLI comparisons and 561 complete optimized tests pass.
 Native [rule configuration patterns](../../compatibility/config-patterns.md) now
-pass focused and pinned tests; custom front-matter recognition and the combined
-regex batch review remain pending. Release hardening remains unfinished. The rule
+pass focused and pinned tests. [Custom front-matter recognition](../../compatibility/front-matter.md)
+now preserves metadata across parser/edit/formatter stages; the combined regex
+batch review remains pending. Complete optimized verification passes 570 tests
+across 77 targets. Release hardening remains unfinished. The rule
 count does not establish complete fixability or parser/option fidelity.
 
 The first useful release includes local declarative configuration,
@@ -167,6 +169,13 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Custom metadata work found that Rust regex character classes interpret `&&`
+  and `~~` as set operators, while pinned RE2JS treats those characters literally.
+  Directly compiling the accepted pattern can therefore miss protected metadata
+  and expose it to edits. Expanded source controls reproduced the mismatch before
+  literal/range translation. The 29-case metadata oracle now passes, including
+  RE2JS class-backspace rejection and translated control escapes; no silent backend
+  syntax substitution is accepted as preservation evidence.
 - The installed-package review reproduced six Important resolver defects with
   unwanted-write effects: exports extension/directory fallback, removed folder
   mappings, raw/encoded invalid-target validation and array-error classes,

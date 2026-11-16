@@ -100,7 +100,7 @@ pub(crate) fn propose(
     let safe = apply_edits(source, parsed, edits.clone())
         .ok()
         .and_then(|output| {
-            let candidate = Source::new(output);
+            let candidate = source.derive(output);
             let reparsed = parse(&candidate).ok()?;
             Some(equivalent(source, parsed, &candidate, &reparsed))
         })

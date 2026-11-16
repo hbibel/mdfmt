@@ -185,7 +185,7 @@ pub(crate) fn propose(
     let safe = crate::edit::apply_authorized_edits(source, parsed, edits.clone(), &edits)
         .ok()
         .and_then(|text| {
-            let candidate = Source::new(text);
+            let candidate = source.derive(text);
             let reparsed = parse(&candidate).ok()?;
             Some(same_except_fragment_case(&parsed.tree, &reparsed.tree))
         })

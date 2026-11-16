@@ -286,6 +286,12 @@ pub(crate) fn apply_authorized_edits(
     let layout = std::cell::OnceCell::new();
     let mut expanded = false;
     for edit in &edits {
+        if source
+            .front_matter_end()
+            .is_some_and(|end| edit.span.start < end)
+        {
+            return Err(ProcessingError::ProtectedRegion(edit.span.clone()));
+        }
         if authorized.contains(edit) {
             continue;
         }
@@ -323,9 +329,9 @@ pub(crate) fn apply_authorized_edits(
             cursor = edit.span.end;
         }
         baseline.push_str(&source.text()[cursor..]);
-        let baseline = Source::new(baseline);
+        let baseline = source.derive(baseline);
         let baseline_parsed = crate::parse::parse(&baseline).map_err(ProcessingError::Parse)?;
-        let candidate = Source::new(output.clone());
+        let candidate = source.derive(output.clone());
         let reparsed = crate::parse::parse(&candidate).map_err(ProcessingError::Parse)?;
         if !crate::parse::equivalent(&baseline, &baseline_parsed, &candidate, &reparsed) {
             return Err(ProcessingError::ProtectedRegion(0..source.text().len()));

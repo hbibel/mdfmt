@@ -1,5 +1,6 @@
 mod brace;
 mod directives;
+mod front_matter;
 mod glob;
 mod load;
 mod packages;
@@ -10,6 +11,7 @@ mod rules;
 mod select;
 
 pub use directives::DocumentConfig;
+pub use front_matter::FrontMatterPattern;
 pub use load::CliOptions;
 pub use resolve::{ConfigResolver, ResolvedConfig, ResolvedFile};
 pub use rules::{RuleConfig, RuleState};

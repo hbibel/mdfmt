@@ -1,0 +1,500 @@
+[
+  {
+    "id": "metadata-\"\\n\"-false",
+    "input": "%%%\nname: 😀\n# Secret!\n%%%\n\n# Visible!\n",
+    "pattern": "^%%%\\n[\\s\\S]*?\\n%%%\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%",
+        "name: 😀",
+        "# Secret!",
+        "%%%"
+      ],
+      "normalizedPrefix": "%%%\nname: 😀\n# Secret!\n%%%\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 6
+        }
+      ]
+    }
+  },
+  {
+    "id": "metadata-\"\\n\"-true",
+    "input": "﻿%%%\nname: 😀\n# Secret!\n%%%\n\n# Visible!\n",
+    "pattern": "^%%%\\n[\\s\\S]*?\\n%%%\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%",
+        "name: 😀",
+        "# Secret!",
+        "%%%"
+      ],
+      "normalizedPrefix": "%%%\nname: 😀\n# Secret!\n%%%\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 6
+        }
+      ]
+    }
+  },
+  {
+    "id": "metadata-\"\\r\\n\"-false",
+    "input": "%%%\r\nname: 😀\r\n# Secret!\r\n%%%\r\n\r\n# Visible!\r\n",
+    "pattern": "^%%%\\n[\\s\\S]*?\\n%%%\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%",
+        "name: 😀",
+        "# Secret!",
+        "%%%"
+      ],
+      "normalizedPrefix": "%%%\nname: 😀\n# Secret!\n%%%\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 6
+        }
+      ]
+    }
+  },
+  {
+    "id": "metadata-\"\\r\\n\"-true",
+    "input": "﻿%%%\r\nname: 😀\r\n# Secret!\r\n%%%\r\n\r\n# Visible!\r\n",
+    "pattern": "^%%%\\n[\\s\\S]*?\\n%%%\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%",
+        "name: 😀",
+        "# Secret!",
+        "%%%"
+      ],
+      "normalizedPrefix": "%%%\nname: 😀\n# Secret!\n%%%\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 6
+        }
+      ]
+    }
+  },
+  {
+    "id": "metadata-\"\\r\"-false",
+    "input": "%%%\rname: 😀\r# Secret!\r%%%\r\r# Visible!\r",
+    "pattern": "^%%%\\n[\\s\\S]*?\\n%%%\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%",
+        "name: 😀",
+        "# Secret!",
+        "%%%"
+      ],
+      "normalizedPrefix": "%%%\nname: 😀\n# Secret!\n%%%\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 6
+        }
+      ]
+    }
+  },
+  {
+    "id": "metadata-\"\\r\"-true",
+    "input": "﻿%%%\rname: 😀\r# Secret!\r%%%\r\r# Visible!\r",
+    "pattern": "^%%%\\n[\\s\\S]*?\\n%%%\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%",
+        "name: 😀",
+        "# Secret!",
+        "%%%"
+      ],
+      "normalizedPrefix": "%%%\nname: 😀\n# Secret!\n%%%\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 6
+        }
+      ]
+    }
+  },
+  {
+    "id": "absent",
+    "input": "---\n# Secret!\n---\n\n# Visible!\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "---",
+        "# Secret!",
+        "---",
+        ""
+      ],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "empty",
+    "input": "---\n# Secret!\n---\n\n# Visible!\n",
+    "pattern": "",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "---",
+        "# Secret!",
+        "---",
+        ""
+      ],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "nonmatch",
+    "input": "---\n# Secret!\n---\n\n# Visible!\n",
+    "pattern": "^NOT-PRESENT",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "zero-width",
+    "input": "---\n# Secret!\n---\n\n# Visible!\n",
+    "pattern": "^",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": "",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "nonprefix",
+    "input": "%%%\nname: value\n%%%\n\n# Visible!\n",
+    "pattern": "name:",
+    "coordinateDifference": true,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "partial-line",
+    "input": "%%%\nname: value\n%%%\n\n# Visible!\n",
+    "pattern": "^%%%",
+    "coordinateDifference": true,
+    "source": {
+      "metadata": [
+        "%%%"
+      ],
+      "normalizedPrefix": "%%%",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 6
+        }
+      ]
+    }
+  },
+  {
+    "id": "ascii-space",
+    "input": "%%%\nname: value\n%%%\n\n# Visible!\n",
+    "pattern": "^%%%\\s+",
+    "coordinateDifference": true,
+    "source": {
+      "metadata": [
+        "%%%"
+      ],
+      "normalizedPrefix": "%%%\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "unicode-space-not-re2",
+    "input": "%%% \n# Visible!\n",
+    "pattern": "^%%%\\s+",
+    "coordinateDifference": true,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "unicode-property",
+    "input": "%%%Title\n# Visible!\n",
+    "pattern": "^%%%\\p{L}+\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%Title"
+      ],
+      "normalizedPrefix": "%%%Title\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "lookahead-unsupported",
+    "input": "%%%\nname: value\n%%%\n\n# Visible!\n",
+    "pattern": "(?=%%%)[\\s\\S]*?%%%\\n",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid or unsupported Perl syntax: `(?=`"
+    }
+  },
+  {
+    "id": "lookbehind-unsupported",
+    "input": "%%%\nname: value\n%%%\n\n# Visible!\n",
+    "pattern": "(?<=x)y",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid named capture: `(?<=x)y`"
+    }
+  },
+  {
+    "id": "backreference-unsupported",
+    "input": "%%%\nname: value\n%%%\n\n# Visible!\n",
+    "pattern": "^((a)\\2)",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid escape sequence: `\\2`"
+    }
+  },
+  {
+    "id": "invalid-js",
+    "input": "%%%\nname: value\n%%%\n\n# Visible!\n",
+    "pattern": "[",
+    "coordinateDifference": false,
+    "source": {
+      "error": "SyntaxError",
+      "message": "Invalid regular expression: /[/u: Unterminated character class"
+    }
+  },
+  {
+    "id": "class-ampersands-are-literal",
+    "input": "%%%ab&\n# Visible!\n",
+    "pattern": "^%%%[ab&&]+\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%ab&"
+      ],
+      "normalizedPrefix": "%%%ab&\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "class-tildes-are-literal",
+    "input": "%%%ab~\n# Visible!\n",
+    "pattern": "^%%%[ab~~]+\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%ab~"
+      ],
+      "normalizedPrefix": "%%%ab~\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "class-leading-dash-range",
+    "input": "%%%0\n# Visible!\n",
+    "pattern": "^%%%[--a]+\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%0"
+      ],
+      "normalizedPrefix": "%%%0\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "class-backspace-unsupported",
+    "input": "%%%\b\n# Visible!\n",
+    "pattern": "^%%%[\\b]\\n",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid escape sequence: `\\b`"
+    }
+  },
+  {
+    "id": "control-escape",
+    "input": "%%%\u0001\n# Visible!\n",
+    "pattern": "^%%%\\cA\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%\u0001"
+      ],
+      "normalizedPrefix": "%%%\u0001\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "class-control-escape",
+    "input": "%%%\u0001\n# Visible!\n",
+    "pattern": "^%%%[\\cA]\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%\u0001"
+      ],
+      "normalizedPrefix": "%%%\u0001\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "word-boundary-ascii",
+    "input": "%%%é\n# Visible!\n",
+    "pattern": "^%%%\\Bé\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%é"
+      ],
+      "normalizedPrefix": "%%%é\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "negative-word-boundary-ascii",
+    "input": "%%%a\n# Visible!\n",
+    "pattern": "^%%%\\ba\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%a"
+      ],
+      "normalizedPrefix": "%%%a\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "vertical-tab-control",
+    "input": "%%%\u000b\n# Visible!\n",
+    "pattern": "^%%%\\v\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%\u000b"
+      ],
+      "normalizedPrefix": "%%%\u000b\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "end-anchor-final-newline",
+    "input": "%%%\n",
+    "pattern": "^%%%$",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": []
+    }
+  }
+]

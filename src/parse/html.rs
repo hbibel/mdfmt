@@ -59,7 +59,7 @@ pub(super) fn diagnostic_view(source: &Source, parsed: &ParsedDocument) -> (Sour
             offsets.extend(start + 1..=end);
         }
     }
-    (Source::new(text), offsets)
+    (source.mapped(text, &offsets), offsets)
 }
 
 fn candidates(tree: &Node, base: usize, inherited_table: bool) -> Vec<Candidate> {

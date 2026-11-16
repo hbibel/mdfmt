@@ -153,7 +153,7 @@ fn safe(source: &Source, parsed: &ParsedDocument, edits: &[Edit]) -> bool {
     apply_authorized_edits(source, parsed, edits.to_vec(), edits)
         .ok()
         .is_some_and(|output| {
-            let output = Source::new(output);
+            let output = source.derive(output);
             parse(&output).is_ok_and(|reparsed| equivalent(source, parsed, &output, &reparsed))
         })
 }

@@ -118,7 +118,7 @@ pub(crate) fn diagnostic_lists(source: &Source) -> Option<(Source, ParsedDocumen
             }
             text.push_str(&logical.text()[cursor..]);
             mapped.extend_from_slice(&offsets[cursor + 1..]);
-            let view = Source::new(text);
+            let view = source.mapped(text, &mapped);
             (logical, parsed, _) = diagnostic_list_parse(&view)?;
             offsets = mapped;
         }

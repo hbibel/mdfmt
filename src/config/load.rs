@@ -283,12 +283,10 @@ pub(crate) fn load(
                 }
             }
             "frontMatter" => {
-                return Err(ConfigError::new(
-                    "unsupported-front-matter-pattern",
-                    key,
-                    "custom JavaScript regular expressions are deferred",
-                )
-                .at(path));
+                let pattern = value.as_str().ok_or_else(invalid)?;
+                if !pattern.is_empty() {
+                    super::FrontMatterPattern::new(pattern).map_err(|error| error.at(path))?;
+                }
             }
             "globs" | "ignores" => {
                 if !string_array(value) {

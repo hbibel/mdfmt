@@ -40,9 +40,9 @@ comparisons pass. The former explicit-deferred assertions now test real behavior
 invalid expressions still fail explicitly. Complete optimized verification passes
 565 tests across 76 targets, with fmt/clippy/diff checks clean.
 
-Custom cli2 `frontMatter` recognition is the next task, not implemented by accepting
-rule patterns. Its pinned RE2JS execution is a different contract. Independent
-batch review follows that task; complete ECMAScript/all-input/platform parity and
+Custom cli2 [frontMatter recognition](front-matter.md) is now implemented with a
+separate pinned RE2-style contract. Complete combined verification passes 570 tests
+across 77 targets. Independent batch review is pending; complete ECMAScript/all-input/platform parity and
 release-hardening completion are not claimed.
 
 ```sh

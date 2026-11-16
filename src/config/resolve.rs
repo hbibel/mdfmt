@@ -12,6 +12,7 @@ pub struct ResolvedConfig {
     pub rules: RuleConfig,
     pub fix: bool,
     pub no_inline_config: bool,
+    pub front_matter: Option<super::FrontMatterPattern>,
 }
 
 impl Default for ResolvedConfig {
@@ -20,6 +21,7 @@ impl Default for ResolvedConfig {
             rules: RuleConfig::default(),
             fix: true,
             no_inline_config: false,
+            front_matter: None,
         }
     }
 }
@@ -41,6 +43,7 @@ pub struct ConfigResolver {
     invocation: PathBuf,
     base: CliOptions,
     layers: RefCell<BTreeMap<PathBuf, Layer>>,
+    front_matter: Option<super::FrontMatterPattern>,
 }
 
 pub(crate) fn absolute(base: &Path, path: &Path) -> PathBuf {
@@ -135,10 +138,16 @@ impl ConfigResolver {
             .merge(&layer.options.clone().unwrap_or_default());
         layer.options = Some(base.clone());
         let layers = RefCell::new(BTreeMap::from([(invocation.clone(), layer)]));
+        let front_matter = base
+            .string("frontMatter")
+            .filter(|pattern| !pattern.is_empty())
+            .map(super::FrontMatterPattern::new)
+            .transpose()?;
         Ok(Self {
             invocation,
             base,
             layers,
+            front_matter,
         })
     }
 
@@ -231,6 +240,7 @@ impl ConfigResolver {
                 rules: standalone.unwrap_or(rules),
                 fix: options.boolean("fix"),
                 no_inline_config: options.boolean("noInlineConfig"),
+                front_matter: self.front_matter.clone(),
             },
             ignored,
             directory: group,

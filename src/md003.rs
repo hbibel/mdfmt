@@ -128,7 +128,7 @@ fn safe(source: &Source, parsed: &ParsedDocument, edits: &[Edit]) -> bool {
     crate::edit::apply_authorized_edits(source, parsed, edits.to_vec(), edits)
         .ok()
         .and_then(|output| {
-            let candidate = Source::new(output);
+            let candidate = source.derive(output);
             let reparsed = parse(&candidate).ok()?;
             Some(crate::parse::equivalent_with_heading_styles(
                 source, parsed, &candidate, &reparsed,

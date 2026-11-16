@@ -53,7 +53,7 @@ pub(super) fn recover(source: &Source, parsed: ParsedDocument) -> Result<ParsedD
         text.push(ch);
         offsets.extend(index + 1..=index + ch.len_utf8());
     }
-    let diagnostic = Source::new(text);
+    let diagnostic = source.mapped(text, &offsets);
     let mut recovered = parse_with_math(&diagnostic, true)?;
     let diagnostic_base = recovered
         .regions

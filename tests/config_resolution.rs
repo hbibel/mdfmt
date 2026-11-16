@@ -128,8 +128,8 @@ fn errors_name_path_and_unsupported_property() {
         ),
         (
             ".markdownlint-cli2.jsonc",
-            r#"{"frontMatter":"custom"}"#,
-            "unsupported-front-matter-pattern",
+            r#"{"frontMatter":"["}"#,
+            "invalid-config",
         ),
         (
             ".markdownlint-cli2.jsonc",

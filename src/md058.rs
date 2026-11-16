@@ -153,7 +153,7 @@ pub(crate) fn propose(
     let Ok(output) = apply_authorized_edits(source, parsed, edits.clone(), &edits) else {
         return vec![];
     };
-    let output = Source::new(output);
+    let output = source.derive(output);
     if parse(&output).is_ok_and(|reparsed| equivalent(source, parsed, &output, &reparsed)) {
         edits
     } else {

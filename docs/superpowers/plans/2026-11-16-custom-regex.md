@@ -46,7 +46,7 @@ Interfaces:
 - [x] Record source-only pinned cases; run `mise exec -- cargo test --release --test config_patterns` and the native oracle consumer. Expected: existing unsupported-rule-pattern failures, not fixture/schema errors.
 - [x] Implement bounded JsPattern/cache and replace custom-pattern rejection only for actual supported consumers. Use per-rule flags and exact upstream matching inputs; include ignored MD051 destinations in both diagnose and propose paths.
 - [x] Run focused pattern/title/fragment/config tests, `node tools/parser-oracle/config-patterns.mjs`, existing content/MD051 native gates, complete optimized suite, fmt/clippy/diff. Expected: literal and pinned findings/actions/idempotence pass; limits return named errors without input changes.
-- [ ] Commit `feat: support bounded native rule configuration patterns`; task-done with the focused public tests plus heading/fragment/config regressions.
+- [x] Commit `feat: support bounded native rule configuration patterns`; task-done with the focused public tests plus heading/fragment/config regressions.
 
 ## Task 2: Configured front-matter recognition throughout formatting
 
@@ -61,12 +61,12 @@ Interfaces:
 - `ResolvedConfig::source(&self, text: &str) -> Result<Source, ProcessingError>` selects configured/default parsing context. Source gains private explicit-prefix metadata and a same-origin derive method; transformed views must map its boundary through their existing source-offset tables.
 - Parser uses the explicit boundary when present; fresh Source::new retains current default recognizer. Complete-source candidates inherit context, while genuinely synthetic isolated probes remain fresh. No edit-authority relaxation follows custom recognition.
 
-- [ ] Write `metadata_prefix_boundaries_preserve_original_coordinates` for custom/missing/empty/no-match/zero-width/partial-line patterns, LF/CRLF/CR/BOM/astral source, default-looking Markdown after a custom nonmatch, exact original edit reconstruction and second-call no edits.
-- [ ] Write `metadata_context_survives_all_reparse_stages`: metadata contains rule-sensitive headings/prose/tables/links/code; enabled Markdown repairs and optional controlled formatters affect only the body, preserve prefix bytes and final warning anchors through all active transformations. Include tab-expanded/recovered diagnostic views and recognized metadata HTML directive permissions.
-- [ ] Add actual pinned RE2JS cases for ASCII versus JS whitespace, classes/escapes/anchors/Unicode properties and unsupported lookaround/backrefs. Literal tests must pin no unexpected language formatter launch from metadata and title-pattern recognition of custom metadata.
-- [ ] Run public tests and source/native oracle RED. Expected: unsupported-front-matter-pattern or missing compiled option/context, not parser-fixture mistakes.
-- [ ] Implement FrontMatterPattern compiler/normalization mapping, resolver option, Source inheritance and pipeline propagation. Audit every Source::new: same-document candidate, transformed mapped view or synthetic probe. Fail explicitly on unsupported semantics; never silently restore default parsing after custom no-match.
-- [ ] Run `mise exec -- cargo test --release --test custom_front_matter --test config_patterns` plus affected heading/fragment/config/reflow/code/preservation tests; run new metadata/rule oracles and prior config/content/MD051/reflow/code gates, complete optimized suite, fmt/clippy/diff. Expected: exact protected prefix and original-coordinate edits with unchanged prior defaults; no false all-input/platform guarantee.
+- [x] Write `metadata_prefix_boundaries_preserve_original_coordinates` for custom/missing/empty/no-match/zero-width/partial-line patterns, LF/CRLF/CR/BOM/astral source, default-looking Markdown after a custom nonmatch, exact original edit reconstruction and second-call no edits.
+- [x] Write `metadata_context_survives_all_reparse_stages`: metadata contains rule-sensitive headings/prose/tables/links/code; enabled Markdown repairs and optional controlled formatters affect only the body, preserve prefix bytes and final warning anchors through all active transformations. Include tab-expanded/recovered diagnostic views and recognized metadata HTML directive permissions.
+- [x] Add actual pinned RE2JS cases for ASCII versus JS whitespace, classes/escapes/anchors/Unicode properties and unsupported lookaround/backrefs. Literal tests must pin no unexpected language formatter launch from metadata and title-pattern recognition of custom metadata.
+- [x] Run public tests and source/native oracle RED. Expected: unsupported-front-matter-pattern or missing compiled option/context, not parser-fixture mistakes.
+- [x] Implement FrontMatterPattern compiler/normalization mapping, resolver option, Source inheritance and pipeline propagation. Audit every Source::new: same-document candidate, transformed mapped view or synthetic probe. Fail explicitly on unsupported semantics; never silently restore default parsing after custom no-match.
+- [x] Run `mise exec -- cargo test --release --test custom_front_matter --test config_patterns` plus affected heading/fragment/config/reflow/code/preservation tests; run new metadata/rule oracles and prior config/content/MD051/reflow/code gates, complete optimized suite, fmt/clippy/diff. Expected: exact protected prefix and original-coordinate edits with unchanged prior defaults; no false all-input/platform guarantee.
 - [ ] Update compatibility/README/roadmap and record Important/Critical discoveries; commit `feat: preserve configured front matter across formatting passes`; task-done with focused consumer evidence.
 - [ ] Request one independent batch review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical issues once regression-first, complete suite; retain every ruling/cost before completed scratch removal.
 - [ ] Continue bounded non-Unix formatter transport and remaining release hardening autonomously; preserve branch/worktree without merge/push.
@@ -97,3 +97,25 @@ consumer assertions (cost: supported callers no longer get deferred errors), and
 share only the existing non-Unicode source-unit decoder with picomatch (cost:
 helper coupling, not a change to glob compilation/execution). MD036 class-injection
 errors and custom frontMatter deferral remain unchanged. No new dependencies.
+
+Task1 committed at `6e4c1d7`. Task2 initially failed on the missing compiled API
+and explicit ResolvedConfig field. Five public tests and 29 actual pinned metadata
+cases now pass. Added controls reproduced literal class-set/range mismatches and
+JS-versus-RE2 class-backspace acceptance before corrections. The compiler now
+translates these deliberately rather than exposing metadata through backend syntax.
+Original prefix bytes, actual partial-line coordinates, mapped views, all-default
+rule protection, active body repairs, code-stage no-spawn/success/final-failure
+anchors and idempotence pass.
+
+Source audit: complete-document candidates use derive, transformed diagnostic/tab/
+HTML/list/table views use mapped boundaries, and processing/code stages construct
+configured Sources. Remaining fresh Sources are tests, isolated label/HTML/container/
+restarted-flow probes or coordinate/display-only views (CLI rendering, edit
+composition, directive positions, comment display). No global/thread-local state.
+Generic authorized edits also reject explicit protected-prefix overlap.
+
+Complete pre-review optimized verification passes 570 tests across 77 targets;
+29 metadata/42 rule-pattern/102 package cases and prior 554 content/1144 fragment/
+220 fence-style/1662 code-style/29 reflow/110 config/53 schema comparisons pass.
+Root fmt/clippy/diff checks are clean. No dependency versions changed. Commit/
+task-done then one independent review of the combined regex batch.

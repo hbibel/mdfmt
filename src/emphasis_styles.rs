@@ -144,7 +144,7 @@ fn safe(
     let Ok(output) = apply_authorized_edits(source, parsed, edits.to_vec(), edits) else {
         return false;
     };
-    let candidate = Source::new(output);
+    let candidate = source.derive(output);
     let Ok(reparsed) = parse(&candidate) else {
         return false;
     };
@@ -243,7 +243,7 @@ pub(crate) fn propose(
     if !enabled(source, document) {
         return vec![];
     }
-    let mut current = Source::new(source.text().into());
+    let mut current = source.derive(source.text().into());
     let mut reparsed = None;
     let mut edits = vec![];
     // A marker change can remove the other rule's ASCII-intraword exclusion.
@@ -265,7 +265,7 @@ pub(crate) fn propose(
             return vec![];
         };
         edits = composed;
-        current = Source::new(output);
+        current = current.derive(output);
         let Ok(tree) = parse(&current) else {
             return vec![];
         };

@@ -92,7 +92,7 @@ pub(crate) fn propose(
     let safe = crate::edit::apply_authorized_edits(source, parsed, edits.clone(), &edits)
         .ok()
         .and_then(|output| {
-            let candidate = Source::new(output);
+            let candidate = source.derive(output);
             let reparsed = parse(&candidate).ok()?;
             Some(equivalent_with_thematic_styles(
                 source, parsed, &candidate, &reparsed,

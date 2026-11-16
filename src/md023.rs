@@ -174,7 +174,7 @@ pub(crate) fn propose(
     let safe = crate::edit::apply_authorized_edits(source, parsed, edits.clone(), &edits)
         .ok()
         .and_then(|output| {
-            let candidate = Source::new(output);
+            let candidate = source.derive(output);
             let reparsed = parse(&candidate).ok()?;
             // Heading spans include indentation. Compare all other protected bytes
             // exactly while allowing only the already-selected heading prefix edits.

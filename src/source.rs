@@ -21,6 +21,7 @@ impl std::error::Error for PositionError {}
 pub struct Source {
     text: String,
     line_starts: Vec<usize>,
+    front_matter_end: Option<usize>,
 }
 
 impl Source {
@@ -44,11 +45,34 @@ impl Source {
                 _ => i += 1,
             }
         }
-        Self { text, line_starts }
+        Self {
+            text,
+            line_starts,
+            front_matter_end: None,
+        }
     }
 
     pub fn text(&self) -> &str {
         &self.text
+    }
+
+    pub(crate) fn set_front_matter_end(&mut self, end: usize) {
+        self.front_matter_end = Some(end);
+    }
+    pub(crate) fn front_matter_end(&self) -> Option<usize> {
+        self.front_matter_end
+    }
+    pub(crate) fn derive(&self, text: String) -> Self {
+        let mut derived = Self::new(text);
+        derived.front_matter_end = self.front_matter_end;
+        derived
+    }
+    pub(crate) fn mapped(&self, text: String, offsets: &[usize]) -> Self {
+        let mut derived = Self::new(text);
+        derived.front_matter_end = self
+            .front_matter_end
+            .map(|end| offsets.partition_point(|&offset| offset < end));
+        derived
     }
 
     pub(crate) fn line_count(&self) -> usize {

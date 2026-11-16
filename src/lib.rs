@@ -151,7 +151,7 @@ fn transaction(
                     ProcessingError::WorkLimit("no-fix diagnostic pass cycled".into())
                 }
             })?;
-            let original = Source::new(source.into());
+            let original = config.source(source)?;
             let document = config
                 .document(source)
                 .map_err(ProcessingError::Configuration)?;
@@ -288,7 +288,7 @@ fn formatting_pass(
         deletion_edits = stabilize::compose(source, &deletion_edits, &pass.edits, origins)?;
         current = pass.output;
     }
-    let before_inline = Source::new(current);
+    let before_inline = config.source(&current)?;
     let before_inline_parsed = parse::parse(&before_inline).map_err(ProcessingError::Parse)?;
     let before_inline_document = config
         .document(before_inline.text())
@@ -322,7 +322,7 @@ fn formatting_pass(
             &result.output,
             &origins.iter().cloned().collect::<Vec<_>>(),
         )?;
-        let before_markers = Source::new(result.output.clone());
+        let before_markers = config.source(&result.output)?;
         let before_markers_parsed =
             parse::parse(&before_markers).map_err(ProcessingError::Parse)?;
         let before_markers_document = config
@@ -344,7 +344,7 @@ fn formatting_pass(
             &marker_edits,
         )?;
         result.edits = stabilize::compose(source, &result.edits, &marker_edits, origins)?;
-        let before_style = Source::new(result.output.clone());
+        let before_style = config.source(&result.output)?;
         let before_style_parsed = parse::parse(&before_style).map_err(ProcessingError::Parse)?;
         let before_style_document = config
             .document(before_style.text())
@@ -365,7 +365,7 @@ fn formatting_pass(
             break;
         }
     }
-    let before_fences = Source::new(result.output.clone());
+    let before_fences = config.source(&result.output)?;
     let before_fences_parsed = parse::parse(&before_fences).map_err(ProcessingError::Parse)?;
     let before_fences_document = config
         .document(before_fences.text())
@@ -386,7 +386,7 @@ fn formatting_pass(
         &fence_edits,
     )?;
     result.edits = stabilize::compose(source, &result.edits, &fence_edits, origins)?;
-    let before_separators = Source::new(result.output.clone());
+    let before_separators = config.source(&result.output)?;
     let before_separators_parsed =
         parse::parse(&before_separators).map_err(ProcessingError::Parse)?;
     let before_separators_document = config
@@ -408,7 +408,7 @@ fn formatting_pass(
         &separator_edits,
     )?;
     result.edits = stabilize::compose(source, &result.edits, &separator_edits, origins)?;
-    let before_tables = Source::new(result.output.clone());
+    let before_tables = config.source(&result.output)?;
     let before_tables_parsed = parse::parse(&before_tables).map_err(ProcessingError::Parse)?;
     let before_tables_document = config
         .document(before_tables.text())
@@ -430,7 +430,7 @@ fn formatting_pass(
     )?;
     result.edits = stabilize::compose(source, &result.edits, &table_edits, origins)?;
     // Table separators can make an ATX-to-setext conversion safe in the same call.
-    let before_headings = Source::new(result.output.clone());
+    let before_headings = config.source(&result.output)?;
     let before_headings_parsed = parse::parse(&before_headings).map_err(ProcessingError::Parse)?;
     let before_headings_document = config
         .document(before_headings.text())
@@ -451,7 +451,7 @@ fn formatting_pass(
         &heading_edits,
     )?;
     result.edits = stabilize::compose(source, &result.edits, &heading_edits, origins)?;
-    let before_fragments = Source::new(result.output.clone());
+    let before_fragments = config.source(&result.output)?;
     let before_fragments_parsed =
         parse::parse(&before_fragments).map_err(ProcessingError::Parse)?;
     let before_fragments_document = config
@@ -473,7 +473,7 @@ fn formatting_pass(
         &fragment_edits,
     )?;
     result.edits = stabilize::compose(source, &result.edits, &fragment_edits, origins)?;
-    let before_eof = Source::new(result.output.clone());
+    let before_eof = config.source(&result.output)?;
     let before_eof_parsed = parse::parse(&before_eof).map_err(ProcessingError::Parse)?;
     let before_eof_document = config
         .document(before_eof.text())
@@ -495,7 +495,7 @@ fn formatting_pass(
         &eof_edits,
     )?;
     result.edits = stabilize::compose(source, &result.edits, &eof_edits, origins)?;
-    let output = Source::new(result.output.clone());
+    let output = config.source(&result.output)?;
     let parsed = parse::parse(&output).map_err(ProcessingError::Parse)?;
     let document = config
         .document(output.text())
@@ -695,7 +695,7 @@ fn process(
     produce: impl FnOnce(&Source, &parse::ParsedDocument, &config::DocumentConfig) -> Vec<edit::Edit>,
     diagnose: impl FnOnce(&str) -> Vec<Diagnostic>,
 ) -> Result<FormatResult, ProcessingError> {
-    let source = Source::new(text.into());
+    let source = config.source(text)?;
     let document = config
         .document(text)
         .map_err(ProcessingError::Configuration)?;

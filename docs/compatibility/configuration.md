@@ -119,7 +119,7 @@ Custom expressions, including MD043 regex headings, now use bounded native
 ECMAScript matching with each consumer's pinned flags; see
 [rule pattern evidence](config-patterns.md). Invalid expressions name their
 rule/property, and work exhaustion prevents processing rather than becoming a
-nonmatch. Custom cli2 frontMatter remains a separate pending RE2-style consumer.
+nonmatch. Custom cli2 frontMatter has a separate [RE2-style contract](front-matter.md).
 
 For MD001/MD025/MD041, an omitted `front_matter_title` uses source fallback
 `^\s*"?title"?\s*[:=]` with case-insensitive matching, accepting quoted title
@@ -177,12 +177,14 @@ Preserve upstream's configuration ability to override the CLI fix default.
 The future formatter CLI must define how write/check/stdin modes map to this;
 do not silently override `fix: false`. CLI spelling remains a later decision.
 
-### frontMatter — deferred
+### frontMatter — supported subset
 
-An explicit pattern requires native JavaScript RegExp semantics (`u` flag) in
-cli2. Compatible custom patterns are a later-release roadmap item. Emit
-`unsupported-front-matter-pattern` until compatibility exists. Without this
-property, preserve upstream's default front-matter recognition and content.
+An explicit nonempty string validates JavaScript `u` syntax, then executes the
+supported pinned RE2-style form natively. Preserve matched metadata bytes and
+original diagnostic/edit coordinates; reject unsupported forms with a named
+configuration error. Missing/empty patterns retain default recognition, while a
+custom no-match does not fall back. This option uses invocation-level precedence;
+see [metadata evidence and limits](front-matter.md).
 
 ### gitignore — supported
 

@@ -258,7 +258,7 @@ pub(crate) fn validated_indentation_proposals(
     else {
         return Default::default();
     };
-    let candidate = Source::new(output);
+    let candidate = source.derive(output);
     let Ok(reparsed) = parse(&candidate) else {
         return Default::default();
     };
