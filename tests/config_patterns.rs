@@ -124,6 +124,47 @@ fn rule_patterns_match_pinned_flags_and_utf16() {
 }
 
 #[test]
+fn shorthand_folding_respects_consumer_unicode_flags() {
+    for key in ["K", "ſ"] {
+        for (pattern, title) in [
+            (r"^\w+:", false),
+            (r"^[\w]+:", false),
+            (r"^\W+:", true),
+            (r"^[\W]+:", true),
+        ] {
+            for (rule, body, count) in [
+                ("MD041", "Ordinary prose.", usize::from(!title)),
+                ("MD001", "### Deep", usize::from(title)),
+                ("MD025", "# Heading", usize::from(title)),
+            ] {
+                assert_eq!(
+                    findings(
+                        &format!("---\n{key}: Title\n---\n\n{body}\n"),
+                        &settings(json!({"default":false,rule:{"front_matter_title":pattern}}))
+                    )
+                    .len(),
+                    count,
+                    "{key} {rule} {pattern}"
+                );
+            }
+        }
+        for (pattern, count) in [(r"^\w$", 0), (r"^[\w]$", 0), (r"^\W$", 1), (r"^[\W]$", 1)] {
+            assert_eq!(
+                findings(
+                    &format!("# {key}\n"),
+                    &settings(
+                        json!({"default":false,"MD043":{"headings":[format!("% {pattern}")]}})
+                    )
+                )
+                .len(),
+                count,
+                "iu {key} {pattern}"
+            );
+        }
+    }
+}
+
+#[test]
 fn pattern_errors_are_transactional_and_recoverable() {
     for value in [
         json!({"MD041":{"front_matter_title":"["}}),

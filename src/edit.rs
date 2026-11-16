@@ -320,6 +320,11 @@ pub(crate) fn apply_authorized_edits(
         cursor = edit.span.end;
     }
     output.push_str(&source.text()[cursor..]);
+    if !source.metadata_stable(&output) {
+        return Err(ProcessingError::ProtectedRegion(
+            0..source.front_matter_end().unwrap_or(0),
+        ));
+    }
     if expanded {
         let mut baseline = String::new();
         let mut cursor = 0;

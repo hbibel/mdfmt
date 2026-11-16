@@ -145,7 +145,8 @@ pass: 102 resolver/CLI comparisons and 561 complete optimized tests pass.
 Native [rule configuration patterns](../../compatibility/config-patterns.md) now
 pass focused and pinned tests. [Custom front-matter recognition](../../compatibility/front-matter.md)
 now preserves metadata across parser/edit/formatter stages; the combined regex
-batch review remains pending. Complete optimized verification passes 570 tests
+review's four Important findings have regression-first corrections. Complete
+optimized verification passes 574 tests
 across 77 targets. Release hardening remains unfinished. The rule
 count does not establish complete fixability or parser/option fidelity.
 
@@ -169,6 +170,19 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- The regex review reproduced four Important defects, with no Critical finding:
+  body edits could change custom metadata recognition and expose its bytes/code
+  to later rules/processes; backend Unicode properties missed source-recognized
+  metadata; Rust accepted RE2JS-invalid properties/repetitions and allowed writes;
+  non-Unicode case-insensitive shorthand classes changed title-rule decisions.
+  Public/CLI regressions failed before the single correction pass. Candidate
+  admission must retain metadata recognition across independent calls, not merely
+  carry a local parser boundary. Unicode membership/vocabulary must come from the
+  pinned consumer, not whichever regex tables happen to ship with Rust. Expanded
+  shorthand controls also exposed bracketed `\\W` complement folding under `iu`.
+  Correction-pass verification passes 574 optimized tests across 77 targets,
+  32 focused debug tests, 537 vendored-engine tests and 280 metadata/82 rule-pattern
+  comparisons. The earlier 570-test result predates these demonstrated defects.
 - Custom metadata work found that Rust regex character classes interpret `&&`
   and `~~` as set operators, while pinned RE2JS treats those characters literally.
   Directly compiling the accepted pattern can therefore miss protected metadata

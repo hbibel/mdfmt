@@ -21,33 +21,61 @@ fn escape(value: char, class: bool) -> Option<&'static str> {
     })
 }
 
-fn escaped_atom(chars: &mut Peekable<impl Iterator<Item = char>>, class: bool) -> String {
-    let Some(value) = chars.next() else {
-        return "\\".into();
-    };
-    if value == 'c' && chars.peek().is_some_and(char::is_ascii_alphabetic) {
-        return format!("\\x{:02x}", u32::from(chars.next().unwrap()) % 32);
-    }
-    escape(value, class)
-        .map(String::from)
-        .unwrap_or_else(|| format!("\\{value}"))
+fn invalid(message: impl Into<String>) -> ConfigError {
+    ConfigError::invalid("frontMatter", message)
 }
 
-fn class_atom(value: char, chars: &mut Peekable<impl Iterator<Item = char>>) -> String {
+fn escaped_atom(
+    chars: &mut Peekable<impl Iterator<Item = char>>,
+    class: bool,
+) -> Result<String, ConfigError> {
+    let Some(value) = chars.next() else {
+        return Ok("\\".into());
+    };
+    if value == 'c' && chars.peek().is_some_and(char::is_ascii_alphabetic) {
+        return Ok(format!("\\x{:02x}", u32::from(chars.next().unwrap()) % 32));
+    }
+    if matches!(value, 'p' | 'P') {
+        if chars.next() != Some('{') {
+            return Err(invalid("unsupported Unicode property syntax"));
+        }
+        let name: String = chars.by_ref().take_while(|&ch| ch != '}').collect();
+        let property = super::front_matter_properties::class(&name).ok_or_else(|| {
+            invalid(format!(
+                "unsupported or invalid pinned RE2JS property: {name}"
+            ))
+        })?;
+        return Ok(if value == 'P' {
+            format!("[^{property}]")
+        } else {
+            property.into()
+        });
+    }
+    Ok(escape(value, class)
+        .map(String::from)
+        .unwrap_or_else(|| format!("\\{value}")))
+}
+
+fn class_atom(
+    value: char,
+    chars: &mut Peekable<impl Iterator<Item = char>>,
+) -> Result<String, ConfigError> {
     if value == '\\' {
         return escaped_atom(chars, true);
     }
-    match value {
+    Ok(match value {
         '-' => r"\x2d".into(),
         '&' => r"\x26".into(),
         '~' => r"\x7e".into(),
         '[' => r"\x5b".into(),
         '^' => r"\x5e".into(),
         _ => value.to_string(),
-    }
+    })
 }
 
-fn character_class(chars: &mut Peekable<impl Iterator<Item = char>>) -> String {
+fn character_class(
+    chars: &mut Peekable<impl Iterator<Item = char>>,
+) -> Result<String, ConfigError> {
     let mut output = String::from("[");
     if chars.peek() == Some(&'^') {
         chars.next();
@@ -58,18 +86,61 @@ fn character_class(chars: &mut Peekable<impl Iterator<Item = char>>) -> String {
             output.push(']');
             break;
         }
-        output.push_str(&class_atom(value, chars));
+        output.push_str(&class_atom(value, chars)?);
         if chars.peek() == Some(&'-') {
             chars.next();
             if chars.peek() == Some(&']') {
                 output.push_str(r"\x2d");
             } else if let Some(end) = chars.next() {
                 output.push('-');
-                output.push_str(&class_atom(end, chars));
+                output.push_str(&class_atom(end, chars)?);
             }
         }
+        if output.len() > 1024 * 1024 {
+            return Err(invalid("translated pattern exceeds 1 MiB"));
+        }
     }
-    output
+    Ok(output)
+}
+
+fn repetition_weight(ast: &regex_syntax::ast::Ast) -> Result<u32, ConfigError> {
+    use regex_syntax::ast::{Ast, RepetitionKind, RepetitionRange};
+    let weight = match ast {
+        Ast::Group(group) => repetition_weight(&group.ast)?,
+        Ast::Concat(concat) => concat
+            .asts
+            .iter()
+            .map(repetition_weight)
+            .collect::<Result<Vec<_>, _>>()?
+            .into_iter()
+            .max()
+            .unwrap_or(1),
+        Ast::Alternation(alternation) => alternation
+            .asts
+            .iter()
+            .map(repetition_weight)
+            .collect::<Result<Vec<_>, _>>()?
+            .into_iter()
+            .max()
+            .unwrap_or(1),
+        Ast::Repetition(repetition) => {
+            let inner = repetition_weight(&repetition.ast)?;
+            let count = match repetition.op.kind {
+                RepetitionKind::Range(
+                    RepetitionRange::Exactly(count)
+                    | RepetitionRange::AtLeast(count)
+                    | RepetitionRange::Bounded(_, count),
+                ) => count,
+                _ => 1,
+            };
+            inner.saturating_mul(count.max(1))
+        }
+        _ => 1,
+    };
+    if weight > 1000 {
+        return Err(invalid("pinned RE2JS repetition count exceeds 1000"));
+    }
+    Ok(weight)
 }
 
 #[derive(Debug, Clone)]
@@ -89,15 +160,26 @@ impl FrontMatterPattern {
         let mut chars = source.chars().peekable();
         while let Some(ch) = chars.next() {
             if ch == '[' {
-                translated.push_str(&character_class(&mut chars));
-                continue;
-            }
-            if ch != '\\' {
+                translated.push_str(&character_class(&mut chars)?);
+            } else if ch != '\\' {
                 translated.push(ch);
-                continue;
+            } else {
+                translated.push_str(&escaped_atom(&mut chars, false)?);
             }
-            translated.push_str(&escaped_atom(&mut chars, false));
+            if translated.len() > 1024 * 1024 {
+                return Err(invalid("translated pattern exceeds 1 MiB"));
+            }
         }
+        let ast = regex_syntax::ast::parse::ParserBuilder::new()
+            .nest_limit(128)
+            .build()
+            .parse(&translated)
+            .map_err(|error| {
+                invalid(format!(
+                    "unsupported or invalid RE2-compatible pattern: {error}"
+                ))
+            })?;
+        repetition_weight(&ast)?;
         let regex = regex::RegexBuilder::new(&translated)
             .size_limit(1024 * 1024)
             .build()
@@ -142,6 +224,7 @@ impl ResolvedConfig {
         let mut source = Source::new(text.into());
         if let Some(pattern) = &self.front_matter {
             source.set_front_matter_end(pattern.prefix_end(text)?);
+            source.set_front_matter_pattern(pattern.clone());
         }
         Ok(source)
     }

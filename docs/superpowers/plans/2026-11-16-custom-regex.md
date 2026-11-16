@@ -67,8 +67,8 @@ Interfaces:
 - [x] Run public tests and source/native oracle RED. Expected: unsupported-front-matter-pattern or missing compiled option/context, not parser-fixture mistakes.
 - [x] Implement FrontMatterPattern compiler/normalization mapping, resolver option, Source inheritance and pipeline propagation. Audit every Source::new: same-document candidate, transformed mapped view or synthetic probe. Fail explicitly on unsupported semantics; never silently restore default parsing after custom no-match.
 - [x] Run `mise exec -- cargo test --release --test custom_front_matter --test config_patterns` plus affected heading/fragment/config/reflow/code/preservation tests; run new metadata/rule oracles and prior config/content/MD051/reflow/code gates, complete optimized suite, fmt/clippy/diff. Expected: exact protected prefix and original-coordinate edits with unchanged prior defaults; no false all-input/platform guarantee.
-- [ ] Update compatibility/README/roadmap and record Important/Critical discoveries; commit `feat: preserve configured front matter across formatting passes`; task-done with focused consumer evidence.
-- [ ] Request one independent batch review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical issues once regression-first, complete suite; retain every ruling/cost before completed scratch removal.
+- [x] Update compatibility/README/roadmap and record Important/Critical discoveries; commit `feat: preserve configured front matter across formatting passes`; task-done with focused consumer evidence.
+- [x] Request one independent batch review with every Review Focus and chronological ruling. Reproduce/fix Important/Critical issues once regression-first, complete suite; retain every ruling/cost before completed scratch removal.
 - [ ] Continue bounded non-Unix formatter transport and remaining release hardening autonomously; preserve branch/worktree without merge/push.
 
 ## Planning check
@@ -119,3 +119,72 @@ Complete pre-review optimized verification passes 570 tests across 77 targets;
 220 fence-style/1662 code-style/29 reflow/110 config/53 schema comparisons pass.
 Root fmt/clippy/diff checks are clean. No dependency versions changed. Commit/
 task-done then one independent review of the combined regex batch.
+
+## Review correction pass
+
+The single independent review found four Important defects, no Critical defects:
+I1 body-dependent metadata protection loss/process execution, I2 newer-script
+Unicode membership mismatch, I3 accepted RE2JS-invalid properties/repetitions and
+I4 shorthand-folding title decisions. New public/CLI/process regressions failed
+before corrections; expanded controls also reproduced bracketed `\W` folding under
+`iu`. Eight metadata and five pattern tests now pass locally, with 280 metadata
+and 82 rule-pattern source/native comparisons. Complete optimized verification
+passes 574 tests across 77 targets, with 32 focused debug and 537 vendored-engine
+tests also passing; one existing vendored doctest is ignored. Post-correction
+102 package/554 content/1144 fragment/220 fence-style/1662 code-style/29 reflow/
+110 config/53 schema comparisons, 126 fixed/755 generated/755 actual-selection
+glob cases and actual Prettier 2.8.8/3.6.2 controls pass. Fmt/clippy/diff are clean.
+The initial vendor-suite command failed to compile because its existing test
+harness requires backend-pikevm; adding that development test feature produced
+the 537-test receipt without changing production features. The unchanged debug
+4,000-item resource gate still fails its 30-second deadline; no limits changed,
+and no full-debug-suite success is claimed. Continue its separate hardening plan.
+
+Correction decisions:
+
+- Sources retain the compiled custom pattern with their explicit boundary.
+  Candidate admission and complete transactions require unchanged recognition,
+  including no-match; optional process stages derive from the original context.
+  Cost if wrong: conservative withheld repairs or transactional protected-region
+  errors, not metadata bytes becoming Markdown on the next call.
+- Generate 56 immutable UTF-8 property classes from actual pinned RE2JS 2.8.6
+  instructions, retaining version/hash/license and a reproducibility check.
+  Cost if wrong: about 138 KiB of generated source and an explicit refresh when
+  reference pins change; Rust's current Unicode tables cannot define membership.
+- Add a direct dependency edge to the already-locked regex-syntax version for
+  bounded repetition AST validation, plus a 1 MiB translation bound.
+  Cost if wrong: conservative errors for unsupported forms and backend coupling,
+  not a source-invalid configuration silently authorizing writes.
+
+### Reviewer-declined rulings retained
+
+1. B1: two native engines remain deliberate; users get per-consumer semantics
+   without Node. Cost if wrong: explicit unsupported errors or further source-backed
+   translation corrections, not silent substitution.
+2. B2: the documented optional public ResolvedConfig field remains. Cost if wrong:
+   exhaustive prerelease literals need a field or `..Default::default()` migration.
+3. B3: explicit protected prefixes and mapped/synthetic views remain; no separate
+   isolated-probe defect was established. Cost if wrong: more boundary plumbing and
+   conservatively withheld edits. Actual complete-document loss is corrected as I1.
+4. B4: partial-line metadata uses real physical coordinates. Cost if wrong:
+   intentional position differences from upstream's phantom-line offset.
+5. B5: valid unsupported native forms may fail explicitly, but source-invalid
+   patterns must fail and accepted membership must match. Cost if wrong: narrower
+   finite support; I2/I3 cannot be waived by the unsupported-form allowance.
+6. B6: pinned HTML directives inside metadata remain active. Cost if wrong:
+   metadata strings can suppress later rules rather than create new isolation.
+7. Supported-string deferred-error assertions stay replaced by real-consumer
+   tests. Cost if wrong: supported callers no longer receive deferred errors;
+   malformed patterns still fail with provenance.
+8. Shared UTF-16 source decoding remains narrow; no glob compiler/executor change.
+   Cost if wrong: helper coupling and shared-engine regressions, covered by the
+   retained native gates rather than an assumption of no effect.
+9. Approved MD026 edits, MD043 loops/wildcards, link/MD051 authority, MD036
+   injection rejection and closed package decisions remain. Cost if wrong:
+   rule-prescribed Markdown changes still occur; metadata never grants ownership.
+10. Existing debug resource limits, non-Unix transport, oracle advisories and broad
+    hardening remain separate obligations, not findings waived by this batch.
+    Cost if wrong: release readiness remains incomplete after regex closure.
+11. The review independently reran 63 focused tests, not the complete suite.
+    Cost if wrong: full correction evidence remains the implementer's receipts,
+    not a falsely claimed second independent rebuild or re-review.

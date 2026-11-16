@@ -1,6 +1,8 @@
 mod brace;
 mod directives;
 mod front_matter;
+#[rustfmt::skip]
+mod front_matter_properties;
 mod glob;
 mod load;
 mod packages;

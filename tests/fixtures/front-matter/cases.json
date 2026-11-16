@@ -496,5 +496,4920 @@
       "normalizedPrefix": null,
       "findings": []
     }
+  },
+  {
+    "id": "body-dependent-boundary",
+    "input": "%%%\n# Secret!\n%%%\n*body*\n",
+    "pattern": "^%%%\\n[\\s\\S]*?\\n%%%\\n\\B",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "%%%",
+        "# Secret!",
+        "%%%"
+      ],
+      "normalizedPrefix": "%%%\n# Secret!\n%%%\n",
+      "findings": []
+    }
+  },
+  {
+    "id": "new-letter-1e6c0-\\p{L}",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^\\p{L}[\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-1e6c0-\\P{C}",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^\\P{C}[\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-1e6c0-\\P{Cn}",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^\\P{Cn}[\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-1e6c0-[\\p{L}]",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{L}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-10940-\\p{L}",
+    "input": "𐥀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^\\p{L}[\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𐥀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𐥀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-10940-\\P{C}",
+    "input": "𐥀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^\\P{C}[\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𐥀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𐥀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-10940-\\P{Cn}",
+    "input": "𐥀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^\\P{Cn}[\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𐥀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𐥀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-10940-[\\p{L}]",
+    "input": "𐥀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{L}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𐥀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𐥀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-11db0-\\p{L}",
+    "input": "𑶰\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^\\p{L}[\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𑶰",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𑶰\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-11db0-\\P{C}",
+    "input": "𑶰\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^\\P{C}[\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𑶰",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𑶰\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-11db0-\\P{Cn}",
+    "input": "𑶰\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^\\P{Cn}[\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𑶰",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𑶰\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "new-letter-11db0-[\\p{L}]",
+    "input": "𑶰\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{L}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𑶰",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𑶰\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-C-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{C}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-C-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{C}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-C-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{C}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-C-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{C}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cc-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Cc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cc-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Cc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cc-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Cc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cc-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Cc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cf-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Cf}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cf-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Cf}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cf-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Cf}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cf-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Cf}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cn-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Cn}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cn-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Cn}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cn-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Cn}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cn-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Cn}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Co-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Co}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Co-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Co}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Co-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Co}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Co-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Co}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cs-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Cs}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cs-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Cs}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cs-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Cs}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Cs-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Cs}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-L-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{L}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-L-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{L}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-L-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{L}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-L-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{L}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-LC-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{LC}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-LC-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{LC}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-LC-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{LC}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-LC-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{LC}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Ll-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Ll}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Ll-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Ll}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Ll-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Ll}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Ll-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Ll}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lm-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Lm}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lm-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Lm}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lm-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Lm}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lm-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Lm}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lo-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Lo}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lo-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Lo}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lo-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Lo}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lo-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Lo}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lt-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Lt}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lt-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Lt}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lt-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Lt}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lt-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Lt}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lu-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Lu}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lu-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Lu}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lu-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Lu}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lu-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Lu}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-M-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{M}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-M-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{M}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-M-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{M}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-M-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{M}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Mc-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Mc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Mc-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Mc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Mc-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Mc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Mc-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Mc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Me-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Me}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Me-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Me}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Me-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Me}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Me-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Me}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Mn-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Mn}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Mn-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Mn}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Mn-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Mn}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Mn-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Mn}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-N-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{N}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-N-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{N}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-N-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{N}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-N-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{N}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Nd-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Nd}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Nd-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Nd}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Nd-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Nd}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Nd-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Nd}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Nl-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Nl}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Nl-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Nl}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Nl-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Nl}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Nl-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Nl}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-No-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{No}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-No-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{No}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-No-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{No}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-No-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{No}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-P-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{P}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-P-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{P}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-P-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{P}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-P-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{P}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pc-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Pc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pc-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Pc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pc-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Pc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pc-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Pc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pd-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Pd}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pd-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Pd}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pd-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Pd}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pd-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Pd}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pe-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Pe}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pe-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Pe}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pe-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Pe}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pe-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Pe}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pf-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Pf}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pf-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Pf}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pf-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Pf}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pf-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Pf}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pi-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Pi}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pi-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Pi}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pi-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Pi}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Pi-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Pi}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Po-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Po}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Po-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Po}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Po-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Po}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Po-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Po}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Ps-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Ps}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Ps-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Ps}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Ps-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Ps}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Ps-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Ps}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-S-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{S}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-S-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{S}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-S-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{S}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-S-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{S}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sc-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Sc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sc-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Sc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sc-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Sc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sc-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Sc}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sk-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Sk}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sk-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Sk}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sk-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Sk}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sk-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Sk}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sm-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Sm}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sm-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Sm}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sm-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Sm}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Sm-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Sm}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-So-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{So}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-So-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{So}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-So-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{So}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-So-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{So}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Z-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Z}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Z-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Z}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Z-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Z}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Z-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Z}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zl-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Zl}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zl-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Zl}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zl-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Zl}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zl-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Zl}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zp-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Zp}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zp-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Zp}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zp-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Zp}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zp-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Zp}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zs-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Zs}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zs-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Zs}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zs-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Zs}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Zs-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Zs}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-ASCII_Hex_Digit-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{ASCII_Hex_Digit}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-ASCII_Hex_Digit-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{ASCII_Hex_Digit}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-ASCII_Hex_Digit-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{ASCII_Hex_Digit}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-ASCII_Hex_Digit-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{ASCII_Hex_Digit}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Alphabetic-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Alphabetic}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Alphabetic-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Alphabetic}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Alphabetic-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Alphabetic}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Alphabetic-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Alphabetic}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Dash-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Dash}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Dash-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Dash}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Dash-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Dash}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Dash-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Dash}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Emoji}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Emoji}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Emoji}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Emoji}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Component-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Emoji_Component}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Component-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Emoji_Component}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Component-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Emoji_Component}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Component-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Emoji_Component}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Modifier-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Emoji_Modifier}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Modifier-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Emoji_Modifier}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Modifier-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Emoji_Modifier}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Modifier-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Emoji_Modifier}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Modifier_Base-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Emoji_Modifier_Base}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Modifier_Base-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Emoji_Modifier_Base}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Modifier_Base-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Emoji_Modifier_Base}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Modifier_Base-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Emoji_Modifier_Base}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Presentation-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Emoji_Presentation}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Presentation-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Emoji_Presentation}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Presentation-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Emoji_Presentation}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Emoji_Presentation-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Emoji_Presentation}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Extended_Pictographic-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Extended_Pictographic}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Extended_Pictographic-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Extended_Pictographic}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Extended_Pictographic-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Extended_Pictographic}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Extended_Pictographic-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Extended_Pictographic}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Hex_Digit-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Hex_Digit}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Hex_Digit-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Hex_Digit}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Hex_Digit-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Hex_Digit}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Hex_Digit-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Hex_Digit}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lowercase-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Lowercase}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lowercase-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Lowercase}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lowercase-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Lowercase}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Lowercase-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Lowercase}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Math-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Math}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Math-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Math}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Math-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Math}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Math-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Math}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Quotation_Mark-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Quotation_Mark}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Quotation_Mark-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Quotation_Mark}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Quotation_Mark-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Quotation_Mark}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Quotation_Mark-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Quotation_Mark}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Terminal_Punctuation-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Terminal_Punctuation}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Terminal_Punctuation-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Terminal_Punctuation}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Terminal_Punctuation-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Terminal_Punctuation}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Terminal_Punctuation-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Terminal_Punctuation}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Uppercase-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Uppercase}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Uppercase-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Uppercase}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Uppercase-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Uppercase}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Uppercase-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Uppercase}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-White_Space-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{White_Space}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-White_Space-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{White_Space}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-White_Space-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{White_Space}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-White_Space-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{White_Space}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Any-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Any}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Any-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Any}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Any-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Any}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Any-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Any}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Assigned-A-p",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Assigned}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "A",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "A\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Assigned-A-P",
+    "input": "A\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Assigned}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Assigned-𞛀-p",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\p{Assigned}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "𞛀",
+        "# Secret!",
+        "END"
+      ],
+      "normalizedPrefix": "𞛀\n# Secret!\nEND\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "property-Assigned-𞛀-P",
+    "input": "𞛀\n# Secret!\nEND\n\n# Body!\n",
+    "pattern": "^[\\P{Assigned}][\\s\\S]*?END\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        },
+        {
+          "rule": "MD026",
+          "line": 5
+        }
+      ]
+    }
+  },
+  {
+    "id": "invalid-re2-\\p{Letter}",
+    "input": "%%%Title\n# Body!\n",
+    "pattern": "\\p{Letter}",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid character class range: `\\p{Letter}`"
+    }
+  },
+  {
+    "id": "invalid-re2-\\p{Lowercase_Letter}",
+    "input": "%%%Title\n# Body!\n",
+    "pattern": "\\p{Lowercase_Letter}",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid character class range: `\\p{Lowercase_Letter}`"
+    }
+  },
+  {
+    "id": "invalid-re2-\\p{ASCII}",
+    "input": "%%%Title\n# Body!\n",
+    "pattern": "\\p{ASCII}",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid character class range: `\\p{ASCII}`"
+    }
+  },
+  {
+    "id": "invalid-re2-\\p{Script=Greek}",
+    "input": "%%%Title\n# Body!\n",
+    "pattern": "\\p{Script=Greek}",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid character class range: `\\p{Script=Greek}`"
+    }
+  },
+  {
+    "id": "invalid-re2-a{1001}",
+    "input": "%%%Title\n# Body!\n",
+    "pattern": "a{1001}",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid repeat count: `{1001}`"
+    }
+  },
+  {
+    "id": "invalid-re2-a{0,1001}",
+    "input": "%%%Title\n# Body!\n",
+    "pattern": "a{0,1001}",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid repeat count: `{0,1001}`"
+    }
+  },
+  {
+    "id": "invalid-re2-(?:a{100}){11}",
+    "input": "%%%Title\n# Body!\n",
+    "pattern": "(?:a{100}){11}",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid repeat count: `{11}`"
+    }
+  },
+  {
+    "id": "invalid-re2-(?:a{1000}){2,}",
+    "input": "%%%Title\n# Body!\n",
+    "pattern": "(?:a{1000}){2,}",
+    "coordinateDifference": false,
+    "source": {
+      "error": "RE2JSSyntaxException",
+      "message": "error parsing regexp: invalid repeat count: `{2,}`"
+    }
+  },
+  {
+    "id": "valid-repeat-a{1000}",
+    "input": "a\n# Body!\n",
+    "pattern": "^a{1000}\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "valid-repeat-a{0,1000}",
+    "input": "a\n# Body!\n",
+    "pattern": "^a{0,1000}\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "a"
+      ],
+      "normalizedPrefix": "a\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "valid-repeat-a{1000,}",
+    "input": "a\n# Body!\n",
+    "pattern": "^a{1000,}\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "valid-repeat-(?:a{100}){10}",
+    "input": "a\n# Body!\n",
+    "pattern": "^(?:a{100}){10}\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "valid-repeat-[a{1001}]",
+    "input": "a\n# Body!\n",
+    "pattern": "^[a{1001}]\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [
+        "a"
+      ],
+      "normalizedPrefix": "a\n",
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "valid-repeat-\\{1001\\}",
+    "input": "a\n# Body!\n",
+    "pattern": "^\\{1001\\}\\n",
+    "coordinateDifference": false,
+    "source": {
+      "metadata": [],
+      "normalizedPrefix": null,
+      "findings": [
+        {
+          "rule": "MD026",
+          "line": 2
+        }
+      ]
+    }
   }
 ]

@@ -522,6 +522,9 @@ pub(crate) fn parse_flow_diagnostics(source: &Source) -> Result<ParsedDocument, 
 
 fn parse_with_math(source: &Source, math_flow: bool) -> Result<ParsedDocument, String> {
     let text = source.text();
+    if !source.metadata_stable(text) {
+        return Err("candidate changes configured front-matter recognition".into());
+    }
     let bom = usize::from(text.starts_with('\u{feff}')) * 3;
     let mut normalized = String::new();
     let mut offsets = vec![bom];

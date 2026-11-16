@@ -16,6 +16,12 @@ Rust's regex engine is not substituted for these consumers. Unicode/non-Unicode
 mode preserves astral/surrogate and case-fold distinctions. Aliases, inline
 configuration, enablement, severities and edit permissions remain authoritative.
 
+The regex review reproduced incorrect standalone `\w`/`\W` folding under legacy
+`i`, plus a bracketed `\W` complement error under `iu` in expanded controls.
+Regression-first engine corrections now pass real MD001/MD025/MD041 title checks
+and MD043 Unicode checks for Kelvin sign and long s, including bracketed controls.
+The expanded pinned rule-pattern oracle passes 82 cases.
+
 ## Limits and failures
 
 Pattern length is limited to 65,536 UTF-16 units and group nesting to 64. Each
@@ -31,18 +37,20 @@ their patterns. A later independent safe document is unaffected.
 
 ## Evidence and remaining scope
 
-Four public tests cover actual repairs/findings, aliases/inline controls, bounded
+Five public tests cover actual repairs/findings, aliases/inline controls, bounded
 cache/fuel failures, CLI check/write preservation, repeat stability and UTF-16
-flag distinctions. A development-only oracle compares 42 actual pinned
+flag distinctions. A development-only oracle compares 82 actual pinned
 markdownlint0.42.0 cases with native diagnostics and unchanged source. Existing
 554 content-diagnostic, 1,144 fragment, 110 config/selection and 53 schema
 comparisons pass. The former explicit-deferred assertions now test real behavior;
 invalid expressions still fail explicitly. Complete optimized verification passes
-565 tests across 76 targets, with fmt/clippy/diff checks clean.
+574 tests across 77 targets after the combined regex review corrections, with
+fmt/clippy/diff checks clean.
 
 Custom cli2 [frontMatter recognition](front-matter.md) is now implemented with a
-separate pinned RE2-style contract. Complete combined verification passes 570 tests
-across 77 targets. Independent batch review is pending; complete ECMAScript/all-input/platform parity and
+separate pinned RE2-style contract. The independent review found four Important
+defects and no Critical defect; regression-first corrections pass the complete
+optimized suite and focused consumers. Complete ECMAScript/all-input/platform parity and
 release-hardening completion are not claimed.
 
 ```sh

@@ -16,6 +16,8 @@ add("heading-mixed-literal-prefix","## Title\n","MD043",{headings:["#% Title"]})
 add("heading-wildcard-loop","# Intro\n\n## Item 1\n\n## Item 2\n\n# End\n","MD043",{headings:["% ^Intro$","^","%% ^Item [0-9]$","^","% ^End$"]});
 for(const [fragment,pattern]of [["missing","^missing$"],["missing","^#missing$"],["skip","(?<=s)kip"],["abcabc","^(abc)\\1$"],["😀","^.$"],["😀","^..$"],["😀","^\\uD83D"],["K","^k$"],["missing",""]])add(`fragment-${fragment}-${pattern}`,`[link](#${fragment})\n`,"MD051",{ignored_pattern:pattern});
 add("title-nonunicode-fold","---\nK: value\n---\n\nOrdinary prose.\n","MD041",{front_matter_title:"^k:"});
+for(const key of ["K","ſ"])for(const pattern of ["^\\w+:","^[\\w]+:","^\\W+:","^[\\W]+:"])for(const rule of ["MD001","MD025","MD041"])add(`title-shorthand-${rule}-${key}-${pattern}`,`---\n${key}: Title\n---\n\n${rule==="MD001"?"### Deep":rule==="MD025"?"# Heading":"Ordinary prose."}\n`,rule,{front_matter_title:pattern});
+for(const key of ["K","ſ"])for(const pattern of ["^\\w$","^[\\w]$","^\\W$","^[\\W]$"])for(const match_case of [false,true])add(`heading-shorthand-${key}-${pattern}-${match_case}`,`# ${key}\n`,"MD043",{headings:[`% ${pattern}`],match_case});
 add("inline-pattern-config","<!-- markdownlint-configure-file {\"MD043\":{\"headings\":[\"% ^Intro$\"]}} -->\n# Intro\n","MD043",false);
 add("inline-fragment-disable","<!-- markdownlint-disable MD051 -->\n[link](#missing)\n","MD051",{ignored_pattern:"^skip$"});
 

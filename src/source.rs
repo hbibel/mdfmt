@@ -22,6 +22,7 @@ pub struct Source {
     text: String,
     line_starts: Vec<usize>,
     front_matter_end: Option<usize>,
+    front_matter_pattern: Option<crate::config::FrontMatterPattern>,
 }
 
 impl Source {
@@ -49,6 +50,7 @@ impl Source {
             text,
             line_starts,
             front_matter_end: None,
+            front_matter_pattern: None,
         }
     }
 
@@ -59,12 +61,25 @@ impl Source {
     pub(crate) fn set_front_matter_end(&mut self, end: usize) {
         self.front_matter_end = Some(end);
     }
+    pub(crate) fn set_front_matter_pattern(&mut self, pattern: crate::config::FrontMatterPattern) {
+        self.front_matter_pattern = Some(pattern);
+    }
+    pub(crate) fn metadata_stable(&self, text: &str) -> bool {
+        self.front_matter_pattern.as_ref().is_none_or(|pattern| {
+            let end = self.front_matter_end.unwrap();
+            text.get(..end) == self.text.get(..end)
+                && pattern
+                    .prefix_end(text)
+                    .is_ok_and(|candidate| candidate == end)
+        })
+    }
     pub(crate) fn front_matter_end(&self) -> Option<usize> {
         self.front_matter_end
     }
     pub(crate) fn derive(&self, text: String) -> Self {
         let mut derived = Self::new(text);
         derived.front_matter_end = self.front_matter_end;
+        derived.front_matter_pattern = self.front_matter_pattern.clone();
         derived
     }
     pub(crate) fn mapped(&self, text: String, offsets: &[usize]) -> Self {

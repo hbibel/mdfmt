@@ -571,6 +571,594 @@
     ]
   },
   {
+    "id": "title-shorthand-MD001-K-^\\w+:",
+    "input": "---\nK: Title\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^\\w+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD025-K-^\\w+:",
+    "input": "---\nK: Title\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^\\w+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD041-K-^\\w+:",
+    "input": "---\nK: Title\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^\\w+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD041",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD001-K-^[\\w]+:",
+    "input": "---\nK: Title\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^[\\w]+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD025-K-^[\\w]+:",
+    "input": "---\nK: Title\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^[\\w]+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD041-K-^[\\w]+:",
+    "input": "---\nK: Title\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^[\\w]+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD041",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD001-K-^\\W+:",
+    "input": "---\nK: Title\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^\\W+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD001",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD025-K-^\\W+:",
+    "input": "---\nK: Title\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^\\W+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD025",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD041-K-^\\W+:",
+    "input": "---\nK: Title\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^\\W+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD001-K-^[\\W]+:",
+    "input": "---\nK: Title\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^[\\W]+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD001",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD025-K-^[\\W]+:",
+    "input": "---\nK: Title\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^[\\W]+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD025",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD041-K-^[\\W]+:",
+    "input": "---\nK: Title\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^[\\W]+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD001-ſ-^\\w+:",
+    "input": "---\nſ: Title\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^\\w+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD025-ſ-^\\w+:",
+    "input": "---\nſ: Title\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^\\w+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD041-ſ-^\\w+:",
+    "input": "---\nſ: Title\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^\\w+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD041",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD001-ſ-^[\\w]+:",
+    "input": "---\nſ: Title\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^[\\w]+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD025-ſ-^[\\w]+:",
+    "input": "---\nſ: Title\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^[\\w]+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD041-ſ-^[\\w]+:",
+    "input": "---\nſ: Title\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^[\\w]+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD041",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD001-ſ-^\\W+:",
+    "input": "---\nſ: Title\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^\\W+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD001",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD025-ſ-^\\W+:",
+    "input": "---\nſ: Title\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^\\W+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD025",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD041-ſ-^\\W+:",
+    "input": "---\nſ: Title\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^\\W+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "title-shorthand-MD001-ſ-^[\\W]+:",
+    "input": "---\nſ: Title\n---\n\n### Deep\n",
+    "config": {
+      "default": false,
+      "MD001": {
+        "front_matter_title": "^[\\W]+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD001",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD025-ſ-^[\\W]+:",
+    "input": "---\nſ: Title\n---\n\n# Heading\n",
+    "config": {
+      "default": false,
+      "MD025": {
+        "front_matter_title": "^[\\W]+:"
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD025",
+        "line": 5
+      }
+    ]
+  },
+  {
+    "id": "title-shorthand-MD041-ſ-^[\\W]+:",
+    "input": "---\nſ: Title\n---\n\nOrdinary prose.\n",
+    "config": {
+      "default": false,
+      "MD041": {
+        "front_matter_title": "^[\\W]+:"
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-shorthand-K-^\\w$-false",
+    "input": "# K\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^\\w$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-shorthand-K-^\\w$-true",
+    "input": "# K\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^\\w$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-shorthand-K-^[\\w]$-false",
+    "input": "# K\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^[\\w]$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-shorthand-K-^[\\w]$-true",
+    "input": "# K\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^[\\w]$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-shorthand-K-^\\W$-false",
+    "input": "# K\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^\\W$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-shorthand-K-^\\W$-true",
+    "input": "# K\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^\\W$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-shorthand-K-^[\\W]$-false",
+    "input": "# K\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^[\\W]$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-shorthand-K-^[\\W]$-true",
+    "input": "# K\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^[\\W]$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-shorthand-ſ-^\\w$-false",
+    "input": "# ſ\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^\\w$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-shorthand-ſ-^\\w$-true",
+    "input": "# ſ\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^\\w$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-shorthand-ſ-^[\\w]$-false",
+    "input": "# ſ\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^[\\w]$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-shorthand-ſ-^[\\w]$-true",
+    "input": "# ſ\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^[\\w]$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-shorthand-ſ-^\\W$-false",
+    "input": "# ſ\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^\\W$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-shorthand-ſ-^\\W$-true",
+    "input": "# ſ\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^\\W$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": []
+  },
+  {
+    "id": "heading-shorthand-ſ-^[\\W]$-false",
+    "input": "# ſ\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^[\\W]$"
+        ],
+        "match_case": false
+      }
+    },
+    "findings": [
+      {
+        "rule": "MD043",
+        "line": 1
+      }
+    ]
+  },
+  {
+    "id": "heading-shorthand-ſ-^[\\W]$-true",
+    "input": "# ſ\n",
+    "config": {
+      "default": false,
+      "MD043": {
+        "headings": [
+          "% ^[\\W]$"
+        ],
+        "match_case": true
+      }
+    },
+    "findings": []
+  },
+  {
     "id": "inline-pattern-config",
     "input": "<!-- markdownlint-configure-file {\"MD043\":{\"headings\":[\"% ^Intro$\"]}} -->\n# Intro\n",
     "config": {

@@ -613,6 +613,7 @@ dependencies = [
  "markdown",
  "oxc_resolver",
  "regex",
+ "regex-syntax",
  "regress",
  "rustix",
  "serde_json",

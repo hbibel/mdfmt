@@ -357,14 +357,19 @@ fn make_bracket_class(ct: CharacterClassType, positive: bool, icase: bool) -> ir
     ir::Node::Bracket(BracketContents { invert: false, cps })
 }
 
-fn add_class_atom(bc: &mut BracketContents, atom: ClassAtom) {
+fn add_class_atom(bc: &mut BracketContents, atom: ClassAtom, unicode_icase: bool) {
     match atom {
         ClassAtom::CodePoint(c) => bc.cps.add_one(c),
         ClassAtom::CharacterClass {
             class_type,
             positive,
         } => {
-            bc.cps.add_set(codepoints_from_class(class_type, positive));
+            if unicode_icase && matches!(class_type, CharacterClassType::Words) {
+                let folded = unicode::add_icase_code_points(codepoints_from_class_positive(class_type));
+                bc.cps.add_set(if positive { folded } else { folded.inverted() });
+            } else {
+                bc.cps.add_set(codepoints_from_class(class_type, positive));
+            }
         }
         ClassAtom::Range { iv, negate } => {
             if negate {
@@ -841,6 +846,8 @@ where
             cps: CodePointSet::default(),
         };
 
+        let unicode_icase = self.flags.icase && self.flags.unicode;
+
         loop {
             match self.peek().map(to_char_sat) {
                 None => {
@@ -867,14 +874,14 @@ where
 
             // Check for a dash; we may have a range.
             if !self.try_consume('-') {
-                add_class_atom(&mut result, first);
+                add_class_atom(&mut result, first, unicode_icase);
                 continue;
             }
 
             let Some(second) = self.try_consume_bracket_class_atom()? else {
                 // No second atom. For example: [a-].
-                add_class_atom(&mut result, first);
-                add_class_atom(&mut result, ClassAtom::CodePoint(u32::from('-')));
+                add_class_atom(&mut result, first, unicode_icase);
+                add_class_atom(&mut result, ClassAtom::CodePoint(u32::from('-')), unicode_icase);
                 continue;
             };
 
@@ -899,9 +906,9 @@ where
             }
 
             // If it does not match a range treat as any match single characters.
-            add_class_atom(&mut result, first);
-            add_class_atom(&mut result, ClassAtom::CodePoint(u32::from('-')));
-            add_class_atom(&mut result, second);
+            add_class_atom(&mut result, first, unicode_icase);
+            add_class_atom(&mut result, ClassAtom::CodePoint(u32::from('-')), unicode_icase);
+            add_class_atom(&mut result, second, unicode_icase);
         }
     }
 
@@ -1610,7 +1617,7 @@ where
                 Ok(make_bracket_class(
                     CharacterClassType::Words,
                     c == 'w' as u32,
-                    self.flags.icase,
+                    self.flags.icase && (self.flags.unicode || self.flags.unicode_sets),
                 ))
             }
 

@@ -114,6 +114,7 @@ fn transaction(
 ) -> Result<FormatResult, ProcessingError> {
     use stabilize::{AttemptFailure, Phase, StateTracker};
     let mut tracker = StateTracker::new(source.len());
+    let metadata = config.source(source)?;
     let mut current = source.to_owned();
     let mut edits = vec![];
     let mut origins = std::collections::BTreeSet::new();
@@ -129,6 +130,11 @@ fn transaction(
             Ok(result) => result,
             Err(failure) => break failure,
         };
+        if !metadata.metadata_stable(&result.output) {
+            return Err(ProcessingError::ProtectedRegion(
+                0..metadata.front_matter_end().unwrap_or(0),
+            ));
+        }
         edits = stabilize::compose(source, &edits, &result.edits, &mut origins)?;
         if result.output == current {
             result.edits = edits;

@@ -70,7 +70,8 @@ pub fn format_with_code_formatters(
     if !code.enabled || !options.fix || !config.fix {
         return Ok(first);
     }
-    let before = config.source(&first.output)?;
+    let context = config.source(source)?;
+    let before = context.derive(first.output.clone());
     let parsed = parse::parse(&before).map_err(ProcessingError::Parse)?;
     let document = config
         .document(before.text())
@@ -138,7 +139,7 @@ pub fn format_with_code_formatters(
         result.edits = compose_edits(source, &combined, &result.edits)?;
         first = result;
     }
-    let output = config.source(&first.output)?;
+    let output = context.derive(first.output.clone());
     let parsed = parse::parse(&output).map_err(ProcessingError::Parse)?;
     let anchors = fences::anchors(&parsed);
     for (ordinal, language, failure) in failures {
