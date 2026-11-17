@@ -150,6 +150,15 @@ optimized verification passes 574 tests
 across 77 targets. Release hardening remains unfinished. The rule
 count does not establish complete fixability or parser/option fidelity.
 
+Offline [corpus/property/benchmark hardening](../../compatibility/corpus-hardening.md)
+now passes all 652 CommonMark examples plus two pinned real documents, 256 seeded
+native cases and 654 bounded native/source comparisons. Complete debug and
+optimized verification each pass 581 tests across 80 targets. The corpus gate
+needed source-probe representation corrections, not formatter production edits;
+no new Important/Critical formatter defect was established in this finite set.
+Artifact packaging and the combined hardening-batch review are next; Windows
+transport/runtime and remote platform evidence remain open.
+
 The first useful release includes local declarative configuration,
 filesystem-based `extends`, and configuration-aware prose reflow. It is not the
 end of the roadmap; built-in rule coverage, code formatter integration, and

@@ -39,13 +39,13 @@ Interfaces:
 - Rust tests consume checked-in observations using existing public formatting APIs, with MD013 width 12, no_inline_config true and explicit custom no-match metadata for the corpus. Seeded cases use fixed local PRNG state, never randomness/network/process formatters.
 - `examples/benchmark.rs` emits JSON records for prose/list/reference/code/table samples, elapsed times and median/p95; no timing assertions beyond existing resource gates.
 
-- [ ] Write `licensed_corpus_preserves_upstream_atomic_ranges`: require 652 standard cases plus two real documents, no-fix exact bytes, MD013-only prefix/range preservation, composed edit reconstruction, second-call no edits and at least one real corpus transformation. Run RED on missing corpus observations, not a fabricated formatter bug.
-- [ ] Write `seeded_native_cases_are_bounded_and_repeatable` and `approved_repairs_remain_available_under_hardening`. Pin 256 seeded cases and literal authorized output `# Target\n\n[case](#target)\n` from `# Target!\n\n[case](#TARGET)\n`. A parent test bounds the native property child; hostile-pattern controls require typed failures and later safe recovery.
-- [ ] Implement explicit fixture refresh with the pinned CommonMark digest and README hashes from source audit, retaining source licenses. Record actual micromark atomic ranges before running Rust/native comparisons. Expected: complete corpus results or concrete failures with case IDs, never skipped failing cases.
-- [ ] Reproduce any Important/Critical result in a focused RED consumer regression, fix narrowly and record the roadmap finding. Preserve reference pins and existing fix authority.
-- [ ] Implement/run the five-sample native benchmark in debug and release. Expected: five categories with actual finite sample distributions, not invented performance numbers.
-- [ ] Run `mise exec -- cargo test --test hardening_corpus`, `mise exec -- cargo test --release --test hardening_corpus`, `node tools/parser-oracle/corpus.mjs` and affected metadata/reflow/literal gates. Expected: exact protected ranges, output reconstruction/idempotence and bounded native properties pass.
-- [ ] Run complete debug/release suites, fmt/clippy/diff; commit `test: add licensed corpus and bounded native properties`, task-done with actual consumer evidence.
+- [x] Write `licensed_corpus_preserves_upstream_atomic_ranges`: require 652 standard cases plus two real documents, no-fix exact bytes, MD013-only prefix/range preservation, composed edit reconstruction, second-call no edits and at least one real corpus transformation. Run RED on missing corpus observations, not a fabricated formatter bug.
+- [x] Write `seeded_native_cases_are_bounded_and_repeatable` and `approved_repairs_remain_available_under_hardening`. Pin 256 seeded cases and literal authorized output `# Target\n\n[case](#target)\n` from `# Target!\n\n[case](#TARGET)\n`. A parent test bounds the native property child; hostile-pattern controls require typed failures and later safe recovery.
+- [x] Implement explicit fixture refresh with the pinned CommonMark digest and README hashes from source audit, retaining source licenses. Record actual micromark atomic ranges before running Rust/native comparisons. Expected: complete corpus results or concrete failures with case IDs, never skipped failing cases.
+- [x] Reproduce any Important/Critical result in a focused RED consumer regression, fix narrowly and record the roadmap finding. Preserve reference pins and existing fix authority. No formatter defect was established; source-probe corrections have separate RED controls.
+- [x] Implement/run the five-sample native benchmark in debug and release. Expected: five categories with actual finite sample distributions, not invented performance numbers.
+- [x] Run `mise exec -- cargo test --test hardening_corpus`, `mise exec -- cargo test --release --test hardening_corpus`, `node tools/parser-oracle/corpus.mjs` and affected metadata/reflow/literal gates. Expected: exact protected ranges, output reconstruction/idempotence and bounded native properties pass.
+- [x] Run complete debug/release suites, fmt/clippy/diff; commit `test: add licensed corpus and bounded native properties`, task-done with actual consumer evidence.
 
 ## Task 2: Curated reproducible archives and extracted-binary checks
 
@@ -81,3 +81,26 @@ instruction. Costs: larger licensed fixtures, finite seeded coverage rather than
 coverage-guided proof, host-specific benchmark distributions, explicit notice
 maintenance and still-missing Windows/remote runtime receipts. None authorizes
 publication, reference-pin upgrades or declaring the whole roadmap complete.
+
+## Task 1 evidence and retained decisions
+
+The missing corpus observations and benchmark APIs failed before implementation.
+All 654 corpus cases now pass native protected-range/edit/idempotence checks and
+bounded source/native comparison. Probe regressions separately exposed lost entity
+payload/word spacing, nonsemantic micromark content grouping and artificial
+undefined-reference overlays; source/runtime checks justified representation
+corrections rather than application edits or skipped cases. Compare selected
+semantic blocks/inline events, not internal chunks/diagnostic copies. Cost if
+wrong: this remains a finite selected-structure proof; literal source ranges and
+probe invariants are retained, not replaced by a universal HTML-parity claim.
+
+All 256 seeded native cases pass; 29 perform real transformations. Approved MD026/
+MD051 controls pass. Debug and release benchmark distributions retain five actual
+samples per prose/list/reference/code/table category. Both complete suites pass
+581 tests across 80 targets; 280 metadata/82 patterns/29 reflow/1,662 literal-style/
+220 fence-style native gates and fmt/clippy/diff pass. Task 2 and the independent
+combined review remain; no new formatter production correction was required.
+
+Retain the ordering ruling: run available Linux corpus/artifact work before Windows
+transport while no native Windows runtime is available. Cost if wrong: the Windows
+implementation/runtime obligation remains open, never waived by these results.

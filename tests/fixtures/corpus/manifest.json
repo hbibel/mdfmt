@@ -1,0 +1,55 @@
+{
+  "commonmark_examples": 652,
+  "attribution": "CommonMark specification copyright 2014-16 John MacFarlane; examples are unmodified CC-BY-SA 4.0 test data, not binary content.",
+  "sources": [
+    {
+      "path": "commonmark.json",
+      "url": "https://spec.commonmark.org/0.31.2/spec.json",
+      "sha256": "d431b29d97b6f73e69d547109cf5081578fac931e72afe95639ebe766c1b2a20",
+      "license": "CC-BY-SA-4.0",
+      "bytes": 140487
+    },
+    {
+      "path": "COMMONMARK-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/commonmark/commonmark-spec/0.31.2/LICENSE",
+      "sha256": "3e4806ba6f20073e8ce40da5a0c4b59f7f44287965f538e195a4d734d833557b",
+      "license": "CC-BY-SA-4.0; BSD-2-Clause; MIT",
+      "bytes": 2792
+    },
+    {
+      "path": "regress-README.md",
+      "url": "https://github.com/ridiculousfish/regress/tree/v0.11.1",
+      "sha256": "ef3875d93b30214d789ee9ff1f35ad3e908f290092db703af17d6cdff1ae7458",
+      "license": "MIT OR Apache-2.0",
+      "bytes": 3314
+    },
+    {
+      "path": "REGRESS-LICENSE-MIT.txt",
+      "url": "https://github.com/ridiculousfish/regress/tree/v0.11.1",
+      "sha256": "3f8a05fc8617c5ce569fa5a4f2301cd847fe00fa011bdaa8f353fd55a2691a54",
+      "license": "MIT",
+      "bytes": 1072
+    },
+    {
+      "path": "REGRESS-LICENSE-APACHE.txt",
+      "url": "https://github.com/ridiculousfish/regress/tree/v0.11.1",
+      "sha256": "e36d55837170195cdf934aa6a48c0ad6efba1bde3f5b4a1b9259c171d5aeb647",
+      "license": "Apache-2.0",
+      "bytes": 10835
+    },
+    {
+      "path": "markdownlint-README.md",
+      "url": "https://www.npmjs.com/package/markdownlint/v/0.42.0",
+      "sha256": "2a37707f9fa0543e6cffbc3281dfad55678f1a16b361e4506a88e201b2a9b1bf",
+      "license": "MIT",
+      "bytes": 37961
+    },
+    {
+      "path": "MARKDOWNLINT-LICENSE.txt",
+      "url": "https://www.npmjs.com/package/markdownlint/v/0.42.0",
+      "sha256": "cdc3c1fb00ee139442c915e98afac039223569a00527e9f7aefc54f92019aec4",
+      "license": "MIT",
+      "bytes": 1073
+    }
+  ]
+}
