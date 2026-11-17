@@ -6,9 +6,10 @@ Finish the roadmap's practical release evidence without converting finite tests
 into a claim of universal Markdown, regex or filesystem parity. Keep the current
 branch/worktree and do not publish, tag, merge or push.
 
-The regex batch is under independent review at `9e31e65`. Its reported complete
-optimized baseline is 570 tests across 77 targets; the review/fix pass must close
-before this work changes shared processing or parser sources.
+The regex correction pass closed at `24b8500`. Processing reuse committed at
+`283af75`, with review closure at `8b942f8`: both debug and optimized suites pass
+577 tests across 78 targets, and independent review found no Important/Critical
+defects. Historical baseline failures below were reproduced before those fixes.
 
 Known obligations remain: the unchanged 4,000-item list and 500-paragraph debug
 budgets previously failed, optional formatter transport is Unix-only, remote
@@ -23,6 +24,10 @@ evidence is absent. These are not resolved by the current optimized suite.
 
 Each deliverable owns a tested implementation and may receive one independent
 review/fix pass. Do not rerun reviews of unrelated completed batches.
+
+Processing reuse is complete. Run the available Linux corpus/artifact deliverable
+next while Windows runtime evidence remains unavailable; this ordering does not
+close or weaken the Windows implementation/evidence obligation.
 
 ## Processing reuse and resource evidence
 
@@ -147,3 +152,38 @@ provision development-only tooling where authorized, otherwise finish available
 native evidence and report the precise missing Windows runtime/remote receipts.
 Do not label unavailable platform tests as passing or claim the entire roadmap
 complete while a required implementation or genuine runtime blocker remains.
+
+## Corpus/artifact implementation decisions
+
+- Pin all 652 CommonMark 0.31.2 examples from the official spec JSON, SHA-256
+  `d431b29d97b6f73e69d547109cf5081578fac931e72afe95639ebe766c1b2a20`.
+  Retain original attribution/CC-BY-SA 4.0 terms as test-data provenance, separate
+  from binary licensing. Include the pinned markdownlint 0.42.0 and regress 0.11.1
+  READMEs as two licensed real-document inputs with hashes and license copies.
+- Record protected source ranges using the pinned development micromark consumer.
+  Native tests check no-edit overlap, exact original edit reconstruction, no-fix
+  preservation and repeat stability. A bounded differential gate compares selected
+  upstream structure/atomic source before and after MD013-only formatting at width
+  12; disable default metadata and inline directives explicitly for this corpus
+  contract. Existing metadata/directive and approved MD026/MD051 controls remain.
+- Run 256 reproducible native seeded cases in a bounded subprocess, with mixed
+  delimiters, containers, tabs, Unicode, newlines, HTML, links, tables and metadata.
+  Include hostile-pattern error/recovery controls without a JS adversarial loop.
+  This is seeded property fuzzing, not an unrun coverage-guided/libFuzzer campaign.
+- Use a native Rust example to report five timed samples after warm-up for prose,
+  dense lists, references, code and tables. Run it in debug and release; keep
+  existing resource gates unchanged and make no universal throughput claim.
+- Use Python standard-library release tooling only during development. Build the
+  Rust CLI with the declared toolchain/locked dependencies and explicit path
+  remapping into a private build directory; package only curated binary, usage,
+  license/dependency notices, lockfile and normalized provenance. Emit deterministic
+  ZIP metadata and SHA-256 sidecars, and smoke-test the extracted executable.
+  Never read or package `.env`, node_modules, arbitrary worktree files or scratch.
+- CI gains bounded corpus/property/oracle and native artifact checks, but no tag,
+  release upload or publication action. Remote results remain unclaimed locally.
+
+Costs if wrong: test-data licensing/provenance needs maintenance when pins change;
+finite deterministic cases do not replace coverage-guided fuzzing; benchmark
+samples are host-specific; curated notice collection is not a legal-compliance
+certification; native-only local packages do not establish cross-platform runtime
+evidence or authorize publication. Existing Node reference pins stay unchanged.
