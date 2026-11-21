@@ -5,111 +5,18 @@ actionable markdownlint violations using existing declarative
 [markdownlint-cli2](https://github.com/DavidAnson/markdownlint-cli2)
 configuration, including prose reflow that goes beyond `markdownlint-cli2 --fix`.
 
-## Status
+## What `mdfmt` does
 
-The Rust library and CLI foundation exist: source-aware parsing, validated
-localized edits, UTF-16 coordinate accounting, and safe file replacement.
+mdfmt reflows prose to your configured line width and applies safe Markdown fixes
+using your existing declarative markdownlint configuration. It keeps inline
+links intact and preserves table contents. Use `--check` to see what needs
+attention without changing files.
 
-Declarative configuration loading, discovery/inheritance, inline rule permissions,
-and native file selection are implemented; see the
-[compatibility evidence and limits](docs/compatibility/configuration-completion.md).
-MD013 prose reflow and remaining-violation diagnostics are implemented, including
-multiline paragraphs, nested lists, and blockquotes. Reflow respects configured
-widths and inline permissions, preserves hard breaks and indivisible inline
-syntax, and checks the parsed structure before applying changes. MD026 removes
-configured trailing heading punctuation, respecting rule permissions and upstream
-entity/emoji exceptions; see [MD026 evidence](docs/compatibility/md026.md).
-MD047 adds a missing final newline where it is safe, preserving literal EOF
-boundaries with a remaining diagnostic; see [MD047 evidence](docs/compatibility/md047.md).
-MD012 reduces excess blank lines where reparsing confirms preservation;
-see [MD012 evidence](docs/compatibility/md012.md).
-MD019/MD021 normalize ATX heading separators without changing heading text;
-see [heading-spacing evidence](docs/compatibility/heading-spaces.md).
-MD035 normalizes thematic-break styles when contextual reparsing confirms safety;
-see [MD035 evidence](docs/compatibility/md035.md).
-MD004 normalizes unordered-list markers without merging parsed lists or changing
-nesting; see [MD004 evidence](docs/compatibility/md004.md).
-MD009 removes incidental trailing whitespace while preserving hard breaks and
-protected source; see [MD009 evidence](docs/compatibility/md009.md).
-MD010 replaces hard tabs where configured substitution preserves meaning;
-see [MD010 evidence](docs/compatibility/md010.md).
-MD023 removes heading indentation where container ownership is unchanged;
-see [MD023 evidence](docs/compatibility/md023.md).
-MD040 reports missing/disallowed fence languages and extra info without guessing
-replacements; see [MD040 evidence](docs/compatibility/md040.md).
-MD042 reports empty links without inventing destinations;
-see [MD042 evidence](docs/compatibility/md042.md).
-MD045 reports images missing alternate text without fabricating descriptions;
-see [MD045 evidence](docs/compatibility/md045.md).
-MD028 reports blank gaps between sibling blockquotes without merging quotations;
-see [MD028 evidence](docs/compatibility/md028.md).
-MD024 reports duplicate headings without renaming content or changing anchors;
-see [MD024 evidence](docs/compatibility/md024.md).
-MD048 converts fence styles only when code and info strings remain unchanged;
-see [MD048 evidence](docs/compatibility/md048.md).
-MD027 removes incidental quote spacing only when container ownership and protected
-source remain intact; see [MD027 evidence](docs/compatibility/md027.md).
-MD029 normalizes later ordered-list markers while retaining rendered start values;
-see [MD029 evidence](docs/compatibility/md029.md).
-MD030 normalizes list-marker spacing where continuation and code ownership remain
-unchanged; see [MD030 evidence](docs/compatibility/md030.md).
-MD005/MD007 conditionally align sibling/nested indentation while preserving list ownership;
-see [list indentation evidence](docs/compatibility/list-indentation.md).
-MD018 reports missing ATX separators without turning literal text into headings;
-see [MD018 evidence](docs/compatibility/md018.md).
-MD020 reports closed-ATX separator gaps without reinterpreting literal hashes;
-see [MD020 evidence](docs/compatibility/md020.md).
-MD011 reports reversed link syntax without creating links from literal text;
-see [MD011 evidence](docs/compatibility/md011.md).
-MD014 reports command-only prompt prefixes while retaining literal code;
-see [MD014 evidence](docs/compatibility/md014.md).
-MD056 reports table cell-count mismatches without adding or discarding cells;
-see [MD056 evidence](docs/compatibility/md056.md).
-MD055 reports configured table edge-pipe styles without editing rows;
-see [MD055 evidence](docs/compatibility/md055.md).
-MD058 adds table separators when block structure remains unchanged and reports
-unsafe cases; see [MD058 evidence](docs/compatibility/md058.md).
-MD001, MD025, MD036, MD041, MD043 and MD059 report heading hierarchy, title,
-required-structure, emphasis-as-heading and descriptive-link findings without
-inventing content; see [content diagnostic evidence](docs/compatibility/content-diagnostics.md).
-MD003 conditionally converts heading styles without changing levels or inline
-content; see [heading-style evidence](docs/compatibility/md003.md).
-MD033 reports disallowed HTML opening tags without deleting or escaping source;
-see [HTML diagnostic evidence](docs/compatibility/md033.md).
-MD060 reports table-column alignment and spacing without changing table bytes;
-see [table-column-style evidence](docs/compatibility/md060.md).
-MD022/MD031/MD032 add heading/fence/list separators where block structure, protected source and
-directive targets remain unchanged; see [separator evidence](docs/compatibility/block-separators.md).
-MD049/MD050 conditionally normalize emphasis/strong markers while preserving inline structure
-and protected bytes; see [emphasis-style evidence](docs/compatibility/emphasis-styles.md).
-MD037/MD038/MD039 report inline whitespace without creating emphasis, trimming
-literal code or changing link text;
-see [inline-whitespace evidence](docs/compatibility/inline-whitespace.md).
-MD052/MD053/MD054 report undefined references, unused/duplicate definitions and
-disallowed link/image styles without fabricating destinations or discarding content;
-see [reference diagnostic evidence](docs/compatibility/reference-diagnostics.md).
-MD046 reports code-block style mismatches without converting or changing code;
-see [literal content evidence](docs/compatibility/literal-content-diagnostics.md).
-MD034 reports bare URLs without wrapping them or changing link/table content;
-see the same [literal content evidence](docs/compatibility/literal-content-diagnostics.md).
-MD044 reports configured proper-name capitalization without rewriting literal
-content; see [proper-name evidence](docs/compatibility/literal-content-diagnostics.md).
-MD051 reports invalid local fragments and conditionally corrects unambiguous
-ASCII destination case; see [link-fragment evidence](docs/compatibility/link-fragments.md).
-Documents with uncertain tabbed container prefixes are preserved to avoid editing
-code misclassified by the native parser; see [parser limits](docs/compatibility/parser-evaluation.md).
-All 53 built-ins have native coverage, including diagnostic-only rules and
-conditional repairs. A successful check does not establish complete parser/option
-parity or roadmap completion. See [MD013 evidence and limits](docs/compatibility/md013.md).
-Formatting now settles complete passes with bounded exact-state histories and
-transactional cycle rollback; see [convergence evidence](docs/compatibility/formatting-conflicts.md).
-Document-specific conflicts explain retained list-spacing and blank-line priorities
-alongside unresolved rule findings, including when fixes are disabled.
-Optional `--format-code` delegates owned fenced bodies to installed rustfmt,
-gofmt, Black or JSON Prettier with bounded execution and byte-preserving failure
-fallback; see [adapter evidence and limits](docs/compatibility/code-formatters.md).
-External execution is currently Unix-only; other platforms preserve code with a
-warning while bounded transport remains release-hardening work.
+mdfmt covers all 53 built-in markdownlint rules. Some rules only report problems,
+and some fixes apply only when they can preserve the document’s meaning.
+Coverage does not mean full markdownlint compatibility. See the
+[compatibility baseline](docs/compatibility/baseline.md) and
+[rule inventory](docs/compatibility/rules.json) for details.
 
 ## Usage
 
@@ -167,9 +74,12 @@ Diagnostics go to stderr. Exit codes are 0 for successful processing, 1 for
 needed changes in check mode or remaining error findings, and 2 for usage or
 processing failures. Warnings alone do not cause exit 1. `fix: false` prevents
 edits but does not suppress configured diagnostics.
-Code formatting is off by default and requires enabled MD013/code-block checking
-and full fence permission. No formatter is downloaded, and ordinary library APIs
-do not execute processes. The explicit process-I/O library entry point is
+Optional `--format-code` uses installed formatters on Unix. If a formatter fails
+or is unavailable, or the platform is unsupported, mdfmt leaves the code unchanged
+and warns. See [supported formatters and limits](docs/compatibility/code-formatters.md).
+Code formatting requires enabled MD013/code-block checking and full fence
+permission. No formatter is downloaded, and ordinary library APIs do not
+execute processes. The explicit process-I/O library entry point is
 `format_with_code_formatters` with `CodeFormatOptions { enabled: true }`.
 
 Reflow joins soft breaks and wraps at ordinary spaces, counting source widths in
@@ -200,12 +110,6 @@ does not detect hardlink aliases.
 - Delegate fenced code to an available language formatter without losing code
   on failure.
 - Produce identical output when formatting a document a second time.
-
-The first release targets local declarative configuration and filesystem-based
-`extends`. Later releases include custom regex compatibility and resolution of
-already-installed shared configuration packages. Package resolution will not
-download or install npm packages. JavaScript configuration execution is outside
-scope.
 
 ## Project documents
 
