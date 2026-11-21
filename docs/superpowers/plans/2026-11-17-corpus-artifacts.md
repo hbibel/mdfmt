@@ -64,7 +64,7 @@ Interfaces:
 - [x] Run `python3 -m unittest discover -s tools -p test_release.py` against actual native builds/archives. Expected: both archive integrity/reproducibility and extracted CLI transactional checks pass with exact code/metadata bytes.
 - [x] Add job timeouts, offline corpus/property gates, bounded oracle comparison and host-native package smoke checks to CI. Do not add release/tag/upload actions; document remote receipts as unavailable until executed.
 - [x] Produce and smoke-test a local Linux archive/checksum under `/tmp/opencode`, run full debug/release and affected configuration/formatter gates, fmt/clippy/diff and Python tests. Expected: real extracted native binary works, curated artifacts have no forbidden members/project paths, no application runtime dependency was introduced.
-- [ ] Commit `build: package and verify native release artifacts`; task-done. Request one independent review of this two-task batch, apply one regression-first Important/Critical pass if needed, retain all rulings/costs and stop for the user's check-in without merge/push.
+- [x] Commit `build: package and verify native release artifacts`; task-done. Request one independent review of this two-task batch, apply one regression-first Important/Critical pass if needed, retain all rulings/costs and stop for the user's check-in without merge/push.
 
 ## Planning check and decisions
 
@@ -183,3 +183,32 @@ not application formatter transport. It fails closed if job assignment fails
 before launching tools. Cost if wrong: native Windows lifecycle may need a
 correction; neither malicious-build-tool sandboxing nor log-volume bounds are
 established. Unix process-group termination has native descendant-marker evidence.
+
+## Closure receipts
+
+Corrections committed at `a661315`. The complete debug and release suites each
+pass 582 tests across 80 targets; the final seven-test Python run passes in
+42.058 seconds, including every archive payload hash and production inventory
+assertion. All 654 corpus comparisons, twelve coordinate controls, seven pinned
+fixture hashes, 102 package/280 metadata/82 pattern cases, actual Prettier 2/3
+controls and fmt/clippy/diff pass. The single review/fix pass is closed with no
+Critical or deferred minor findings. No second review was run.
+
+The corrected clean-input Linux archive was built from `a661315`:
+
+```text
+/tmp/opencode/mdfmt-native-artifact-f2oki7fj/out/mdfmt-0.1.0-x86_64-unknown-linux-gnu.zip
+SHA-256 3aef25c103b74bd4a741bfae85d75e6309c6d146a095ddbeb1afb404e1c647bc
+Size 3866364 bytes
+Production inputs 165; locked dependency notices 138
+```
+
+Its SHA-256 sidecar and all payload hashes match. Two actual archive builds
+produce identical bytes. Extraction, version and stdin formatting pass with an
+empty toolchain PATH. BUILD-INFO records clean inputs and the production
+fingerprint `99879ed6dec9938a6315ec3ce55597cf4f5a514c25f61caec34340f391f36e91`.
+The later closure documentation does not change these production inputs.
+
+Stop here for the requested check-in. Preserve `roadmap-completion` and its sibling
+worktree; nothing was merged, pushed, tagged or published. Windows formatter
+transport/native runtime and remote platform CI evidence remain unfinished.
