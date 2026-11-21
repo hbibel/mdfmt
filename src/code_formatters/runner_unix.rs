@@ -28,13 +28,16 @@ struct Retained {
     _slot: Slot,
 }
 
+fn group_gone(child: &GroupChild) -> bool {
+    Pid::from_raw(child.id() as i32)
+        .is_some_and(|pid| test_kill_process_group(pid) == Err(rustix::io::Errno::SRCH))
+}
+
 fn reserve() -> Result<Slot, FormatterFailure> {
     let mut pending = PENDING.lock().unwrap_or_else(|error| error.into_inner());
     pending.retain_mut(|retained| {
         let reaped = matches!(retained.child.try_wait(), Ok(Some(_)));
-        let gone = Pid::from_raw(retained.child.id() as i32)
-            .is_some_and(|pid| test_kill_process_group(pid) == Err(rustix::io::Errno::SRCH));
-        !reaped || !gone
+        !reaped || !group_gone(&retained.child)
     });
     if !pending.is_empty() {
         return Err(FormatterFailure::Cleanup(
@@ -88,16 +91,31 @@ fn pump(
     }
 }
 
-fn terminate(child: &mut GroupChild) -> Result<(), FormatterFailure> {
-    match child.kill() {
-        Ok(()) => Ok(()),
+fn terminate(
+    child: &mut GroupChild,
+    signal: impl FnOnce(&mut GroupChild) -> io::Result<()>,
+    cleanup: Instant,
+) -> Result<(), FormatterFailure> {
+    let error = match signal(child) {
+        Ok(()) => return Ok(()),
         Err(error) if error.raw_os_error() == Some(rustix::io::Errno::SRCH.raw_os_error()) => {
-            Ok(())
+            return Ok(());
         }
-        Err(error) => Err(FormatterFailure::Cleanup(format!(
-            "cannot terminate formatter group: {error}"
-        ))),
+        Err(error) => error,
+    };
+    // Darwin can report EPERM before an exiting group is ready to reap.
+    if error.raw_os_error() == Some(rustix::io::Errno::PERM.raw_os_error()) {
+        loop {
+            match child.try_wait() {
+                Ok(Some(_)) if group_gone(child) => return Ok(()),
+                Ok(_) if Instant::now() < cleanup => std::thread::sleep(Duration::from_millis(1)),
+                _ => break,
+            }
+        }
     }
+    Err(FormatterFailure::Cleanup(format!(
+        "cannot terminate formatter group: {error}"
+    )))
 }
 
 pub(super) fn run(
@@ -180,7 +198,8 @@ pub(super) fn run(
                 match child.try_wait() {
                     Ok(Some(exit)) => {
                         status = Some(exit);
-                        if let Err(error) = terminate(&mut child) {
+                        if let Err(error) = terminate(&mut child, GroupChild::kill, Instant::now())
+                        {
                             break Err(error);
                         }
                         if !exit.success() {
@@ -208,7 +227,8 @@ pub(super) fn run(
     drop(stdin);
     drop(stdout);
     drop(stderr);
-    let termination = terminate(&mut child);
+    let cleanup = Instant::now() + Duration::from_millis(100);
+    let termination = terminate(&mut child, GroupChild::kill, cleanup);
     if let Err(error) = termination {
         // Retain bounded ownership for later nonblocking reaping, never a waiter thread.
         PENDING
@@ -217,7 +237,6 @@ pub(super) fn run(
             .push(Retained { child, _slot: slot });
         return Err(error);
     }
-    let cleanup = Instant::now() + Duration::from_millis(100);
     loop {
         match child.try_wait() {
             Ok(Some(_)) => return result,
@@ -242,5 +261,40 @@ pub(super) fn run(
             ));
         }
         std::thread::sleep(Duration::from_millis(1));
+    }
+}
+
+#[cfg(all(test, any(target_os = "linux", target_os = "macos")))]
+mod tests {
+    use super::*;
+    use rustix::process::{WaitId, WaitIdOptions, waitid};
+
+    #[test]
+    fn denied_signal_to_exited_group_is_recovered_by_reaping() {
+        let mut child = Command::new("true").group_spawn().unwrap();
+        let pid = Pid::from_raw(child.id() as i32).unwrap();
+        assert!(
+            waitid(
+                WaitId::Pid(pid),
+                WaitIdOptions::EXITED | WaitIdOptions::NOWAIT
+            )
+            .unwrap()
+            .is_some()
+        );
+
+        let result = terminate(
+            &mut child,
+            |child| {
+                if cfg!(target_os = "macos") {
+                    child.kill()
+                } else {
+                    Err(rustix::io::Errno::PERM.into())
+                }
+            },
+            Instant::now() + Duration::from_millis(100),
+        );
+        let reaped = child.try_wait().unwrap();
+        assert!(reaped.is_some_and(|status| status.success()));
+        result.unwrap();
     }
 }

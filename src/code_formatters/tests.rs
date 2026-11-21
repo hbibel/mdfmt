@@ -239,9 +239,9 @@ fn runner_preserves_partial_failure_and_bounds_both_pipes() {
         },
     )
     .unwrap_err();
-    assert_eq!(error.code(), "formatter-output-limit");
+    assert_eq!(error.code(), "formatter-output-limit", "{error:?}");
     let error = run(fixture("flood"), b"", &limits).unwrap_err();
-    assert_eq!(error.code(), "formatter-output-limit");
+    assert_eq!(error.code(), "formatter-output-limit", "{error:?}");
     let error = run(
         Command::new("mdfmt-no-such-formatter-8def8494"),
         b"",
