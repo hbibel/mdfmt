@@ -28,6 +28,15 @@ diagnostic copies are not rendered semantic blocks. Dedicated probe assertions
 failed before those distinctions were corrected; those probe failures were not
 formatter corruption findings.
 
+The independent review exposed a separate authority error: upstream coordinates
+refer to BOM-stripped, newline-normalized parser input, not original source bytes.
+The observer now maps UTF-16 line/column positions to original UTF-8 bytes and
+asserts that every atomic slice recovers the upstream token text after newline
+normalization. Twelve checked-in controls combine BOM, LF/CRLF/CR, tabs, astral
+text and lazy container continuation. The source probe and native consumer assert
+literal link/code slices at original offsets before applying the range-overlap
+gate. The original 654 receipts did not change.
+
 The 654 native/source comparisons pass. The Rust gate also passes all 654 cases
 with exact protected-range/edit/idempotence checks. No formatter production change
 was needed for this corpus. Existing metadata/directive contracts remain covered
@@ -79,7 +88,9 @@ mise exec -- cargo run --release --example benchmark
 Only explicit `python3 tools/refresh-corpus.py --fetch` downloads/copies pinned
 inputs; source observations refresh with `corpus.mjs --record --source-only`.
 Ordinary Rust tests need neither network access nor Node. Complete debug and
-optimized verification each pass 581 tests across 80 targets, including the
-benchmark's sample/statistics test. Fmt/clippy/diff checks are clean. Independent
-batch review follows the artifact task; artifact and Windows deliverables remain
-unfinished.
+optimized verification each pass 582 tests across 80 targets, including the
+benchmark's sample/statistics test and original-byte coordinate controls.
+Fmt/clippy/diff checks are clean. The combined corpus/artifact review found four
+Important tooling/evidence gaps with regression-first corrections; no formatter
+production defect was established. Windows transport/runtime and remote CI
+evidence remain open.

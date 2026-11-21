@@ -104,3 +104,82 @@ combined review remain; no new formatter production correction was required.
 Retain the ordering ruling: run available Linux corpus/artifact work before Windows
 transport while no native Windows runtime is available. Cost if wrong: the Windows
 implementation/runtime obligation remains open, never waived by these results.
+
+## Task 2 evidence and retained decisions
+
+Task 2 committed at `6e57388`. Both original archive consumers failed before
+the packager existed. The provenance environment-path regression separately
+failed before the shared guarded reader correction; no real environment file
+was read. Four Python tests pass, including actual repeated ZIP bytes/checksums,
+extracted-binary transactional behavior and the Linux descendant-pipe deadline
+control. That deadline control already passed the baseline; it did not establish
+a local defect or justify a production fix.
+
+Complete debug and release suites each pass 581 tests across 80 targets.
+Installed-package/configuration/metadata/pattern gates pass 102/110/280/82 cases;
+all 654 corpus comparisons pass. Actual Prettier 2.8.8 and 3.6.2 exact-output,
+stability and plugin-isolation controls pass. Offline fixture hashes, workflow
+YAML/matrices/deadlines/no-publication checks and fmt/clippy/diff pass.
+
+Retained rulings:
+
+- Include the root MIT license, 138-package Linux closure, audited version-specific
+  supplements and installed Rust-library notices. Cost if wrong: explicit notice
+  maintenance or platform-specific file availability failures; no legal-compliance
+  certification.
+- Reject custom Rust flags and use a separate host-native build with path remaps.
+  Cost if wrong: callers must clear their flags and need a compatible OS/libc;
+  neither hermetic nor cross-host binary reproducibility is established.
+- Claim identical archives only for the same build and inputs. Cost if wrong:
+  independent-build reproducibility remains unproved.
+
+The user narrowed the handoff: finish this artifact item and its combined review,
+then stop for a check-in. Windows implementation/runtime and remote CI receipts
+remain open; no merge, push, tag or publication is authorized.
+
+## Independent review and single correction pass
+
+The read-only review covered `01ace34..6e57388`, deliberately checked all five
+focus risks, and independently passed four Python tests, three corpus/property
+tests, the benchmark control, 654 comparisons and seven fixture hashes. It found
+four Important defects, no Critical defects and no minors:
+
+- Root/local notice-prefix scanning could read and embed unrelated private files.
+  A controlled private notice failed before explicit local notice allowlists.
+- Provenance could call modified vendored code or embedded rules clean. A private
+  committed Git fixture failed for both vendor trees, the rule inventory and option
+  schema before complete known production-input hashing/dirty detection.
+- Normalized upstream coordinates shifted original BOM/CRLF byte authority.
+  Source controls and the native receipt consumer failed before original-byte
+  mapping and twelve BOM/newline/tab/astral/lazy-container controls.
+- A timed-out build left a live descendant writing its directory. The inherited
+  stdout/stderr marker control failed before process-group/job containment and
+  bounded cleanup. Native Windows execution remains unclaimed.
+
+Each correction has focused GREEN evidence after RED. The complete correction
+suite and final archive receipt are recorded at closure; no second review occurs.
+No formatter production change was required.
+
+Declined judgments retained as costed rulings:
+
+- Keep closed regex/processing review closures out of this batch. Cost if wrong:
+  finite batch review can miss unrelated pre-existing defects.
+- Keep native Windows/macOS success and Windows formatter transport unclaimed.
+  Cost if wrong: native platform failures remain until CI/runtime evidence exists.
+- Keep independent-build/cross-host/hermetic reproduction outside the same-build
+  ZIP contract. Cost if wrong: fresh builds/toolchains/hosts may produce differences.
+- Do not claim universal parser/HTML equivalence or coverage-guided fuzzing.
+  Cost if wrong: unseen syntax paths remain unproved by finite ranges/seeds.
+- Keep adversarial filesystem races, extended metadata and crash durability
+  outside the current write contract. Cost if wrong: attackers, metadata needs or
+  power loss require stronger filesystem semantics.
+- Do not certify legal sufficiency of collected notices. Cost if wrong:
+  distribution still needs legal review.
+- Do not sign, publish or integrate. Cost if wrong: verified local packages still
+  need a separate release/integration decision.
+
+The builder uses a Windows job bootstrap and temporary file-captured build logs,
+not application formatter transport. It fails closed if job assignment fails
+before launching tools. Cost if wrong: native Windows lifecycle may need a
+correction; neither malicious-build-tool sandboxing nor log-volume bounds are
+established. Unix process-group termination has native descendant-marker evidence.

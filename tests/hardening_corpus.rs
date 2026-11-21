@@ -108,6 +108,43 @@ fn licensed_corpus_preserves_upstream_atomic_ranges() {
     assert!(changed > 0, "corpus never exercised formatting");
 }
 
+#[test]
+fn upstream_ranges_keep_original_bom_newline_container_bytes() {
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/fixtures/corpus/coordinate-observations.json");
+    let rows: Value = serde_json::from_str(
+        &fs::read_to_string(path).expect("offline upstream coordinate controls are required"),
+    )
+    .unwrap();
+    let rows = rows.as_array().unwrap();
+    assert_eq!(rows.len(), 12);
+    let config = settings(
+        "^never-match$",
+        json!({"default":false,"MD013":{"line_length":12}}),
+    );
+    for row in rows {
+        let input = row["input"].as_str().unwrap();
+        let protected: Vec<_> = row["protected"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|span| {
+                let start = span[0].as_u64().unwrap() as usize;
+                let end = span[1].as_u64().unwrap() as usize;
+                let original = input.get(start..end).expect("original UTF-8 boundaries");
+                if span[2] == "link" {
+                    assert_eq!(original, "[link](/url)");
+                    assert_eq!(start, input.find("[link](/url)").unwrap());
+                } else if span[2] == "codeText" {
+                    assert_eq!(original, "`code`");
+                }
+                (start, end)
+            })
+            .collect();
+        verify(input, &config, row["id"].as_str().unwrap(), &protected);
+    }
+}
+
 fn protected_values(input: &str) -> Vec<(String, String)> {
     use markdown::mdast::Node;
     fn visit(node: &Node, input: &str, values: &mut Vec<(String, String)>) {

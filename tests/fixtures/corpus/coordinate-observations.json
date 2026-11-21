@@ -1,0 +1,698 @@
+[
+  {
+    "id": "coordinates-0",
+    "input": "alpha [link](/url)\n",
+    "protected": [
+      [
+        6,
+        18,
+        "link"
+      ]
+    ],
+    "structure": [
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "alpha "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "paragraph",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-1",
+    "input": "> - 😀\talpha beta\nlazy [link](/url) and `code`\n\n> tail\n",
+    "protected": [
+      [
+        2,
+        4,
+        "listItemPrefix"
+      ],
+      [
+        25,
+        37,
+        "link"
+      ],
+      [
+        42,
+        48,
+        "codeText"
+      ]
+    ],
+    "structure": [
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "listUnordered",
+        "open"
+      ],
+      [
+        "listItemPrefix",
+        "- "
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "😀 alpha beta lazy "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "data",
+        " and "
+      ],
+      [
+        "codeText",
+        "`code`"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "listUnordered",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "tail"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-2",
+    "input": "alpha [link](/url)\r\n",
+    "protected": [
+      [
+        6,
+        18,
+        "link"
+      ]
+    ],
+    "structure": [
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "alpha "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "paragraph",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-3",
+    "input": "> - 😀\talpha beta\r\nlazy [link](/url) and `code`\r\n\r\n> tail\r\n",
+    "protected": [
+      [
+        2,
+        4,
+        "listItemPrefix"
+      ],
+      [
+        26,
+        38,
+        "link"
+      ],
+      [
+        43,
+        49,
+        "codeText"
+      ]
+    ],
+    "structure": [
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "listUnordered",
+        "open"
+      ],
+      [
+        "listItemPrefix",
+        "- "
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "😀 alpha beta lazy "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "data",
+        " and "
+      ],
+      [
+        "codeText",
+        "`code`"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "listUnordered",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "tail"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-4",
+    "input": "alpha [link](/url)\r",
+    "protected": [
+      [
+        6,
+        18,
+        "link"
+      ]
+    ],
+    "structure": [
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "alpha "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "paragraph",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-5",
+    "input": "> - 😀\talpha beta\rlazy [link](/url) and `code`\r\r> tail\r",
+    "protected": [
+      [
+        2,
+        4,
+        "listItemPrefix"
+      ],
+      [
+        25,
+        37,
+        "link"
+      ],
+      [
+        42,
+        48,
+        "codeText"
+      ]
+    ],
+    "structure": [
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "listUnordered",
+        "open"
+      ],
+      [
+        "listItemPrefix",
+        "- "
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "😀 alpha beta lazy "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "data",
+        " and "
+      ],
+      [
+        "codeText",
+        "`code`"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "listUnordered",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "tail"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-6",
+    "input": "﻿alpha [link](/url)\n",
+    "protected": [
+      [
+        9,
+        21,
+        "link"
+      ]
+    ],
+    "structure": [
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "alpha "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "paragraph",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-7",
+    "input": "﻿> - 😀\talpha beta\nlazy [link](/url) and `code`\n\n> tail\n",
+    "protected": [
+      [
+        5,
+        7,
+        "listItemPrefix"
+      ],
+      [
+        28,
+        40,
+        "link"
+      ],
+      [
+        45,
+        51,
+        "codeText"
+      ]
+    ],
+    "structure": [
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "listUnordered",
+        "open"
+      ],
+      [
+        "listItemPrefix",
+        "- "
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "😀 alpha beta lazy "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "data",
+        " and "
+      ],
+      [
+        "codeText",
+        "`code`"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "listUnordered",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "tail"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-8",
+    "input": "﻿alpha [link](/url)\r\n",
+    "protected": [
+      [
+        9,
+        21,
+        "link"
+      ]
+    ],
+    "structure": [
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "alpha "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "paragraph",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-9",
+    "input": "﻿> - 😀\talpha beta\r\nlazy [link](/url) and `code`\r\n\r\n> tail\r\n",
+    "protected": [
+      [
+        5,
+        7,
+        "listItemPrefix"
+      ],
+      [
+        29,
+        41,
+        "link"
+      ],
+      [
+        46,
+        52,
+        "codeText"
+      ]
+    ],
+    "structure": [
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "listUnordered",
+        "open"
+      ],
+      [
+        "listItemPrefix",
+        "- "
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "😀 alpha beta lazy "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "data",
+        " and "
+      ],
+      [
+        "codeText",
+        "`code`"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "listUnordered",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "tail"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-10",
+    "input": "﻿alpha [link](/url)\r",
+    "protected": [
+      [
+        9,
+        21,
+        "link"
+      ]
+    ],
+    "structure": [
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "alpha "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "paragraph",
+        "close"
+      ]
+    ]
+  },
+  {
+    "id": "coordinates-11",
+    "input": "﻿> - 😀\talpha beta\rlazy [link](/url) and `code`\r\r> tail\r",
+    "protected": [
+      [
+        5,
+        7,
+        "listItemPrefix"
+      ],
+      [
+        28,
+        40,
+        "link"
+      ],
+      [
+        45,
+        51,
+        "codeText"
+      ]
+    ],
+    "structure": [
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "listUnordered",
+        "open"
+      ],
+      [
+        "listItemPrefix",
+        "- "
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "😀 alpha beta lazy "
+      ],
+      [
+        "link",
+        "[link](/url)"
+      ],
+      [
+        "data",
+        " and "
+      ],
+      [
+        "codeText",
+        "`code`"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "listUnordered",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "open"
+      ],
+      [
+        "paragraph",
+        "open"
+      ],
+      [
+        "data",
+        "tail"
+      ],
+      [
+        "paragraph",
+        "close"
+      ],
+      [
+        "blockQuote",
+        "close"
+      ]
+    ]
+  }
+]

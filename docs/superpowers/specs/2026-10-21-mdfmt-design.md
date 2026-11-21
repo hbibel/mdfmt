@@ -153,11 +153,14 @@ count does not establish complete fixability or parser/option fidelity.
 Offline [corpus/property/benchmark hardening](../../compatibility/corpus-hardening.md)
 now passes all 652 CommonMark examples plus two pinned real documents, 256 seeded
 native cases and 654 bounded native/source comparisons. Complete debug and
-optimized verification each pass 581 tests across 80 targets. The corpus gate
+optimized verification each pass 582 tests across 80 targets. The corpus gate
 needed source-probe representation corrections, not formatter production edits;
 no new Important/Critical formatter defect was established in this finite set.
-Artifact packaging and the combined hardening-batch review are next; Windows
-transport/runtime and remote platform evidence remain open.
+Native [artifact packaging](../../compatibility/native-artifacts.md) now has
+curated local archives, checksums, provenance, notices and extracted-binary checks.
+The combined review's four Important tooling/evidence findings have
+regression-first corrections; seven Python tests pass. Windows transport/runtime
+and remote platform evidence remain open.
 
 The first useful release includes local declarative configuration,
 filesystem-based `extends`, and configuration-aware prose reflow. It is not the
@@ -179,6 +182,16 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- The artifact/corpus review found four Important gaps: project notice-prefix
+  scanning could embed unrelated private worktree files; provenance omitted
+  vendored production code and embedded data; upstream protected ranges used
+  BOM-stripped/newline-normalized offsets rather than original UTF-8 bytes; and
+  build timeout cleanup left descendants running (with an additional Windows
+  inherited-pipe deadline hazard). Regression-first corrections explicitly curate
+  local notices, inventory known production inputs, map upstream coordinates to
+  original bytes and contain build process trees. Windows builder lifecycle is
+  source-reviewed only until native CI runs; these fixes do not implement the
+  separately outstanding Windows formatter transport.
 - Artifact tooling must apply its environment-path exclusion to provenance
   inventory reads as well as archive/notice selection. The first implementation
   bypassed the guard while hashing Rust inputs. A controlled path-component

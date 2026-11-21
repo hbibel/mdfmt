@@ -33,11 +33,17 @@ function normalize(items,trim=false) {
 
 function observe(input) {
     let observation;
-    const text=input.replace(/^\uFEFF/,"").replace(/\r\n?/g,"\n");
+    // markdownlint strips the initial BOM and normalizes newlines before parsing.
+    const lineStarts=[input.startsWith("\uFEFF")?1:0];
+    for(let index=lineStarts[0];index<input.length;index++) {
+        if(input[index]==="\r") {
+            if(input[index+1]==="\n")index++;
+            lineStarts.push(index+1);
+        }else if(input[index]==="\n")lineStarts.push(index+1);
+    }
     function offset(line,column) {
-        let cursor=0;
-        for(let index=1;index<line;index++)cursor=text.indexOf("\n",cursor)+1;
-        return Buffer.byteLength(text.slice(0,cursor+column-1));
+        assert.ok(line>=1&&line<=lineStarts.length,"upstream line outside original source");
+        return Buffer.byteLength(input.slice(0,lineStarts[line-1]+column-1));
     }
     lint({strings:{doc:input},noInlineConfig:true,frontMatter:/^never-match$/u,config:{default:false,"corpus-probe":true},customRules:[{
         names:["corpus-probe"],description:"Capture corpus boundaries",tags:["observation"],parser:"micromark",
@@ -48,7 +54,9 @@ function observe(input) {
                     // markdownlint appends diagnostic-only copies of rendered data.
                     if(token.type.startsWith("undefinedReference"))return [];
                     if(atomic.has(token.type)) {
-                        protectedRanges.push([offset(token.startLine,token.startColumn),offset(token.endLine,token.endColumn),token.type]);
+                        const start=offset(token.startLine,token.startColumn),end=offset(token.endLine,token.endColumn);
+                        assert.equal(Buffer.from(input).subarray(start,end).toString().replace(/\r\n?/gu,"\n"),token.text,"upstream coordinates must recover the original atomic payload");
+                        protectedRanges.push([start,end,token.type]);
                         return [[token.type,token.text]];
                     }
                     if(token.type==="data")return [["data",token.text.replace(/[\t\r\n ]+/gu," ")]];
@@ -70,6 +78,25 @@ assert.notDeepEqual(observe("alpha **beta**\n").structure,observe("alpha**beta**
 assert.notDeepEqual(observe("&copy;\n").structure,observe("&amp;\n").structure,"entity payload must remain observable");
 assert.deepEqual(observe("[foo]: /url\n===\n[foo]\n").structure,observe("[foo]: /url\n=== [foo]\n").structure,"micromark content chunks are not semantic blocks");
 assert.deepEqual(observe("[foo [bar](/uri)](/uri)\n").structure,observe("[foo\n[bar](/uri)](/uri)\n").structure,"artificial undefined-reference overlays are not rendered content");
+const coordinateRows=[];
+for(const bom of ["","\uFEFF"])for(const newline of ["\n","\r\n","\r"])for(const [name,body]of [
+    ["link","alpha [link](/url)\n"],
+    ["container","> - 😀\talpha beta\nlazy [link](/url) and `code`\n\n> tail\n"]
+]) {
+    const input=bom+body.replace(/\n/gu,newline),source=observe(input),bytes=Buffer.from(input);
+    const link=source.protected.filter(span=>span[2]==="link");
+    assert.equal(link.length,1,"coordinate control lost the source link");
+    assert.equal(link[0][0],bytes.indexOf("[link](/url)"),"upstream range must use original BOM/newline bytes");
+    assert.equal(bytes.subarray(link[0][0],link[0][1]).toString(),"[link](/url)","upstream link slice");
+    if(name==="container") {
+        const code=source.protected.find(span=>span[2]==="codeText");
+        assert.ok(code,"coordinate control lost inline code");
+        assert.equal(bytes.subarray(code[0],code[1]).toString(),"`code`","upstream inline-code slice");
+    }
+    coordinateRows.push({id:`coordinates-${coordinateRows.length}`,input,...source});
+}
+const coordinateDestination=new URL("coordinate-observations.json",directory),coordinateSerialized=JSON.stringify(coordinateRows,null,2)+"\n";
+if(process.argv.includes("--record"))writeFileSync(coordinateDestination,coordinateSerialized);else assert.equal(readFileSync(coordinateDestination,"utf8"),coordinateSerialized);
 const root=process.argv.includes("--source-only")?null:mkdtempSync("/tmp/opencode/mdfmt-corpus-oracle-");
 const rows=[];
 try {

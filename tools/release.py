@@ -5,10 +5,13 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import signal
 import stat
 import subprocess
+import sys
 import tempfile
 import time
+import uuid
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,6 +19,20 @@ SUPPLEMENTS = {
     ("fast-glob", "1.1.2"): ("licenses/fast-glob-1.1.2.txt", "https://github.com/oxc-project/fast-glob/blob/cd1157ebe949c07c2e08ccf7b96f753dfc08e7bd/LICENSE"),
     ("nodejs-built-in-modules", "1.0.0"): ("licenses/nodejs-built-in-modules-1.0.0.txt", "https://github.com/oxc-project/nodejs-built-in-modules/blob/9117efa38fe088325e8a1036a8ddea7f3546c1ac/LICENSE"),
 }
+LOCAL_NOTICES = {
+    ".": ("LICENSE",),
+    "vendor/regress": ("LICENSE-APACHE", "LICENSE-MIT"),
+    "vendor/oxc_resolver": ("LICENSE",),
+}
+SOURCE_TREES = ("src", "vendor/regress/src", "vendor/oxc_resolver/src")
+SOURCE_FILES = (
+    "Cargo.toml", "Cargo.lock", "mise.toml", "vendor/regress/Cargo.toml",
+    "vendor/oxc_resolver/Cargo.toml", "docs/compatibility/rules.json",
+)
+OPTIONAL_BUILD_INPUTS = (
+    "build.rs", "vendor/regress/build.rs", "vendor/oxc_resolver/build.rs",
+    ".cargo/config", ".cargo/config.toml",
+)
 
 
 def digest(data):
@@ -31,12 +48,109 @@ def read_input(path):
     return path.read_bytes()
 
 
+def windows_job_api():
+    import ctypes
+    from ctypes import wintypes
+    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel.CreateJobObjectW.argtypes = [wintypes.LPVOID, wintypes.LPCWSTR]
+    kernel.CreateJobObjectW.restype = wintypes.HANDLE
+    kernel.OpenJobObjectW.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.LPCWSTR]
+    kernel.OpenJobObjectW.restype = wintypes.HANDLE
+    kernel.SetInformationJobObject.argtypes = [wintypes.HANDLE, ctypes.c_int, wintypes.LPVOID, wintypes.DWORD]
+    kernel.SetInformationJobObject.restype = wintypes.BOOL
+    kernel.AssignProcessToJobObject.argtypes = [wintypes.HANDLE, wintypes.HANDLE]
+    kernel.AssignProcessToJobObject.restype = wintypes.BOOL
+    kernel.GetCurrentProcess.restype = wintypes.HANDLE
+    kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+    kernel.CloseHandle.restype = wintypes.BOOL
+    return ctypes, kernel
+
+
+def create_windows_job():
+    ctypes, kernel = windows_job_api()
+    from ctypes import wintypes
+
+    class BasicLimits(ctypes.Structure):
+        _fields_ = [
+            ("process_time", ctypes.c_longlong), ("job_time", ctypes.c_longlong),
+            ("flags", wintypes.DWORD), ("min_working_set", ctypes.c_size_t),
+            ("max_working_set", ctypes.c_size_t), ("active_processes", wintypes.DWORD),
+            ("affinity", ctypes.c_size_t), ("priority", wintypes.DWORD),
+            ("scheduling", wintypes.DWORD),
+        ]
+
+    class ExtendedLimits(ctypes.Structure):
+        _fields_ = [
+            ("basic", BasicLimits), ("io_counters", ctypes.c_ulonglong * 6),
+            ("process_memory", ctypes.c_size_t), ("job_memory", ctypes.c_size_t),
+            ("peak_process_memory", ctypes.c_size_t), ("peak_job_memory", ctypes.c_size_t),
+        ]
+
+    name = "Local\\mdfmt-build-" + uuid.uuid4().hex
+    handle = kernel.CreateJobObjectW(None, name)
+    if not handle:
+        raise ctypes.WinError(ctypes.get_last_error())
+    limits = ExtendedLimits()
+    limits.basic.flags = 0x2000  # JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+    if not kernel.SetInformationJobObject(handle, 9, ctypes.byref(limits), ctypes.sizeof(limits)):
+        error = ctypes.WinError(ctypes.get_last_error())
+        kernel.CloseHandle(handle)
+        raise error
+    return kernel, handle, name
+
+
+def contained_windows_command(name, arguments):
+    ctypes, kernel = windows_job_api()
+    handle = kernel.OpenJobObjectW(1, False, name)  # JOB_OBJECT_ASSIGN_PROCESS
+    if not handle:
+        raise ctypes.WinError(ctypes.get_last_error())
+    try:
+        if not kernel.AssignProcessToJobObject(handle, kernel.GetCurrentProcess()):
+            raise ctypes.WinError(ctypes.get_last_error())
+    finally:
+        kernel.CloseHandle(handle)
+    return subprocess.call(arguments)
+
+
 def run(arguments, *, environment=None, timeout=600):
-    result = subprocess.run(arguments, cwd=ROOT, env=environment, capture_output=True,
-                            text=True, encoding="utf-8", timeout=timeout)
-    if result.returncode:
-        raise RuntimeError(f"command failed ({result.returncode}): {' '.join(map(str, arguments))}\n{result.stderr}")
-    return result.stdout.strip()
+    arguments = list(map(str, arguments))
+    job = create_windows_job() if os.name == "nt" else None
+    launched = [sys.executable, str(Path(__file__).resolve()), "--contained-command", job[2], *arguments] if job else arguments
+    process = None
+    # Build logs are files, so inherited handles cannot prolong timeout cleanup.
+    with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
+        try:
+            process = subprocess.Popen(launched, cwd=ROOT, env=environment, stdin=subprocess.DEVNULL,
+                                       stdout=stdout, stderr=stderr, start_new_session=not job)
+            process.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            if job:
+                process.kill()
+            else:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            try:
+                process.wait(timeout=1)
+            except subprocess.TimeoutExpired as error:
+                raise RuntimeError("build process cleanup exceeded one second") from error
+            raise
+        finally:
+            if job:
+                job[0].CloseHandle(job[1])
+            elif process:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+        stdout.seek(0)
+        stderr.seek(0)
+        output = stdout.read().decode("utf-8")
+        error = stderr.read().decode("utf-8")
+    if process.returncode:
+        raise RuntimeError(f"command failed ({process.returncode}): {' '.join(arguments)}\n{error}")
+    return output.strip()
 
 
 def tool(*arguments, environment=None, timeout=600):
@@ -60,10 +174,16 @@ def notices(metadata):
     sections = []
     for package in sorted((packages[key] for key in selected), key=lambda item: (item["name"], item["version"])):
         directory = Path(package["manifest_path"]).parent.resolve()
-        files = {child for child in directory.iterdir()
-                 if child.name.lower().startswith(("license", "copying", "notice", "copyright")) and child.is_file()}
-        if package.get("license_file"):
-            files.add(directory / package["license_file"])
+        if package.get("source") is None:
+            relative = directory.relative_to(ROOT.resolve()).as_posix()
+            if relative not in LOCAL_NOTICES:
+                raise ValueError(f"unreviewed local package notices: {relative}")
+            files = {directory / name for name in LOCAL_NOTICES[relative]}
+        else:
+            files = {child for child in directory.iterdir()
+                     if child.name.lower().startswith(("license", "copying", "notice", "copyright")) and child.is_file()}
+            if package.get("license_file"):
+                files.add(directory / package["license_file"])
         copied = []
         heading = f"{package['name']} {package['version']} ({package.get('license') or 'license-file'})"
         for path in sorted(files):
@@ -89,13 +209,18 @@ def notices(metadata):
 
 def source_identity():
     checksum = hashlib.sha256()
-    paths = [ROOT / "Cargo.toml", ROOT / "Cargo.lock", *sorted((ROOT / "src").rglob("*.rs"))]
+    paths = sorted(path for tree in SOURCE_TREES for path in (ROOT / tree).rglob("*") if path.is_file())
+    paths += [ROOT / name for name in SOURCE_FILES]
+    paths += [ROOT / name for name in OPTIONAL_BUILD_INPUTS if (ROOT / name).is_file()]
     for path in paths:
         checksum.update(path.relative_to(ROOT).as_posix().encode() + b"\0" + read_input(path))
     return {
         "git_commit": run(["git", "rev-parse", "--verify", "HEAD"], timeout=30),
-        "inputs_dirty": bool(run(["git", "status", "--porcelain", "--", "Cargo.toml", "Cargo.lock", "src", "README.md", "LICENSE", "tools/release.py", "licenses"], timeout=30)),
-        "rust_and_manifest_sha256": checksum.hexdigest(),
+        "inputs_dirty": bool(run(["git", "status", "--porcelain", "--untracked-files=all", "--",
+                                 *SOURCE_TREES, *SOURCE_FILES, *OPTIONAL_BUILD_INPUTS,
+                                 "README.md", "LICENSE", "tools/release.py", "licenses"], timeout=30)),
+        "production_inputs_sha256": checksum.hexdigest(),
+        "production_inputs": sorted(path.relative_to(ROOT).as_posix() for path in paths),
     }
 
 
@@ -183,4 +308,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if os.name == "nt" and sys.argv[1:2] == ["--contained-command"]:
+        sys.exit(contained_windows_command(sys.argv[2], sys.argv[3:]))
+    else:
+        main()

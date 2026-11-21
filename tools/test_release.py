@@ -59,6 +59,11 @@ class NativeReleaseTests(unittest.TestCase):
             self.assertTrue(info["rustc"].startswith("rustc "))
             self.assertIn("host", info)
             self.assertRegex(info["source"]["git_commit"], r"^[0-9a-f]{40}$")
+            self.assertIn("vendor/regress/src/lib.rs", info["source"]["production_inputs"])
+            self.assertIn("docs/compatibility/rules.json", info["source"]["production_inputs"])
+            self.assertIn("src/config/option-schema.json", info["source"]["production_inputs"])
+            for name, expected in info["payload_sha256"].items():
+                self.assertEqual(hashlib.sha256(archive.read(prefix + name)).hexdigest(), expected, name)
             notices = archive.read(prefix + "THIRD-PARTY-NOTICES.txt").decode("utf-8")
             for name in ["regress", "oxc_resolver", "RE2JS", "Unicode", "fast-glob", "nodejs-built-in-modules"]:
                 self.assertIn(name, notices)
@@ -83,15 +88,94 @@ class NativeReleaseTests(unittest.TestCase):
         else:
             self.fail("source inventory accepted an environment path")
 
+    def test_project_notices_exclude_unrelated_private_files(self):
+        spec = importlib.util.spec_from_file_location("mdfmt_release_notices", ROOT / "tools/release.py")
+        release = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(release)
+        sandbox = self.base / "notice-inputs"
+        for name in ["LICENSE", "src/config/RE2JS-LICENSE.txt", "src/md060/UNICODE-LICENSE.txt"]:
+            target = sandbox / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("public fixture notice", encoding="utf-8")
+        (sandbox / "NOTICE-private.txt").write_bytes(b"private sentinel\xff")
+        release.ROOT = sandbox
+        metadata = {
+            "packages": [{"id": "root", "name": "mdfmt", "version": "0.1.0", "license": "MIT",
+                          "source": None, "manifest_path": str(sandbox / "Cargo.toml")}],
+            "resolve": {"root": "root", "nodes": [{"id": "root", "deps": []}]},
+        }
+        try:
+            data, inventory = release.notices(metadata)
+        except UnicodeDecodeError:
+            self.fail("unrelated private notice was read and decoded")
+        self.assertNotIn(b"private sentinel", data)
+        self.assertEqual([notice["file"] for notice in inventory[0]["notices"]], ["LICENSE"])
+
+    def test_provenance_tracks_vendored_and_embedded_inputs(self):
+        spec = importlib.util.spec_from_file_location("mdfmt_release_provenance", ROOT / "tools/release.py")
+        release = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(release)
+        sandbox = self.base / "production-inputs"
+        files = [
+            "Cargo.toml", "Cargo.lock", "mise.toml", "src/lib.rs", "src/config/option-schema.json",
+            "vendor/regress/Cargo.toml", "vendor/regress/src/lib.rs",
+            "vendor/oxc_resolver/Cargo.toml", "vendor/oxc_resolver/src/lib.rs",
+            "docs/compatibility/rules.json",
+        ]
+        for name in files:
+            target = sandbox / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("fixture", encoding="utf-8")
+        subprocess.run(["git", "init", "--quiet", str(sandbox)], check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(sandbox), "add", "."], check=True, capture_output=True)
+        subprocess.run(["git", "-C", str(sandbox), "-c", "user.name=Test", "-c", "user.email=test@example.test",
+                        "commit", "--quiet", "-m", "fixture"], check=True, capture_output=True)
+        release.ROOT = sandbox
+        baseline = release.source_identity()
+        self.assertFalse(baseline["inputs_dirty"])
+        for name in ["vendor/regress/src/lib.rs", "vendor/oxc_resolver/src/lib.rs",
+                     "docs/compatibility/rules.json", "src/config/option-schema.json"]:
+            with self.subTest(input=name):
+                target = sandbox / name
+                target.write_text("changed fixture", encoding="utf-8")
+                try:
+                    changed = release.source_identity()
+                    self.assertTrue(changed["inputs_dirty"], f"{name}: false clean provenance")
+                    self.assertNotEqual(
+                        [value for key, value in changed.items() if key.endswith("_sha256")],
+                        [value for key, value in baseline.items() if key.endswith("_sha256")],
+                        f"{name}: invisible production change",
+                    )
+                finally:
+                    target.write_text("fixture", encoding="utf-8")
+
     def test_build_deadline_does_not_wait_for_descendant_pipes(self):
         spec = importlib.util.spec_from_file_location("mdfmt_release_deadline", ROOT / "tools/release.py")
         release = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(release)
-        command = "import subprocess,sys,time; subprocess.Popen([sys.executable,'-c','import time; time.sleep(5)']); time.sleep(5)"
+        marker = self.base / "escaped-descendant"
+        ready = self.base / "descendant-started"
+        descendant = f"import pathlib,time; time.sleep(1.5); pathlib.Path({str(marker)!r}).write_text('escaped'); time.sleep(1)"
+        command = (
+            "import pathlib,subprocess,sys,time; "
+            f"subprocess.Popen([sys.executable,'-c',{descendant!r}],stdout=sys.stdout,stderr=sys.stderr,close_fds=False); "
+            f"pathlib.Path({str(ready)!r}).write_text('started'); time.sleep(5)"
+        )
         start = time.monotonic()
         with self.assertRaises(subprocess.TimeoutExpired):
-            release.run([sys.executable, "-c", command], timeout=0.1)
+            release.run([sys.executable, "-c", command], timeout=1)
         self.assertLess(time.monotonic() - start, 3, "build deadline waited on inherited descendant pipes")
+        self.assertTrue(ready.is_file(), "timeout control did not launch its descendant")
+        time.sleep(1.8)
+        self.assertFalse(marker.exists(), "timed-out build descendant continued modifying its directory")
+
+    def test_build_runner_captures_output_and_preserves_failure(self):
+        spec = importlib.util.spec_from_file_location("mdfmt_release_output", ROOT / "tools/release.py")
+        release = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(release)
+        self.assertEqual(release.run([sys.executable, "-c", "print('result')"], timeout=5), "result")
+        with self.assertRaisesRegex(RuntimeError, r"command failed \(7\):[\s\S]*failure"):
+            release.run([sys.executable, "-c", "import sys; print('failure',file=sys.stderr); sys.exit(7)"], timeout=5)
 
     def test_packaged_binary_modes_are_transactional(self):
         archive_path = self.packages()[0]
