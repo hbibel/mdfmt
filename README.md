@@ -113,7 +113,21 @@ warning while bounded transport remains release-hardening work.
 
 ## Usage
 
-With the toolchain from `mise.toml`:
+From an extracted native archive:
+
+```sh
+./mdfmt --help
+./mdfmt document.md
+./mdfmt --check document.md
+./mdfmt --write document.md
+```
+
+On Windows, use `.\mdfmt.exe`. If an archive extractor drops executable permissions,
+restore them with `chmod +x mdfmt` on Unix. Running the binary requires a compatible
+OS/runtime, not Rust, Python or Node. Documentation links refer to the source
+checkout; `--help` is available in the archive.
+
+From source, with the toolchain from `mise.toml`:
 
 ```sh
 mise exec -- cargo run -- document.md
@@ -206,6 +220,10 @@ scope.
 ## Development
 
 The Rust toolchain is declared in `mise.toml`; `Cargo.lock` is tracked.
+Offline [corpus/property checks](docs/compatibility/corpus-hardening.md) and
+[local native packaging](docs/compatibility/native-artifacts.md) have separate
+commands and evidence. Packaging tools are development-only, not formatter
+runtime dependencies.
 
 ```sh
 mise exec -- cargo test --all-targets

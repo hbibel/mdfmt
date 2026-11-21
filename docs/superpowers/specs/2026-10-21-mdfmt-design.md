@@ -179,6 +179,11 @@ release numbers and ordering relative to other later-release work remain open.
 
 ## Important implementation findings
 
+- Artifact tooling must apply its environment-path exclusion to provenance
+  inventory reads as well as archive/notice selection. The first implementation
+  bypassed the guard while hashing Rust inputs. A controlled path-component
+  regression failed before the shared guarded reader correction; no real `.env`
+  file was read. Curated archive names alone do not prove input-read privacy.
 - Processing hardening reproduced the unchanged debug resource failures: 4,000
   list items exceeded the 30-second subprocess budget, and 500 prose paragraphs
   exceeded ten seconds. Instrumentation measured 169 parses and 42 directive

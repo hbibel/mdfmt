@@ -9,6 +9,7 @@ permissions:
 
 jobs:
   rust:
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -18,21 +19,43 @@ jobs:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v3
       - run: cargo fmt --check
-      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo clippy --locked --all-targets -- -D warnings
       - if: runner.os != 'Windows'
-        run: cargo test --all-targets
+        run: cargo test --locked --all-targets --jobs 2
       - if: runner.os == 'Windows'
-        run: cargo test --lib --bins --test source --test preservation --test config_rules --test config_directives --test config_resolution
+        run: cargo test --locked --lib --bins --test source --test preservation --test config_rules --test config_directives --test config_resolution --test config_patterns --test custom_front_matter --test processing_reuse --test hardening_corpus --example benchmark --jobs 2
+      - if: runner.os == 'Linux'
+        run: cargo test --locked --release --all-targets --jobs 2
       - if: runner.os == 'Linux'
         run: cargo test --manifest-path vendor/regress/Cargo.toml --features prohibit-unsafe,utf16 --lib --test tests
 
   upstream-oracle:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - run: mkdir -p /tmp/opencode
       - run: npm ci --ignore-scripts --prefix tools/parser-oracle
       - run: npm test --prefix tools/parser-oracle
+      - run: cargo build --locked --jobs 2
+      - run: node tools/parser-oracle/corpus.mjs
+
+  native-artifact:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python tools/refresh-corpus.py
+      - run: python -m unittest discover -s tools -p test_release.py

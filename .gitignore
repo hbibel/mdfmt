@@ -7,3 +7,5 @@
 .superpowers/
 .worktrees/
 node_modules/
+/dist/
+/tools/__pycache__/
